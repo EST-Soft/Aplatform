@@ -60,5 +60,6 @@
   "description": "'",
   "main": "babel.config.js",
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "proxy": "http://localhost:80"
 }

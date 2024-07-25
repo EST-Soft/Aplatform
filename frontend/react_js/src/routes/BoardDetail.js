@@ -27,6 +27,7 @@ const BoardDetail = () => {
           title={board.title}
           contents={board.contents}
           createdBy={board.createdBy}
+          createdAt={board.createdAt}
         />
       )}
     </div>

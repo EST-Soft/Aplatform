@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 //기본 게시물 컴포넌트
-const Board = ({ idx, title, contents, createdBy }) => {
+const Board = ({ idx, title, contents, createdBy, createdAt }) => {
   const navigate = useNavigate();
   //수정버튼
   const moveToUpdate = () => {
@@ -24,17 +24,29 @@ const Board = ({ idx, title, contents, createdBy }) => {
   };
 
   return (
-    <div>
-      <div>
-        <h2>{title}</h2>
-        <h5>{createdBy}</h5>
-        <hr />
-        <p>{contents}</p>
-      </div>
-      <div>
-        <button onClick={moveToUpdate}>수정</button>
-        <button onClick={deleteBoard}>삭제</button>
-        <button onClick={moveToList}>목록</button>
+    <div className='write-post-container'>
+      <header className="header">
+        <h1>일반게시판</h1>
+      </header>
+      <div className='form-container'>
+        <div className='form-group'>
+          <span>제목</span>
+          <h2>{title}</h2>
+          <div className="post-meta">
+            <span>작성자: {createdBy}</span>
+            <span>등록일: {createdAt ? createdAt.slice(0, 10) : ''}</span>
+            <span>조회수: 24</span>
+          </div>
+          
+          <hr />
+          <p className='form-group'>{contents}</p>
+        </div>
+        <div className='button-container'>
+          {/* 로그인 여부 따져서 수정/삭제 버튼 가려야함(일단 로그인 된 가정) */}
+          <button className='btn btn-primary' onClick={moveToUpdate}>수정</button>
+          <button className='btn btn-primary' onClick={deleteBoard}>삭제</button>
+          <button className='btn btn-primary' onClick={moveToList}>목록</button>
+        </div>
       </div>
     </div>
   );

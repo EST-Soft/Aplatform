@@ -1,15 +1,8 @@
 
 import { Route, Routes, useLocation } from 'react-router-dom';
 
-import Home from './routes/Home';
-import UserMainView from './user/UserMainView';
 import React from 'react';
-import BoardDetail from './routes/BoardDetail';
-import BoardWrite from './routes/BoardWrite';
-import BoardUpdate from "./routes/BoardUpdate";
 import SidebarLayout from './mypage/SidebarLayout';
-import Header from "./layout/Header";
-import Footer from "./layout/Footer";
 import MypageHome from './mypage/MypageHome';
 import ResumeForm from './mypage/ResumeInsertView';
 import ResumeList from './mypage/ResumeListView';
@@ -38,7 +31,6 @@ import EnterJobPostingDetail from './enterprise/EnterJobPostingDetail';
 import EnterJobPostingEdit from './enterprise/EnterJobPostingUpdateForm';
 import 'bootstrap/dist/css/bootstrap.min.css';
 // import Header from "./layout/Header";
-import Footer from "./common/Footer";
 import './App.css';
 
 function Test() {

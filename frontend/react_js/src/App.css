@@ -1,38 +1,118 @@
+@import '~@fortawesome/fontawesome-free/css/all.min.css';
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+}
+
+/* .wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+} */
+
+.main {
+  flex: 1;
+}
+
 .App {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  align-items: center;
+}
+
+/* BoradList css */
+.header {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.pagination-wrapper, .search-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+  width: 50%;
+  margin: 20px 0;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.search-select {
+  padding: 5px;
+  margin-right: 10px;
+}
+
+.search-input {
+  flex: 1;
+  padding: 5px;
+}
+
+.post-table {
+  width: 80%;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.post-table th, .post-table td {
+  border: 1px solid #ccc;
+  padding: 10px;
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.post-table th {
+  background-color: #f4f4f4;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+/* BoardWrite css */
+.write-post-container {
+  width: 80%;
+  margin: 20px auto;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.form-container {
+  background-color: #ddd;
+  padding: 20px;
+  border-radius: 5px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-control {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+textarea.form-control {
+  height: 200px;
+}
+
+.button-container {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  justify-content: flex-end;
 }
 
-.App-link {
-  color: #61dafb;
+/* BoardUpdate css */
+.post-header {
+  background-color: #ddd;
+  padding: 10px;
+  border-radius: 5px;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.post-meta {
+  display: flex;
+  justify-content: space-evenly;
+  background-color: #ddd;
+  padding: 10px;
+  border-radius: 5px;
+  margin-top: 10px;
 }

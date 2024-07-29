@@ -1,0 +1,23 @@
+.table-container{
+    display: flex;
+    align-items: center; /* 세로 축 가운데 정렬 */
+    justify-content: center; /* 가로 축 가운데 정렬 */
+}
+
+.table-apply-state th, .table-apply-state td{
+    text-align: center;
+    vertical-align: middle;
+}
+
+
+  .sidebar {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-right: 1px solid #eaeaea;
+    height: 100vh; /* 사이드바가 페이지 높이만큼 확장되도록 설정 */
+  }
+  
+  .main-content {
+    padding: 15px;
+    flex: 1;
+  }

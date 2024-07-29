@@ -34,37 +34,50 @@ const BoardWrite = () => {
   };
 
   return (
-    <div>
-      <div>
-        <span>제목</span>
-        <input type="text" name="title" value={title} onChange={onChange} />
+    <div className='write-post-container'>
+      <header className="header">
+        <h1>일반게시판</h1>
+      </header>
+      <div className='form-container'>
+        <div className='form-group'>
+          <span>제목</span>
+          <input
+            type="text"
+            name="title"
+            value={title}
+            onChange={onChange}
+            placeholder='제목을 입력하세요'
+            className='form-control' />
+        </div>
+        <div className='form-group'>
+          <span>작성자</span>
+          <input
+            type="text"
+            name="createdBy"
+            value={createdBy}
+            onChange={onChange}
+            placeholder='작성자를 입력하세요'
+            className='form-control'
+          />
+        </div>
+        <div className='form-group'>
+          <span>내용</span>
+          <textarea
+            name="contents"
+            cols="30"
+            rows="10"
+            value={contents}
+            onChange={onChange}
+            placeholder='내용을 입력하세요'
+            className='form-control'
+          ></textarea>
+        </div>
+        <div className='button-container'>
+          <button className='btn btn-primary' onClick={saveBoard}>저장</button>
+          <button className='btn btn-primary' onClick={backToList}>취소</button>
+        </div>
       </div>
-      <br />
-      <div>
-        <span>작성자</span>
-        <input
-          type="text"
-          name="createdBy"
-          value={createdBy}
-          onChange={onChange}
-        />
-      </div>
-      <br />
-      <div>
-        <span>내용</span>
-        <textarea
-          name="contents"
-          cols="30"
-          rows="10"
-          value={contents}
-          onChange={onChange}
-        ></textarea>
-      </div>
-      <br />
-      <div>
-        <button onClick={saveBoard}>저장</button>
-        <button onClick={backToList}>취소</button>
-      </div>
+
     </div>
   );
 };

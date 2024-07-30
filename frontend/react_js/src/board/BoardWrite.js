@@ -34,7 +34,7 @@ const BoardWrite = () => {
   };
 
   return (
-    <div className='write-post-container'>
+    <div>
       <header className="header">
         <h1>일반게시판</h1>
       </header>

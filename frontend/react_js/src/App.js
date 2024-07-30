@@ -10,6 +10,11 @@ import PositionProposal from './mypage/MypagePPAcception';
 import PositionProposalList from './mypage/MypageProposedPositionList';
 import ApplyCompanyList from './mypage/ApplyCompanyList';
 import ResumeDetail from './mypage/ResumeDetails';
+// 게시판 관련 import
+import BoardList from './board/BoardList';
+import BoardDetail from './board/BoardDetail';
+import BoardWrite from './board/BoardWrite';
+import BoardUpdate from './board/BoardUpdate';
 
 
 import JobInfo from './user/JobPostingListView';
@@ -71,11 +76,11 @@ function Test() {
           // 일반회원 사이드바 레이아웃
           <SidebarLayout showSidebar={showSidebar}>
             <Routes>
-              {/* <Route path="/" element={<Home />} />
+              {/* <Route path="/" element={<Home />} /> */}
               <Route path="/board" element={<BoardList />} />
               <Route path="/board/:idx" element={<BoardDetail />} />
               <Route path="/write" element={<BoardWrite />} />
-              <Route path="/update/:idx" element={<BoardUpdate />} /> */}
+              <Route path="/update/:idx" element={<BoardUpdate />} />
               {/* <Route path="/" element={<UserMainView />} /> */}
               <Route path="/user/jobinfo" element={<JobInfo />} />
               <Route path="/user/login" element={<UserLoginForm />} />

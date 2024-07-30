@@ -69,15 +69,11 @@ html, body {
 }
 
 /* BoardWrite css */
-.write-post-container {
-  width: 80%;
-  margin: 20px auto;
-}
-
 .form-container {
   background-color: #ddd;
   padding: 20px;
   border-radius: 5px;
+  flex-direction: column;
 }
 
 .form-group {

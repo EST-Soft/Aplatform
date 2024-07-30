@@ -33,6 +33,10 @@ const BoardWrite = () => {
     navigate('/board');
   };
 
+  const fileUpload = () => {
+    navigate('/fileUpload')
+  }
+
   return (
     <div>
       <header className="header">
@@ -73,6 +77,7 @@ const BoardWrite = () => {
           ></textarea>
         </div>
         <div className='button-container'>
+          <button className='btn btn-primary' onClick={fileUpload}>파일추가</button>
           <button className='btn btn-primary' onClick={saveBoard}>저장</button>
           <button className='btn btn-primary' onClick={backToList}>취소</button>
         </div>

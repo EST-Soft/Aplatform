@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import store from '../store/store';
 
 const UserLoginForm = () => {
   const [entrprsId, setEntrprsId] = useState('');
@@ -12,19 +14,19 @@ const UserLoginForm = () => {
     event.preventDefault();
 
     // 데이터가 필요한 부분 주석 처리
-    // const loginData = {
-    //   entrprsId,
-    //   entrprsPswrd,
-    // };
+    const loginData = {
+      entrprsId,
+      entrprsPswrd,
+    };
 
-    // axios.post("http://localhost:80/enter/login", loginData, { withCredentials: true })
-    //   .then(async (response) => {
-    //     store.commit("setEnter", response.data); // store에 기업 정보 저장(pk, id)
-    //     await navigate('/');
-    //   })
-    //   .catch((error) => {
-    //     alert(error);
-    //   });
+    axios.post("http://localhost:80/user/login", loginData, { withCredentials: true })
+      .then(async (response) => {
+        store.commit("setEnter", response.data); // store에 기업 정보 저장(pk, id)
+        await navigate('/');
+      })
+      .catch((error) => {
+        alert(error);
+      });
   };
 
   // 네이버 로그인 핸들러

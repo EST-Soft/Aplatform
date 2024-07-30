@@ -6,7 +6,7 @@ import"./JobPostingListView.css"
 // moment를 사용하기 위해 npm install moment
 import moment from 'moment';
 import BasePagination from '../common/BasePagination';
-// import SearchComponent from './SearchComponent';
+import SearchComponent from '../enterprise/SearchComponent';
 
 /*
 JobPostingListView.css 내에 .dropdown 지워야 list div css나옴
@@ -47,21 +47,22 @@ const JobInfo = () => {
 
   ];
 
+  // 밑에 getJobList와 같음
 
-  useEffect(() => {
-    const fetchItems = async () => {
-      try {
-        const response = await axios.get('/board/list/jobPosting', {
-          params: { sortBy: sortOption }
-        });
-        setItems(response.data || []);
-      } catch (error) {
-        console.error('Error fetching items:', error);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchItems = async () => {
+  //     try {
+  //       const response = await axios.get('/board/list/jobPosting', {
+  //         params: { sortBy: sortOption }
+  //       });
+  //       setItems(response.data || []);
+  //     } catch (error) {
+  //       console.error('Error fetching items:', error);
+  //     }
+  //   };
 
-    fetchItems();
-  }, [sortOption]);
+  //   fetchItems();
+  // }, [sortOption]);
 
   // 공고리스트 db값 가져오는 로직 
   const getJobList = async () => {
@@ -132,7 +133,7 @@ const JobInfo = () => {
     setSelectedCareers([]);
     setSelectedEducations([]);
     setSelectedJobTypes([]);
-    // fetchItems();
+    getJobList();
   };
 
   const toggleDropdown = (type) => {
@@ -191,7 +192,7 @@ const JobInfo = () => {
         <div className="container py-4">
           <div className="d-flex justify-content-end">
             {/* 유저는 등록 리스트내에 등록버튼이 필요 없음 공고 확인과 입사지원만 하기 때문 그래서 지움*/}
-            {/* <Link to="/board/jobPostingInsert" className="btn btn-primary">등록</Link> */}
+            <Link to="/enter/jobPostingInsert" className="btn btn-primary">등록</Link>
           </div>
 
           <div className="list-container">
@@ -388,14 +389,14 @@ const JobInfo = () => {
                   )}
                 </div>
               </div>
-              {/* <SearchComponent onSearchResult={handleSearchResult} /> */}
+              <SearchComponent onSearchResult={handleSearchResult} />
               <div>
                 <select value={sortOption} onChange={(e) => setSortOption(e.target.value)}>
                   <option value="regstrStrtDtm">최신순</option>
                   <option value="apply">지원자순</option>
                   <option value="hits">조회수순</option>
                 </select>
-                {/* //디비 값 받는거 연습중------------------ */}
+                {/* //디비 값 받는거 test중------------------ */}
                 {/* <ul>  
                     {jobList.map((joblist) => (
                       // 4) map 함수로 데이터 출력

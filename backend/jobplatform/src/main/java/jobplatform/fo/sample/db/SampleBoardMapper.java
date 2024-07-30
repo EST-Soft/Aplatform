@@ -29,6 +29,8 @@ public interface SampleBoardMapper {
 	int insertBoard(SampleBoardEntity entity);
 	
 	int updateBoard(SampleBoardEntity entity);
+
+	int hitsBoard(Long idx);
 	
 	int deleteBoard(Long idx);
 

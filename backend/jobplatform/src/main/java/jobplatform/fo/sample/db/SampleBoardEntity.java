@@ -30,4 +30,5 @@ public class SampleBoardEntity {
     private String contents;
     private String createdBy;
     private Date createdAt;
+    private Long hits;
 }

@@ -28,6 +28,7 @@ const BoardDetail = () => {
           contents={board.contents}
           createdBy={board.createdBy}
           createdAt={board.createdAt}
+          hits={board.hits}
         />
       )}
     </div>

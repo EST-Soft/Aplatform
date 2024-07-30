@@ -30,6 +30,7 @@ public class SampleBoardController {
     //idx의 데이터 1개를 조회한다.
     @GetMapping("/board/{idx}")
     Header<SampleBoardEntity> getBoardOne(@PathVariable Long idx) {
+        boardService.updateHits(idx);
         return boardService.getBoardOne(idx);
     }
 

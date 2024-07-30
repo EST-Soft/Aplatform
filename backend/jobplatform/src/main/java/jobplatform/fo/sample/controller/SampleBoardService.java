@@ -62,6 +62,10 @@ public class SampleBoardService {
             return Header.ERROR("ERROR");
         }
     }
+    
+    public void updateHits(Long idx){
+        boardMapper.hitsBoard(idx);
+    }
 
     Header<String> deleteBoard(Long idx) {
         if (boardMapper.deleteBoard(idx) > 0) {

@@ -49,6 +49,7 @@
         , CONTENTS
         , CREATED_BY AS createdBy
         , CREATED_AT AS createdAt
+        , HITS
         FROM TB_BOARD
         WHERE IDX = #{idx}
     </select>
@@ -72,6 +73,12 @@
         UPDATE TB_BOARD
         SET TITLE = #{title}
         , CONTENTS = #{contents}
+        WHERE IDX = #{idx}
+    </update>
+
+    <update id="hitsBoard" parameterType="Long">
+        UPDATE TB_BOARD
+        SET HITS = HITS + 1
         WHERE IDX = #{idx}
     </update>
 

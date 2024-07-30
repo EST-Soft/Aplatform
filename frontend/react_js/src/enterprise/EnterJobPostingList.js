@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 // import"./EnterJobPostingListView.css"
 // import moment from 'moment';
 import BasePagination from '../common/BasePagination';
-// import SearchComponent from './SearchComponent';
+import SearchComponent from '../enterprise/SearchComponent';
 
 const EnterJobInfo = () => {
   const [items, setItems] = useState([]);
@@ -126,7 +126,7 @@ const EnterJobInfo = () => {
     setSelectedCareers([]);
     setSelectedEducations([]);
     setSelectedJobTypes([]);
-    // fetchItems();
+    getJobList();
   };
 
   const toggleDropdown = (type) => {
@@ -381,7 +381,7 @@ const EnterJobInfo = () => {
                   )}
                 </div>
               </div>
-              {/* <SearchComponent onSearchResult={handleSearchResult} /> */}
+              <SearchComponent onSearchResult={handleSearchResult} />
               <div>
                 <select value={sortOption} onChange={(e) => setSortOption(e.target.value)}>
                   <option value="regstrStrtDtm">최신순</option>

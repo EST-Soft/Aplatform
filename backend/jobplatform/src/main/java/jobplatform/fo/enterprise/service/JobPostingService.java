@@ -13,7 +13,7 @@ public interface JobPostingService {
 
 	public List<JobPostingEntity> jobPostingList(String sortBy);
 
-//	public int insertJobPosting(JobPostingEntity jpe);
+	// public int insertJobPosting(JobPostingEntity jpe);
 
 	public JobPostingDTO jobPostingDetail(int jbpSq);
 

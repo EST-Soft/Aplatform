@@ -15,7 +15,8 @@ import BoardList from './board/BoardList';
 import BoardDetail from './board/BoardDetail';
 import BoardWrite from './board/BoardWrite';
 import BoardUpdate from './board/BoardUpdate';
-
+// 파일 업로드
+import FileUpload from './common/FileUpload';
 
 import JobInfo from './user/JobPostingListView';
 import UserLoginForm from './user/UserLoginForm';
@@ -95,7 +96,7 @@ function Test() {
               <Route path="/mypage/applycompanylist" element={<ApplyCompanyList />} />
               <Route path="/resumeDetailView/:rsm_sq" element={<ResumeDetail />} />
               
-           
+              <Route path='/FileUpload' element={<FileUpload />} />
             </Routes>
           </SidebarLayout>
         )}

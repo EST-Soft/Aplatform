@@ -30,17 +30,17 @@ const MypageHome = () => {
   };
 
   // 이력서 상태 합계를 계산하는 함수
-  const getApplyStateSum = () => {
-    if (!result || !result.EachCndtnApplyCount) {
-      return 0;
-    }
+  // const getApplyStateSum = () => {
+  //   if (!result || !result.EachCndtnApplyCount) {
+  //     return 0;
+  //   }
 
-    let sum = 0;
-    for (const key in result.EachCndtnApplyCount) {
-      sum += result.EachCndtnApplyCount[key];
-    }
-    return sum;
-  };
+  //   let sum = 0;
+  //   for (const key in result.EachCndtnApplyCount) {
+  //     sum += result.EachCndtnApplyCount[key];
+  //   }
+  //   return sum;
+  // };
 
   // Calendar 이벤트 생성 함수
   const makeCalendarDatas = (toParsingData) => {
@@ -110,81 +110,82 @@ const MypageHome = () => {
   }, [month]);
 
   return (
-    <div className="container py-4">
-      <  div className="row">
-        {/* 메인 콘텐츠 */}
-        <div className="col-lg-9">
-          <div className="main-content">
-            <div className="row" style={{ paddingBottom: '20px' }}>
-              <div className="col-3" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <div className="thumb-info-side-image-wrapper">
-                  <img src="/assets/profile.webp" className="img-fluid" alt="" style={{ width: '140px' }} />
-                </div>
+    // <div>
+    //   {result && (
+   <>
+          <div className="row" style={{ paddingBottom: '20px', borderBottom: '1px solid #eaeaea' }}>
+            <div className="col-3" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <div className="thumb-info-side-image-wrapper">
+                <img src="/assets/profile.webp" className="img-fluid" alt="" style={{ width: '140px' }} />
+                {/* 나중에 야돈대신 들어갈 자리 :src="{{result.rsmInfo.rsm_img_file_url}}" */}
               </div>
-              <div className="col-9 table-container">
-                <table className="table table-bordered" style={{ marginBottom: 0 }}>
-                  <thead>
-                    <tr>
-                      <th colSpan="3">
-                        {/* 여기에 콘텐츠 추가 */}
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody style={{ textAlign: 'center' }}>
-                    <tr>
-                      {/* 여기에 콘텐츠 추가 */}
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>  
-            <div className="row" style={{ paddingTop: '20px' }}>
-              <table className="table table-bordered" style={{ textAlign: 'center' }}>
-                <tbody>
+            </div>
+            <div className="col-9 table-container">
+              <table bordered style={{ marginBottom: 0 }}>
+                <thead>
                   <tr>
-                    <th>등록한 이력서&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{result?.myState.rsm_cnt || 0}</th>
-                    <th>추천 공고&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(로직 준비중)</th>
-                    <th>스크랩 공고&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{result?.myState.scrap_cnt || 0}</th>
-                    <th>받은 제안&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{result?.myState.prpsl_cnt || 0}</th>
+                    <th colSpan="3">
+                      <h2 className="font-weight-bold" style={{ marginBottom: '10px' }}>{result.rsmInfo.rsm_tl}</h2>
+                      <span>-최종 수정일자&nbsp;&nbsp;:&nbsp;&nbsp;{formatDateYMD(result.rsmInfo.updt_dtm)}</span>
+                      <span style={{ marginLeft: '20px' }}>-포지션 수락 여부&nbsp;&nbsp;:&nbsp;&nbsp;{result.mbrInfo.pstn_prpsl_accept_yn === 'Y' ? '수락' : '거절'}</span>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody style={{ textAlign: 'center' }}>
+                  <tr>
+                    <th>{result.mbrInfo.mbr_name}</th>
+                    <th>{result.mbrInfo.mbr_mp}</th>
+                    <th>{result.mbrInfo.mbr_eml_adrs}</th>
                   </tr>
                 </tbody>
               </table>
             </div>
-            <div className="row" style={{ paddingTop: '20px', borderBottom: '1px solid #eaeaea' }}>
-              <div className="col pb-3">
-                <table className="table table-bordered table-apply-state">
-                  <thead>
-                    <tr>
-                      <th rowSpan="2">전체</th>
-                      <th colSpan="2">진행중</th>
-                      <th colSpan="2">면접</th>
-                      <th rowSpan="2">불합격</th>
-                      <th rowSpan="2">합격</th>
-                      <th rowSpan="2">마감</th>
-                    </tr>
-                    <tr>
-                      <th>열람</th>
-                      <th>미열람</th>
-                      <th>대기</th>
-                      <th>완료</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>{result?.applyStateSum || 0}</td>
-                      <td>{result?.EachCndtnApplyCount.cndtn_402 || 0}</td>
-                      <td>{result?.EachCndtnApplyCount.cndtn_401 || 0}</td>
-                      <td>{result?.EachCndtnApplyCount.cndtn_405 || 0}</td>
-                      <td>{result?.EachCndtnApplyCount.cndtn_406 || 0}</td>
-                      <td>{result?.EachCndtnApplyCount.cndtn_408 || 0}</td>
-                      <td>{result?.EachCndtnApplyCount.cndtn_407 || 0}</td>
-                      <td>(준비중)</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+          </div>
+          <div className="row" style={{ paddingTop: '20px' }}>
+            <table bordered style={{ textAlign: 'center' }}>
+              <tr>
+                <th>등록한 이력서&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{result.myState.rsm_cnt}</th>
+                <th>추천 공고&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(로직 준비중)</th>
+                <th>스크랩 공고&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{result.myState.scrap_cnt}</th>
+                <th>받은 제안&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{result.myState.prpsl_cnt}</th>
+              </tr>
+            </table>
+          </div>
+          <div className="row" style={{ paddingTop: '20px', borderBottom: '1px solid #eaeaea' }}>
+            <div className="col pb-3">
+              <table bordered className="table-apply-state">
+                <thead>
+                  <tr>
+                    <th rowSpan="2">전체</th>
+                    <th colSpan="2">진행중</th>
+                    <th colSpan="2">면접</th>
+                    <th rowSpan="2">불합격</th>
+                    <th rowSpan="2">합격</th>
+                    <th rowSpan="2">마감</th>
+                  </tr>
+                  <tr>
+                    <th>열람</th>
+                    <th>미열람</th>
+                    <th>대기</th>
+                    <th>완료</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {/* <tr>
+                    <td>{applyStateSum}</td>
+                    <td>{result.EachCndtnApplyCount.cndtn_402}</td>
+                    <td>{result.EachCndtnApplyCount.cndtn_401}</td>
+                    <td>{result.EachCndtnApplyCount.cndtn_405}</td>
+                    <td>{result.EachCndtnApplyCount.cndtn_406}</td>
+                    <td>{result.EachCndtnApplyCount.cndtn_408}</td>
+                    <td>{result.EachCndtnApplyCount.cndtn_407}</td>
+                    <td>(준비중)</td>
+                  </tr> */}
+                </tbody>
+              </table>
             </div>
-            <div className="row" style={{ paddingTop: '20px' }}>
+          </div>
+          <div className="row" style={{ paddingTop: '20px' }}>
               <Calendar events={calendarEvents} customButtons={{
                 myPrev: {
                   text: '<',
@@ -196,10 +197,9 @@ const MypageHome = () => {
                 }
               }} />
             </div>
-          </div>
-        </div>
-      </div>
-    </div>
+        </>
+      // )}
+      // </div>
   );
 };
 

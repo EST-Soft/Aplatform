@@ -6,7 +6,7 @@ import {BrowserRouter} from "react-router-dom";
 import Header from "./common/MainHeader";
 // import './common/MainLayout.css';
 import Footer from "./common/Footer";
-import './styles/index.css';
+//import './styles/index.css';
 
 
 const root = ReactDOM.createRoot(document.getElementById('app'));

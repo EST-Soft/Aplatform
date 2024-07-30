@@ -2,7 +2,6 @@ import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 
-import"./JobPostingListView.css"
 // moment를 사용하기 위해 npm install moment
 import moment from 'moment';
 import BasePagination from '../common/BasePagination';
@@ -172,8 +171,8 @@ const JobInfo = () => {
   return (
     <div>
       <section className="page-header page-header-modern bg-color-grey page-header-md">
-        <div className="container">
-          <div className="row">
+        <div className="container1">
+          <div className="row1">
             <div className="col-md-12 align-self-center p-static order-2 text-center">
               <h1 className="text-dark font-weight-bold text-8">일반게시판</h1>
               <span className="sub-title text-dark">자유로운 글 작성!</span>
@@ -195,10 +194,10 @@ const JobInfo = () => {
             <Link to="/enter/jobPostingInsert" className="btn btn-primary">등록</Link>
           </div>
 
-          <div className="list-container">
-            <div className="list-header">
-              <div className="search-options">
-                <div className="dropdown-wrapper">
+          <div className="list-container1">
+            <div className="list-header1">
+              <div className="search-options1">
+                <div className="dropdown-wrapper1">
                   <button onClick={() => toggleDropdown('region')}>지역</button>
                   {showDropdown.region && (
                     <div className="dropdown">
@@ -227,7 +226,7 @@ const JobInfo = () => {
                   )}
                 </div>
 
-                <div className="dropdown-wrapper">
+                <div className="dropdown-wrapper1">
                   <button onClick={() => toggleDropdown('career')}>경력</button>
                   {showDropdown.career && (
                     <div className="dropdown">
@@ -274,7 +273,7 @@ const JobInfo = () => {
                   )}
                 </div>
 
-                <div className="dropdown-wrapper">
+                <div className="dropdown-wrapper1">
                   <button onClick={() => toggleDropdown('education')}>학력</button>
                   {showDropdown.education && (
                     <div className="dropdown">
@@ -360,7 +359,7 @@ const JobInfo = () => {
                   )}
                 </div>
 
-                <div className="dropdown-wrapper">
+                <div className="dropdown-wrapper1">
                   <button onClick={() => toggleDropdown('jobType')}>직종</button>
                   {showDropdown.jobType && (
                     <div className="dropdown">
@@ -409,10 +408,10 @@ const JobInfo = () => {
                 <button onClick={clearAllFilter} className="btn btn-primary">초기화</button>
               </div>
             </div>
-            <div className="list-body">
+            <div className="list-body1">
               {paginatedItems.length > 0 ? (
                 paginatedItems.map((item, idx) => (
-                  <div key={idx} className="custom">
+                  <div key={idx} className="custom1">
                     <div>
                       <Link to={`/board/detail/jobPosting/${item.jbpSq}`}>{item.jbpTl}</Link>
                     </div>
@@ -431,7 +430,7 @@ const JobInfo = () => {
               )}
             </div>
           </div>
-          <div className="pagenation-wrapper">
+          <div className="pagenation-wrapper1">
             <BasePagination
               currentPage={currentPage}
               totalPages={totalPages}

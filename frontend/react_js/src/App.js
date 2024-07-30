@@ -34,9 +34,6 @@ import EnterSignUp from './member/EnterMemberRegister';
 import EnterJobPostingForm from './enterprise/EnterJobPostingInsertForm';
 import EnterJobPostingDetail from './enterprise/EnterJobPostingDetail';
 import EnterJobPostingEdit from './enterprise/EnterJobPostingUpdateForm';
-import 'bootstrap/dist/css/bootstrap.min.css';
-// import Header from "./layout/Header";
-import './App.css';
 
 function Test() {
   const location = useLocation();

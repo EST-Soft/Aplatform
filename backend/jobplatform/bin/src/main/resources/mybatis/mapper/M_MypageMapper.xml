@@ -9,7 +9,7 @@
 	<!-- 회원 정보 중 이름, 전화번호, 이메일, 포지션 제안 수락여부 -->
 	<select id="getMbrInfo">
 		SELECT mbr_name, mbr_mp, mbr_eml_adrs, pstn_prpsl_accept_yn
-		FROM p2_tbl_member_m
+		FROM p3_tbl_member_m
 		WHERE
 			mbr_sq = #{mbr_sq}
 	</select>
@@ -28,7 +28,7 @@
 	    SELECT 
 	        m.mbr_name, m.mbr_mp, m.mbr_eml_adrs, m.pstn_prpsl_accept_yn, r.rsm_sq, r.rsm_tl, r.insrt_dtm, r.updt_dtm, r.rsm_img_file_rul
 	    FROM 
-	        p2_tbl_member_m m
+	        p3_tbl_member_m m
 	    	LEFT JOIN p2_tbl_resume_m r ON m.mbr_sq = r.mbr_sq AND r.rsm_rprsntv_yn = 'Y'
 	    WHERE
 	        m.mbr_sq = #{mbr_sq}
@@ -123,12 +123,12 @@
 
 	<!-- 포지션 제안 수락 여부 CHECK -->
 	<select id="getPstnPrpslAcceptYN">
-		SELECT pstn_prpsl_accept_yn FROM p2_tbl_member_m WHERE mbr_sq = #{mbr_sq}
+		SELECT pstn_prpsl_accept_yn FROM p3_tbl_member_m WHERE mbr_sq = #{mbr_sq}
 	</select>
 
 	<!-- 포지션 제안 수락 여부 변경 -->
 	<update id="updatePstnPrpslAcceptYN">
-		UPDATE p2_tbl_member_m SET pstn_prpsl_accept_yn = #{pstn_prpsl_accept_yn} WHERE mbr_sq = #{mbr_sq}
+		UPDATE p3_tbl_member_m SET pstn_prpsl_accept_yn = #{pstn_prpsl_accept_yn} WHERE mbr_sq = #{mbr_sq}
 	</update>
 
 	<!-- 지역 코드 정보 -->

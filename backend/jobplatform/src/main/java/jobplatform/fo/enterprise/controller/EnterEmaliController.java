@@ -1,8 +1,10 @@
 package jobplatform.fo.enterprise.controller;
 
+import jobplatform.fo.enterprise.domain.dto.EnterRegisterDTO;
 import jobplatform.fo.enterprise.domain.repository.EnterMemberRepository;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
@@ -34,6 +36,7 @@ public class EnterEmaliController {
         log.info(map);
 
         String entrprsPicEml = map.get("entrprsPicEml");
+        String purpose = map.get("purpose");
 
         log.info("entrprsPicEml : " + entrprsPicEml);
         // 이메일 주소가 null인지 확인
@@ -57,41 +60,41 @@ public class EnterEmaliController {
 
 
         // MemberEntity member = memberRepository.findByMbrEmlAdrs(mbrEmlAdrs);
-
+        boolean member=enterMemberRepository.existsByEntrprsPicEml(entrprsPicEml);
         // 가입 때는 true값이 나오면 BadRequest ,  비밀번호 변경 , 아이디 조회를 위해서 false일 때 BadRequest
-        if (enterMemberRepository.existsByEntrprsPicEml(entrprsPicEml)) {
-
-            String error  = "이미 가입된 이메일입니다 ";
-//          String error =  "가입된 회원이 없습니다";
-
-            return ResponseEntity.badRequest().body(error);
-
-        } else {
-            Random random = new Random();
-            String key = "";
-
-            SimpleMailMessage message = new SimpleMailMessage();
-            message.setTo(entrprsPicEml);
-
-            // 입력 키를 위한 난수 생성 코드
-            for (int i = 0; i < 3; i++) {
-                int index = random.nextInt(26) + 65;
-                key += (char) index;
-            }
-            for (int i = 0; i < 6; i++) {
-                int numIndex = random.nextInt(10);
-                key += numIndex;
-            }
-            String mail = "\n 회원가입 인증코드";
-            message.setSubject("회원가입 인증코드 메일입니다.");    // 이메일 제목
-            message.setText("인증번호는 " + key + " 입니다." + mail);    // 이메일 내용
-            map.put("key",key);
-            try {
-                mailSenderImpl.send(message);
-            } catch (Exception e) {
-                e.printStackTrace();
+        System.out.println("멤버"+member);
+        if (purpose == null) { // 회원가입 로직
+            if (member) {
+                map.put("error", "이미 존재하는 이메일입니다.");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(map);
             }
         }
+
+        Random random = new Random();
+        String key = "";
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(entrprsPicEml);
+
+        for (int i = 0; i < 3; i++) {
+            int index = random.nextInt(26) + 65;
+            key += (char) index;
+        }
+        for (int i = 0; i < 6; i++) {
+            int numIndex = random.nextInt(10);
+            key += numIndex;
+        }
+
+        message.setSubject("인증코드 메일입니다.");
+        message.setText("인증번호는 " + key + " 입니다.");
+
+        try {
+            mailSenderImpl.send(message);
+        } catch (Exception e) {
+            map.put("error", "메일 전송에 실패했습니다.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(map);
+        }
+
+        map.put("key", key);
         return ResponseEntity.ok(map);
     }
 }

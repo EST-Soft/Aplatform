@@ -1,12 +1,11 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-
 // moment를 사용하기 위해 npm install moment
 import moment from 'moment';
 import BasePagination from '../common/BasePagination';
 import SearchComponent from '../enterprise/SearchComponent';
-
+import './JobPostingListView.css'
 /*
 JobPostingListView.css 내에 .dropdown 지워야 list div css나옴
 수시로 체크 요망 
@@ -48,20 +47,20 @@ const JobInfo = () => {
 
   // 밑에 getJobList와 같음
 
-  // useEffect(() => {
-  //   const fetchItems = async () => {
-  //     try {
-  //       const response = await axios.get('/board/list/jobPosting', {
-  //         params: { sortBy: sortOption }
-  //       });
-  //       setItems(response.data || []);
-  //     } catch (error) {
-  //       console.error('Error fetching items:', error);
-  //     }
-  //   };
+  useEffect(() => {
+    const fetchItems = async () => {
+      try {
+        const response = await axios.get('/board/list/jobPosting', {
+          params: { sortBy: sortOption }
+        });
+        setItems(response.data || []);
+      } catch (error) {
+        console.error('Error fetching items:', error);
+      }
+    };
 
-  //   fetchItems();
-  // }, [sortOption]);
+    fetchItems();
+  }, [sortOption]);
 
   // 공고리스트 db값 가져오는 로직 
   const getJobList = async () => {
@@ -137,10 +136,14 @@ const JobInfo = () => {
 
   const toggleDropdown = (type) => {
     setShowDropdown(prev => ({
-      ...prev,
-      [type]: !prev[type],
+      region: false,
+      career: false,
+      education: false,
+      jobType: false,
+      [type]: !prev[type], // 선택한 드롭다운만 열기
     }));
   };
+  
 
   const filteredAreas = useMemo(() => {
     return areas.filter(area => area.areaName.toLowerCase().includes(regionSearch.toLowerCase()));
@@ -171,34 +174,34 @@ const JobInfo = () => {
   return (
     <div>
       <section className="page-header page-header-modern bg-color-grey page-header-md">
-        <div className="container1">
+        <div className="container">
           <div className="row1">
-            <div className="col-md-12 align-self-center p-static order-2 text-center">
-              <h1 className="text-dark font-weight-bold text-8">일반게시판</h1>
-              <span className="sub-title text-dark">자유로운 글 작성!</span>
-            </div>
             <div className="col-md-12 align-self-center order-1">
               <ul className="breadcrumb d-block text-center">
                 <li><Link to="/">Home</Link></li>
                 <li className="active">일반게시판</li>
               </ul>
             </div>
+            <div className="col-md-12 align-self-center p-static order-2 text-center">
+              <h1 className="text-dark font-weight-bold text-8">일반게시판</h1>
+              <span className="sub-title text-dark">자유로운 글 작성!</span>
+            </div>
           </div>
         </div>
       </section>
 
-      <section className="card card-admin">
-        <div className="container py-4">
           <div className="d-flex justify-content-end">
             {/* 유저는 등록 리스트내에 등록버튼이 필요 없음 공고 확인과 입사지원만 하기 때문 그래서 지움*/}
             <Link to="/enter/jobPostingInsert" className="btn btn-primary">등록</Link>
           </div>
+      <section className="card card-admin">
+        <div className="container py-4">
 
-          <div className="list-container1">
-            <div className="list-header1">
-              <div className="search-options1">
-                <div className="dropdown-wrapper1">
-                  <button onClick={() => toggleDropdown('region')}>지역</button>
+          <div className="list-container">
+            <div className="list-header">
+              <div className="search-options">
+                <div className="dropdown-wrapper">
+                  <button onClick={() => toggleDropdown('region')} className='btn btn-primary'>지역</button>
                   {showDropdown.region && (
                     <div className="dropdown">
                       <input
@@ -226,8 +229,8 @@ const JobInfo = () => {
                   )}
                 </div>
 
-                <div className="dropdown-wrapper1">
-                  <button onClick={() => toggleDropdown('career')}>경력</button>
+                <div className="dropdown-wrapper">
+                  <button onClick={() => toggleDropdown('career')} className='btn btn-primary'>경력</button>
                   {showDropdown.career && (
                     <div className="dropdown">
                       <label>
@@ -273,8 +276,8 @@ const JobInfo = () => {
                   )}
                 </div>
 
-                <div className="dropdown-wrapper1">
-                  <button onClick={() => toggleDropdown('education')}>학력</button>
+                <div className="dropdown-wrapper">
+                  <button onClick={() => toggleDropdown('education')} className='btn btn-primary'>학력</button>
                   {showDropdown.education && (
                     <div className="dropdown">
                       <label>
@@ -359,8 +362,8 @@ const JobInfo = () => {
                   )}
                 </div>
 
-                <div className="dropdown-wrapper1">
-                  <button onClick={() => toggleDropdown('jobType')}>직종</button>
+                <div className="dropdown-wrapper">
+                  <button onClick={() => toggleDropdown('jobType')} className='btn btn-primary'>직종</button>
                   {showDropdown.jobType && (
                     <div className="dropdown">
                       <input
@@ -408,10 +411,10 @@ const JobInfo = () => {
                 <button onClick={clearAllFilter} className="btn btn-primary">초기화</button>
               </div>
             </div>
-            <div className="list-body1">
+            <div className="list-body">
               {paginatedItems.length > 0 ? (
                 paginatedItems.map((item, idx) => (
-                  <div key={idx} className="custom1">
+                  <div key={idx} className="custom">
                     <div>
                       <Link to={`/board/detail/jobPosting/${item.jbpSq}`}>{item.jbpTl}</Link>
                     </div>
@@ -430,7 +433,7 @@ const JobInfo = () => {
               )}
             </div>
           </div>
-          <div className="pagenation-wrapper1">
+          <div className="pagenation-wrapper">
             <BasePagination
               currentPage={currentPage}
               totalPages={totalPages}

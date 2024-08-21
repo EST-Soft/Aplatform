@@ -4,9 +4,14 @@
   }
   .list-header {
     display: flex;
+    justify-content: space-around;
+    align-items: center;
   }
   .list-header > div {
-    margin-left: 50px;
+    /* margin-left: 50px; */
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
   .list-body {
     margin-top: 50px;
@@ -29,16 +34,29 @@
     justify-content: space-between;
   }
   
-  .search-options {
+  /* .search-options {
     margin-top: 20px;
     display: flex;
     align-items: center;
-  }
+  } */
   
   .dropdown-wrapper {
     position: relative; /* 부모 요소에 대해 위치를 상대적으로 설정 */
+    
   }
-  
+  .dropdown-wrapper .dropdown {
+    position: absolute;
+    top: 100%; /* 버튼 바로 아래에 위치하도록 설정 */
+    left: 0;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+    margin-top: 5px;
+    max-height: 200px; /* 드롭다운의 최대 높이 설정 */
+    overflow-y: auto; /* 세로 스크롤 처리 */
+    
+  }
   .search-options button {
     padding: 8px 16px;
     font-size: 16px;
@@ -72,8 +90,4 @@
     z-index: 1000;
     bottom: -50px; /* 페이지네이션을 게시물 아래로 이동시킵니다 */
   
-  }
-  .container{
-    position : relative;
-    margin-bottom: 50px;
   }

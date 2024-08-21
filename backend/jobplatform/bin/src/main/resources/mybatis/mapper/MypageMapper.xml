@@ -11,7 +11,7 @@
 	
 	<!-- test용 회원순번-->
 	<select id="getid" resultType="Integer">
-		select mbr_sq from p2_tbl_member_m where mbr_id = #{id}
+		select mbr_sq from p3_tbl_member_m where mbr_id = #{id}
 	</select>
 	
 	<!-- 지원정보 -->
@@ -58,6 +58,6 @@
 	<select id="delAppy" parameterType="Integer">
 		update p2_tbl_apply_h set apy_cndtn ='403'  where apy_sq = #{apySq}
 	</select>
-	
-	
+
+
 </mapper>

@@ -3,13 +3,13 @@ import axios from 'axios';
 import Calendar from './MypageCalendar';
 import { formatDateYMD } from '../tools'; // tools.js 파일에서 함수 import
 import './Mypagehome.css';
-
+import profileImage from '../assets/profile.webp';
 const MypageHome = () => {
   const [result, setResult] = useState(null);
   const [calendarEvents, setCalendarEvents] = useState([]);
   const [month, setMonth] = useState(new Date().getMonth() + 1);
   const [checkedMonth, setCheckedMonth] = useState([new Date().getMonth() + 1]);
-
+  const [applyStateSum,setApplyStatesum]= useState(null);
   // 날짜 포맷 함수
   const formatDateYMD = (dateString) => {
     const date = new Date(dateString);
@@ -24,23 +24,24 @@ const MypageHome = () => {
       });
       setResult(response.data);
       setCalendarEvents(makeCalendarDatas(response.data.calendarData));
+      setApplyStatesum(getApplyStateSum());
     } catch (error) {
       console.error('데이터 가져오기 실패', error);
     }
   };
 
   // 이력서 상태 합계를 계산하는 함수
-  // const getApplyStateSum = () => {
-  //   if (!result || !result.EachCndtnApplyCount) {
-  //     return 0;
-  //   }
+  const getApplyStateSum = () => {
+    if (!result || !result.EachCndtnApplyCount) {
+      return 0;
+    }
 
-  //   let sum = 0;
-  //   for (const key in result.EachCndtnApplyCount) {
-  //     sum += result.EachCndtnApplyCount[key];
-  //   }
-  //   return sum;
-  // };
+    let sum = 0;
+    for (const key in result.EachCndtnApplyCount) {
+      sum += result.EachCndtnApplyCount[key];
+    }
+    return sum;
+  };
 
   // Calendar 이벤트 생성 함수
   const makeCalendarDatas = (toParsingData) => {
@@ -82,7 +83,7 @@ const MypageHome = () => {
   };
 
   // 캘린더 데이터 가져오기
-  const fetchCalendarData = async () => {
+  const fetchCalendarData = async (month) => {
     if (!checkedMonth.includes(month)) {
       try {
         const response = await axios.get('/user/mypage/calendar', { params: { month } });
@@ -99,6 +100,7 @@ const MypageHome = () => {
   const handleMonthChange = (direction) => {
     setMonth((prevMonth) => {
       const newMonth = direction === 'next' ? prevMonth + 1 : prevMonth - 1;
+      console.log("newMonth",newMonth)
       fetchCalendarData(newMonth);
       return newMonth;
     });
@@ -110,18 +112,18 @@ const MypageHome = () => {
   }, [month]);
 
   return (
-    // <div>
-    //   {result && (
+    <div>
+      {result && (
    <>
           <div className="row" style={{ paddingBottom: '20px', borderBottom: '1px solid #eaeaea' }}>
             <div className="col-3" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <div className="thumb-info-side-image-wrapper">
-                <img src="/assets/profile.webp" className="img-fluid" alt="" style={{ width: '140px' }} />
+                <img src={profileImage} className="img-fluid" alt="" style={{ width: '140px' }} />
                 {/* 나중에 야돈대신 들어갈 자리 :src="{{result.rsmInfo.rsm_img_file_url}}" */}
               </div>
             </div>
             <div className="col-9 table-container">
-              <table bordered style={{ marginBottom: 0 }}>
+              <table  className="table table-bordered"  bordered style={{ marginBottom: 0 }}>
                 <thead>
                   <tr>
                     <th colSpan="3">
@@ -142,7 +144,7 @@ const MypageHome = () => {
             </div>
           </div>
           <div className="row" style={{ paddingTop: '20px' }}>
-            <table bordered style={{ textAlign: 'center' }}>
+            <table className="table table-bordered"  bordered style={{ textAlign: 'center' }}>
               <tr>
                 <th>등록한 이력서&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{result.myState.rsm_cnt}</th>
                 <th>추천 공고&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(로직 준비중)</th>
@@ -153,7 +155,7 @@ const MypageHome = () => {
           </div>
           <div className="row" style={{ paddingTop: '20px', borderBottom: '1px solid #eaeaea' }}>
             <div className="col pb-3">
-              <table bordered className="table-apply-state">
+              <table bordered className="table table-bordered table-apply-state">
                 <thead>
                   <tr>
                     <th rowSpan="2">전체</th>
@@ -171,7 +173,7 @@ const MypageHome = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {/* <tr>
+                  <tr>
                     <td>{applyStateSum}</td>
                     <td>{result.EachCndtnApplyCount.cndtn_402}</td>
                     <td>{result.EachCndtnApplyCount.cndtn_401}</td>
@@ -180,26 +182,17 @@ const MypageHome = () => {
                     <td>{result.EachCndtnApplyCount.cndtn_408}</td>
                     <td>{result.EachCndtnApplyCount.cndtn_407}</td>
                     <td>(준비중)</td>
-                  </tr> */}
+                  </tr>
                 </tbody>
               </table>
             </div>
           </div>
           <div className="row" style={{ paddingTop: '20px' }}>
-              <Calendar events={calendarEvents} customButtons={{
-                myPrev: {
-                  text: '<',
-                  click: () => handleMonthChange('prev')
-                },
-                myNext: {
-                  text: '>',
-                  click: () => handleMonthChange('next')
-                }
-              }} />
-            </div>
+          <Calendar events={calendarEvents} onMonthChange={handleMonthChange} />
+          </div>
         </>
-      // )}
-      // </div>
+      )}
+      </div>
   );
 };
 

@@ -3,6 +3,7 @@ package jobplatform.fo.user.domain.mapper;
 import java.util.HashMap;
 import java.util.List;
 
+import jobplatform.fo.user.domain.entity.MemberEntity;
 import org.apache.ibatis.annotations.Mapper;
 
 import jobplatform.fo.user.domain.vo.ApplyInfoDTO;
@@ -27,6 +28,7 @@ public interface MypageMapper {
    Integer resumeReadCnt(Integer mbrSq); // 이력서 열람Cnt
    
    Integer resumeNotReadCnt(Integer mbrSq); // 이력서 미열람Cnt
+   MemberEntity findByMbrSq(int mbrSq);
 
    
 }

@@ -1,98 +1,144 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { Link, useNavigate } from 'react-router-dom';
-import SearchBar from '../components/SearchBar';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { Link, useNavigate } from "react-router-dom";
+import SearchBar from "../components/SearchBar";
+import styled from "styled-components";
+import { useModal } from "../components/ModalProvider";
+
+const Section = styled.div`
+  margin: 20px auto;
+
+  button {
+    margin: 2px;
+    padding: 4px 8px; // 패딩을 줄여서 버튼 크기 조절
+    font-size: 0.875rem; // 글자 크기 줄이기
+  }
+`;
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+`;
+
+const Table = styled.table`
+  width: 100%;
+  border-collapse: collapse;
+  tbody,
+  td,
+  tfoot,
+  th,
+  thead,
+  tr {
+    border-style: double;
+    border-width: 3px;
+  }
+  thead th {
+    background-color: #343a406e !important;
+  }
+  th,
+  td {
+    padding: 10px;
+    text-align: center;
+  }
+
+  thead th {
+    background-color: #343a40;
+    color: white;
+  }
+
+  tbody tr:nth-child(odd) {
+    background-color: #f9f9f9;
+  }
+
+  tbody tr:hover {
+    background-color: #f1f1f1;
+  }
+
+  td:first-child {
+    width: 70%;
+  }
+
+  td:nth-child(2),
+  td:nth-child(3) {
+    width: 15%;
+  }
+
+  a {
+    color: #007bff;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+`;
 
 const BoardList = () => {
-  //페이지 이동 객체 선언
   const navigate = useNavigate();
-  //변수 선언
-  const [boardList, setBoardList] = useState([]);   //없다면 []을 기본값으로
+  const [boardList, setBoardList] = useState([]);
   const [pageList, setPageList] = useState([]);
-
-  const [curPage, setCurPage] = useState(0); //현재 페이지 세팅
-  const [prevBlock, setPrevBlock] = useState(0); //이전 페이지 블록
-  const [nextBlock, setNextBlock] = useState(0); //다음 페이지 블록
-  const [lastPage, setLastPage] = useState(0); //마지막 페이지
-
-  const [search, setSearch] = useState({
-    page: 1,
-    sk: '',
-    sv: '',
-  });
+  const [curPage, setCurPage] = useState(0);
+  const [prevBlock, setPrevBlock] = useState(0);
+  const [nextBlock, setNextBlock] = useState(0);
+  const [lastPage, setLastPage] = useState(0);
+  const [search, setSearch] = useState({ page: 1, sk: "", sv: "" });
+  const { showModal } = useModal();
 
   const getBoardList = async () => {
-    // debugger;
-    if (search.page === curPage) return; //현재 페이지와 누른 페이지가 같으면 return
-    //검색어 쿼리 문자열로 변경
+    console.log("서치", search.page);
+    if (search.page === curPage) return;
     const queryString = Object.entries(search)
-      .map((e) => e.join('=')) //각각 요소를 a=1 형태로 조인
-      .join('&');             //a=1&b=1 로 다시 조인
-
-    const resp = await (
-      await axios.get('/board?' + queryString)
-    ).data; // 2) 게시글 목록 데이터에 할당
-
-    setBoardList(resp.data || []); // 3) 게시글 결과값 boardList 변수에 할당 
-    const pngn = resp.pagination;
-
-    const { endPage, nextBlock, prevBlock, startPage, totalPageCnt } = pngn;
-    //페이징 셋팅 
-    setCurPage(search.page);    //현재페이지
-    setPrevBlock(prevBlock);    //이전버튼
-    setNextBlock(nextBlock);    //다음버튼
-    setLastPage(totalPageCnt);   //총 페이지
-    //페이지 변수
+      .map((e) => e.join("="))
+      .join("&");
+    const resp = await axios
+      .get("/board?" + queryString)
+      .then((res) => res.data);
+    setBoardList(resp.data || []);
+    const { endPage, nextBlock, prevBlock, startPage, totalPageCnt } =
+      resp.pagination;
+    console.log(resp.pagination);
+    setCurPage(search.page);
+    setPrevBlock(prevBlock);
+    setNextBlock(nextBlock);
+    setLastPage(totalPageCnt);
     const tmpPages = [];
     for (let i = startPage; i <= endPage; i++) {
       tmpPages.push(i);
     }
-    //페이지 정보 셋팅
+    console.log("tempages", tmpPages);
     setPageList(tmpPages);
   };
-  //글쓰기 눌렀을 때 쓰기 화면으로 이동
-  const moveToWrite = () => {
-    navigate('/write');
-  };
-  //클릭 이벤트
-  const onClick = (event) => {  //event.target에서 name과 value만 가져오기
-    let value = event.target.value;
-    setSearch({
-      ...search,
-      page: value,
-    });
 
+  const moveToWrite = () => {
+    navigate("/write");
+  };
+
+  const onClick = (event) => {
+    let value = event.target.value;
+    setSearch({ ...search, page: value });
     getBoardList();
   };
-  //변경 이벤트
+
   const onChange = (event) => {
     const { value, name } = event.target;
-    setSearch({
-      ...search,
-      [name]: value,
-    });
+    setSearch({ ...search, [name]: value });
   };
-  //검색함수
+
   const onSearch = () => {
-    //검색어 없을 시 
-    if (search.sk === '') {
-      alert('검색조건을 선택해주세요!');
+    if (search.sk === "") {
+      showModal("검색조건을 선택해주세요!");
       return;
     } else {
-      //if (search.sk !== '' && search.sv !== '') {
-      setSearch({
-        ...search,
-        page: 1,
-      });
+      setSearch({ ...search, page: 1 });
       setCurPage(0);
       getBoardList();
-      //}
     }
-
   };
 
   useEffect(() => {
-    getBoardList(); // 1) 게시글 목록 조회 함수 호출
+    getBoardList();
   }, [search]);
 
   return (
@@ -102,60 +148,75 @@ const BoardList = () => {
       </header>
       <div>
         <div className="d-flex justify-content-end">
-          <a className="btn btn-primary" onClick={moveToWrite}>글쓰기</a>
+          <button className="btn btn-primary" onClick={moveToWrite}>
+            글쓰기
+          </button>
         </div>
-        <div className="container py-4">
-          <table className="post-table">
+        <Container className="container py-4">
+          <Table className="table table-hover table-striped">
             <thead>
               <tr>
                 <th>제목</th>
                 <th>작성자</th>
                 <th>등록일</th>
-                {/* <th>조회수</th>
-            <th>댓글수</th> */}
               </tr>
             </thead>
             <tbody>
               {boardList.map((board) => (
-                // 4) map 함수로 데이터 출력
                 <tr key={board.idx}>
-                  <td><Link to={`/board/${board.idx}`}>{board.title}</Link></td>
+                  <td>
+                    <Link to={`/board/${board.idx}`}>{board.title}</Link>
+                  </td>
                   <td>{board.createdBy}</td>
                   <td>{board.createdAt.slice(0, 10)}</td>
-                  {/* <td>{board.createdBy}</td>
-              <td>{board.createdBy}</td> */}
                 </tr>
               ))}
             </tbody>
-          </table>
-          <div className="pagination-wrapper">
+          </Table>
+          <Section className="pagination-wrapper">
             <ul>
-              <button onClick={onClick} value={1}>
+              <button onClick={onClick} value={1} className="btn btn-primary">
                 &lt;&lt;
               </button>
-              <button onClick={onClick} value={prevBlock}>
+              <button
+                onClick={onClick}
+                value={prevBlock}
+                className="btn btn-primary"
+              >
                 &lt;
               </button>
               {pageList.map((page, index) => (
-                <button key={index} onClick={onClick} value={page}>
+                <button
+                  key={index}
+                  onClick={onClick}
+                  value={page}
+                  className="btn btn-primary"
+                >
                   {page}
                 </button>
               ))}
-              <button onClick={onClick} value={nextBlock}>
+              <button
+                onClick={onClick}
+                value={nextBlock}
+                className="btn btn-primary"
+              >
                 &gt;
               </button>
-              <button onClick={onClick} value={lastPage}>
+              <button
+                onClick={onClick}
+                value={lastPage}
+                className="btn btn-primary"
+              >
                 &gt;&gt;
               </button>
             </ul>
-          </div>
+          </Section>
           <br />
           <div className="search-bar">
-            {/* 검색 부분 컴포넌트로 대체 */}
             <SearchBar onChange={onChange} onSearch={onSearch} />
           </div>
           <br />
-        </div>
+        </Container>
       </div>
     </div>
   );

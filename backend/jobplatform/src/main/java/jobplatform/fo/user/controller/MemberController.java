@@ -9,6 +9,7 @@ import java.util.Properties;
 import java.util.Random;
 
 import jobplatform.fo.common.config.JwtTokenProvider;
+import jobplatform.fo.enterprise.domain.dto.EnterRegisterDTO;
 import jobplatform.fo.user.domain.entity.MemberEntity;
 import jobplatform.fo.user.domain.repository.MemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,14 +20,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -49,7 +44,8 @@ public class MemberController {
     private JwtTokenProvider jwtTokenProvider;
 
     @PostMapping("/login")
-    public MemberEntity login(@RequestBody Map<String, String> params, HttpSession session) {
+    public Map<String, Object> login(@RequestBody Map<String, String> params, HttpSession session, Model model) {
+        System.out.println(params);
         MemberEntity member = memberRepository.findByMbrIdAndMbrPswrd(params.get("mbrId"), params.get("mbrPswrd"));
 
         if (member != null) {
@@ -67,8 +63,13 @@ public class MemberController {
 
             // 세션에 사용자 정보 저장
             session.setAttribute("member", member);
-            System.out.println("로그인 성공" + member);
-            return member;
+
+            Map<String, Object> result = new HashMap<>();
+            result.put("mbrId", member.getMbrId());
+            result.put("mbrSq", member.getMbrSq());
+            result.put("mbrName", member.getMbrName());
+
+            return result;
         }
 
         throw new ResponseStatusException(HttpStatus.NOT_FOUND, "잘못된 시도입니다.");
@@ -165,70 +166,78 @@ public class MemberController {
         }
     }
 
-    // https://henniee.tistory.com/217 이메일 관련 참고 링크
-    @ResponseBody
-    @PostMapping("/emlRegister")
-    public Map<String, Object> emlRegister(@RequestBody Map<String, String> request) {
-        //
-        String mbrEmlAdrs = request.get("mbrEmlAdrs");
+    @PostMapping("/idCheck")
+    public int idCheck(@RequestBody MemberEntity memberEntity) {
+        Optional<MemberEntity> existingMember = memberRepository.findByMbrId(memberEntity.getMbrId());
 
-        Map<String, Object> map = new HashMap<>();
-
-        // 이메일 주소가 null인지 확인
-        if (mbrEmlAdrs == null || mbrEmlAdrs.isEmpty()) {
-            map.put("error", "이메일 주소가 입력되지 않았습니다.");
-            return map;
-        }
-        //어떻게 메일 보낼지에 대한 설정
-
-        JavaMailSenderImpl mailSenderImpl = new JavaMailSenderImpl();
-        Properties prop = new Properties();
-
-        mailSenderImpl.setHost("smtp.gmail.com");
-        mailSenderImpl.setPort(587);
-        mailSenderImpl.setUsername("walkingongreenball@gmail.com");		// 본인 또는 회사 아이디로 교체
-        mailSenderImpl.setPassword("lopq jelw gspn fqux");				// 참고 링크에 따라 제공받은 비밀번호 사용
-        prop.put("mail.smtp.auth", true);								// 이메일 서버에 인증 요구
-        prop.put("mail.smtp.starttls.enable", true);  					// 암호화된 연결을 활성화. starttls는 이메일 전송중에 보안 계층을 추가하여 데이터의 기밀성을 보호
-
-        mailSenderImpl.setJavaMailProperties(prop);
-
-
-        MemberEntity member = memberRepository.findByMbrEmlAdrs(mbrEmlAdrs);
-        if (member != null) {
-            map.put("exist", "이미 존재하는 이메일입니다.");
-        } else {
-            Random random = new Random();
-            String key = "";
-
-            SimpleMailMessage message = new SimpleMailMessage();
-            message.setTo(mbrEmlAdrs);
-
-            // 입력 키를 위한 난수 생성 코드
-            for (int i = 0; i < 3; i++) {
-                int index = random.nextInt(26) + 65;
-                key += (char) index;
-            }
-            for (int i = 0; i < 6; i++) {
-                int numIndex = random.nextInt(10);
-                key += numIndex;
-            }
-
-            String mail = "\n 회원가입 인증코드";
-            message.setSubject("회원가입 인증코드 메일입니다.");	// 이메일 제목
-            message.setText("인증번호는 " + key +" 입니다." + mail);	// 이메일 내용
-
-            try {
-                mailSenderImpl.send(message);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            map.put("key", key);
-        }
-        return map;
+        // 아이디가 이미 존재하면 1, 존재하지 않으면 0을 반환
+        return existingMember.isPresent() ? 1 : 0;
     }
 
     // https://henniee.tistory.com/217 이메일 관련 참고 링크
+    //        mailSenderImpl.setUsername("walkingongreenball@gmail.com");		// 본인 또는 회사 아이디로 교체
+//        mailSenderImpl.setPassword("lopq jelw gspn fqux");				// 참고 링크에 따라 제공받은 비밀번호 사용
+    @ResponseBody
+    @PostMapping("/emlRegister")
+    public ResponseEntity<Map<String, Object>> emlRegister(@RequestBody Map<String, String> request) {
+        String mbrEmlAdrs = request.get("mbrEmlAdrs");
+        String purpose = request.get("purpose");
+
+        Map<String, Object> map = new HashMap<>();
+
+        if (mbrEmlAdrs == null || mbrEmlAdrs.isEmpty()) {
+            map.put("error", "이메일 주소가 입력되지 않았습니다.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(map);
+        }
+
+        JavaMailSenderImpl mailSenderImpl = new JavaMailSenderImpl();
+        Properties prop = new Properties();
+        mailSenderImpl.setHost("smtp.gmail.com");
+        mailSenderImpl.setPort(587);
+        mailSenderImpl.setUsername("zmclsnsn@gmail.com");
+        mailSenderImpl.setPassword("lvyi aayx ivbe lefz");
+        prop.put("mail.smtp.auth", true);
+        prop.put("mail.smtp.starttls.enable", true);
+        mailSenderImpl.setJavaMailProperties(prop);
+
+        MemberEntity member = memberRepository.findByMbrEmlAdrs(mbrEmlAdrs);
+
+        if (purpose == null) { // 회원가입 로직
+            if (member != null) {
+                map.put("error", "이미 존재하는 이메일입니다.");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(map);
+            }
+        }
+
+        Random random = new Random();
+        String key = "";
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(mbrEmlAdrs);
+
+        for (int i = 0; i < 3; i++) {
+            int index = random.nextInt(26) + 65;
+            key += (char) index;
+        }
+        for (int i = 0; i < 6; i++) {
+            int numIndex = random.nextInt(10);
+            key += numIndex;
+        }
+
+        message.setSubject("인증코드 메일입니다.");
+        message.setText("인증번호는 " + key + " 입니다.");
+
+        try {
+            mailSenderImpl.send(message);
+        } catch (Exception e) {
+            map.put("error", "메일 전송에 실패했습니다.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(map);
+        }
+
+        map.put("key", key);
+        return ResponseEntity.ok(map);
+    }
+
+
     @PostMapping("/findId")
     public ResponseEntity<String> findMbrId(@RequestBody MemberEntity userData) {
         try {
@@ -256,7 +265,7 @@ public class MemberController {
 
     // https://henniee.tistory.com/217 이메일 관련 참고 링크
     @PostMapping("/findPswrd")
-    public ResponseEntity<String> findMbrPswrd(@RequestBody MemberEntity userData) {
+    public ResponseEntity<?> findMbrPswrd(@RequestBody MemberEntity userData) {
         try {
             if (userData.getMbrId() == null || userData.getMbrId().isEmpty()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("아이디가 누락되었습니다.");
@@ -277,12 +286,27 @@ public class MemberController {
             }
 
             // 정상적인 경우에만 MemberEntity 반환
-            return ResponseEntity.ok().body(mbr.getMbrPswrd());
+            return ResponseEntity.ok().body(mbr.getMbrSq());
         } catch (Exception e) {
             return ResponseEntity.status(500).body("조회에 실패했습니다: " + e.getMessage());
         }
     }
 
+    @PatchMapping("/PswrdReset")
+    public ResponseEntity<Integer> pswrdReset(@RequestBody MemberEntity member) {
+        try {
+            System.out.println(member);
+            int result = memberRepository.pswrdReset(member);
+            if (result == 0) {
+                return ResponseEntity.status(HttpStatus.NOT_MODIFIED).body(result);
+            }
+            System.out.println("비번수정" + result);
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            System.out.println("err" + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(0);
+        }
+    }
     // https://henniee.tistory.com/217 이메일 관련 참고 링크
     @ResponseBody
     @PostMapping("/emlFind")

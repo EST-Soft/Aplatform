@@ -10,5 +10,12 @@ public interface EnterMemberService {
     
     public Long login(EnterLoginDTO enterLoginDTO);
 
-    public boolean selectId(String id)
-;}
+    public boolean selectId(String id);
+
+        String findByIdEml(EnterRegisterDTO enterRegisterDTO);
+
+    String findByPswrd(EnterRegisterDTO enterRegisterDTO);
+
+    int pswrdReset(EnterRegisterDTO enterRegisterDTO);
+
+    ;}

@@ -11,9 +11,8 @@
 
 
   .sidebar {
-    background-color: #f8f9fa;
+    position: absolute;
     padding: 15px;
-    border-right: 1px solid #eaeaea;
     height: 100vh; /* 사이드바가 페이지 높이만큼 확장되도록 설정 */
   }
   

@@ -1,15 +1,15 @@
-const express = require('express');                 //express ì¶”ê°€
-const mysql = require('mysql2');                     //mysql ëª¨ë“ˆ ì¶”ê°€
-const cors = require('cors');                       // CORS íŒ¨í‚¤ì§€ import (í”„ë¡ì‹œ ì„œë²„ ì„¤ì •)
-const Pagination = require('./utils/Pagination');   // íŽ˜ì´ì§• ì²˜ë¦¬ js ìž„í¬íŠ¸
+const express = require('express');                 //express ì¶”ê??
+const mysql = require('mysql2');                     //mysql ëª¨ë“ˆ ì¶”ê??
+const cors = require('cors');                       // CORS ?Œ¨?‚¤ì§? import (?”„ë¡ì‹œ ?„œë²? ?„¤? •)
+const Pagination = require('./utils/Pagination');   // ?Ž˜?´ì§? ì²˜ë¦¬ js ?ž„?¬?Š¸
 const app = express();
-const port = 5000;          //express ì„œë²„ í¬íŠ¸ ì„¤ì •
+const port = 5000;          //express ?„œë²? ?¬?Š¸ ?„¤? •
 
-// ë¯¸ë“¤ì›¨ì–´ ì„¤ì • (JSON íŒŒì‹±)
-app.use(cors()); // CORS ë¯¸ë“¤ì›¨ì–´ ì¶”ê°€ --> í¬ë¡œìŠ¤ì˜¤ë²„ ì˜¤ë¥˜ ë°©ì§€ (ìž‘ì—…í´ë”ì— cors ì„¤ì¹˜í•´ì•¼í•¨ => í„°ë¯¸ë„ì—ì„œ npm install cors)
-app.use(express.json()); //json íŒŒì‹± ëª¨ë“ˆ
+// ë¯¸ë“¤?›¨?–´ ?„¤? • (JSON ?ŒŒ?‹±)
+app.use(cors()); // CORS ë¯¸ë“¤?›¨?–´ ì¶”ê?? --> ?¬ë¡œìŠ¤?˜¤ë²? ?˜¤ë¥? ë°©ì?? (?ž‘?—…?´?”?— cors ?„¤ì¹˜í•´?•¼?•¨ => ?„°ë¯¸ë„?—?„œ npm install cors)
+app.use(express.json()); //json ?ŒŒ?‹± ëª¨ë“ˆ
 
-// MariaDB ì—°ê²° ì„¤ì •
+// MariaDB ?—°ê²? ?„¤? •
 const db = mysql.createConnection({
   host: 'estsw-rds-mariadb-edu.che0sy2qqx6s.ap-northeast-2.rds.amazonaws.com',
   user: 'admin',
@@ -18,13 +18,13 @@ const db = mysql.createConnection({
   database: 'est_eep_db'
 });
 
-// MariaDB ì—°ê²°
+// MariaDB ?—°ê²?
 db.connect(err => {
   if (err) {
     console.error('Error connecting to MariaDB: ', err);
     return;
   }
-  console.log('Connected to MariaDB ==> MariaDB ì—°ê²° ì„±ê³µ');
+  console.log('Connected to MariaDB ==> MariaDB ?—°ê²? ?„±ê³?');
 });
 
 // GET /board - ëª©ë¡ ì¡°íšŒ
@@ -33,17 +33,17 @@ app.get('/board', (req, res) => {
     const size = parseInt(req.query.size) || 10;
     const sk = req.query.sk || '';
     const sv = req.query.sv || '';
-    //ì „ì²´ì¹´ìš´íŠ¸  ì„  ì¡°íšŒ
+    //? „ì²´ì¹´?š´?Š¸  ?„  ì¡°íšŒ
     let queryCount = `
       SELECT COUNT(IDX) AS totalListCnt
       FROM TB_BOARD
       WHERE 1=1
     `;
-    //ê²€ìƒ‰êµ¬ë¶„, ê²€ìƒ‰ì–´ ì¿¼ë¦¬ ì¶”ê°€
+    //ê²??ƒ‰êµ¬ë¶„, ê²??ƒ‰?–´ ì¿¼ë¦¬ ì¶”ê??
     if (sk && sv) {
       queryCount += ` AND ${sk.toUpperCase()} LIKE '%${sv}%'`;
     }
-    //ì „ì²´ì¹´ìš´íŠ¸ ì¡°íšŒ
+    //? „ì²´ì¹´?š´?Š¸ ì¡°íšŒ
     db.query(queryCount, (err, countResults) => {
       if (err) return res.status(500).json({ error: err.message });
         
@@ -61,11 +61,11 @@ app.get('/board', (req, res) => {
       }
   
       query += ` ORDER BY IDX DESC LIMIT ${pagination.startIndex}, ${pagination.pageSize}`;
-      //ì‹¤ì œ ê²Œì‹œë¬¼ ëª©ë¡ ì¡°íšŒ
+      //?‹¤? œ ê²Œì‹œë¬? ëª©ë¡ ì¡°íšŒ
       db.query(query, (err, results) => {
         if (err) return res.status(500).json({ error: err.message });
         
-        //ê°’ ë³€í™˜ (ìŠ¤í”„ë§ë¶€íŠ¸_SampleController ë“±.. ê³¼ ê°’ ë§žì¶”ê¸°)
+        //ê°? ë³??™˜ (?Š¤?”„ë§ë???Š¸_SampleController ?“±.. ê³? ê°? ë§žì¶”ê¸?)
         const transformedResults = results.map(item => ({
             idx: item.IDX,
             title: item.TITLE,
@@ -78,7 +78,7 @@ app.get('/board', (req, res) => {
     });
   });
   
-  // GET /board/total - ì´ ê²Œì‹œë¬¼ ìˆ˜ ì¡°íšŒ
+  // GET /board/total - ì´? ê²Œì‹œë¬? ?ˆ˜ ì¡°íšŒ
   app.get('/board/total', (req, res) => {
     const sk = req.query.sk || '';
     const sv = req.query.sv || '';
@@ -102,7 +102,7 @@ app.get('/board', (req, res) => {
   });
   
 
-// GET /board/total - ì´ ê²Œì‹œë¬¼ ìˆ˜ ì¡°íšŒ
+// GET /board/total - ì´? ê²Œì‹œë¬? ?ˆ˜ ì¡°íšŒ
 app.get('/board/total', (req, res) => {
   const sk = req.query.sk || '';
   const sv = req.query.sv || '';
@@ -131,7 +131,7 @@ app.get('/board/total', (req, res) => {
   });
 });
 
-// GET /board/:idx - ë°ì´í„° 1ê°œ ì¡°íšŒ
+// GET /board/:idx - ?°?´?„° 1ê°? ì¡°íšŒ
 app.get('/board/:idx', (req, res) => {
   const idx = req.params.idx;
 
@@ -154,7 +154,7 @@ app.get('/board/:idx', (req, res) => {
   });
 });
 
-// POST /board - ë°ì´í„° ìƒì„±
+// POST /board - ?°?´?„° ?ƒ?„±
 app.post('/board', (req, res) => {
   const { title, contents, createdBy } = req.body;
   const query = 'INSERT INTO TB_BOARD (TITLE, CONTENTS, CREATED_BY, CREATED_AT) VALUES (?, ?, ?, NOW())';
@@ -163,11 +163,11 @@ app.post('/board', (req, res) => {
     if (err) {
       return res.status(500).json({ error: err.message });
     }
-    res.json({ message: 'Data inserted (ë°ì´í„° ìƒì„±)', id: result.insertId });
+    res.json({ message: 'Data inserted (?°?´?„° ?ƒ?„±)', id: result.insertId });
   });
 });
 
-// PATCH /board - ë°ì´í„° ìˆ˜ì •
+// PATCH /board - ?°?´?„° ?ˆ˜? •
 app.patch('/board', (req, res) => {
   const { idx, title, contents } = req.body;
   const query = 'UPDATE TB_BOARD SET TITLE = ?, CONTENTS = ? WHERE IDX = ?';
@@ -176,11 +176,11 @@ app.patch('/board', (req, res) => {
     if (err) {
       return res.status(500).json({ error: err.message });
     }
-    res.json({ message: 'Data updated (ë°ì´í„° ìˆ˜ì •)' });
+    res.json({ message: 'Data updated (?°?´?„° ?ˆ˜? •)' });
   });
 });
 
-// DELETE /board/:idx - ë°ì´í„° ì‚­ì œ
+// DELETE /board/:idx - ?°?´?„° ?‚­? œ
 app.delete('/board/:idx', (req, res) => {
   const idx = req.params.idx;
 
@@ -189,11 +189,11 @@ app.delete('/board/:idx', (req, res) => {
     if (err) {
       return res.status(500).json({ error: err.message });
     }
-    res.json({ message: 'Data deleted (ë°ì´í„° ì‚­ì œ)' });
+    res.json({ message: 'Data deleted (?°?´?„° ?‚­? œ)' });
   });
 });
 
-// ì„œë²„ ì‹¤í–‰
+// ?„œë²? ?‹¤?–‰
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });

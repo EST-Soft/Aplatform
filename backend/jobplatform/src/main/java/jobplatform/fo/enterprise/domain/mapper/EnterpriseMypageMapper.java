@@ -2,6 +2,7 @@ package jobplatform.fo.enterprise.domain.mapper;
 
 import java.util.Map;
 
+import jobplatform.fo.enterprise.domain.entity.EnterMemberEntity;
 import org.apache.ibatis.annotations.Mapper;
 
 import jobplatform.fo.enterprise.domain.dto.EnterInfoDTO;
@@ -20,4 +21,6 @@ public interface EnterpriseMypageMapper {
    int passwordUpdate(Map<String, Object> data); // 기업회원 비밀번호 수정
 
    int enterSignOut(int entrprsSq); // 기업회원 탈퇴
+   EnterMemberEntity findByEntrprsSq(int entrprsSq);
+
 }

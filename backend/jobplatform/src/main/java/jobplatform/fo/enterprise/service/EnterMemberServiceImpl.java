@@ -58,10 +58,43 @@ public class EnterMemberServiceImpl implements EnterMemberService{
     }
 
     @Override
+    public String findByIdEml(EnterRegisterDTO enterRegisterDTO) {
+        // DTO에서 이메일을 추출
+        String EntrprsPicEml = enterRegisterDTO.getEntrprsPicEml();
+
+        // 이메일을 사용하여 회원 정보 조회
+        EnterMemberEntity memberEntity = enterMemberRepository.findByEntrprsPicEml(EntrprsPicEml);
+
+        // 회원이 존재하면 아이디 반환, 그렇지 않으면 빈 문자열 반환
+        if (memberEntity != null) {
+            return memberEntity.getEntrprsId();
+        } else {
+            return ""; // 회원이 존재하지 않으면 빈 문자열 반환
+        }
+    }
+
+    @Override
+    public String findByPswrd(EnterRegisterDTO enterRegisterDTO) {
+
+        String entrprsSq=enterMemberRepository.findByEntrprsPw(enterRegisterDTO);
+
+            return entrprsSq;
+    }
+
+    @Override
+    public int pswrdReset(EnterRegisterDTO enterRegisterDTO) {
+        String encodePswrd =   passwordEncoder.encode(enterRegisterDTO.getEntrprsPswrd());
+        enterRegisterDTO.setEntrprsPswrd(encodePswrd);
+        int result= enterMemberRepository.pswrdReset(enterRegisterDTO);
+
+        return result;
+    }
+
+    @Override
     public Long login(EnterLoginDTO enterLoginDTO) {
     	
     	String id = enterLoginDTO.getEntrprsId();
-    	
+
     	Long sq = null;
     	//전에 저장한 암호화된 비밀번호
     	String pswrd = 	enterMemberRepository.findByEntrprsId(id);

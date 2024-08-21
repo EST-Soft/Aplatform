@@ -1,13 +1,16 @@
 package jobplatform.fo.enterprise.domain.dto;
 
 
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+
 @ToString
 @NoArgsConstructor
-@Getter
+@Data
 public class EnterRegisterDTO {
+    private int entrprsSq;
 
     private String entrprsId;
 
@@ -19,7 +22,7 @@ public class EnterRegisterDTO {
 
     private String entrprsPicEml; // 기업담당자_이메일_주소
 
-    private String  entrprsName;
+    private String entrprsName;
 
     private String entrprsPicMp; // 기업담당자_휴대폰
 

@@ -8,7 +8,7 @@ const MypageSidebar = () =>{
 
 
     <div className="col-lg-3">
-            <aside className="sidebar" style={{position: 'fixed'}}>
+            <aside className="sidebar">
                 <h5 className="font-weight-semi-bold pt-4">마이페이지</h5>
                 <ul className="nav nav-list flex-column mb-5">
                     <li className="nav-item"><Link className="nav-link" to="/mypage/home">현황 및 일정</Link></li>

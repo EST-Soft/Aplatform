@@ -1,8 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="jobplatform.fo.user.domain.mapper.MypageMapper">
-   
-   <select id="getJoinCondition" parameterType="int" resultType="java.util.Map">
+    <resultMap id="MemberEntityResultMap" type="jobplatform.fo.user.domain.entity.MemberEntity">
+        <id property="mbrSq" column="mbr_sq"/>
+        <result property="sclCtgryCd" column="scl_ctgry_cd"/>
+        <result property="gndrCtgryCd" column="gndr_ctgry_cd"/>
+        <result property="mbrId" column="mbr_id"/>
+        <result property="mbrName" column="mbr_name"/>
+        <result property="mbrPswrd" column="mbr_pswrd"/>
+        <result property="mbrMp" column="mbr_mp"/>
+        <result property="mbrBd" column="mbr_bd"/>
+        <result property="mbrEmlAdrs" column="mbr_eml_adrs"/>
+        <result property="mbrEmlRcvChck" column="mbr_eml_rcv_yn"/>
+        <result property="mbrPrvcyTrmsChck" column="mbr_prvcy_trms_yn"/>
+        <result property="insrtMbrSq" column="insrt_mbr_sq"/>
+        <result property="insrtDtm" column="insrt_dtm"/>
+        <result property="updtMbrSq" column="updt_mbr_sq"/>
+        <result property="updtDtm" column="updt_dtm"/>
+        <result property="dltDtm" column="dlt_dtm"/>
+        <result property="dltChck" column="dlt_chck"/>
+        <result property="useChck" column="use_chck"/>
+        <result property="pstnPrpslAcceptYn" column="pstn_prpsl_accept_yn"/>
+        <result property="social" column="social"/>
+    </resultMap>
+
+    <select id="getJoinCondition" parameterType="int" resultType="java.util.Map">
       SELECT count(a.apy_sq) 지원완료, a.rsm_sq 이력서번호, r.mbr_sq 회원번호
       FROM p2_tbl_resume_m as r
       inner join p2_tbl_apply_h as a 
@@ -11,7 +33,7 @@
    
    <!-- test용 회원순번-->
    <select id="getid" resultType="Integer">
-      select mbr_sq from p2_tbl_member_m where mbr_id = #{id}
+      select mbr_sq from p3_tbl_member_m where mbr_id = #{id}
    </select>
    
    <!-- 지원정보  jobplatform.fo.user.domain.vo.ApplyInfoDTO -->
@@ -39,7 +61,7 @@
           p2_tbl_job_posting_m as j 
           on a.jbp_sq = j.jbp_sq
       inner join 
-          p2_tbl_enterprise_member_m as e 
+          p3_tbl_enterprise_member_m as e 
           on e.entrprs_sq = j.entrprs_sq
       inner join 
           p2_tbl_common_code_dtl_s as c 
@@ -72,7 +94,7 @@
            p2_tbl_job_posting_m AS j 
            ON a.jbp_sq = j.jbp_sq
        INNER JOIN 
-           p2_tbl_enterprise_member_m AS e 
+           p3_tbl_enterprise_member_m AS e 
            ON e.entrprs_sq = j.entrprs_sq
        INNER JOIN 
            p2_tbl_common_code_dtl_s AS c 
@@ -130,13 +152,13 @@
    </select>
    
    <select id="getTest" parameterType="int">
-        select mbr_name from p2_tbl_member_m
+        select mbr_name from p3_tbl_member_m
          where mbr_sq=#{mbrSq}
    </select>
-   
-   
-   
-   
-   
-   
+    <select id="findByMbrSq" resultMap="MemberEntityResultMap">
+        SELECT * FROM p3_tbl_member_m WHERE mbr_sq=#{mbrSq}
+
+    </select>
+
+
 </mapper>

@@ -8,6 +8,7 @@
         , CONTENTS
         , CREATED_BY AS createdBy
         , CREATED_AT AS createdAt
+        , HITS
         FROM TB_BOARD
         WHERE 1=1
 

@@ -161,8 +161,24 @@ const LoginSubmit = async () => {
       pwError.value = "아이디 또는 비밀번호가 일치하지 않습니다.";
     }
   } catch (error) {
-    showAlert("로그인 중 오류가 발생했습니다.");
-    console.error(error);
+    if (error.response && error.response.status) {
+      switch (error.response.status) {
+        case 403: // 금지된 요청, 탈퇴한 회원 또는 사용 중지된 계정
+          pwError.value = "계정이 탈퇴되었거나 사용이 중지되었습니다.";
+          break;
+        case 404: // 찾을 수 없음, 잘못된 아이디 또는 비밀번호
+          pwError.value = "잘못된 아이디 또는 비밀번호입니다.";
+          break;
+        case 400: // 잘못된 요청, 아이디나 비밀번호가 빈 경우
+          pwError.value = "아이디와 비밀번호를 입력해주세요.";
+          break;
+        default: // 기타 에러
+          pwError.value = "로그인에 실패했습니다. 다시 시도해주세요.";
+      }
+    } else {
+      // 네트워크 오류 등 기타 에러 처리
+      pwError.value = "서버와의 통신에 실패했습니다. 다시 시도해주세요.";
+    }
   }
 };
 

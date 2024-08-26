@@ -76,7 +76,6 @@
 
 <script setup>
 import { computed, ref, onMounted } from "vue";
-import { useRouter } from "vue-router";
 import { api } from "../../../../axios";
 import { showAlert, showConfirm } from "../../../../utill/utillModal";
 import { useStore } from "vuex";
@@ -84,7 +83,6 @@ import Quill from "quill";
 
 const store = useStore();
 // Vue Router를 사용하여 페이지 이동을 처리
-const router = useRouter();
 const member = computed(() => store.getters.getMember);
 console.log(member.value.mbrSq);
 // 게시글 정보를 관리할 상태 선언
@@ -129,7 +127,7 @@ const saveBoard = async () => {
       await api.$post("/board", board.value);
       showAlert("등록되었습니다.");
       setTimeout(() => {
-        router.push("/board/feedback"); // 게시글 목록으로 이동
+        window.location.href = `/board/feedback`; // 게시글 목록으로 이동
       }, 2000);
     } catch (error) {
       console.error("Error saving board:", error);
@@ -143,7 +141,7 @@ const saveBoard = async () => {
 
 const backToList = () => {
   showConfirm("작성을 취소 하시겠습니까?", () => {
-    router.push("/board/feedback");
+    window.location.href = `/board/feedback`; // 게시글 목록으로 이동
   });
 };
 </script>

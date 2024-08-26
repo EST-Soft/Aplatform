@@ -106,6 +106,7 @@
                 </choose>
             </if>
         </where>
+        ORDER BY b.brd_sq DESC  <!-- brd_sq 기준으로 내림차순 정렬 -->
         LIMIT #{page}, #{size}  <!-- 페이지네이션 적용 -->
     </select>
 

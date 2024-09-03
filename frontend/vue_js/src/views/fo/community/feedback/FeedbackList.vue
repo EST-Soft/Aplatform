@@ -22,7 +22,7 @@
           <button class="btn btn-primary" @click="onSearch">검색</button>
         </div>
         <div class="d-flex justify-content-end mb-4" v-if="isLoggedIn">
-          <router-link class="btn btn-primary" to="/board/feedback/write"
+          <router-link class="btn btn-primary" to="/board/write"
             >글쓰기</router-link
           >
         </div>

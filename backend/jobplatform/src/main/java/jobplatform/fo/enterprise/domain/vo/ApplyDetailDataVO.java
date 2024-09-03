@@ -23,7 +23,7 @@ public class ApplyDetailDataVO {
 	// 이력서 희망연봉
 	private int rsm_es;
 	// 제목
-	private String rsm_tl;
+	private String rsm_ttl;
 	// 지원자 이름
 	private String rsm_name;
 	// 성별 코드를 통한 한글명
@@ -40,7 +40,7 @@ public class ApplyDetailDataVO {
 	private String rsm_eml;
 	
 	//지원 상태 코드 번호
-	private int apy_cndtn;
+	private String apy_cndtn;
 	//지원 상태 코드 한글화
 	private String apy_cndtn_name;
 	

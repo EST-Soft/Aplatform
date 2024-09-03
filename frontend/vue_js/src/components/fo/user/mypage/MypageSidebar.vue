@@ -4,7 +4,7 @@
             <h5 class="font-weight-semi-bold pt-4">마이페이지</h5>
             <ul class="nav nav-list flex-column mb-5">
                 <li class="nav-item"><router-link class="nav-link" to="/mypage/home">현황 및 일정</router-link></li>
-                <li class="nav-item"><router-link class="nav-link">이력서 관리</router-link>
+                <li class="nav-item"><router-link class="nav-link none-click" to="null">이력서 관리</router-link>
                     <ul>
                         <li class="nav-item"><router-link class="nav-link" to="/resumes/resume-insert">이력서
                                 등록</router-link></li>
@@ -13,7 +13,7 @@
                     </ul>
                 </li>
                 <li class="nav-item"><router-link class="nav-link" to="/mypage/applycompanylist">입사지원현황</router-link></li>
-                <li class="nav-item"><router-link class="nav-link">포지션 제안</router-link>
+                <li class="nav-item"><router-link class="nav-link  none-click" to="null">포지션 제안</router-link>
                     <ul>
                         <li class="nav-item"><router-link class="nav-link" to="/mypage/ppAcception">포지션 제안
                                 설정</router-link></li>
@@ -33,3 +33,9 @@
         </aside>
     </div>
 </template>
+
+<style scoped>
+    .none-click{
+        pointer-events: none;
+    }
+</style>

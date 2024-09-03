@@ -4,7 +4,46 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0ba9fd2e-843c-4c59-ad06-e3d2d891e326" name="Changes" comment="" />
+    <list default="true" id="0ba9fd2e-843c-4c59-ad06-e3d2d891e326" name="Changes" comment="Changes">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/jobplatform/src/main/java/jobplatform/fo/board/controller/BoardController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/jobplatform/src/main/java/jobplatform/fo/board/controller/BoardController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/jobplatform/src/main/java/jobplatform/fo/board/entity/BoardEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/jobplatform/src/main/java/jobplatform/fo/board/entity/BoardEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/jobplatform/src/main/java/jobplatform/fo/board/service/BoardService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/jobplatform/src/main/java/jobplatform/fo/board/service/BoardService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/jobplatform/src/main/java/jobplatform/fo/board/service/BoardServiceImp.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/jobplatform/src/main/java/jobplatform/fo/board/service/BoardServiceImp.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/jobplatform/src/main/java/jobplatform/fo/enterprise/controller/ApplyManagementController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/jobplatform/src/main/java/jobplatform/fo/enterprise/controller/ApplyManagementController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/jobplatform/src/main/java/jobplatform/fo/enterprise/controller/JobPostingController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/jobplatform/src/main/java/jobplatform/fo/enterprise/controller/JobPostingController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/jobplatform/src/main/java/jobplatform/fo/enterprise/domain/dto/ApplyConditionDataDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/jobplatform/src/main/java/jobplatform/fo/enterprise/domain/dto/ApplyConditionDataDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/jobplatform/src/main/java/jobplatform/fo/enterprise/domain/dto/ApplyDataDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/jobplatform/src/main/java/jobplatform/fo/enterprise/domain/dto/ApplyDataDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/jobplatform/src/main/java/jobplatform/fo/enterprise/domain/dto/EnterRegisterDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/jobplatform/src/main/java/jobplatform/fo/enterprise/domain/dto/EnterRegisterDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/jobplatform/src/main/java/jobplatform/fo/enterprise/domain/dto/JobPostingDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/jobplatform/src/main/java/jobplatform/fo/enterprise/domain/dto/JobPostingDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/jobplatform/src/main/java/jobplatform/fo/enterprise/domain/dto/ResumeDataDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/jobplatform/src/main/java/jobplatform/fo/enterprise/domain/dto/ResumeDataDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/jobplatform/src/main/java/jobplatform/fo/enterprise/domain/entity/EnterMemberEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/jobplatform/src/main/java/jobplatform/fo/enterprise/domain/entity/EnterMemberEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/jobplatform/src/main/java/jobplatform/fo/enterprise/domain/entity/JobPostingEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/jobplatform/src/main/java/jobplatform/fo/enterprise/domain/entity/JobPostingEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/jobplatform/src/main/java/jobplatform/fo/enterprise/domain/repository/JobPostingRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/jobplatform/src/main/java/jobplatform/fo/enterprise/domain/repository/JobPostingRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/jobplatform/src/main/java/jobplatform/fo/enterprise/domain/vo/ApplyConditionCount.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/jobplatform/src/main/java/jobplatform/fo/enterprise/domain/vo/ApplyConditionCount.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/jobplatform/src/main/java/jobplatform/fo/enterprise/domain/vo/ApplyDetailDataVO.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/jobplatform/src/main/java/jobplatform/fo/enterprise/domain/vo/ApplyDetailDataVO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/jobplatform/src/main/java/jobplatform/fo/enterprise/domain/vo/ApplyListVO.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/jobplatform/src/main/java/jobplatform/fo/enterprise/domain/vo/ApplyListVO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/jobplatform/src/main/java/jobplatform/fo/enterprise/domain/vo/MyJobPostSimpleDataVO.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/jobplatform/src/main/java/jobplatform/fo/enterprise/domain/vo/MyJobPostSimpleDataVO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/jobplatform/src/main/java/jobplatform/fo/enterprise/domain/vo/ResumeListVO.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/jobplatform/src/main/java/jobplatform/fo/enterprise/domain/vo/ResumeListVO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/jobplatform/src/main/java/jobplatform/fo/enterprise/domain/vo/ResumeVO.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/jobplatform/src/main/java/jobplatform/fo/enterprise/domain/vo/ResumeVO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/jobplatform/src/main/java/jobplatform/fo/enterprise/service/JobPostingServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/jobplatform/src/main/java/jobplatform/fo/enterprise/service/JobPostingServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/jobplatform/src/main/java/jobplatform/fo/user/controller/MemberController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/jobplatform/src/main/java/jobplatform/fo/user/controller/MemberController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/jobplatform/src/main/java/jobplatform/fo/user/domain/entity/MemberEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/jobplatform/src/main/java/jobplatform/fo/user/domain/entity/MemberEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/jobplatform/src/main/java/jobplatform/fo/user/service/M_MypageServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/jobplatform/src/main/java/jobplatform/fo/user/service/M_MypageServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/jobplatform/src/main/resources/mybatis/mapper/ApplyMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/jobplatform/src/main/resources/mybatis/mapper/ApplyMapper.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/jobplatform/src/main/resources/mybatis/mapper/BoardMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/jobplatform/src/main/resources/mybatis/mapper/BoardMapper.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/jobplatform/src/main/resources/mybatis/mapper/M_EnterpriseMainPageMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/jobplatform/src/main/resources/mybatis/mapper/M_EnterpriseMainPageMapper.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/jobplatform/src/main/resources/mybatis/mapper/M_MypageMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/jobplatform/src/main/resources/mybatis/mapper/M_MypageMapper.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/jobplatform/src/main/resources/mybatis/mapper/MypageMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/jobplatform/src/main/resources/mybatis/mapper/MypageMapper.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/jobplatform/src/main/resources/mybatis/mapper/ResumeMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/jobplatform/src/main/resources/mybatis/mapper/ResumeMapper.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/react_js/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/react_js/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/react_js/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/react_js/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/vue_js/src/components/fo/user/mypage/MypageSidebar.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/vue_js/src/components/fo/user/mypage/MypageSidebar.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/vue_js/src/store/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/vue_js/src/store/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/vue_js/src/views/fo/community/feedback/FeedbackList.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/vue_js/src/views/fo/community/feedback/FeedbackList.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/vue_js/src/views/fo/community/qna/QnaList.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/vue_js/src/views/fo/community/qna/QnaList.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/vue_js/src/views/fo/user/UserMainView.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/vue_js/src/views/fo/user/UserMainView.vue" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -32,22 +71,24 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;android.gradle.sync.needed&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;Phase2&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;yarn&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;vcs.Git&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "android.gradle.sync.needed": "true",
+    "git-widget-placeholder": "Phase3",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/dev/workspace/Aplatform",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "yarn",
+    "settings.editor.selected.configurable": "org.jetbrains.plugins.github.ui.GithubSettingsConfigurable",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">

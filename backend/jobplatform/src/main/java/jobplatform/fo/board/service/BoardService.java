@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface BoardService {
     int register(BoardEntity boardEntity);
-    Header<List<BoardEntity>> List(int page, int size, Search search,String brdgnrCd);
+    Header<List<BoardEntity>> List(int page, int size, Search search,String brdTypCode);
     BoardEntity board(int brdSq);
     int modify(BoardEntity boardEntity);
 

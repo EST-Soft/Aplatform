@@ -15,7 +15,7 @@ public class ApplyListVO {
 		// 지원 일시
 		private Timestamp apy_dtm;
 		//지원 상태 코드 번호
-		private int apy_cndtn;
+		private String apy_cndtn;
 		//지원 상태 코드 한글화
 		private String apy_cndtn_name;
 		// 이력서 순번 (상세열람 용)

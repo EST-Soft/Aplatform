@@ -51,12 +51,12 @@ public class MemberController {
         if (member != null) {
             System.out.println("로그인 시도:" + params.get("mbrId") + "," + params.get("mbrPswrd"));
 
-            if (member.getDltChck()) {
+            if ("Y".equals(member.getDltYn())) {
                 System.out.println("로그인 실패: 탈퇴한 회원");
                 throw new ResponseStatusException(HttpStatus.FORBIDDEN, "탈퇴한 회원입니다.");
             }
-
-            if (!member.getUseChck()) {
+            
+            if ("N".equals(member.getUseYn())) {
                 System.out.println("로그인 실패: 사용 중지된 회원");
                 throw new ResponseStatusException(HttpStatus.FORBIDDEN, "사용 중지된 회원입니다.");
             }
@@ -94,6 +94,7 @@ public class MemberController {
             existingMember.setMbrPswrd(updatedMember.getMbrPswrd());
             existingMember.setMbrMp(updatedMember.getMbrMp());
             existingMember.setUpdtMbrSq(updatedMember.getMbrSq());
+            // existingMember.setUpdtMbrSq(Long.valueOf( updatedMember.getMbrSq() ) );
             existingMember.setUpdtDtm(LocalDateTime.now()); // 수정 일시 설정
 
             MemberEntity updatedEntity = memberRepository.save(existingMember);
@@ -113,9 +114,9 @@ public class MemberController {
                     .orElseThrow(() -> new IllegalArgumentException("회원을 찾을 수 없습니다. 회원순번:" + deletedMember.getMbrSq()));
 
             // 삭제,사용 여부 업데이트
-            existingMember.setDltChck(true); // 삭제 여부 true
-            existingMember.setUseChck(false); // 사용 여부 false
-            existingMember.setDltDtm(LocalDateTime.now()); // 삭제 일시 설정
+            existingMember.setDltYn("N"); // 삭제 여부 true
+            existingMember.setUseYn("Y"); // 사용 여부 false
+            // existingMember.setDltDtm(LocalDateTime.now()); // 삭제 일시 설정
 
             // 회원 정보 업데이트
             memberRepository.save(existingMember);
@@ -141,7 +142,7 @@ public class MemberController {
         if (userData.getMbrPrvcyTrmsChck() == null || userData.getMbrPrvcyTrmsChck().isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("개인정보 약관 체크가 누락되었습니다.");
         }
-        if (userData.getGndrCtgryCd() == null || userData.getGndrCtgryCd().isEmpty()) {
+        if (userData.getGndrTypCode() == null || userData.getGndrTypCode().isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("성별 유형 코드가 누락되었습니다.");
         }
         // 아이디 중복 체크
@@ -153,8 +154,8 @@ public class MemberController {
         try {
             // admin일 경우 로직 추가해야함
             userData.setInsrtMbrSq(99); // 임시 값 설정
-            userData.setDltChck(false);
-            userData.setUseChck(true);
+            userData.setDltYn("N");
+            userData.setUseYn("Y");
 
             MemberEntity savedUser = memberRepository.save(userData); // 처음 저장
             savedUser.setInsrtMbrSq(savedUser.getMbrSq());
@@ -432,11 +433,11 @@ public class MemberController {
                     member.setMbrEmlAdrs(email);
                     member.setMbrMp(mobile.replace("-", ""));
                     member.setMbrBd(birthDate);
-                    member.setGndrCtgryCd(gender);
+                    member.setGndrTypCode(gender);
 
-                    member.setSclCtgryCd("NAVER");
-                    member.setDltChck(false);
-                    member.setUseChck(true);
+                    // member.setSclCtgryCd("NAVER");
+                    member.setDltYn("N");
+                    member.setUseYn("Y");
                     member.setMbrEmlRcvChck("N");    // 임시 값 설정
                     member.setMbrPrvcyTrmsChck("Y");// 임시 값 설정
                     member.setMbrPswrd(name);       // 임시 값 설정

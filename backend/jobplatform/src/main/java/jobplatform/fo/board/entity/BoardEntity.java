@@ -23,8 +23,8 @@ public class BoardEntity {
     @Column(name = "entrprs_sq", nullable = true)
     private Long entrprsSq;      // 기업 순번 (null 가능)
 
-    @Column(name = "brd_gnr_cd", nullable = false, length = 50)
-    private String brdGnrCd;     // 게시글 분류 코드
+    @Column(name = "brd_typ_code", nullable = false, length = 50)
+    private String brdTypCode;     // 게시글 분류 코드
 
     @Column(name = "brd_ttl", nullable = false, length = 255)
     private String brdTtl;       // 게시글 제목

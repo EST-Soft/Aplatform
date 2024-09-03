@@ -15,11 +15,11 @@
 	</select>
 	<!-- 이력서 중 대표 이력서 이력서 순번, 이력서 제목, 등록일시, 최종 수정일시, 이미지 -->
 	<select id="getRprsntvRsmInfo">
-		SELECT rsm_sq, rsm_tl, insrt_dtm, updt_dtm, rsm_img_file_url
+		SELECT rsm_sq, rsm_ttl, insrt_dtm, updt_dtm, rsm_img_file_url
 		FROM p2_tbl_resume_m
 		WHERE 
 			mbr_sq = #{mbr_sq}
-			AND
+		AND
 			rsm_rprsntv_yn = 'Y'
 	</select>
 	<!--

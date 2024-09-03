@@ -24,7 +24,7 @@
             <tr>
               <th colspan="3">
                 <h2 class="font-weight-bold" style="margin-bottom: 10px">
-                  {{ result.rsmInfo.rsm_tl }}
+                  {{ result.rsmInfo.rsm_ttl }}
                 </h2>
                 <span
                   >-최종 수정일자&nbsp;&nbsp;:&nbsp;&nbsp;{{

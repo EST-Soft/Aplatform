@@ -12,7 +12,7 @@
 		<result property="rsm_fnl_edctn_cd_name" column="rsm_fnl_edctn_cd_name"/>
 		<result property="rsm_grd" column="rsm_grd"/>
 		<result property="rsm_es" column="rsm_es"/>
-		<result property="rsm_tl" column="rsm_tl"/>
+		<result property="rsm_ttl" column="rsm_ttl"/>
 		<result property="rsm_name" column="rsm_name"/>
 		<result property="rsm_gndr_cd_name" column="rsm_gndr_cd_name"/>
 		<result property="rsm_bd" column="rsm_bd"/>
@@ -133,7 +133,7 @@
 			(select code_name from P2_TBL_COMMON_CODE_DTL_S where code_id = resume.rsm_fnl_edctn_cd) as rsm_gndr_cd_name,
 			RESUME.rsm_grd,
 			RESUME.rsm_es,
-			RESUME.rsm_tl,
+			RESUME.rsm_ttl,
 			RESUME.rsm_name,
 			(select code_name from P2_TBL_COMMON_CODE_DTL_S where code_id = RESUME.rsm_gndr_cd) as rsm_gndr_cd_name,
 			RESUME.rsm_bd,

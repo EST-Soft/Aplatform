@@ -15,7 +15,7 @@
 	</select>
 	<!-- 이력서 중 대표 이력서 이력서 순번, 이력서 제목, 등록일시, 최종 수정일시, 이미지 -->
 	<select id="getRprsntvRsmInfo">
-		SELECT rsm_sq, rsm_tl, insrt_dtm, updt_dtm, rsm_img_file_url
+		SELECT rsm_sq, rsm_ttl, insrt_dtm, updt_dtm, rsm_img_file_url
 		FROM p2_tbl_resume_m
 		WHERE 
 			mbr_sq = #{mbr_sq}
@@ -26,7 +26,7 @@
 	카사디안 곱 결과물 만들고 where절 비교할듯.. 즉 성능면에서 더 떨어질 듯...
 	<select>
 	    SELECT 
-	        m.mbr_name, m.mbr_mp, m.mbr_eml_adrs, m.pstn_prpsl_accept_yn, r.rsm_sq, r.rsm_tl, r.insrt_dtm, r.updt_dtm, r.rsm_img_file_rul
+	        m.mbr_name, m.mbr_mp, m.mbr_eml_adrs, m.pstn_prpsl_accept_yn, r.rsm_sq, r.rsm_ttl, r.insrt_dtm, r.updt_dtm, r.rsm_img_file_rul
 	    FROM 
 	        p3_tbl_member_m m
 	    	LEFT JOIN p2_tbl_resume_m r ON m.mbr_sq = r.mbr_sq AND r.rsm_rprsntv_yn = 'Y'
@@ -77,7 +77,7 @@
 	월별 지원 공고 데이터 AC
 	s.mbr_sq = #{mbr_sq} 서브쿼리로 빼서 필터링 한다음 조인하는게 좋을까?--> 
 	<select id="getToMakeCalendarData">
-		SELECT "S" tbl_type, j.jbp_sq, j.jbp_tl, DATE_FORMAT(j.regstr_dln_dtm, '%Y-%m-%d') as dtm
+		SELECT "S" tbl_type, j.jbp_sq, j.jbp_ttl, DATE_FORMAT(j.regstr_dln_dtm, '%Y-%m-%d') as dtm
 		FROM p2_tbl_scrap_s s,
 			 p2_tbl_job_posting_m j
 		WHERE
@@ -87,7 +87,7 @@
 			AND
 			MONTH(j.regstr_dln_dtm) = #{month}
 		UNION
-		SELECT "I" tbl_type, j.jbp_sq, j.jbp_tl, DATE_FORMAT(a.intv_dtm, '%Y-%m-%d') as dtm
+		SELECT "I" tbl_type, j.jbp_sq, j.jbp_ttl, DATE_FORMAT(a.intv_dtm, '%Y-%m-%d') as dtm
 		FROM p2_tbl_apply_h a,
 			 p2_tbl_job_posting_m j
 		WHERE
@@ -97,7 +97,7 @@
 			AND
 			MONTH(intv_dtm) = #{month}
 		UNION
-		SELECT "PP" tbl_type, j.jbp_sq, j.jbp_tl, DATE_FORMAT(j.regstr_dln_dtm, '%Y-%m-%d') as dtm
+		SELECT "PP" tbl_type, j.jbp_sq, j.jbp_ttl, DATE_FORMAT(j.regstr_dln_dtm, '%Y-%m-%d') as dtm
 		FROM p2_tbl_position_proposal_m p,
 			 p2_tbl_job_posting_m j
 		WHERE 
@@ -107,7 +107,7 @@
 			AND
 			MONTH(j.regstr_dln_dtm) = #{month}
 		UNION
-		SELECT  "AC" tbl_type, j.jbp_sq, j.jbp_tl, DATE_FORMAT(a.apy_dtm, '%Y-%m-%d') as dtm
+		SELECT  "AC" tbl_type, j.jbp_sq, j.jbp_ttl, DATE_FORMAT(a.apy_dtm, '%Y-%m-%d') as dtm
 		FROM p2_tbl_apply_h a,
 			 p2_tbl_job_posting_m j
 		WHERE
@@ -191,7 +191,7 @@
 	<!-- <resultMap id="jobPostingResultMap" type="jobplatform.fo.user.domain.vo.M_JobPosting_pp">
         <id property="jbp_sq" column="jbp_sq"/>
         <result property="entrprs_sq" column="entrprs_sq"/>
-        <result property="jbp_tl" column="jbp_tl"/>
+        <result property="jbp_ttl" column="jbp_ttl"/>
         <result property="jbp_cntnt" column="jbp_cntnt"/>
         <result property="cr" column="cr"/>
         <result property="edctn" column="edctn"/>
@@ -214,11 +214,11 @@
 	##조인 테이블 너무 많아서.. 카사디안곱으로 연산될 수 밖에 없을듯;; list로 받을 것들 따로 받기
 	<select id="getPPJopPostingData" resultMap="jobPostingResultMap">
 		SELECT 
-			sjp.jbp_sq, sjp.entrprs_sq, sjp.jbp_tl, sjp.jbp_cntnt, sjp.cr, sjp.edctn, sjp.regstr_dln_dtm, sjp.pstn_prpsl_sq, sjp.pstn_prpsl_cndtn,
+			sjp.jbp_sq, sjp.entrprs_sq, sjp.jbp_ttl, sjp.jbp_cntnt, sjp.cr, sjp.edctn, sjp.regstr_dln_dtm, sjp.pstn_prpsl_sq, sjp.pstn_prpsl_cndtn,
 			sjp.prpsl_dtm, em.entrprs_name, apr.area_sq, jpr.job_sq, spr.skl_cd_sq
 		FROM 
 			(SELECT 
-				jp.jbp_sq, jp.entrprs_sq, jp.jbp_tl, jp.jbp_cntnt, jp.cr, jp.edctn, jp.regstr_dln_dtm, pp.pstn_prpsl_sq, pp.pstn_prpsl_cndtn, pp.prpsl_dtm
+				jp.jbp_sq, jp.entrprs_sq, jp.jbp_ttl, jp.jbp_cntnt, jp.cr, jp.edctn, jp.regstr_dln_dtm, pp.pstn_prpsl_sq, pp.pstn_prpsl_cndtn, pp.prpsl_dtm
 			FROM
 				p2_tbl_job_posting_m jp, p2_tbl_position_proposal_m pp
 			WHERE 
@@ -236,14 +236,14 @@
 	<!-- COUNT(*) OVER() as total_count 한번에 구하기 -> vo 등 다 바꿔줘야함 -->
 	<select id="getPPJopPostingData" resultType="jobplatform.fo.user.domain.vo.M_JobPosting_pp">
 		SELECT
-			sjp.jbp_sq, sjp.entrprs_sq, sjp.jbp_tl, sjp.jbp_cntnt,
-			(SELECT code_name FROM p2_tbl_common_code_dtl_s ccd WHERE ccd.code_id = sjp.cr) cr,
+			sjp.jbp_sq, sjp.entrprs_sq, sjp.jbp_ttl, sjp.jbp_cntnt,
+			(SELECT code_name FROM p2_tbl_common_code_dtl_s ccd WHERE ccd.code_id = sjp.crr_drtn) crr_drtn,
 			(SELECT code_name FROM p2_tbl_common_code_dtl_s ccd WHERE ccd.code_id = sjp.edctn) edctn,
 			sjp.regstr_dln_dtm, sjp.pstn_prpsl_sq, sjp.pstn_prpsl_cndtn, sjp.prpsl_dtm, em.entrprs_name,
 			sjp.hits, sjp.work_form, sjp.slry
 		FROM
 			(SELECT 
-				jp.jbp_sq, jp.entrprs_sq, jp.jbp_tl, jp.jbp_cntnt, jp.cr, jp.edctn, jp.regstr_dln_dtm, jp.hits, jp.work_form, jp.slry,
+				jp.jbp_sq, jp.entrprs_sq, jp.jbp_ttl, jp.jbp_cntnt, jp.crr_drtn, jp.edctn, jp.regstr_dln_dtm, jp.hits, jp.work_form, jp.slry,
 				pp.pstn_prpsl_sq, pp.pstn_prpsl_cndtn, pp.prpsl_dtm
 			FROM
 				p2_tbl_job_posting_m jp, p2_tbl_position_proposal_m pp

@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ResumeDataDTO {
 	// 이력서 제목
-	private String rsm_tl;
+	private String rsm_ttl;
 	// 이력서 이름
 	private String rsm_name;
 	// 이력서 주소
@@ -31,7 +31,7 @@ public class ResumeDataDTO {
 	private int rsm_fnl_edctn_cd;
 	
 	// 이력서 성별 코드
-	private int rsm_gndr_cd;
+	private int rsm_gndr_code;
 	
 	// 자기소개서 리스트
 	private List<SelfintoductionsDataDTO> selfintoductionData;

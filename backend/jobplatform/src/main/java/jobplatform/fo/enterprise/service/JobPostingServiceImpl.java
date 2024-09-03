@@ -116,10 +116,10 @@ public class JobPostingServiceImpl implements JobPostingService {
         LocalDate today = LocalDate.now();
          
         
-		updateJobPosting.setJbpTl(jpe.getJbpTl());
+		updateJobPosting.setJbpTtl(jpe.getJbpTtl());
 		updateJobPosting.setJbpCndtn(jpe.getJbpCndtn());
 		updateJobPosting.setJobName(jpe.getJobName());
-		updateJobPosting.setCr(jpe.getCr());
+		updateJobPosting.setCrrDrtn(jpe.getCrrDrtn());
 		updateJobPosting.setEdctn(jpe.getEdctn());
 		updateJobPosting.setWorkArea(jpe.getWorkArea());
 		updateJobPosting.setWorkForm(jpe.getWorkForm());
@@ -156,11 +156,11 @@ public class JobPostingServiceImpl implements JobPostingService {
 	@Override
 	public List<JobPostingEntity> searchJobPostings(String searchTerm, String searchField) {
 	    //제목 또는 내용
-		if ("jbpTl_jbpCntnt".equals(searchField)) {
-	        return jobPostingRepository.findByJbpTlContainingOrJbpCntntContaining(searchTerm, searchTerm);
+		if ("jbpTtl_jbpCntnt".equals(searchField)) {
+	        return jobPostingRepository.findByJbpTtlContainingOrJbpCntntContaining(searchTerm, searchTerm);
 	    // 제목
-		} else if ("jbpTl".equals(searchField)) {
-	        return jobPostingRepository.findByJbpTlContaining(searchTerm);
+		} else if ("jbpTtl".equals(searchField)) {
+	        return jobPostingRepository.findByJbpTtlContaining(searchTerm);
 	    // 내용
 		} else if ("jbpCntnt".equals(searchField)) {
 	        return jobPostingRepository.findByJbpCntntContaining(searchTerm);

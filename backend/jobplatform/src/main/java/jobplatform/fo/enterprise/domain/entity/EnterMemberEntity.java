@@ -29,11 +29,11 @@ public class EnterMemberEntity {
     @Column(name = "entrprs_sq", nullable = false)
     private long entrprsSq; // 기업_순번
 
-    @Column(name = "scl_ctgry_cd", nullable = true)
-    private String sclctGryCd; // 소셜_유형_코드
+    // @Column(name = "scl_ctgry_cd", nullable = true)
+    // private String sclctGryCd; // 소셜_유형_코드
 
-    @Column(name = "gndr_ctgry_cd", nullable = false)
-    private String gndrCtryCd; // 성별_유형_코드
+    @Column(name = "gndr_typ_code", nullable = false)
+    private String gndrTypCode; // 성별_유형_코드
 
     @Column(name = "entrprs_id", nullable = false)
     private String entrprsId; // 기업_아이디
@@ -56,8 +56,8 @@ public class EnterMemberEntity {
     @Column(name = "entrprs_adrs", nullable = true)
     private String entrprsAdrs; // 기업_주소
     
-    @Column(name = "entrprs_zip_code", nullable = true)
-    private String entrprsZipCode; // 우편번호
+    // @Column(name = "entrprs_zip_code", nullable = true)
+    // private String entrprsZipCode; // 우편번호
 
     @Column(name = "entrprs_ceo_name", nullable = true)
     private String entrprsCeoName; // 기업 대표자이름
@@ -100,10 +100,10 @@ public class EnterMemberEntity {
     @Column(name = "use_yn", nullable = true)
     private String useYn; // 사용 여부
 
-    @Column(name = "del", nullable = true)
-    private String del; // 삭제 여부
+    // @Column(name = "del", nullable = true)
+    // private String del; // 삭제 여부
 
-    @Column(name = "social", nullable = true)
-    private String social; // 소셜 여부
+    // @Column(name = "social", nullable = true)
+    // private String social; // 소셜 여부
 
 }

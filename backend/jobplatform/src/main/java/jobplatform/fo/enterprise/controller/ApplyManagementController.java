@@ -79,7 +79,7 @@ public class ApplyManagementController {
 	@PatchMapping("/applys/condition/{apy_sq}/{apy_cndtn}")
 	public ResponseEntity<HttpStatus> modifyApplyCondition(
 			@PathVariable(name = "apy_sq", required = false) int apy_sq,
-			@PathVariable(name = "apy_cndtn", required = false) int apy_cndtn,
+			@PathVariable(name = "apy_cndtn", required = false) String apy_cndtn,
 			@RequestParam Timestamp intv_dtm
 			) {
 		

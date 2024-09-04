@@ -19,7 +19,7 @@
 			rsm_sq,
 			mbr_sq,
 			rsm_rprsntv_yn,
-			rsm_tl,
+			rsm_ttl,
 			updt_dtm
 		from P2_TBL_RESUME_M
 		where mbr_sq = #{searchData.mbr_sq} 

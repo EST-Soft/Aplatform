@@ -1,5 +1,5 @@
 <template>
-  <div v-if="result">
+  <div v-if="result && Object.keys(result).length > 0">
     <div
       class="row"
       style="padding-bottom: 20px; border-bottom: 1px solid #eaeaea"
@@ -24,7 +24,7 @@
             <tr>
               <th colspan="3">
                 <h2 class="font-weight-bold" style="margin-bottom: 10px">
-                  {{ result.rsmInfo.rsm_tl }}
+                  {{ result.rsmInfo.rsm_ttl }}
                 </h2>
                 <span
                   >-최종 수정일자&nbsp;&nbsp;:&nbsp;&nbsp;{{
@@ -56,6 +56,7 @@
         </table>
       </div>
     </div>
+
     <div class="row" style="padding-top: 20px">
       <table class="table table-bordered" style="text-align: center">
         <tr>
@@ -137,6 +138,106 @@
       />
     </div>
   </div>
+  <div v-else>
+    <div
+      class="row"
+      style="padding-bottom: 20px; border-bottom: 1px solid #eaeaea"
+    >
+      <div
+        class="col-3"
+        style="display: flex; align-items: center; justify-content: center"
+      >
+        <div class="thumb-info-side-image-wrapper">
+          <img
+            src="@/assets/avatar.jpg"
+            class="img-fluid rounded-circle mb-4"
+            alt=""
+            style="width: 140px"
+          />
+        </div>
+        <!-- 나중에 야돈대신 들어갈 자리 :src="{{result.rsmInfo.rsm_img_file_url}}" -->
+      </div>
+      <div class="col-9 table-container">
+        <table class="table table-bordered" style="margin-bottom: 0">
+          <thead>
+            <tr>
+              <th colspan="3">
+                <h2 class="font-weight-bold" style="margin-bottom: 10px">대표 이력서를 등록해주세요.</h2>
+              </th>
+            </tr>
+          </thead>
+          <tbody style="text-align: center">
+            <tr>
+              <th></th>
+              <th></th>
+              <th></th>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    
+    <div class="row" style="padding-top: 20px">
+      <table class="table table-bordered" style="text-align: center">
+        <tr>
+          <th>
+            등록한 이력서&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0
+          </th>
+          <th>추천 공고&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(로직 준비중)</th>
+          <th>
+            스크랩 공고&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0
+          </th>
+          <th>
+            받은 제안&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0
+          </th>
+        </tr>
+      </table>
+    </div>
+    <div
+      class="row"
+      style="padding-top: 20px; border-bottom: 1px solid #eaeaea"
+    >
+      <div class="col pb-3">
+        <table class="table table-bordered table-apply-state">
+          <thead>
+            <tr>
+              <th rowspan="2">전체</th>
+              <th colspan="2">진행중</th>
+              <th colspan="2">면접</th>
+              <th rowspan="2">불합격</th>
+              <th rowspan="2">합격</th>
+              <th rowspan="2">마감</th>
+            </tr>
+            <tr>
+              <th>열람</th>
+              <th>미열람</th>
+              <th>대기</th>
+              <th>완료</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>0</td>
+              <td>0</td>
+              <td>0</td>
+              <td>0</td>
+              <td>0</td>
+              <td>0</td>
+              <td>0</td>
+              <td>(준비중)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="row" style="padding-top: 20px">
+      <Calendar
+        :events="calendarEvents"
+        :customButtons="customButtons"
+        ref="fc"
+      />
+    </div>
+  </div>
 </template>
 
 <script setup>
@@ -147,7 +248,7 @@ import { formatDateYMD } from "@/tools";
 import { useStore } from "vuex";
 const store = useStore();
 
-let result = ref(null);
+let result = ref({});
 let applyStateSum = computed(() => getApplyStateSum());
 let calendarEvents = computed(() =>
   makeCalendarDatas(result.value.calendarData)
@@ -157,12 +258,18 @@ let month = new Date().getMonth() + 1;
 let checkedMonth = [month];
 
 onMounted(async () => {
-  result.value = await api.$get("/user/mypage/", {
-    params: {
-      mbr_sq: store.state.member.mbrSq,
-      month: month,
-    },
-  });
+  try {
+    const response = await api.$get("/user/mypage/", {
+      params: {
+        mbr_sq: store.state.member.mbrSq,
+        month: month,
+      },
+    });
+    result.value = response.data || {};  // 데이터를 받지 못했을 때 기본 빈 객체로 설정
+  } catch (error) {
+    console.error("API 호출 오류:", error);
+    result.value = {};  // 오류가 발생했을 때 기본 빈 객체로 설정
+  }
 });
 
 function getApplyStateSum() {
@@ -213,7 +320,7 @@ function makeCalendarDatas(toParsingData) {
         break;
     }
     event.date = temp.dtm;
-    event.description = temp.jbp_tl;
+    event.description = temp.jbp_ttl;
 
     events.push(event);
   }

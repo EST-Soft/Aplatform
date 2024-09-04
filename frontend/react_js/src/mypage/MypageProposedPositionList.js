@@ -10,11 +10,11 @@ const PositionProposalList = () => {
     jobPosts: [
       {
         entrprs_name: 'Enterprise 1',
-        jbp_tl: 'Job Title 1',
+        jbp_ttl: 'Job Title 1',
         hits: 123,
         slry: '50,000',
         edctn: 'Bachelor',
-        cr: '3 years',
+        crr: '3 years',
         work_form: 'Full-time',
         prpsl_dtm: '2023-07-21',
         regstr_dln_dtm: '2023-08-21',
@@ -63,7 +63,7 @@ const PositionProposalList = () => {
                       <th colSpan="2" style={{ fontSize: 'large' }}>
                         {post.entrprs_name}
                       </th>
-                      <th colSpan="3">{post.jbp_tl}</th>
+                      <th colSpan="3">{post.jbp_ttl}</th>
                       <th colSpan="1" style={{ textAlign: 'center' }}>
                         조회수&nbsp;&nbsp;{post.hits}
                       </th>

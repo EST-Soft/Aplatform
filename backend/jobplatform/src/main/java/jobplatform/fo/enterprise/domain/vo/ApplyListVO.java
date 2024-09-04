@@ -23,7 +23,7 @@ public class ApplyListVO {
 		// 이력서 이미지 주소
 		private String rsm_img_file_url;
 		// 최종학력 코드 번호
-		private int rsm_fnl_edctn_cd;
+		private int rsm_fnl_edctn_code;
 		// 이력서 최종학력 코드 한글화
 		private String rsm_fnl_edctn_name;
 		// 이력서 학점

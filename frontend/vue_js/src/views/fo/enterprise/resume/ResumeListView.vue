@@ -45,9 +45,10 @@ import PaginationData from "@/components/fo/enterprise/common/PaginationData.vue
 import ResumeDatas from "@/components/fo/enterprise/resume/ResumeDatas.vue";
 import axios from "axios";
 
-import { onMounted, ref } from "vue";
+import { onMounted, ref, computed } from "vue";
+import { useStore } from "vuex";
 
-
+const store = useStore();
 
 const resumeListData = ref({
     resumeDatas: [],
@@ -55,10 +56,18 @@ const resumeListData = ref({
     searchData: {},
 });
 
+const member = computed(() => store.getters.getMember);
+const isLoggedIn = computed(() => member.value !== null);
+
 onMounted(() => {
-    // 첫페이지 입장시 정보 넣어주기 
-    resumeListData.value.searchData = { mbr_sq: 1, sort: "desc", pageNo: 1 };
-    callAxios();
+    if (isLoggedIn.value && member.value) {
+        resumeListData.value.searchData = { 
+            mbr_sq: member.value.mbrSq, // member.value로 접근
+            sort: "desc", 
+            pageNo: 1 
+        };
+        callAxios();
+    }
 });
 
 // axios 함수

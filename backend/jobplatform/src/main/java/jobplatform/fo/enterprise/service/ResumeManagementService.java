@@ -12,7 +12,13 @@ import jakarta.transaction.Transactional;
 import jobplatform.fo.enterprise.common.Pagination;
 import jobplatform.fo.enterprise.domain.dto.ResumeSearchDataDTO;
 import jobplatform.fo.enterprise.domain.mapper.ResumeMapper;
+import jobplatform.fo.enterprise.domain.vo.ResumeAttachmentDataVO;
+import jobplatform.fo.enterprise.domain.vo.ResumeCareerDataVO;
+import jobplatform.fo.enterprise.domain.vo.ResumeCertificateDataVO;
+import jobplatform.fo.enterprise.domain.vo.ResumeEducationDataVO;
 import jobplatform.fo.enterprise.domain.vo.ResumeListVO;
+import jobplatform.fo.enterprise.domain.vo.ResumeSelfintroductionDataVO;
+import jobplatform.fo.enterprise.domain.vo.ResumeSkillCodeDataVO;
 
 @Service
 public class ResumeManagementService {
@@ -55,6 +61,39 @@ public class ResumeManagementService {
 		
 
 		return result;
+	}
+
+	//이력서 상세정보 얻기
+	public Map<String, Object> findResumeM(int rsm_sq) {
+		Map<String, Object> map = new HashMap<>();
+	
+		
+		// 이력서 상세 정보 조회
+		Map<String, Object> resumeInfo = resumeMapper.selectResumeM(rsm_sq);
+
+		//학력 정보 가져오기
+		List<ResumeEducationDataVO> rsmedctnInfo = resumeMapper.selectResumeEducation(rsm_sq);
+		//경력 정보 가져오기
+		List<ResumeCareerDataVO> rsmcrInfo = resumeMapper.selectResumeCareer(rsm_sq);
+		//기술 정보 가져오기
+		List<ResumeSkillCodeDataVO> rsmsklcdInfo = resumeMapper.selectResumeSkillCode(rsm_sq);
+		//자격증 정보 가져오기
+		List<ResumeCertificateDataVO> rsmcrtfctInfo = resumeMapper.selectResumeCertificate(rsm_sq);
+		//자기소개서 정보 가져오기
+		List<ResumeSelfintroductionDataVO> rsmsiInfo = resumeMapper.selectResumeSelfIntroduction(rsm_sq);
+		//첨부파일 정보 가져오기
+		List<ResumeAttachmentDataVO> rsmatchmntInfo = resumeMapper.selectResumeAttachment(rsm_sq);
+		
+		// 결과를 map에 추가
+		map.put("rsmInfo", resumeInfo);
+		map.put("rsmedctnInfo", rsmedctnInfo);
+		map.put("rsmcrInfo", rsmcrInfo);
+		map.put("rsmsklcdInfo", rsmsklcdInfo);
+		map.put("rsmcrtfctInfo", rsmcrtfctInfo);
+		map.put("rsmsiInfo", rsmsiInfo);
+		map.put("rsmatchmntInfo", rsmatchmntInfo);
+		
+		return map;
 	}
 	
 	// 이력서 삭제

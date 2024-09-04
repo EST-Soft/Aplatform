@@ -12,7 +12,7 @@
                     <thead>
                         <tr>
                             <th colspan="3">
-                                <h2 class="font-weight-bold" style="margin-bottom: 10px;">{{result.rsmInfo.rsm_tl}}</h2>
+                                <h2 class="font-weight-bold" style="margin-bottom: 10px;">{{result.rsmInfo.rsm_ttl}}</h2>
                                 <span>-최종 수정일자&nbsp;&nbsp;:&nbsp;&nbsp;{{ formatDateYMD(result.rsmInfo.updt_dtm) }}</span><span style="margin-left: 20px;">-포지션 수락 여부&nbsp;&nbsp;:&nbsp;&nbsp;{{ result.mbrInfo.pstn_prpsl_accept_yn = 'Y'? '수락':'거절'}}</span>
                             </th>
                         </tr>
@@ -182,7 +182,7 @@
                     break;
              }
              event.date = temp.dtm;
-             event.description = temp.jbp_tl;
+             event.description = temp.jbp_ttl;
 
              events.push(event);
         }

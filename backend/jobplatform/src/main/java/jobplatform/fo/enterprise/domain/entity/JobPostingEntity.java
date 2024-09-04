@@ -47,8 +47,8 @@ public class JobPostingEntity {
 
     
     
-    @Column(name = "jbp_tl", nullable = false, length = 30)
-    private String jbpTl = "";
+    @Column(name = "jbp_ttl", nullable = false, length = 30)
+    private String jbpTtl = "";
 
     @Column(name = "jbp_cntnt", nullable = false, length = 500)
     private String jbpCntnt = "";
@@ -56,8 +56,8 @@ public class JobPostingEntity {
     @Column(name = "hits", nullable = false)
     private int hits = 0;
 
-    @Column(name = "cr", nullable = false, length = 20)
-    private String cr = "";
+    @Column(name = "crr", nullable = false, length = 20)
+    private String crr = "";
 
     @Column(name = "skl_name", nullable = false, length = 30)
     private String sklName = "";

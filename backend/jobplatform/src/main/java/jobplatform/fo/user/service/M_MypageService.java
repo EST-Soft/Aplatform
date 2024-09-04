@@ -33,4 +33,7 @@ public interface M_MypageService {
 	//@@예정@@포지션 제안 거절했을 때 -> 포지션 제안 상태 변경
 	public int refuseProposedPostion(int pstn_prpsl_sq);
 
+	//회원 정보 받아오기
+	public Map<String, Object> findResumeM(int mbr_sq);
+
 }

@@ -56,11 +56,16 @@ public class ResumeManagementController {
 		return new ResponseEntity<Map<String, Object>>(map, httpStatus);
 		
 	}
+	
 	// 이력서 상세 불러오기
 	@GetMapping("/resumes/resume-detail/{rsm_sq}")
-	public void findResumeDetailData(@PathVariable("rsm_sq") int rsm_sq) {
-		System.out.println("컨트롤 도착 : " + rsm_sq);
-		// 지원자 상세와 일반화하면 좋음
+	public ResponseEntity<Map<String, Object>> findResumeDetailData(@PathVariable("rsm_sq") int rsm_sq) {
+
+		// 이력서 정보를 조회
+        Map<String, Object> resumeDetail = resumeManagementService.findResumeM(rsm_sq);
+
+        // 조회된 이력서 정보를 응답으로 반환
+        return ResponseEntity.ok(resumeDetail);
 	}
 	
 	// 이력서 등록

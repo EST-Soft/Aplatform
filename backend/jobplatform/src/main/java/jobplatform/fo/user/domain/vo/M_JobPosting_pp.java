@@ -9,9 +9,9 @@ import lombok.Data;
 public class M_JobPosting_pp {
     private int jbp_sq;
     private int entrprs_sq;
-    private String jbp_tl;
+    private String jbp_ttl;
     private String jbp_cntnt;
-    private String cr;
+    private String crr;
     private String edctn;
     private Timestamp regstr_dln_dtm;
     private int pstn_prpsl_sq;
@@ -29,7 +29,7 @@ public class M_JobPosting_pp {
 
     @Override
     public String toString(){
-        return jbp_tl+jbp_cntnt+cr+edctn+entrprs_name+areas+jobs+skills;
+        return jbp_ttl+jbp_cntnt+crr+edctn+entrprs_name+areas+jobs+skills;
     }
 
 }

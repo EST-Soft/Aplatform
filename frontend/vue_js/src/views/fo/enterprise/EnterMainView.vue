@@ -31,16 +31,16 @@
                                 {{ jobPost.entrprs_sq }} - {{ jobPost.jbp_sq }}
                             </td>
                             <td>
-                                {{ jobPost.jbp_tl }}
+                                {{ jobPost.jbp_ttl }}
                             </td>
                             <td>
                                 {{ formatDateYMD(jobPost.insrt_dtm) }}
                             </td>
                             <td>
-                                <template v-if="jobPost.jbp_cndtn == 701">예정</template>
-                                <template v-if="jobPost.jbp_cndtn == 702">진행중</template>
-                                <template v-if="jobPost.jbp_cndtn == 703">접수마감</template>
-                                <template v-if="jobPost.jbp_cndtn == 704">종료</template>
+                                <template v-if="jobPost.jbp_cndtn == 'bgt'">예정</template>
+                                <template v-if="jobPost.jbp_cndtn == 'prcdng'">진행중</template>
+                                <template v-if="jobPost.jbp_cndtn == 're'">접수마감</template>
+                                <template v-if="jobPost.jbp_cndtn == 'end'">종료</template>
                             </td>
                         </tr>
                     </tbody>

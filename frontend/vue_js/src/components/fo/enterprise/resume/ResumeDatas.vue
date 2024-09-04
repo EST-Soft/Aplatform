@@ -5,7 +5,7 @@
         <div class="call-to-action-content">
           <h3>
             <!-- <router-link class="font-weight-extra-bold" :to="dtlInfo">{{ props.resumeData.rsm_tl }}</router-link> -->
-            <a class="font-weight-extra-bold" @click="toDtlPage()">{{ props.resumeData.rsm_tl }}</a>
+            <a class="font-weight-extra-bold" @click="toDtlPage()">{{ props.resumeData.rsm_ttl }}</a>
           </h3>
         </div>
       </div>

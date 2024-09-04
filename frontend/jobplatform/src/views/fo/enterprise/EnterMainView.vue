@@ -31,7 +31,7 @@
                                 {{ jobPost.entrprs_sq }} - {{ jobPost.jbp_sq }}
                             </td>
                             <td>
-                                {{ jobPost.jbp_tl }}
+                                {{ jobPost.jbp_ttl }}
                             </td>
                             <td>
                                 {{ formatDateYMD(jobPost.insrt_dtm) }}

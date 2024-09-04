@@ -10,7 +10,7 @@ public class ApplyInfoDTO {
     private Long rsmSq;         // 이력서번호
     private Long mbrSq;         // 회원번호
     private String rsmTl;       // 이력서제목
-    private String jbpTl;       // 공고제목
+    private String jbpTtl;       // 공고제목
     private String apyDtm;      // 지원일시
     private String jbpCndtn;    // 공고상태
     private String entrprsName; // 기업이름

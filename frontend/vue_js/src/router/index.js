@@ -41,6 +41,8 @@ import QnaWrite from "../views/fo/community/qna/QnaWrite.vue";
 import FeedbackWrite from "../views/fo/community/feedback/FeedbackWrite.vue";
 import FeedbackDetail from "../views/fo/community/feedback/FeedbackDetail.vue";
 import FeedbackUpdate from "../views/fo/community/feedback/FeedbackUpdate.vue";
+import UserInfrmtnUpdt from "../views/fo/auth/UserInfrmtnUpdt.vue";
+import UserPswrdCk from "../components/fo/user/common/UserPswrdCk.vue";
 // import store from "@/store"; // Vuex 스토어를 직접 가져옵니다.
 
 const routes = [
@@ -78,6 +80,9 @@ const routes = [
       },
       { path: "/resumes/resume-insert", component: ResumeInsertView },
       { path: "/resumes/resume-list", component: ResumeListView },
+
+      { path: "userPswrdCk", component: UserPswrdCk},
+      { path: "userInfmtn", component: UserInfrmtnUpdt},
     ],
   },
   // 기우님 컴포넌트 경로

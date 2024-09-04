@@ -3,8 +3,7 @@
 <mapper namespace="jobplatform.fo.enterprise.domain.mapper.EnterpriseMypageMapper">
 	<resultMap id="EnterMemberEntityResultMap" type="jobplatform.fo.enterprise.domain.entity.EnterMemberEntity">
 		<id property="entrprsSq" column="entrprs_sq"/>
-		<result property="sclctGryCd" column="scl_ctgry_cd"/>
-		<result property="gndrCtryCd" column="gndr_ctgry_cd"/>
+		<result property="gndrCtryCd" column="gndr_typ_code"/>
 		<result property="entrprsId" column="entrprs_id"/>
 		<result property="entrprsPswrd" column="entrprs_pswrd"/>
 		<result property="entrprsPicName" column="entrprs_pic_name"/>
@@ -27,7 +26,6 @@
 		<result property="dltYn" column="dlt_yn"/>
 		<result property="useYn" column="use_yn"/>
 		<result property="del" column="del"/>
-		<result property="social" column="social"/>
 	</resultMap>
 
 	<!--기업회원정보 수정 -> 기업정보 가져오기 jobplatform.fo.enterprise.domain.dto.EnterInfoDTO-->

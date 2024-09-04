@@ -1,11 +1,12 @@
 <template>
   <section class="call-to-action with-full-borders mb-2">
     <div class="row col-sm-12 col-lg-12">
+      {{ props }}
       <div class="col-sm-9 col-lg-9">
         <div class="call-to-action-content">
           <h3>
             <!-- <router-link class="font-weight-extra-bold" :to="dtlInfo">{{ props.resumeData.rsm_tl }}</router-link> -->
-            <a class="font-weight-extra-bold" @click="toDtlPage()">{{ props.resumeData.rsm_tl }}</a>
+            <a class="font-weight-extra-bold" @click="toDtlPage()">{{ props.resumeData.rsm_ttl }}</a>
           </h3>
         </div>
       </div>

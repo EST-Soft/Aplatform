@@ -119,7 +119,7 @@ public class JobPostingController {
     @GetMapping("/board/search")
     public List<JobPostingEntity> searchJobPostings(
             @RequestParam(value = "searchTerm", required = false) String searchTerm,
-            @RequestParam(value = "searchField", defaultValue = "jbpTl_jbpCntnt") String searchField) {
+            @RequestParam(value = "searchField", defaultValue = "jbpTtl_jbpCntnt") String searchField) {
         	System.out.println("검색 잘 되니"+searchTerm);
         	System.out.println("검색 잘 되니"+searchField);
         return jobPostingService.searchJobPostings(searchTerm, searchField);

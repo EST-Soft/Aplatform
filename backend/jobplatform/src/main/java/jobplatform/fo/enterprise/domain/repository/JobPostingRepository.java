@@ -29,8 +29,8 @@ public interface JobPostingRepository extends JpaRepository<JobPostingEntity, In
     int increaseHits(@Param("jbpSq") int jbpSq);
     
     // 검색
-    List<JobPostingEntity> findByJbpTlContainingOrJbpCntntContaining(String jbpTl, String jbpCntnt);
-	List<JobPostingEntity> findByJbpTlContaining(String jpbTl);
+    List<JobPostingEntity> findByJbpTtlContainingOrJbpCntntContaining(String jbpTtl, String jbpCntnt);
+	List<JobPostingEntity> findByJbpTtlContaining(String jpbTl);
 	List<JobPostingEntity> findByJbpCntntContaining(String jbpCntnt);
 
 

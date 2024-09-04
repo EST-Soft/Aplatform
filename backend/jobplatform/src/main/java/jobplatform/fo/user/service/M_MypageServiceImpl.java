@@ -35,7 +35,8 @@ public class M_MypageServiceImpl implements M_MypageService{
         Map<String, Object> rsmInfo = mypageMapper.getRprsntvRsmInfo(mbr_sq);
         response.put("rsmInfo", rsmInfo);
         
-        int rsm_sq = (int)rsmInfo.get("rsm_sq");
+        Long rsmSqLong = (Long) rsmInfo.get("rsm_sq"); // rsm_sq 값을 Long으로 가져오기
+        int rsm_sq = rsmSqLong.intValue();
 
         // 각 상태별 지원 개수
         Map<String, Integer> EachCndtnApplyCount = mypageMapper.getEachCndtnApplyCount(rsm_sq);
@@ -56,6 +57,13 @@ public class M_MypageServiceImpl implements M_MypageService{
     @Override
     public List<Map<String, Object>> getToMakeCalendarData(int mbr_sq, int rsm_sq, int month) {
         return mypageMapper.getToMakeCalendarData(mbr_sq,rsm_sq, month);
+    }
+
+    //마이페이지 정보수정의 회원 정보가져오기
+    @Override
+    public Map<String, Object> findResumeM(int mbr_sq) {
+        // 회원 정보
+        return mypageMapper.getMbrInfo(mbr_sq);
     }
 
 

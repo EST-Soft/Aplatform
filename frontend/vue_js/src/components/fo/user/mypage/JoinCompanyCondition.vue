@@ -3,19 +3,19 @@
         <div class="row align-items-center">
             <div class="col-12 pb-3 ">
                 <div class="d-flex justify-content-between align-items-center mb-2">
-                    <span class="badge text-white p-2 bg-primary" v-if="props.data.jbp_cndtn == '701'">
+                    <span class="badge text-white p-2 bg-primary" v-if="props.data.jbp_cndtn == 'bgt'">
                         예정</span>
-                    <span class="badge text-white p-2 bg-primary" v-else-if="props.data.jbp_cndtn == '702'">
+                    <span class="badge text-white p-2 bg-primary" v-else-if="props.data.jbp_cndtn == 'prcdng'">
                     진행중</span> 
-                    <span class="badge text-white p-2 bg-danger" v-else-if="props.data.jbp_cndtn == '703'">
+                    <span class="badge text-white p-2 bg-danger" v-else-if="props.data.jbp_cndtn == 're'">
                         접수마감</span>
-                        <span class="badge text-white p-2 bg-danger" v-else-if="props.data.jbp_cndtn == '704'">
+                        <span class="badge text-white p-2 bg-danger" v-else-if="props.data.jbp_cndtn == 'end'">
                             종료</span>
                     <span class="bg-white p-2 border" style="margin-left: auto;">지원자 수: {{  applyCount }}</span>
                 </div>
                 <h5 class="mb-2">{{ props.data.entrprs_name }}</h5>
-                <p class="mb-2"><router-link :to="`/board/detail/jobPosting/${props.data.jbp_sq}`">{{ props.data.jbp_tl }}</router-link></p>
-                <a href="#" class="popup-with-zoom-anim text-primary">지원한 이력서 | {{ props.data.rsm_tl }}</a>
+                <p class="mb-2"><router-link :to="`/board/detail/jobPosting/${props.data.jbp_sq}`">{{ props.data.jbp_ttl }}</router-link></p>
+                <a href="#" class="popup-with-zoom-anim text-primary">지원한 이력서 | {{ props.data.rsm_ttl }}</a>
                 <hr class="my-2">
                 <div class="d-flex justify-content-between align-items-center pt-2">
                     <div class="d-flex align-items-center">

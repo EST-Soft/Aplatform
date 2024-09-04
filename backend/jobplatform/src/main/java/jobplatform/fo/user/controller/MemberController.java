@@ -51,12 +51,12 @@ public class MemberController {
         if (member != null) {
             System.out.println("로그인 시도:" + params.get("mbrId") + "," + params.get("mbrPswrd"));
 
-            if (member.getDltChck()) {
+            if (member.getDltYn() == 'Y') {
                 System.out.println("로그인 실패: 탈퇴한 회원");
                 throw new ResponseStatusException(HttpStatus.FORBIDDEN, "탈퇴한 회원입니다.");
             }
 
-            if (!member.getUseChck()) {
+            if (member.getUseYn() == 'N') {
                 System.out.println("로그인 실패: 사용 중지된 회원");
                 throw new ResponseStatusException(HttpStatus.FORBIDDEN, "사용 중지된 회원입니다.");
             }
@@ -113,9 +113,9 @@ public class MemberController {
                     .orElseThrow(() -> new IllegalArgumentException("회원을 찾을 수 없습니다. 회원순번:" + deletedMember.getMbrSq()));
 
             // 삭제,사용 여부 업데이트
-            existingMember.setDltChck(true); // 삭제 여부 true
-            existingMember.setUseChck(false); // 사용 여부 false
-            existingMember.setDltDtm(LocalDateTime.now()); // 삭제 일시 설정
+            existingMember.setDltYn('Y'); // 삭제 여부 true
+            existingMember.setUseYn('N'); // 사용 여부 false
+            // existingMember.setDltDtm(LocalDateTime.now()); // 삭제 일시 설정
 
             // 회원 정보 업데이트
             memberRepository.save(existingMember);
@@ -153,8 +153,8 @@ public class MemberController {
         try {
             // admin일 경우 로직 추가해야함
             userData.setInsrtMbrSq(99); // 임시 값 설정
-            userData.setDltChck(false);
-            userData.setUseChck(true);
+            userData.setDltYn('N');
+            userData.setUseYn('Y');
 
             MemberEntity savedUser = memberRepository.save(userData); // 처음 저장
             savedUser.setInsrtMbrSq(savedUser.getMbrSq());
@@ -434,9 +434,8 @@ public class MemberController {
                     member.setMbrBd(birthDate);
                     member.setGndrCtgryCd(gender);
 
-                    member.setSclCtgryCd("NAVER");
-                    member.setDltChck(false);
-                    member.setUseChck(true);
+                    member.setDltYn('N');
+                    member.setUseYn('Y');
                     member.setMbrEmlRcvChck("N");    // 임시 값 설정
                     member.setMbrPrvcyTrmsChck("Y");// 임시 값 설정
                     member.setMbrPswrd(name);       // 임시 값 설정

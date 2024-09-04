@@ -39,7 +39,7 @@
                     <thead>
                         <tr>
                             <th colspan="3">
-                                <h2 class="font-weight-bold" style="margin-bottom: 10px;">{{result.rsmInfo.rsm_tl}}</h2>
+                                <h2 class="font-weight-bold" style="margin-bottom: 10px;">{{result.rsmInfo.rsm_ttl}}</h2>
                             </th>
                         </tr>
                     </thead>

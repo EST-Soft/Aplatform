@@ -87,9 +87,9 @@
           <div class="list-body">
             <div v-if="paginatedItems.length > 0">
               <div v-for="(item, idx) in paginatedItems" :key="idx" class="custom">
-                <div><router-link :to="`/board/detail/jobPosting/${item.jbpSq}`">{{ item.jbpTl }}</router-link></div>
+                <div><router-link :to="`/board/detail/jobPosting/${item.jbpSq}`">{{ item.jbpTtl }}</router-link></div>
                 <div>{{ getEducationText(item.edctn) }}</div>
-                <div>{{ getCareerText(item.cr) }}</div>
+                <div>{{ getCareerText(item.crrDrtn) }}</div>
                 <div>{{ formatJobName(item.jobName) }}</div>
                 <div>{{ formatWorkArea(item.workArea) }}</div>
               </div>
@@ -379,6 +379,8 @@ const getCareerText = (value) => {
   height: 150px;
   overflow: hidden;
 }
+
+
 .row {
   display: flex;
   flex-wrap: wrap;
@@ -404,6 +406,7 @@ const getCareerText = (value) => {
   border-radius: 5px;
   cursor: pointer;
   margin-right: 10px;
+  
 }
 
 .search-options button:hover {

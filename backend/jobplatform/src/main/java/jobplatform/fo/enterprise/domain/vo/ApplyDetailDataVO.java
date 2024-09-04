@@ -40,7 +40,7 @@ public class ApplyDetailDataVO {
 	private String rsm_eml;
 	
 	//지원 상태 코드 번호
-	private int apy_cndtn;
+	private String apy_cndtn;
 	//지원 상태 코드 한글화
 	private String apy_cndtn_name;
 	

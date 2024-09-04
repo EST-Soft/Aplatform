@@ -19,7 +19,7 @@
 		FROM p2_tbl_resume_m
 		WHERE 
 			mbr_sq = #{mbr_sq}
-			AND
+		AND
 			rsm_rprsntv_yn = 'Y'
 	</select>
 	<!--

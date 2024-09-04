@@ -122,7 +122,7 @@ const curPage = ref(0);
 const prevBlock = ref(0);
 const nextBlock = ref(0);
 const lastPage = ref(0);
-const search = ref({ page: 1, sk: "", sv: "", brdgnrCd: "qna" });
+const search = ref({ page: 1, sk: "", sv: "", brdTypCode: "qna" });
 
 const getBoardList = async () => {
   const queryString = Object.entries(search.value)

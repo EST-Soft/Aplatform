@@ -36,7 +36,7 @@
         WHERE
             entrprs_sq = #{entrprs_sq}
             AND
-            jbp_cndtn != 704
+            jbp_cndtn != '704'
         ORDER BY 
             insrt_dtm DESC
         LIMIT 5

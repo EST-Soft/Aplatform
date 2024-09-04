@@ -15,7 +15,7 @@ public class ApplyDataDTO {
 			// 지원 일시
 			private int apy_dtm;
 			//지원 상태
-			private int apy_cndtn;
+			private String apy_cndtn;
 			//기업 열람 일시
 			private int entrprs_read_dtm;
 			//면접 일시

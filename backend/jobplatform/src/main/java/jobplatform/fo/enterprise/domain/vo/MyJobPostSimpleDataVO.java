@@ -10,6 +10,6 @@ public class MyJobPostSimpleDataVO {
     private int entrprs_sq;
     private String jbp_ttl;
     private String insrt_dtm;
-    private int jbp_cndtn;
+    private String jbp_cndtn;
     private List<ApplyConditionCount> applicationStatusList;
 }

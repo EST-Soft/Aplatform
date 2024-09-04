@@ -1,13 +1,7 @@
 <template>
-    <section class="page-header page-header-modern bg-color-grey page-header-lg">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-12 align-self-center p-static order-2 text-center">
-                    <h1 class="font-weight-bold text-dark">회원정보 수정</h1>
-                </div>
-            </div>
-        </div>
-    </section>
+    <div class="heading heading-border heading-middle-border">
+        <h1 class="font-weight-normal">회원정보 수정<strong class="font-weight-extra-bold"></strong></h1>
+    </div>
 
     <div class="d-flex justify-content-center mb-4">
         <div class="profile-image-outer-container">
@@ -85,20 +79,14 @@
                         <input class="form-control text-3 h-auto py-2" type="text" name="mbr_adrs" placeholder="상세주소">
                     </div>
                 </div>
+
+                <br>
                 
                 <div class="form-group row">
-                    <div class="form-group col-lg-9">
-                    </div >
-
-                    <div class="d-flex justify-content-right">
-                        <div class="form-group ">
-                            <input type="button" value="수정하기" class="btn btn-outline btn-tertiary rounded-0 mb-2">
-                        </div>
-                        <div class="form-group">
-                            <input type="submit" value="취소" class="btn btn-outline btn-quaternary rounded-0 mb-2">
-                        </div>
+                    <div class="button-container">
+                        <a href="#" id="abtn1" class="btn btn-modern btn-light mb-2">수정한다</a>
+                        <a href="#" id="abtn2" class="btn btn-modern btn-dark mb-2">취소</a>
                     </div>
-
                 </div>
             </form>
         </div>
@@ -111,7 +99,7 @@
 </template>
 
 <script setup>
-import { onMounted , ref} from 'vue';
+import { onMounted , ref, computed} from 'vue';
 // import store from '@/store'
 import { api } from "@/axios";
 import { useStore } from "vuex";
@@ -126,15 +114,17 @@ const img = ref(0);
 const file = ref(''); // 파일저장
 
 let result = ref({});
+const member = computed(() => store.getters.getMember);
+const isLoggedIn = computed(() => member.value !== null);
 
 onMounted(async () => {
   try {
     const response = await api.$get("/user/mypage/infrmtn", {
       params: {
-        mbr_sq: store.state.member.mbrSq,
+        mbr_sq: isLoggedIn.value.mbrSq
       },
     });
-    result.value = response.data || {};  // 데이터를 받지 못했을 때 기본 빈 객체로 설정
+    result.value = response || {};  // 데이터를 받지 못했을 때 기본 빈 객체로 설정
   } catch (error) {
     console.error("API 호출 오류:", error);
     result.value = {};  // 오류가 발생했을 때 기본 빈 객체로 설정
@@ -256,6 +246,31 @@ const uploadImg = async (e) => {
 .form-container {
     display: flex;
     justify-content: center;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.form-group {
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+.form-control {
+    box-shadow: none;
+    width: 280px;
+}
+
+.form-control:focus {
+    background-color: #f4f4f4;
+}
+  
+.button-container {
+    display: flex;
+}
+
+#abtn1, #abtn2 {
+    width: 110px;
 }
 
 </style>

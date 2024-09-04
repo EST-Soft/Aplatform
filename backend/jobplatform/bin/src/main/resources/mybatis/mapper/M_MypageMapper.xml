@@ -231,10 +231,10 @@
 	<!-- 포지션 제안 받은 공고 리스트 가져오기 -->
 	<select id="getPPJopPostingData" resultType="jobplatform.fo.user.domain.vo.M_JobPosting_pp">
 		SELECT 
-			sjp.jbp_sq, sjp.entrprs_sq, sjp.jbp_ttl, sjp.jbp_cntnt, sjp.crr, sjp.edctn, sjp.regstr_dln_dtm, sjp.pstn_prpsl_sq, sjp.pstn_prpsl_cndtn, sjp.prpsl_dtm, em.entrprs_name
+			sjp.jbp_sq, sjp.entrprs_sq, sjp.jbp_ttl, sjp.jbp_cntnt, sjp.crr_drtn, sjp.edctn, sjp.regstr_dln_dtm, sjp.pstn_prpsl_sq, sjp.pstn_prpsl_cndtn, sjp.prpsl_dtm, em.entrprs_name
 		FROM
 			(SELECT 
-				jp.jbp_sq, jp.entrprs_sq, jp.jbp_ttl, jp.jbp_cntnt, jp.crr, jp.edctn, jp.regstr_dln_dtm, pp.pstn_prpsl_sq, pp.pstn_prpsl_cndtn, pp.prpsl_dtm
+				jp.jbp_sq, jp.entrprs_sq, jp.jbp_ttl, jp.jbp_cntnt, jp.crr_drtn, jp.edctn, jp.regstr_dln_dtm, pp.pstn_prpsl_sq, pp.pstn_prpsl_cndtn, pp.prpsl_dtm
 			FROM
 				p2_tbl_job_posting_m jp, p2_tbl_position_proposal_m pp
 			WHERE 

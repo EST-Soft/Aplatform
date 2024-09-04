@@ -38,7 +38,7 @@
                     <label for="rsm_mp" class="form-label">연락처</label>
                     <input type="text" maxlength="100" readonly class="form-control-plaintext" name="rsm_mp" id="rsm_mp" v-bind:value="result.rsmInfo.rsm_mp">
                 </div>
-                <hr class="mt-3 mb-1" style="width: 510px; margin-right: 30px;"/>
+                <hr class="mt-3 mb-1" style="width: 580px; margin-right: 50px;"/>
                 <div class="col-sm-2 col-lg-7">
                     <label for="rsm_adrs" class="form-label">주소</label>
                   <input type="text" maxlength="100" readonly class="form-control-plaintext" name="rsm_adrs" id="rsm_adrs" v-bind:value="result.rsmInfo.rsm_adrs">
@@ -47,7 +47,7 @@
                     <label for="rsm_eml" class="form-label">이메일</label>
                   <input type="text" maxlength="100" readonly class="form-control-plaintext" name="rsm_eml" id="rsm_eml" v-bind:value="result.rsmInfo.rsm_eml">
                 </div>
-                <hr class="mt-3 mb-1" style="width: 510px; margin-right: 30px;"/>
+                <hr class="mt-3 mb-1" style="width: 580px; margin-right: 50px;"/>
                 <div class="col-sm-4 col-lg-4">
                     <label for="rsm_es" class="form-label">희망연봉</label>
                   <input type="text" maxlength="100" readonly class="form-control-plaintext" name="rsm_es" id="rsm_es" v-bind:value="result.rsmInfo.rsm_es">
@@ -63,7 +63,6 @@
                 <div class="col-sm-3 col-lg-3"></div>
               </div>
             </section>
-            <div class="row"></div>
           </div>
         </div>
 
@@ -73,6 +72,7 @@
             <label for="rsm_edctn" class="llabel">학력</label>
             <div v-for="item in result.rsmedctnInfo" :key="item.id">
               <div class="row g-4" id="rsm_edctn">
+                <div class="col-auto flex-grow-1"></div>
                   <div class="col-auto">
                     <input type="text" readonly maxlength="100" class="form-control-plaintext" :name="'schl_name_' + item.id" :id="'schl_name_' + item.id" :value="item.schl_name">
                   </div>
@@ -82,7 +82,7 @@
                   <div class="col-auto">
                     <input type="text" readonly maxlength="50" style="width: 100px;"  class="form-control-plaintext" :name="'schl_dprtmnt_' + item.id" :id="'schl_dprtmnt_' + item.id" :value="item.schl_dprtmnt">
                   </div>
-                  <div class="col-auto">
+                  <div class="col-auto ms-auto">
                     <input type="text" readonly maxlength="100" style="width: 200px;" class="form-control-plaintext" :name="'schl_n_date_' + item.id" :id="'schl_n_date_' + item.id" :value="item.schl_admsn_date + ' ~ ' + item.schl_grdtn_date">
                   </div>
               </div>
@@ -98,12 +98,15 @@
           <p>학력 정보를 로드할 수 없습니다.</p>
         </div>
 
+        <hr>
+
         <!-- 경력 정보 -->
         <div v-if="result.rsmcrInfo" class="titem">
           <div v-if="result.rsmcrInfo.length > 0">
             <label for="rsm_crr" class="llabel">경력</label>
             <div v-for="item in result.rsmcrInfo" :key="item.id">
               <div class="row g-4" id="rsm_crr">
+                 <div class="col-auto flex-grow-1"></div>
                   <div class="col-auto">
                     <input type="text" readonly maxlength="100" class="form-control-plaintext" :name="'entrprs_name_' + item.id" :id="'entrprs_name_' + item.id" :value="item.entrprs_name">
                   </div>
@@ -113,7 +116,7 @@
                   <div class="col-auto">
                     <input type="text" readonly maxlength="50" style="width: 200px;"  class="form-control-plaintext" :name="'entrprs_date_' + item.id" :id="'entrprs_date_' + item.id" :value="item.entrprs_jac_date + ' ~ ' + item.entrprs_rsgntn_date">
                   </div>
-                  <div class="col-auto">
+                  <div class="col-auto ms-auto">
                     <input type="text" readonly maxlength="100" style="width: 100px;" class="form-control-plaintext" :name="'entrprs_drtn_' + item.id" :id="'entrprs_drtn_' + item.id" :value="calculateDuration(item)">
                   </div>
               </div>
@@ -128,6 +131,8 @@
           <label class="llabel">경력</label>
           <p>경력 정보를 로드할 수 없습니다.</p>
         </div>
+
+        <hr>
 
         <!-- 기술 정보 -->
         <div v-if="result.rsmsklcdInfo" class="titem">
@@ -204,19 +209,22 @@
           <p>기술 정보를 로드할 수 없습니다.</p>
         </div>
 
+        <hr>
+
         <!-- 자격/면허증 정보 -->
         <div v-if="result.rsmcrtfctInfo" class="titem">
           <div v-if="result.rsmcrtfctInfo.length > 0">
             <label for="rsm_crtfct" class="llabel">자격/면허증</label>
             <div v-for="item in result.rsmcrtfctInfo" :key="item.id">
               <div class="row g-4" id="rsm_crtfct">
+                  <div class="col-auto flex-grow-1"></div>
                   <div class="col-auto">
                     <input type="text" readonly maxlength="100" class="form-control-plaintext" :name="'crtfct_name_' + item.id" :id="'crtfct_name_' + item.id" :value="item.crtfct_name">
                   </div>
                   <div class="col-auto">
                     <input type="text" readonly maxlength="100" class="form-control-plaintext" :name="'crtfct_isr_' + item.id" :id="'crtfct_isr_' + item.id" :value="item.crtfct_isr">
                   </div>
-                  <div class="col-auto">
+                  <div class="col-auto ms-auto">
                     <input type="text" readonly maxlength="100"  class="form-control-plaintext" :name="'crtfct_ad_' + item.id" :id="'crtfct_ad_' + item.id" :value="item.crtfct_ad">
                   </div>
               </div>
@@ -231,6 +239,8 @@
           <label class="llabel">자격/면허증</label>
           <p>자격/면허증 정보를 로드할 수 없습니다.</p>
         </div>
+
+        <hr>
 
         <!-- 자기소개서 정보 -->
         <div v-if="result.rsmsiInfo" class="titem">
@@ -259,15 +269,17 @@
           <p>자기소개서 정보를 로드할 수 없습니다.</p>
         </div>
 
+        <hr>
+
         <!-- 첨부파일 정보 -->
         <div v-if="result.rsmatchmntInfo" class="titem">
           <div v-if="result.rsmatchmntInfo.length > 0">
             <label for="rsm_atchmnt" class="llabel">첨부파일</label>
-            <div v-for="item in result.rsmatchmntInfo" :key="item.id">
-              <div class="row g-4" id="rsm_atchmnt">
-                  <div class="col-auto">
-                    <input type="text" readonly maxlength="100" class="form-control-plaintext" :name="'atchmnt_orgnl_fn_' + item.id" :id="'atchmnt_orgnl_fn_' + item.id" :value="item.atchmnt_orgnl_fn">
-                  </div>
+            <div class="attachment-container">
+              <div v-for="item in result.rsmatchmntInfo" :key="item.id" class="attachment-item">
+                <div id="rsm_atchmnt">
+                    <a :href="item.atchmnt_url" :download="item.atchmnt_orgnl_fn" id="bbtn" class="btn btn-outline btn-rounded btn-primary  btn-with-arrow mb-2">{{item.atchmnt_orgnl_fn}}<span><i class="fas fa-chevron-right"></i></span></a>
+                </div>
               </div>
             </div>
           </div>
@@ -281,6 +293,7 @@
           <p>첨부파일 정보를 로드할 수 없습니다.</p>
         </div>
 
+        <hr>
     </div>
   </template>
   
@@ -403,11 +416,61 @@
     margin-bottom: 50px;
   }
   .skitem{
-    margin-bottom: 10px;
+    margin-bottom: 20px;
   }
   .llabel{
-    margin-bottom: 10px;
-    font-size: 20px;
+    margin-bottom: 20px;
+    font-size: 30px;
+  }
+  
+  /* 첨부파일 아이콘 */
+  .attachment-container {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    padding: 0;
+  }
+  
+  .attachment-item {
+    display: inline-block;
+  }
+  #bbtn{
+    display: inline-block;
+  }
+  
+  /* 이미지 중앙 정렬 */
+  .call-to-action {
+    display: flex;
+    align-items: center;
+  }
+
+  .img-container {
+    display: flex;
+    align-items: center;
+  }
+
+  .img-thumbnail {
+    display: flex;
+    justify-content: center;
+  }
+
+  .row.g-4 {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    margin-bottom: 1rem;
+  }
+
+  .col-auto {
+    margin-right: 1rem;
+  }
+
+  .col-auto.ms-auto {
+    margin-left: auto;
+  }
+
+  .col-auto.flex-grow-1 {
+    flex-grow: 1; /* 빈 공간을 채우기 위한 div가 남은 공간을 채우도록 설정 */
   }
   </style>
   

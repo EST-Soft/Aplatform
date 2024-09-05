@@ -28,7 +28,7 @@ const actions = {
     commit("clearModalContent");
   },
   confirmModal({ commit, state }) {
-    if (state.onConfirm) state.onConfirm();
+    if (state.onConfirm) state.onConfirm(state.modalContent);
     commit("clearModalContent");
   },
   cancelModal({ commit, state }) {

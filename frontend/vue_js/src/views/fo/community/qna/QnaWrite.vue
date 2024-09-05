@@ -98,17 +98,18 @@ onMounted(() => {
     },
   });
 });
+
 const board = ref({
   brdTtl: "",
   brdCntnt: "",
-  brdGnrCd: "qna",
+  brdTypCode: "qna",
 });
 
 // 게시글 작성 폼 입력값 처리
 const saveBoard = async () => {
   const contentHtml = quillInstance.value.root.innerHTML.trim();
   // 불필요한 비어있는 태그들을 제거
-  const sanitizedContent = contentHtml.replace(/<h2><br><\/h2>/g, "").trim();
+  const sanitizedContent = contentHtml.replace(/<p><br><\/p>/g, "").trim();
 
   if (!board.value.brdTtl || !sanitizedContent) {
     showAlert(!board.value.brdTtl ? "제목을 입력하세요" : "내용을 입력하세요");

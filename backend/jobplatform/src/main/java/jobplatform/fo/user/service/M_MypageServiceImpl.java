@@ -34,21 +34,30 @@ public class M_MypageServiceImpl implements M_MypageService{
         // 대표 이력서 정보
         Map<String, Object> rsmInfo = mypageMapper.getRprsntvRsmInfo(mbr_sq);
         response.put("rsmInfo", rsmInfo);
-        
-        int rsm_sq = (int)rsmInfo.get("rsm_sq");
 
-        // 각 상태별 지원 개수
-        Map<String, Integer> EachCndtnApplyCount = mypageMapper.getEachCndtnApplyCount(rsm_sq);
-        response.put("EachCndtnApplyCount", EachCndtnApplyCount);
+        if(rsmInfo != null && rsmInfo.containsKey("rsm_sq")){
+            int rsm_sq = (int)rsmInfo.get("rsm_sq");
 
-        // 등록한 이력서, 스크랩한 공고, 포지션 제안 받은 개수
-        Map<String, Integer> myState = mypageMapper.getMyState(mbr_sq, rsm_sq);
-        response.put("myState", myState);
+            // 각 상태별 지원 개수
+            Map<String, Integer> EachCndtnApplyCount = mypageMapper.getEachCndtnApplyCount(rsm_sq);
+            response.put("EachCndtnApplyCount", EachCndtnApplyCount);
+    
+            // 등록한 이력서, 스크랩한 공고, 포지션 제안 받은 개수
+            Map<String, Integer> myState = mypageMapper.getMyState(mbr_sq, rsm_sq);
+            response.put("myState", myState);
+    
+            // 월별 캘린더 데이터
+            List<Map<String, Object>> calendarData = mypageMapper.getToMakeCalendarData(mbr_sq,rsm_sq, month);
+            response.put("calendarData", calendarData);
+            
+        }else{
 
-        // 월별 캘린더 데이터
-        List<Map<String, Object>> calendarData = mypageMapper.getToMakeCalendarData(mbr_sq,rsm_sq, month);
-        response.put("calendarData", calendarData);
-		
+            response.put("rsmInfo", new HashMap<>());
+            response.put("EachCndtnApplyCount", new HashMap<>());
+            response.put("myState", new HashMap<>());
+            response.put("calendarData", new ArrayList<>());
+        }
+       
 		return response;
 	}
 
@@ -155,9 +164,6 @@ public class M_MypageServiceImpl implements M_MypageService{
     public int refuseProposedPostion(int pstn_prpsl_sq) {
     	return mypageMapper.refuseProposedPostion(pstn_prpsl_sq);
     }
-
-
-    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 
 

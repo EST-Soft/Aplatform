@@ -3,8 +3,8 @@
 <mapper namespace="jobplatform.fo.user.domain.mapper.MypageMapper">
     <resultMap id="MemberEntityResultMap" type="jobplatform.fo.user.domain.entity.MemberEntity">
         <id property="mbrSq" column="mbr_sq"/>
-        <result property="sclCtgryCd" column="scl_ctgry_cd"/>
-        <result property="gndrCtgryCd" column="gndr_ctgry_cd"/>
+        <!-- <result property="sclCtgryCd" column="scl_ctgry_cd"/> -->
+        <result property="gndrTypCode" column="gndr_typ_code"/>
         <result property="mbrId" column="mbr_id"/>
         <result property="mbrName" column="mbr_name"/>
         <result property="mbrPswrd" column="mbr_pswrd"/>
@@ -18,10 +18,10 @@
         <result property="updtMbrSq" column="updt_mbr_sq"/>
         <result property="updtDtm" column="updt_dtm"/>
         <result property="dltDtm" column="dlt_dtm"/>
-        <result property="dltChck" column="dlt_chck"/>
-        <result property="useChck" column="use_chck"/>
+        <result property="dltYn" column="dlt_yn"/>
+        <result property="useYn" column="use_yn"/>
         <result property="pstnPrpslAcceptYn" column="pstn_prpsl_accept_yn"/>
-        <result property="social" column="social"/>
+        <!-- <result property="social" column="social"/> -->
     </resultMap>
 
     <select id="getJoinCondition" parameterType="int" resultType="java.util.Map">

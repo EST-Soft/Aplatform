@@ -38,9 +38,11 @@ import EnterFindMain from "../views/fo/auth/EnterFind/EnterFindMain.vue";
 import QnADetail from "../views/fo/community/qna/QnADetail.vue";
 import QnAUpdate from "../views/fo/community/qna/QnAUpdate.vue";
 import QnaWrite from "../views/fo/community/qna/QnaWrite.vue";
+import QnAAnswer from "../views/fo/community/qna/QnAAnswer.vue"
 import FeedbackWrite from "../views/fo/community/feedback/FeedbackWrite.vue";
 import FeedbackDetail from "../views/fo/community/feedback/FeedbackDetail.vue";
 import FeedbackUpdate from "../views/fo/community/feedback/FeedbackUpdate.vue";
+
 // import store from "@/store"; // Vuex 스토어를 직접 가져옵니다.
 
 const routes = [
@@ -60,7 +62,7 @@ const routes = [
       },
       {
         path: "ppAcception",
-        component: MypagePPAcception,
+        component:MypagePPAcception ,
       },
       {
         path: "proposedPosition",
@@ -173,6 +175,11 @@ const routes = [
           {
             path: "write",
             component: QnaWrite,
+          },
+          {
+            path: "answer/:id",
+            component: QnAAnswer,
+
           },
         ],
       },

@@ -35,6 +35,8 @@
               <th>작성자</th>
               <th>등록일</th>
               <th>조회수</th>
+              <th>답글수</th>
+              <th>채택여부</th>
             </tr>
           </thead>
           <tbody>
@@ -47,6 +49,19 @@
               <td class="small-text">{{ board.createdBy }}</td>
               <td class="small-text">{{ board.insrtDtm.slice(0, 10) }}</td>
               <td class="small-text">{{ board.brdHits }}</td>
+              <td class="small-text">{{ board.answerCount }}</td>
+              <td v-if="board.answerCheck == 1" class="small-text">
+                <img
+                    alt="Check"
+                    width="20"
+                    height="20"
+                    data-sticky-width="82"
+                    data-sticky-height="40"
+                    src="/img/check.png"
+                  />
+
+              </td>
+              <td v-else class="small-text"></td>
             </tr>
           </tbody>
         </table>
@@ -122,7 +137,7 @@ const curPage = ref(0);
 const prevBlock = ref(0);
 const nextBlock = ref(0);
 const lastPage = ref(0);
-const search = ref({ page: 1, sk: "", sv: "", brdgnrCd: "qna" });
+const search = ref({ page: 1, sk: "", sv: "", brdTypCode: "qna" });
 
 const getBoardList = async () => {
   const queryString = Object.entries(search.value)
@@ -132,7 +147,40 @@ const getBoardList = async () => {
     console.log(queryString);
     const data = await api.$get("/board?" + queryString);
     boardList.value = data.data || [];
-    console.log(boardList);
+    // console.log("ㅁㄴㅇㅁㅁㄴ", boardList.value);
+
+    const answerPromises = boardList.value.map(board =>
+      api.$get("/answer/" + board.brdSq)
+        .then(answer => ({
+          brdSq: board.brdSq,
+          answerCheck: answer.checkAnswer || 0,
+          answerCount: answer.countAnswer || 0
+        }))
+        .catch(error => {
+          console.error(error);
+          return {
+            brdSq: board.brdSq,
+            answerCheck: 0,
+            answerCount: 0
+          };
+        })
+    );
+
+    const answers = await Promise.all(answerPromises);
+
+    for(const board of boardList.value){
+      try{
+        // const answer = await api.$get("/answer/" + board.brdSq);
+        const answer = answers.find(a => a.brdSq === board.brdSq);
+        board.answerCheck = answer ? answer.answerCheck : 0;
+        board.answerCount = answer ? answer.answerCount : 0;
+
+      }catch(error){
+        console.error("값 추가중 오류 발생", error);
+        board.answerCheck = 0;
+        board.countAnswer = 0;
+      }
+    }
     if (data.pagination) {
       const {
         endPage,
@@ -157,6 +205,9 @@ const getBoardList = async () => {
     console.error("Failed to fetch board list:", error);
   }
 };
+
+
+
 
 const onSearch = () => {
   if (search.value.sk === "" || search.value.sv === "") {
@@ -185,7 +236,7 @@ onMounted(() => {
 
 <style scoped>
 .board-list-container {
-  max-width: 1000px;
+  max-width: 1100px;
   margin: 0 auto;
   padding: 20px;
 }
@@ -213,7 +264,7 @@ onMounted(() => {
   vertical-align: middle;
 }
 .title-cell {
-  width: 70%;
+  width: 60%;
 }
 .title-cell:hover {
   cursor: pointer;

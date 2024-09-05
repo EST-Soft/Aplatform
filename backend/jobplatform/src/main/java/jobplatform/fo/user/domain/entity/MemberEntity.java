@@ -32,12 +32,12 @@ public class MemberEntity {
     private int mbrSq;
 
     // 소셜_유형_코드
-    @Column(name = "scl_ctgry_cd", nullable = true, columnDefinition = "varchar(20)")
-    private String sclCtgryCd;
+    // @Column(name = "scl_ctgry_cd", nullable = true, columnDefinition = "varchar(20)")
+    // private String sclCtgryCd;
 
     // 성별_유형_코드
-    @Column(name = "gndr_ctgry_cd", nullable = false, columnDefinition = "varchar(20)")
-    private String gndrCtgryCd;
+    @Column(name = "gndr_typ_code", nullable = false, columnDefinition = "varchar(20)")
+    private String gndrTypCode;
 
     // 회원_아이디
     @Column(name = "mbr_id", nullable = false, columnDefinition = "varchar(20)")
@@ -105,24 +105,24 @@ public class MemberEntity {
 //    private LocalDateTime dltDtm;
     // 삭제_일시--DB랑 구조가 달라서 변경함./
 //    @LastModifiedDate // 해당 필드가 DB에 저장되거나 업데이트될 때마다 현재 시간으로 업데이트
-    @Column(name = "dlt_dtm", nullable = true)
-    private LocalDateTime dltDtm;
+    // @Column(name = "dlt_dtm", nullable = true)
+    // private LocalDateTime dltDtm;
 
     // 삭제_여부
-    @Column(name = "dlt_chck", nullable = false, columnDefinition = "boolean default false")
-    private Boolean dltChck;
+    @Column(name = "dlt_yn", nullable = false, columnDefinition = "boolean default false")
+    private char dltYn;
 
     // 사용_여부
-    @Column(name = "use_chck", nullable = false, columnDefinition = "boolean default true")
-    private Boolean useChck;
+    @Column(name = "use_yn", nullable = false, columnDefinition = "boolean default true")
+    private char useYn;
 
 //    // 제안 수락 여부--없는데 추가했음.
     @Column(name = "pstn_prpsl_accept_yn", nullable = false, columnDefinition = "char(1)")
     private String pstnPrpslAcceptYn;
 //
 //    // 소셜 로그인 여부--없는데 추가했음.
-    @Column(name = "social", nullable = true, columnDefinition = "bit(1)")
-    private Boolean social;
+    // @Column(name = "social", nullable = true, columnDefinition = "bit(1)")
+    // private Boolean social;
 
 
 }

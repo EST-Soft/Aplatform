@@ -23,7 +23,7 @@ public class BoardServiceImp implements BoardService{
     }
 
     @Override
-    public Header<List<BoardEntity>> List(int page, int size, Search search,String brdgnrCd) {
+    public Header<List<BoardEntity>> List(int page, int size, Search search,String brdTypCode) {
         HashMap<String, Object> paramMap = new HashMap<>();
 
         // 페이지 계산
@@ -39,13 +39,13 @@ public class BoardServiceImp implements BoardService{
             paramMap.put("sk", search.getSk());
             paramMap.put("sv", search.getSv());
         }
-        System.out.println(brdgnrCd);
-        if (brdgnrCd != null && !brdgnrCd.isEmpty()) {
-            System.out.println("출력되고있어"+brdgnrCd);
+        System.out.println(brdTypCode);
+        if (brdTypCode != null && !brdTypCode.isEmpty()) {
+            System.out.println("출력되고있어"+brdTypCode);
 
-            paramMap.put("brdGnrCd", brdgnrCd);
+            paramMap.put("brdTypCode", brdTypCode);
         }
-        System.out.println(paramMap);
+        System.out.println("보드서비스 : " + paramMap);
         // 데이터 가져오기
         List<BoardEntity> boardList = boardMapper.findAll(paramMap);
 

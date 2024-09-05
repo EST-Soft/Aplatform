@@ -62,6 +62,8 @@ public class JobPostingController {
 	@PostMapping("/board/jobPostingInsert")
 	public ResponseEntity<Map<String, Object>> insertJobPosting(@RequestBody JobPostingEntity jpe) {
 	    int insertedJbpSq = jobPostingService.insertJobPosting(jpe);
+
+		System.out.println("jpe :: " + jpe);
 	    
 	    // 상세 페이지로 이동
 	    String detailUrl = "/board/detail/jobPosting/" + insertedJbpSq;

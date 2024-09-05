@@ -155,6 +155,7 @@ import { ref, computed, onMounted } from 'vue';
 import { api } from '@/axios.js';
 import { useRouter } from 'vue-router';
 import QuillEditorComponent from '@/components/common/Editor.vue';
+import store from '../../../store';
 
 const areas = ref([]);
 const jobs = ref([]);
@@ -163,7 +164,7 @@ const selectedJobs = ref([]);
 
 
 const jbpSq = ref(0);
-const entrprsSq = ref(1);
+const entrprsSq = store.getters.getMember.pk;
 const jbpTl = ref('');
 const jbpCntnt = ref('');
 const cr = ref(801);
@@ -224,7 +225,7 @@ const submitPost = () => {
   api.$post('/board/jobPostingInsert', {
       jbpSq: jbpSq.value,
       enterpriseMember: {
-        entrprsSq: entrprsSq.value,
+        entrprsSq: entrprsSq,
       },
       jbpTl: jbpTl.value,
       jbpCntnt: jbpCntnt.value,

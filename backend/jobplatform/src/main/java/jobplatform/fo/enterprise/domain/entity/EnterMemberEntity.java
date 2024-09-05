@@ -29,11 +29,11 @@ public class EnterMemberEntity {
     @Column(name = "entrprs_sq", nullable = false)
     private long entrprsSq; // 기업_순번
 
-    @Column(name = "scl_ctgry_cd", nullable = true)
-    private String sclctGryCd; // 소셜_유형_코드
+    // @Column(name = "scl_ctgry_cd", nullable = true)
+    // private String sclctGryCd; // 소셜_유형_코드
 
-    @Column(name = "gndr_ctgry_cd", nullable = false)
-    private String gndrCtryCd; // 성별_유형_코드
+    @Column(name = "gndr_typ_code", nullable = false)
+    private String gndrTypCode; // 성별_유형_코드
 
     @Column(name = "entrprs_id", nullable = false)
     private String entrprsId; // 기업_아이디
@@ -103,7 +103,7 @@ public class EnterMemberEntity {
     @Column(name = "del", nullable = true)
     private String del; // 삭제 여부
 
-    @Column(name = "social", nullable = true)
-    private String social; // 소셜 여부
+    // @Column(name = "social", nullable = true)
+    // private String social; // 소셜 여부
 
 }

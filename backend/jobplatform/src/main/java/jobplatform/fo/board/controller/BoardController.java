@@ -32,13 +32,14 @@ public class BoardController {
     }
 
     @GetMapping("") // 리스트
-    public ResponseEntity<?> boardList(@RequestParam(defaultValue = "general") String brdgnrCd,
+    public ResponseEntity<?> boardList(@RequestParam(defaultValue = "general") String brdTypCode,
                                        @RequestParam(defaultValue = "0") int page,
                                        @RequestParam(defaultValue = "10") int size,
                                        Search search) {
         try {
-            System.out.println(brdgnrCd);
-            Header<List<BoardEntity>> boardList = boardService.List(page, size, search, brdgnrCd);
+            System.out.println(brdTypCode);
+            Header<List<BoardEntity>> boardList = boardService.List(page, size, search, brdTypCode);
+            System.out.println("게시판에서는 어떻게 출력? " + boardList);
             return ResponseEntity.ok(boardList);
         } catch (Exception e) {
             System.out.println("Error during fetching board list: " + e.getMessage());

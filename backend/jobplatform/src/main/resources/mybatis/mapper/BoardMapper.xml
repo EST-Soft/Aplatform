@@ -91,8 +91,8 @@
         p3_tbl_enterprise_member_m e ON b.entrprs_sq = e.entrprs_sq  <!-- 기업 회원 테이블과 LEFT JOIN -->
         <where>
             b.dlt_yn = 'N'  <!-- 삭제되지 않은 게시글만 조회 -->
-            <if test="brdGnrCd != null and brdGnrCd != ''">
-                AND brd_gnr_code = #{brdGnrCd}  <!-- 게시글 종류 코드로 필터링 -->
+            <if test="brdTypCode != null and brdTypCode != ''">
+                AND brd_typ_code = #{brdTypCode}  <!-- 게시글 종류 코드로 필터링 -->
             </if>
             <if test="sk != null and sk != ''">
                 <choose>

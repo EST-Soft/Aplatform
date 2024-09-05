@@ -37,7 +37,7 @@ public class BoardController {
                                        @RequestParam(defaultValue = "10") int size,
                                        Search search) {
         try {
-            System.out.println(brdTypCode);
+            System.out.println("현재 게시판 : " + brdTypCode);
             Header<List<BoardEntity>> boardList = boardService.List(page, size, search, brdTypCode);
             return ResponseEntity.ok(boardList);
         } catch (Exception e) {

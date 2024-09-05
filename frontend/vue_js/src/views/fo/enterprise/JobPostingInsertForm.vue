@@ -8,8 +8,8 @@
       </section>
 
       <div class="mb-3">
-        <label for="jbpTtl" class="form-label">제목</label>
-        <input type="text" v-model="jbpTtl" class="form-control" id="jbpTtl" placeholder="제목을 입력하세요">
+        <label for="jbpTl" class="form-label">제목</label>
+        <input type="text" v-model="jbpTl" class="form-control" id="jbpTl" placeholder="제목을 입력하세요">
       </div>
 
       <div class="row">
@@ -60,20 +60,20 @@
         <div class="col-md-3 mb-3">
           <label for="cr" class="form-label">경력</label>
           <select v-model="cr" class="form-control" id="cr">
-            <option value="enr">경력무관</option>
-            <option value="exprncd">경력</option>
-            <option value="nwcmr">신입</option>
+            <option value="801">경력무관</option>
+            <option value="802">신입</option>
+            <option value="803">경력</option>
           </select>
         </div>
         <div class="col-md-3 mb-3">
           <label for="edctn" class="form-label">학력</label>
           <select v-model="edctn" class="form-control" id="edctn">
-            <option value="denm">학력무관</option>
-            <option value="hs">고등학교 이상</option>
-            <option value="jc">대학교(2,3년제) 이상</option>
-            <option value="unvrsty">대학교(4년제) 이상</option>
-            <option value="mid">석사</option>
-            <option value="did">박사</option>
+            <option value="606">학력무관</option>
+            <option value="605">고등학교 이상</option>
+            <option value="604">대학교(2,3년제) 이상</option>
+            <option value="603">대학교(4년제) 이상</option>
+            <option value="602">석사</option>
+            <option value="601">박사</option>
           </select>
         </div>
         <!-- <div class="col-md-3 mb-3">
@@ -155,6 +155,7 @@ import { ref, computed, onMounted } from 'vue';
 import { api } from '@/axios.js';
 import { useRouter } from 'vue-router';
 import QuillEditorComponent from '@/components/common/Editor.vue';
+import store from '../../../store';
 
 const areas = ref([]);
 const jobs = ref([]);
@@ -163,12 +164,12 @@ const selectedJobs = ref([]);
 
 
 const jbpSq = ref(0);
-const entrprsSq = ref(1);
-const jbpTtl = ref('');
+const entrprsSq = store.getters.getMember.pk;
+const jbpTl = ref('');
 const jbpCntnt = ref('');
-const crrDrtn = ref('drtn');
+const cr = ref(801);
 const sklName = ref('');
-const edctn = ref('ednm');
+const edctn = ref(606);
 const workForm = ref('정규직');
 const slry = ref('');
 const workStartTime = ref('');
@@ -213,7 +214,7 @@ onMounted(() => {
 });
 
 const submitPost = () => {
-  if (jbpTtl.value.trim() === '' || jbpCntnt.value.trim() === '') {
+  if (jbpTl.value.trim() === '' || jbpCntnt.value.trim() === '') {
     alert('제목과 내용을 확인하세요.');
     return;
   }
@@ -224,11 +225,11 @@ const submitPost = () => {
   api.$post('/board/jobPostingInsert', {
       jbpSq: jbpSq.value,
       enterpriseMember: {
-        entrprsSq: entrprsSq.value,
+        entrprsSq: entrprsSq,
       },
-      jbpTtl: jbpTtl.value,
+      jbpTl: jbpTl.value,
       jbpCntnt: jbpCntnt.value,
-      crrDrtn: crrDrtn.value,
+      cr: cr.value,
       sklName: sklName.value,
       jobName: jobNames,
       edctn: edctn.value,
@@ -260,11 +261,11 @@ const submitPost = () => {
 };
 
 const clearForm = () => {
-  jbpTtl.value = '';
+  jbpTl.value = '';
   jbpCntnt.value = '';
-  crrDrtn.value = '경력무관';
+  cr.value = 801;
   sklName.value = '';
-  edctn.value = '학력무관';
+  edctn.value = 606;
   workForm.value = '정규직';
   slry.value = '';
   workStartTime.value = '';

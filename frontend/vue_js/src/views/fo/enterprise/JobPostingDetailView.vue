@@ -99,7 +99,7 @@
           <!-- 수정, 삭제 버튼 -->
           <div class="row mt-3">
             <div class="col d-flex justify-content-end">
-              <button class="btn btn-success" @click="goUpdatePage">수정</button>
+              <button class="btn btn-success" @click="goUpdatePage(jbp)">수정</button>
               <button class="btn btn-danger ms-2" @click="confirmDelete">삭제</button>
             </div>
           </div>
@@ -114,6 +114,7 @@
   import { useRoute, useRouter } from 'vue-router';
   import QuillEditorComponent from '@/components/common/Editor.vue';
 
+
   const isEditable = ref(true);
 
   const route = useRoute();
@@ -121,8 +122,12 @@
   
   const loading = ref(true);
 
+
+
+
   const jbp = ref({
     jbpSq: 0,
+    entrprsSq : 0,
     enterpriseName: "",
     jbpTl: "",
     jbpCntnt: "",
@@ -150,6 +155,7 @@
     try {
       const response = await api.$get(`/board/detail/jobPosting/${jbpSq}`);
       jbp.value = response;
+      
     } catch (error) {
       console.error('Error fetching job posting detail:', error);
     } finally {
@@ -157,11 +163,15 @@
     }
   };
   
+ 
+  
   onMounted(() => {
     fetchJobPostingDetail();
+    const entrprsSq = jbp.value.entrprsSq;
+    console.log("entrprsSqqqqqq", entrprsSq);
   });
   
-  const goUpdatePage = () => {
+  const goUpdatePage = (jbp) => {
     isEditable.value = false;
     router.push(`/board/jobPostingUpdate/${jbp.value.jbpSq}`);
   };

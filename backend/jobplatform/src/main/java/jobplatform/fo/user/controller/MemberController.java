@@ -141,7 +141,7 @@ public class MemberController {
         if (userData.getMbrPrvcyTrmsChck() == null || userData.getMbrPrvcyTrmsChck().isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("개인정보 약관 체크가 누락되었습니다.");
         }
-        if (userData.getGndrCtgryCd() == null || userData.getGndrCtgryCd().isEmpty()) {
+        if (userData.getGndrTypCode() == null || userData.getGndrTypCode().isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("성별 유형 코드가 누락되었습니다.");
         }
         // 아이디 중복 체크
@@ -152,7 +152,7 @@ public class MemberController {
 
         try {
             // admin일 경우 로직 추가해야함
-            userData.setInsrtMbrSq(99L); // 임시 값 설정
+            userData.setInsrtMbrSq(99); // 임시 값 설정
             userData.setDltYn('N');
             userData.setUseYn('Y');
 
@@ -432,8 +432,9 @@ public class MemberController {
                     member.setMbrEmlAdrs(email);
                     member.setMbrMp(mobile.replace("-", ""));
                     member.setMbrBd(birthDate);
-                    member.setGndrCtgryCd(gender);
+                    member.setGndrTypCode(gender);
 
+                    // member.setSclCtgryCd("NAVER");
                     member.setDltYn('N');
                     member.setUseYn('Y');
                     member.setMbrEmlRcvChck("N");    // 임시 값 설정
@@ -464,7 +465,7 @@ public class MemberController {
                 return new ResponseEntity<>(response, HttpStatus.OK);
             } else {
                 // 새로운 회원이면 회원 가입 처리 후 로그인 성공으로 처리
-                member.setInsrtMbrSq(99L); // 임시 값 설정
+                member.setInsrtMbrSq(99); // 임시 값 설정
                 MemberEntity savedUser = memberRepository.save(member); // 처음 저장
                 savedUser.setInsrtMbrSq(savedUser.getMbrSq());
                 memberRepository.save(savedUser);

@@ -6,7 +6,7 @@
       <div class="container">
         <div class="row">
           <div class="col-md-12 align-self-center p-static order-2 text-center">
-            <h1 class="font-weight-bold text-dark">qna 게시판 - 글 보기</h1>
+            <h1 class="font-weight-bold text-dark">Q&A 게시판 - 글 보기</h1>
           </div>
         </div>
       </div>
@@ -36,9 +36,110 @@
           :to="`/board/qna/update/${boardId}`"
           >수정</router-link
         >
+        
         <button class="btn btn-danger me-2" @click="boardDelete">삭제</button>
         <button class="btn btn-secondary" @click="backToList">취소</button>
       </div>
+      <div v-if="loginCheck" class="d-flex justify-content-end mt-4">
+        <div class="btn btn-primary me-2" @click="openEditorModal">
+          답변하기
+        </div>  
+      </div>
+
+      <div class="answer-list-container">
+    <header class="header">
+      <h1>답변</h1>
+    </header>
+
+    <div class="answer-content">
+      <div class="table-responsive">
+        <table class="table table-hover table-striped">
+          <thead>
+            <tr v-if="answerList > 0">
+              <th>제목</th>
+              <th>작성자</th>
+              <th>등록일</th>
+              <th>조회수</th>
+              <th>채택여부</th>
+            </tr>
+            <tr v-else>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody v-if="answerList.length > 0">
+            <tr v-for="board in boardList" :key="board.brdSq">
+              <td class="title-cell">
+                <router-link :to="`/board/qna/${board.brdSq}`">
+                  {{ board.brdTtl }}
+                </router-link>
+              </td>
+              <td class="small-text">{{ board.createdBy }}</td>
+              <td class="small-text">{{ board.insrtDtm.slice(0, 10) }}</td>
+              <td class="small-text">{{ board.brdHits }}</td>
+              <td class="small-text">채택</td>
+            </tr>
+          </tbody>
+          <tbody v-else>
+            <tr>
+              <td colspan="5"><h3>현재 등록된 답변이 없습니다</h3></td>               
+            </tr>
+          </tbody>
+
+        </table>
+      </div>
+      <div class="pagination-wrapper">
+        <ul class="pagination justify-content-center">
+          <li class="page-item" :class="{ disabled: curPage === 1 }">
+            <button
+              class="page-link"
+              @click="goToPage(1)"
+              :disabled="curPage === 1"
+            >
+              &lt;&lt;
+            </button>
+          </li>
+          <li class="page-item" :class="{ disabled: curPage === 1 }">
+            <button
+              class="page-link"
+              @click="goToPage(curPage - 1)"
+              :disabled="curPage === 1"
+            >
+              &lt;
+            </button>
+          </li>
+          <li
+            v-for="(page, index) in pageList"
+            :key="index"
+            class="page-item"
+            :class="{ active: curPage === page }"
+          >
+            <button class="page-link" @click="goToPage(page)">
+              {{ page }}
+            </button>
+          </li>
+          <li class="page-item" :class="{ disabled: curPage === lastPage }">
+            <button
+              class="page-link"
+              @click="goToPage(curPage + 1)"
+              :disabled="curPage === lastPage"
+            >
+              &gt;
+            </button>
+          </li>
+          <li class="page-item" :class="{ disabled: curPage === lastPage }">
+            <button
+              class="page-link"
+              @click="goToPage(lastPage)"
+              :disabled="curPage === lastPage"
+            >
+              &gt;&gt;
+            </button>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+      
       <div class="comments-section">
         <div v-if="loginCheck" class="comment-input">
           <textarea
@@ -49,6 +150,7 @@
           <button @click="submitComment" class="comment-submit-button">
             댓글 달기
           </button>
+          
         </div>
 
         <div
@@ -120,21 +222,188 @@
     </div>
     <!-- 게시글 상세 내용 끝 -->
   </div>
+
+  <div  v-show="answerModal" @click="openEditorModal" class="answer">
+    <div class="answerModal">
+      
+      <div class="container mt-5">
+    <section
+      class="page-header page-header-modern bg-color-grey page-header-lg text-center"
+    >
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12 align-self-center p-static order-2 text-center">
+            <h1 class="font-weight-bold text-dark">QnA 게시판 - 답변 작성</h1>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- 답글 작성 폼 시작 -->
+    <div class="form-container shadow-sm p-4 bg-white rounded">
+      <div class="form-group mb-3">
+        <label for="title" class="form-label">제목</label>
+        <input
+          type="text"
+          id="answrTtl"
+          v-model="answer.answrTtl"
+          placeholder="제목을 입력하세요"
+          class="form-control"
+        />
+      </div>
+      <div class="form-group mb-4">
+        <label for="contents" class="form-label">내용</label>
+        <!-- <textarea
+          id="brdCntnt"
+          v-model="board.brdCntnt"
+          placeholder="내용을 입력하세요"
+          class="form-control"
+          rows="10"
+        ></textarea> -->
+        <div class="editer">
+          <!-- 툴바 -->
+          <div id="toolbar">
+            <select class="ql-font"></select>
+            <select class="ql-size"></select>
+            <button class="ql-bold"></button>
+            <button class="ql-italic"></button>
+            <button class="ql-underline"></button>
+            <button class="ql-strike"></button>
+            <select class="ql-color"></select>
+            <select class="ql-background"></select>
+            <button class="ql-script" value="sub"></button>
+            <button class="ql-script" value="super"></button>
+            <button class="ql-header" value="1"></button>
+            <button class="ql-header" value="2"></button>
+            <button class="ql-blockquote"></button>
+            <button class="ql-code-block"></button>
+            <button class="ql-list" value="ordered"></button>
+            <button class="ql-list" value="bullet"></button>
+            <button class="ql-indent" value="-1"></button>
+            <button class="ql-indent" value="+1"></button>
+            <button class="ql-direction" value="rtl"></button>
+            <select class="ql-align"></select>
+            <button class="ql-link"></button>
+            <!-- <button class="ql-image"></button> -->
+            <!-- <button class="ql-video"></button> -->
+            <button class="ql-clean"></button>
+          </div>
+
+          <!-- 에디터 -->
+          <div ref="editor" style="height: 300px"></div>
+        </div>
+      </div>
+      <div class="button-container d-flex justify-content-between">
+        <button class="btn btn-success" @click="saveAnswer">저장</button>
+        <button class="btn btn-secondary" @click="backToDetail">취소</button>
+      </div>
+    </div>
+    <!-- 답글 작성 폼 끝 -->
+  </div>
+
+    </div>
+  </div>
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted, computed, nextTick } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { api } from "@/axios";
 import { showAlert, showConfirm } from "../../../../utill/utillModal";
 import { useStore } from "vuex";
+// import Modal from "@/components/modal/textModal.vue";
+import Quill from "quill";
+
+const store = useStore();
+const member = computed(() => store.getters.getMember);
+const quillInstance = ref(null);
+const editor = ref(null);
+const answer = ref({
+  answrTtl: "",
+  answrCntnt: "",
+  brdSq: 0,
+  mbrSq: 0,
+  entrprsSq: 0,
+  atchmntSq: 0,
+})
+
+
+
+// 답글 작성 폼 입력값 처리
+const saveAnswer = async () => {
+  const contentHtml = quillInstance.value.root.innerHTML.trim();
+  const sanitizedContent = contentHtml.replace(/<p><br><\/p>/g, "").trim();
+  // 불필요한 비어있는 태그들 제거
+
+  if(!answer.value.answrTtl || !sanitizedContent){
+    showAlert(!answer.value.answrTtl ? "제목을 입력하세요" : "내용을 입력하세요");
+    return;
+  }
+
+  showConfirm("답변을 등록 하시겠습니까?", async () => {
+    if(member.value.mbrSq){
+      answer.value.mbrSq = member.value.mbrSq;
+    }else if(member.value.pk){
+      answer.value.entrprsSq = member.value.pk;
+    }
+    try{
+      answer.value.answrCntnt = contentHtml;
+      answer.value.brdSq = board.value.brdSq;
+      console.log ("답변 ~~~~~~~~~~", answer);
+      await api.$post("/answer", answer.value);
+      showAlert("답변이 등록되었습니다.");
+      setTimeout(() => {
+        window.location.href = `/board/qna/` + board.value.brdSq;
+      }, 2000);
+    }catch(error){
+      console.error("Error saving Answer : " , error);
+    }
+  });
+
+}
+
+const answerModal = ref(false);
+
+const openEditorModal = () => {
+      answerModal.value = true;
+      nextTick(() => {
+        // 에디터가 보이게 된 후 초기화
+        if (!quillInstance.value) {
+          quillInstance.value = new Quill(editor.value, {
+            theme: 'snow',
+            modules: {
+              toolbar: '#toolbar',
+            },
+          });
+        }
+      });
+    };
+
+// const clearEditor = () => {
+//   if(quillInstance.value){
+//     quillInstance.value.setText('');
+//   }
+// }
+
+const backToDetail = () => {
+  showConfirm("작성을 취소 하시겠습니까?", () => {
+    const brdSq = board.value.brdSq;
+    console.log("boardSq : " + brdSq);
+    window.location.href = `/board/qna/` + brdSq;
+  })
+}
+
 
 const newComment = ref("");
 const editingCommentId = ref(null);
 const editedContent = ref("");
 
-const store = useStore();
-const member = computed(() => store.getters.getMember);
+const goToPage = (page) => {
+  if (page >= 1 && page <= lastPage.value) {
+    search.value.page = page;
+  }
+};
+
+
 const isLoggedIn = computed(() => {
   if (!member.value) {
     return false;
@@ -286,8 +555,59 @@ const boardDelete = () => {
   );
 };
 
+const answerList = ref([]);
+const pageList = ref([]);
+const curPage = ref(0);
+const prevBlock = ref(0);
+const nextBlock = ref(0);
+const lastPage = ref(0);
+const search = ref({ page: 1, brdSq: "${board.brdSq}" });
+
+
+const getAnswerList = async () => {
+  try{
+    console.log("brdSq" + route.params.id );
+    const data = await api.$get("/answer/qna/" + route.params.id);
+    answerList.value = data.data || [];
+    console.log(answerList.value.length);
+    if(data.pagination){
+      const {
+        endPage,
+        nextBlock: nextPageBlock,
+        prevBlock: previousBlock,
+        startPage,
+        totalPageCnt,
+      } = data.pagination;
+      prevBlock.value = previousBlock;
+      nextBlock.value = nextPageBlock;
+      lastPage.value = totalPageCnt;
+      const tmpPages = [];
+      for(let i = startPage; i <= endPage; i++){
+        tmpPages.push(i);
+      }
+      pageList.value = tmpPages;
+    }else{
+      console.error("Pagination data is missing.");
+    }
+  }catch(error){
+    console.error("Failed to fetch answer list:", error);
+  }
+}
+
+
+
+
+
 onMounted(async () => {
+  await nextTick(); // DOM 업데이트가 완료될 때까지 대기
+  getAnswerList();
   try {
+    quillInstance.value = new Quill(editor.value, {
+    theme: "snow",
+    modules: {
+      toolbar: "#toolbar",
+    }
+  });
     const response = await api.$get(`/board/${boardId.value}`);
     board.value = response;
   } catch (error) {
@@ -414,4 +734,181 @@ hr {
   display: flex;
   gap: 10px;
 }
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000; /* 모달이 다른 콘텐츠 위에 오도록 */
+}
+
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 5px;
+  width: 300px;
+  position: relative;
+}
+
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+textarea {
+  width: 100%;
+  height: 100px;
+  margin-top: 10px;
+}
+
+.answer{
+  height: 1000px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  bottom: 1300px;
+}
+
+.answerModal{
+  height: 800px;
+  width: 60%;
+  background-color: skyblue;
+  text-align: center;
+  z-index: 1000;
+}
+
+section {
+  padding: 30px 0 !important;
+}
+
+.form-container {
+  flex-direction: column;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  font-weight: bold;
+}
+
+.form-control {
+  border-radius: 5px;
+  width: 100%; /* 이 속성으로 입력 필드가 컨테이너 너비를 채우게 합니다 */
+}
+
+.button-container {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.button-container .btn {
+  min-width: 100px; /* 버튼 너비를 고정합니다 */
+  padding: 10px 20px;
+}
+
+/* 에디터 컨테이너 스타일 */
+#editor {
+  border: 1px solid #ccc;
+  padding: 10px;
+  background-color: #fff;
+}
+
+/* 툴바 버튼 스타일 */
+#toolbar .ql-formats button,
+#toolbar .ql-formats select {
+  margin-right: 5px;
+}
+
+/* 툴바 레이아웃 */
+#toolbar {
+  border: 1px solid #ccc;
+  background-color: #f3f3f3;
+  padding: 8px;
+  margin-bottom: 10px;
+}
+
+
+.answer-list-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.answer-content {
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  text-align: center;
+}
+
+.table {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.table th,
+.table td {
+  vertical-align: middle;
+}
+.title-cell {
+  width: 70%;
+}
+.title-cell:hover {
+  cursor: pointer;
+}
+.title-cell a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.title-cell a:hover {
+  text-decoration: underline;
+}
+
+.small-text {
+  font-size: 0.875rem;
+}
+
+.pagination-wrapper {
+  margin-top: 20px;
+}
+
+.page-link {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.page-item.active .page-link {
+  background-color: #007bff;
+  border-color: #007bff;
+  color: #fff;
+}
+
+.btn-primary {
+  padding: 5px 10px;
+}
+.justify-content-end {
+  align-items: center;
+}
+
+
 </style>

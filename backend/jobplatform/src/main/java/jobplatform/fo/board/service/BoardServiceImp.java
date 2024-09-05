@@ -45,7 +45,7 @@ public class BoardServiceImp implements BoardService{
 
             paramMap.put("brdTypCode", brdTypCode);
         }
-        System.out.println(paramMap);
+        System.out.println("보드서비스 : " + paramMap);
         // 데이터 가져오기
         List<BoardEntity> boardList = boardMapper.findAll(paramMap);
 

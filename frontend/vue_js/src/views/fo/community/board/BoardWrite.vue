@@ -108,7 +108,8 @@ const board = ref({
 const saveBoard = async () => {
   const contentHtml = quillInstance.value.root.innerHTML.trim();
   // 불필요한 비어있는 태그들을 제거(빈내용 유효성체크를 위해)
-  const sanitizedContent = contentHtml.replace(/<h2><br><\/h2>/g, "").trim();
+  const sanitizedContent = contentHtml.replace(/<p><br><\/p>/g, "").trim();
+
 
   if (!board.value.brdTtl || !sanitizedContent) {
     showAlert(!board.value.brdTtl ? "제목을 입력하세요" : "내용을 입력하세요");

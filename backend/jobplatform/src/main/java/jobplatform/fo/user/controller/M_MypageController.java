@@ -47,26 +47,26 @@ public class M_MypageController {
 	//마이페이지 포지션 제안 받기 화면 데이터(대표이력서, 제안 수락 여부, 선택했던 지역&직업 + 지역&직업 데이터)
 	//http://localhost/user/mypage/ppAcception?mbr_sq=1
 	@GetMapping("/ppAcception")
-	public ResponseEntity<Map<String, Object>> getPosionProposalData(@RequestParam("mbr_sq") int mbr_sq) {
+	public ResponseEntity<Map<String, Object>> getPosionProposalData(@RequestParam("mbr_sq") Long mbr_sq) {
 		return ResponseEntity.ok(myPageService.getPosionProposalData(mbr_sq));
 	}
 
 	//포지션 제안받기 상태 변경
 	@PatchMapping("/ppAcception/{ppyn}")
 	public int putMethodName(@PathVariable String ppyn, @RequestBody Map<String, Object> data) {
-		int mbr_sq = (int)data.get("mbr_sq");
+		Long mbr_sq = (Long)data.get("mbr_sq");
 		return myPageService.updatePstnPrpslAcceptYN(mbr_sq, ppyn);
 	}
 
 	//포지션 제안 받기 설정 후 원하는 지역, 직종 선택 -> 기존 데이터 삭제 후 재입력
 	@PostMapping("/ppAcception")
-	public int postMethodName(@RequestParam("mbr_sq") int mbr_sq, @RequestBody Map<String, Object> areaAndJobLists) {
+	public int postMethodName(@RequestParam("mbr_sq") Long mbr_sq, @RequestBody Map<String, Object> areaAndJobLists) {
 		return myPageService.insertSelectAreasAndJobs(mbr_sq, areaAndJobLists);
 	}
 
 	//제안 받은 포지션 공고 리스트
 	@GetMapping("/ppJobPost")
-	public ResponseEntity<Map<String, Object>> getMethodName(@RequestParam("mbr_sq") int mbr_sq, @RequestParam("page_num") int page_num) {
+	public ResponseEntity<Map<String, Object>> getMethodName(@RequestParam("mbr_sq") Long mbr_sq, @RequestParam("page_num") int page_num) {
 		return ResponseEntity.ok(myPageService.getPPJopPostingData(mbr_sq, page_num));
 	}
 	

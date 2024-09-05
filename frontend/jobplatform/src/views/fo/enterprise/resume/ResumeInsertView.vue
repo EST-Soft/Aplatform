@@ -12,7 +12,7 @@
         <div class="row">
           <div class="form-group col-md-6">
             <input type="text" value="" maxlength="20" class="form-control text-3 h-auto py-2" placeholder="제목"
-              name="rsm_tl" required />
+              name="rsm_ttl" required />
           </div>
         </div>
         <div class="row">
@@ -37,13 +37,13 @@
               <div class="col-sm-3 col-lg-2">
                 <div class="form-check form-check-inline">
                   <label class="form-check-label">
-                    <input class="form-check-input" type="radio" id="rsm_gndr_cd1" value="201" name="rsm_gndr_cd"
+                    <input class="form-check-input" type="radio" id="rsm_gndr_code1" value="m" name="rsm_gndr_code"
                       required /> 남
                   </label>
                 </div>
                 <div class="form-check form-check-inline">
                   <label class="form-check-label">
-                    <input class="form-check-input" type="radio" id="rsm_gndr_cd2" value="202" name="rsm_gndr_cd"
+                    <input class="form-check-input" type="radio" id="rsm_gndr_code2" value="f" name="rsm_gndr_code"
                       _required /> 여
                   </label>
                 </div>

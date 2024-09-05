@@ -127,7 +127,7 @@ const MypageHome = () => {
                 <thead>
                   <tr>
                     <th colSpan="3">
-                      <h2 className="font-weight-bold" style={{ marginBottom: '10px' }}>{result.rsmInfo.rsm_tl}</h2>
+                      <h2 className="font-weight-bold" style={{ marginBottom: '10px' }}>{result.rsmInfo.rsm_ttl}</h2>
                       <span>-최종 수정일자&nbsp;&nbsp;:&nbsp;&nbsp;{formatDateYMD(result.rsmInfo.updt_dtm)}</span>
                       <span style={{ marginLeft: '20px' }}>-포지션 수락 여부&nbsp;&nbsp;:&nbsp;&nbsp;{result.mbrInfo.pstn_prpsl_accept_yn === 'Y' ? '수락' : '거절'}</span>
                     </th>

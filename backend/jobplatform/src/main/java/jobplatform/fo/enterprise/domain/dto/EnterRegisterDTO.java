@@ -16,7 +16,7 @@ public class EnterRegisterDTO {
 
     private String entrprsPswrd;
 
-    private String cmnRgtrrtnNmbr;
+    private String cmnRgtrrtnNmbr;// 사업자등록번호
 
     private String entrprsPicName; // 기업담당자_이름
 
@@ -30,5 +30,5 @@ public class EnterRegisterDTO {
 
     private String entrprsPrvcyTrmsYn; // 회원 개인정보 약관 동의 여부
 
-    private String gndrCtryCd;
+    private String gndrTypCd;
 }

@@ -8,8 +8,8 @@
 	<select id="selectCommonCodeApplyCategoryData" resultType="jobplatform.fo.enterprise.domain.vo.CommonCodeVO">
 		select code_id, code_name
 		from P2_TBL_COMMON_CODE_DTL_S 
-		where code_ctgry_id = 400 
-			and code_id != 403;
+		where code_type_id = 400 
+			and code_id != 'ac';
 	</select>
 	
 	

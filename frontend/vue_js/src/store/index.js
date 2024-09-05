@@ -1,6 +1,7 @@
 import { createStore } from "vuex";
 import showModal from "./modules/showModal";
 
+// store 생성
 const store = createStore({
   modules: {
     showModal,

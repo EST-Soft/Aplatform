@@ -19,7 +19,7 @@
                                     {{ post.entrprs_name }}
                                 </th>
                                 <th colspan="3">
-                                    {{ post.jbp_tl }}
+                                    {{ post.jbp_ttl }}
                                 </th>
                                 <th colspan="1" style="text-align: center;">
                                     조회수&nbsp;&nbsp;{{ post.hits }}

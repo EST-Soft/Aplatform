@@ -20,7 +20,7 @@ const ResumeCard = ({ resumeData, onModifyRepresentative, onCopyResumes, onModif
           <div className="call-to-action-content">
             <h3>
               <a className="font-weight-extra-bold" onClick={toDtlPage}>
-                {resumeData.rsm_tl}
+                {resumeData.rsm_ttl}
               </a>
             </h3>
           </div>

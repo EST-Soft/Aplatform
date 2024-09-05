@@ -77,6 +77,14 @@ public class M_MypageController {
 		return myPageService.refuseProposedPostion((int)data.get("pstn_prpsl_sq"));
 	};
 	
+	//마이페이지 개인정보 수정
+	@GetMapping("/infrmtn")
+	public ResponseEntity<Map<String, Object>> userInfrmtn(@RequestParam("mbr_sq") int mbr_sq) {
+		System.out.println("어휴ㅡㅜㅜㅜ======="+mbr_sq);
+		Map<String, Object> userInfrmtn = myPageService.findResumeM(mbr_sq);
+		System.out.println(userInfrmtn);
+		return ResponseEntity.ok(userInfrmtn);
+	}
 	
 	
 	

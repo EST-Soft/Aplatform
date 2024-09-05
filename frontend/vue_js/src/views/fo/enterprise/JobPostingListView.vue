@@ -44,21 +44,21 @@
               <div class="dropdown-wrapper">
                 <button @click="toggleDropdown('career')">경력</button>
                 <div v-if="showDropdown.career" class="dropdown">
-                  <label><input type="checkbox" v-model="selectedCareers" value="801"> 경력무관</label>
-                  <label><input type="checkbox" v-model="selectedCareers" value="802"> 신입</label>
-                  <label><input type="checkbox" v-model="selectedCareers" value="803"> 경력</label>
+                  <label><input type="checkbox" v-model="selectedCareers" value="enr"> 경력무관</label>
+                  <label><input type="checkbox" v-model="selectedCareers" value="nwcmr"> 신입</label>
+                  <label><input type="checkbox" v-model="selectedCareers" value="exprncd"> 경력</label>
                 </div>
               </div>
 
               <div class="dropdown-wrapper">
                 <button @click="toggleDropdown('education')">학력</button>
                 <div v-if="showDropdown.education" class="dropdown">
-                  <label><input type="checkbox" v-model="selectedEducations" value="606"> 학력무관</label>
-                  <label><input type="checkbox" v-model="selectedEducations" value="605"> 고등학교 이상</label>
-                  <label><input type="checkbox" v-model="selectedEducations" value="604"> 대학교(2,3년제) 이상</label>
-                  <label><input type="checkbox" v-model="selectedEducations" value="603"> 대학교(4년제) 이상</label>
-                  <label><input type="checkbox" v-model="selectedEducations" value="602"> 석사</label>
-                  <label><input type="checkbox" v-model="selectedEducations" value="601"> 박사</label>
+                  <label><input type="checkbox" v-model="selectedEducations" value="ednm"> 학력무관</label>
+                  <label><input type="checkbox" v-model="selectedEducations" value="hs"> 고등학교 이상</label>
+                  <label><input type="checkbox" v-model="selectedEducations" value="jc"> 대학교(2,3년제) 이상</label>
+                  <label><input type="checkbox" v-model="selectedEducations" value="unvrsty"> 대학교(4년제) 이상</label>
+                  <label><input type="checkbox" v-model="selectedEducations" value="mid"> 석사</label>
+                  <label><input type="checkbox" v-model="selectedEducations" value="did"> 박사</label>
                 </div>
               </div>
 
@@ -87,9 +87,9 @@
           <div class="list-body">
             <div v-if="paginatedItems.length > 0">
               <div v-for="(item, idx) in paginatedItems" :key="idx" class="custom">
-                <div><router-link :to="`/board/detail/jobPosting/${item.jbpSq}`">{{ item.jbpTl }}</router-link></div>
+                <div><router-link :to="`/board/detail/jobPosting/${item.jbpSq}`">{{ item.jbpTtl }}</router-link></div>
                 <div>{{ getEducationText(item.edctn) }}</div>
-                <div>{{ getCareerText(item.cr) }}</div>
+                <div>{{ getCareerText(item.crrDrtn) }}</div>
                 <div>{{ formatJobName(item.jobName) }}</div>
                 <div>{{ formatWorkArea(item.workArea) }}</div>
               </div>
@@ -327,19 +327,19 @@ const filteredJobTypes = computed(() => {
 
 // 학력 매핑 테이블
 const educationMapping = {
-  '606': '학력무관',
-  '605': '고등학교 이상',
-  '604': '대학교(2,3년제) 이상',
-  '603': '대학교(4년제) 이상',
-  '602': '석사',
-  '601': '박사'
+  'ednm': '학력무관',
+  'hs': '고등학교 이상',
+  'jc': '대학교(2,3년제) 이상',
+  'unvrsty': '대학교(4년제) 이상',
+  'mid': '석사',
+  'did': '박사'
 };
 
 // 경력 매핑 테이블
 const careerMapping = {
-  '801': '경력무관',
-  '802': '신입',
-  '803': '경력'
+  'enr': '경력무관',
+  'exprncd': '신입',
+  'nwcmr': '경력'
 };
 
 // 학력 텍스트 반환 함수
@@ -379,6 +379,8 @@ const getCareerText = (value) => {
   height: 150px;
   overflow: hidden;
 }
+
+
 .row {
   display: flex;
   flex-wrap: wrap;
@@ -404,6 +406,7 @@ const getCareerText = (value) => {
   border-radius: 5px;
   cursor: pointer;
   margin-right: 10px;
+  
 }
 
 .search-options button:hover {

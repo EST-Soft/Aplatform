@@ -3,8 +3,7 @@
 <mapper namespace="jobplatform.fo.user.domain.mapper.MypageMapper">
     <resultMap id="MemberEntityResultMap" type="jobplatform.fo.user.domain.entity.MemberEntity">
         <id property="mbrSq" column="mbr_sq"/>
-        <result property="sclCtgryCd" column="scl_ctgry_cd"/>
-        <result property="gndrCtgryCd" column="gndr_ctgry_cd"/>
+        <result property="gndrCtgryCd" column="gndr_typ_code"/>
         <result property="mbrId" column="mbr_id"/>
         <result property="mbrName" column="mbr_name"/>
         <result property="mbrPswrd" column="mbr_pswrd"/>
@@ -17,11 +16,10 @@
         <result property="insrtDtm" column="insrt_dtm"/>
         <result property="updtMbrSq" column="updt_mbr_sq"/>
         <result property="updtDtm" column="updt_dtm"/>
-        <result property="dltDtm" column="dlt_dtm"/>
-        <result property="dltChck" column="dlt_chck"/>
-        <result property="useChck" column="use_chck"/>
+        <!-- <result property="dltDtm" column="dlt_dtm"/> -->
+        <result property="dltYn" column="dlt_yn"/>
+        <result property="useYn" column="use_yn"/>
         <result property="pstnPrpslAcceptYn" column="pstn_prpsl_accept_yn"/>
-        <result property="social" column="social"/>
     </resultMap>
 
     <select id="getJoinCondition" parameterType="int" resultType="java.util.Map">
@@ -43,7 +41,7 @@
           a.rsm_sq, 
           r.mbr_sq, 
           r.rsm_ttl, 
-          j.jbp_tl, 
+          j.jbp_ttl, 
           j.jbp_sq,
           Date(a.apy_dtm) as apy_dtm,
           j.jbp_cndtn, 
@@ -51,7 +49,7 @@
           c.code_name,
           (select count(a_inner.jbp_sq) 
            from p2_tbl_apply_h as a_inner 
-           where a_inner.jbp_sq = j.jbp_sq and apy_cndtn != '403') as apply_count
+           where a_inner.jbp_sq = j.jbp_sq and apy_cndtn != 'ac') as apply_count
       FROM 
           p2_tbl_resume_m as r
       inner join 
@@ -76,7 +74,7 @@
            a.rsm_sq, 
            r.mbr_sq, 
            r.rsm_ttl, 
-           j.jbp_tl, 
+           j.jbp_ttl, 
            j.jbp_sq,
            DATE(a.apy_dtm) AS apy_dtm,
            j.jbp_cndtn, 
@@ -84,7 +82,7 @@
            c.code_name,
            (SELECT COUNT(a_inner.jbp_sq) 
             FROM p2_tbl_apply_h AS a_inner 
-            WHERE a_inner.jbp_sq = j.jbp_sq AND a_inner.apy_cndtn != '403') AS apply_count
+            WHERE a_inner.jbp_sq = j.jbp_sq AND a_inner.apy_cndtn != 'ac') AS apply_count
        FROM 
            p2_tbl_resume_m AS r
        INNER JOIN 
@@ -101,7 +99,7 @@
            ON c.code_id = a.apy_cndtn
        WHERE 
            <if test='searchType == "jbpTtl"'>
-               j.jbp_tl LIKE CONCAT('%', #{search}, '%')
+               j.jbp_ttl LIKE CONCAT('%', #{search}, '%')
            </if>
            <if test='searchType == "rsmName"'>
                r.rsm_ttl LIKE CONCAT('%', #{search}, '%')
@@ -116,19 +114,19 @@
          from p2_tbl_apply_h as a
          inner join 
             p2_tbl_resume_m as r
-            on a.rsm_sq = r.rsm_sq and a.apy_cndtn!='403' and r.mbr_sq=#{mbrSq}
+            on a.rsm_sq = r.rsm_sq and a.apy_cndtn!='ac' and r.mbr_sq=#{mbrSq}
    </select>
    
    <!--지원 취소-->
    <select id="delAppy" parameterType="Integer">
-      update p2_tbl_apply_h set apy_cndtn ='403'  where apy_sq = #{apySq}
+      update p2_tbl_apply_h set apy_cndtn ='ac'  where apy_sq = #{apySq}
    </select>
    
    <!--지원 취소cnt-->
    <select id="cancelApplyCnt" parameterType="Integer" resultType="Integer">
        select count(apy_sq) from p2_tbl_apply_h as a
        inner join
-       p2_tbl_resume_m as r on a.rsm_sq=r.rsm_sq and a.apy_cndtn ='403' and r.mbr_sq=#{mbrSq}
+       p2_tbl_resume_m as r on a.rsm_sq=r.rsm_sq and a.apy_cndtn ='ac' and r.mbr_sq=#{mbrSq}
    </select>
    
    <!--이력서 열람cnt-->
@@ -138,7 +136,7 @@
       inner join
          p2_tbl_resume_m as r
          on a.rsm_sq = r.rsm_sq 
-         where a.apy_cndtn !='403' and a.apy_cndtn !='401' and r.mbr_sq=#{mbrSq}
+         where a.apy_cndtn !='ac' and a.apy_cndtn !='unrd' and r.mbr_sq=#{mbrSq}
    </select>
    
    <!--이력서 미열람cnt-->
@@ -148,7 +146,7 @@
       inner join
          p2_tbl_resume_m as r
          on a.rsm_sq = r.rsm_sq 
-         where a.apy_cndtn = '401' and r.mbr_sq=#{mbrSq}
+         where a.apy_cndtn = 'unrd' and r.mbr_sq=#{mbrSq}
    </select>
    
    <select id="getTest" parameterType="int">

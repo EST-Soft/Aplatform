@@ -14,8 +14,8 @@
                     <span class="bg-white p-2 border" style="margin-left: auto;">지원자 수: {{  applyCount }}</span>
                 </div>
                 <h5 class="mb-2">{{ props.data.entrprs_name }}</h5>
-                <p class="mb-2"><router-link :to="`/board/detail/jobPosting/${props.data.jbp_sq}`">{{ props.data.jbp_tl }}</router-link></p>
-                <a href="#" class="popup-with-zoom-anim text-primary">지원한 이력서 | {{ props.data.rsm_tl }}</a>
+                <p class="mb-2"><router-link :to="`/board/detail/jobPosting/${props.data.jbp_sq}`">{{ props.data.jbp_ttl }}</router-link></p>
+                <a href="#" class="popup-with-zoom-anim text-primary">지원한 이력서 | {{ props.data.rsm_ttl }}</a>
                 <hr class="my-2">
                 <div class="d-flex justify-content-between align-items-center pt-2">
                     <div class="d-flex align-items-center">

@@ -25,20 +25,20 @@
                 <div class="col-md-3 mb-3">
                     <label for="cr" class="form-label">경력</label>
                     <select v-model="cr" class="form-control" id="cr">
-                        <option value="801">경력무관</option>
-                        <option value="802">신입</option>
-                        <option value="803">경력</option>
+                        <option value="enr">경력무관</option>
+                        <option value="nwcmr">신입</option>
+                        <option value="exprncd">경력</option>
                     </select>
                 </div>
                 <div class="col-md-3 mb-3">
                     <label for="edctn" class="form-label">학력</label>
                     <select v-model="edctn" class="form-control" id="edctn">
-                        <option value="600">학력무관</option>
-                        <option value="605">고등학교 이상</option>
-                        <option value="604">대학교(2,3년제) 이상</option>
-                        <option value="603">대학교(4년제) 이상</option>
-                        <option value="602">석사</option>
-                        <option value="601">박사</option>
+                        <option value="ednm">학력무관</option>
+                        <option value="hs">고등학교 이상</option>
+                        <option value="jc">대학교(2,3년제) 이상</option>
+                        <option value="unvrsty">대학교(4년제) 이상</option>
+                        <option value="mid">석사</option>
+                        <option value="did">박사</option>
                     </select>
                 </div>
                 <div class="col-md-3 mb-3">

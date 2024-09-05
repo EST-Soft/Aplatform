@@ -8,7 +8,13 @@ import java.util.Map;
 import org.apache.ibatis.annotations.Mapper;
 
 import jobplatform.fo.enterprise.domain.dto.ResumeSearchDataDTO;
+import jobplatform.fo.enterprise.domain.vo.ResumeAttachmentDataVO;
+import jobplatform.fo.enterprise.domain.vo.ResumeCareerDataVO;
+import jobplatform.fo.enterprise.domain.vo.ResumeCertificateDataVO;
+import jobplatform.fo.enterprise.domain.vo.ResumeEducationDataVO;
 import jobplatform.fo.enterprise.domain.vo.ResumeListVO;
+import jobplatform.fo.enterprise.domain.vo.ResumeSelfintroductionDataVO;
+import jobplatform.fo.enterprise.domain.vo.ResumeSkillCodeDataVO;
 
 
 @Mapper
@@ -36,6 +42,22 @@ public interface ResumeMapper {
 	// 이력서 복사
 	// 이력서 메인테이블 복사
 	int insertCopyResume(int rsm_sq) throws SQLException, IOException;
+
+	// 이력서 상세 정보 가져오기
+	public Map<String, Object> selectResumeM(int rsm_sq);
+
+	//학력 정보 가져오기
+	List<ResumeEducationDataVO> selectResumeEducation(int rsm_sq);
+	//경력 정보 가져오기
+	List<ResumeCareerDataVO> selectResumeCareer(int rsm_sq);
+	//기술 정보 가져오기
+	List<ResumeSkillCodeDataVO> selectResumeSkillCode(int rsm_sq);
+	//자격증 정보 가져오기
+	List<ResumeCertificateDataVO> selectResumeCertificate(int rsm_sq);
+	//자기소개서 정보 가져오기
+	List<ResumeSelfintroductionDataVO> selectResumeSelfIntroduction(int rsm_sq);
+	//첨부파일 정보 가져오기
+	List<ResumeAttachmentDataVO> selectResumeAttachment(int rsm_sq);
 
 
 }

@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public class ApplyConditionCount {
-    private int apy_cndtn;
+    private String apy_cndtn;
     private int cnt;
 }

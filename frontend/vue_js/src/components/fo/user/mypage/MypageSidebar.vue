@@ -24,8 +24,8 @@
                 <li class="nav-item">
                     <router-link class="nav-link" to="#">회원정보 관리</router-link>
                     <ul>
-                        <li class="nav-item"><router-link class="nav-link" to="#">회원정보 수정</router-link></li>
-                        <li class="nav-item"><router-link class="nav-link" to="#">회원정보 변경</router-link></li>
+                        <li class="nav-item"><router-link class="nav-link" to="/mypage/userInfmtn">회원정보 수정</router-link></li>
+                        <li class="nav-item"><router-link class="nav-link" to="/mypage/userPwChange">비밀번호 변경</router-link></li>
                         <li class="nav-item"><router-link class="nav-link" to="#">회원탈퇴</router-link></li>
                     </ul>
                 </li>

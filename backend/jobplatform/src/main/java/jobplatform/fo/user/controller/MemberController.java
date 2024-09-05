@@ -152,7 +152,7 @@ public class MemberController {
 
         try {
             // admin일 경우 로직 추가해야함
-            userData.setInsrtMbrSq(99); // 임시 값 설정
+            userData.setInsrtMbrSq(99L); // 임시 값 설정
             userData.setDltYn('N');
             userData.setUseYn('Y');
 
@@ -464,7 +464,7 @@ public class MemberController {
                 return new ResponseEntity<>(response, HttpStatus.OK);
             } else {
                 // 새로운 회원이면 회원 가입 처리 후 로그인 성공으로 처리
-                member.setInsrtMbrSq(99); // 임시 값 설정
+                member.setInsrtMbrSq(99L); // 임시 값 설정
                 MemberEntity savedUser = memberRepository.save(member); // 처음 저장
                 savedUser.setInsrtMbrSq(savedUser.getMbrSq());
                 memberRepository.save(savedUser);

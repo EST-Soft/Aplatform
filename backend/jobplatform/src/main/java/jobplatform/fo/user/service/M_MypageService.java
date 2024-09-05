@@ -34,6 +34,6 @@ public interface M_MypageService {
 	public int refuseProposedPostion(int pstn_prpsl_sq);
 
 	//회원 정보 받아오기
-	public Map<String, Object> findResumeM(int mbr_sq);
+	public Map<String, Object> findResumeM(Long mbr_sq);
 
 }

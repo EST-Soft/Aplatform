@@ -69,6 +69,12 @@ public class M_MypageServiceImpl implements M_MypageService{
         return mypageMapper.getToMakeCalendarData(mbr_sq,rsm_sq, month);
     }
 
+    //마이페이지 정보수정의 회원 정보가져오기
+    @Override
+    public Map<String, Object> findResumeM(Long mbr_sq) {
+        // 회원 정보
+        return mypageMapper.getMbrInfo(mbr_sq);
+    } 
 
 //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 

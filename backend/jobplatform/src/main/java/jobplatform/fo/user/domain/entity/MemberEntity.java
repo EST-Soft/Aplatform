@@ -33,7 +33,7 @@ public class MemberEntity {
 
     // 성별_유형_코드
     @Column(name = "gndr_typ_code", nullable = false, columnDefinition = "varchar(20)")
-    private String gndrCtgryCd;
+    private String gndrTypCd;
 
     // 회원_아이디
     @Column(name = "mbr_id", nullable = false, columnDefinition = "varchar(20)")

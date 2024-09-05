@@ -3,7 +3,7 @@
 <mapper namespace="jobplatform.fo.user.domain.mapper.MypageMapper">
     <resultMap id="MemberEntityResultMap" type="jobplatform.fo.user.domain.entity.MemberEntity">
         <id property="mbrSq" column="mbr_sq"/>
-        <result property="gndrCtgryCd" column="gndr_typ_code"/>
+        <result property="gndrTypCd" column="gndr_typ_code"/>
         <result property="mbrId" column="mbr_id"/>
         <result property="mbrName" column="mbr_name"/>
         <result property="mbrPswrd" column="mbr_pswrd"/>

@@ -23,7 +23,7 @@ public class M_MypageServiceImpl implements M_MypageService{
 	
     //마이페이지 매인화면에 필요한 전체 데이터 가져오기
 	@Override
-	public Map<String, Object> getMyPageMainData(int mbr_sq, int month) {
+	public Map<String, Object> getMyPageMainData(Long mbr_sq, int month) {
 		
 		Map<String, Object> response = new HashMap<>();
 
@@ -36,7 +36,7 @@ public class M_MypageServiceImpl implements M_MypageService{
         response.put("rsmInfo", rsmInfo);
 
         if(rsmInfo != null && rsmInfo.containsKey("rsm_sq")){
-            int rsm_sq = (int)rsmInfo.get("rsm_sq");
+            Long rsm_sq = (Long)rsmInfo.get("rsm_sq");
 
             // 각 상태별 지원 개수
             Map<String, Integer> EachCndtnApplyCount = mypageMapper.getEachCndtnApplyCount(rsm_sq);
@@ -63,16 +63,23 @@ public class M_MypageServiceImpl implements M_MypageService{
 
     //마이페이지 메인 화면 캘린더 데이터(월 이동시)
     @Override
-    public List<Map<String, Object>> getToMakeCalendarData(int mbr_sq, int rsm_sq, int month) {
+    public List<Map<String, Object>> getToMakeCalendarData(Long mbr_sq, Long rsm_sq, int month) {
         return mypageMapper.getToMakeCalendarData(mbr_sq,rsm_sq, month);
     }
+
+    //마이페이지 정보수정의 회원 정보가져오기
+    @Override
+    public Map<String, Object> findResumeM(Long mbr_sq) {
+        // 회원 정보
+        return mypageMapper.getMbrInfo(mbr_sq);
+    } 
 
 
 //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
     //포지션 제안 받기 페이지 데이터
     @Override
-    public Map<String, Object> getPosionProposalData(int mbr_sq) {
+    public Map<String, Object> getPosionProposalData(Long mbr_sq) {
 
         Map<String, Object> response = new HashMap<>();
 
@@ -90,14 +97,14 @@ public class M_MypageServiceImpl implements M_MypageService{
 
     //포지션 제안 받기 수락 여부 변경
     @Override
-    public int updatePstnPrpslAcceptYN(int mbr_sq, String pstn_prpsl_accept_yn) {
+    public int updatePstnPrpslAcceptYN(Long mbr_sq, String pstn_prpsl_accept_yn) {
         return mypageMapper.updatePstnPrpslAcceptYN(mbr_sq, pstn_prpsl_accept_yn);
     }
 
     //포지션 제안 받을 때, 지역, 직업 선택
     @Override
     @SuppressWarnings("unchecked")
-    public int insertSelectAreasAndJobs(int mbr_sq, Map<String, Object> areaAndJobLists) {
+    public int insertSelectAreasAndJobs(Long mbr_sq, Map<String, Object> areaAndJobLists) {
         int result = 0;
         
         ObjectMapper om = new ObjectMapper();
@@ -134,7 +141,7 @@ public class M_MypageServiceImpl implements M_MypageService{
     //제안 받은 포지션 공고 리스트 출력
     //검색에 사용하기 위해 vo에 추가 변수(forSearch)
     @Override
-    public Map<String, Object> getPPJopPostingData(int mbr_sq, int page_num){
+    public Map<String, Object> getPPJopPostingData(Long mbr_sq, int page_num){
         int rsm_sq = mypageMapper.getRRsm_sq(mbr_sq);
         
         int limit = 5; //한페이지에 보여줄 글 수

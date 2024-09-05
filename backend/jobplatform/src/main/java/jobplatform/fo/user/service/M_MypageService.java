@@ -16,18 +16,18 @@ public interface M_MypageService {
 	//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 	//포지션 제안 받기 페이지 데이터
-	public Map<String, Object> getPosionProposalData(int mbr_sq);
+	public Map<String, Object> getPosionProposalData(Long mbr_sq);
 
 	//포지션 제안 받기 수락 여부 변경
-	public int updatePstnPrpslAcceptYN(int mbr_sq, String pstn_prpsl_accept_yn);
+	public int updatePstnPrpslAcceptYN(Long mbr_sq, String pstn_prpsl_accept_yn);
 
 	//포지션 제안 받을 때, 지역, 직업 선택
-	public int insertSelectAreasAndJobs(int mbr_sq, Map<String, Object> areaAndJobLists);
+	public int insertSelectAreasAndJobs(Long mbr_sq, Map<String, Object> areaAndJobLists);
 
 	//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 	//제안 받은 포지션 공고
-	public Map<String, Object> getPPJopPostingData(int mbr_sq, int page_num);
+	public Map<String, Object> getPPJopPostingData(Long mbr_sq, int page_num);
 
 	//@@예정@@포지션 제안 수락했을 때 -> 같은 공고로 지원한 내역 있는지 확인 + 지원 프로세스 진행 + 포지션 제안 상태 변경 
 	//@@예정@@포지션 제안 거절했을 때 -> 포지션 제안 상태 변경

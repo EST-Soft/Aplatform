@@ -85,7 +85,6 @@
             </div>
           </div>
         </div> -->
-
         <div class="col-md-2 mb-3">
           <label for="workForm" class="form-label">근무형태</label>
           <select v-model="workForm" class="form-control" id="workForm">

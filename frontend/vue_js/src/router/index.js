@@ -44,6 +44,7 @@ import FeedbackUpdate from "../views/fo/community/feedback/FeedbackUpdate.vue";
 import UserInfrmtnUpdt from "../views/fo/auth/UserInfrmtnUpdt.vue";
 import UserPswrdCk from "../components/fo/user/common/UserPswrdCk.vue";
 import UserPwChange from "../views/fo/auth/UserFind/UserPwChange.vue";
+import UserSingout from "../views/fo/auth/UserSingout.vue";
 // import store from "@/store"; // Vuex 스토어를 직접 가져옵니다.
 
 const routes = [
@@ -85,6 +86,7 @@ const routes = [
       { path: "userPswrdCk", component: UserPswrdCk},
       { path: "userInfmtn", component: UserInfrmtnUpdt},
       { path: "userPwChange", component: UserPwChange},
+      { path: "userSingout", component: UserSingout},
     ],
   },
   // 기우님 컴포넌트 경로

@@ -75,7 +75,6 @@ public class M_MypageServiceImpl implements M_MypageService{
         // 회원 정보
         return mypageMapper.getMbrInfo(mbr_sq);
     } 
-
 //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
     //포지션 제안 받기 페이지 데이터

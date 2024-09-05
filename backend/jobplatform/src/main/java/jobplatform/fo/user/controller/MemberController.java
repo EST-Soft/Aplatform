@@ -141,7 +141,7 @@ public class MemberController {
         if (userData.getMbrPrvcyTrmsChck() == null || userData.getMbrPrvcyTrmsChck().isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("개인정보 약관 체크가 누락되었습니다.");
         }
-        if (userData.getGndrCtgryCd() == null || userData.getGndrCtgryCd().isEmpty()) {
+        if (userData.getGndrTypCode() == null || userData.getGndrTypCode().isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("성별 유형 코드가 누락되었습니다.");
         }
         // 아이디 중복 체크
@@ -432,7 +432,7 @@ public class MemberController {
                     member.setMbrEmlAdrs(email);
                     member.setMbrMp(mobile.replace("-", ""));
                     member.setMbrBd(birthDate);
-                    member.setGndrCtgryCd(gender);
+                    member.setGndrTypCode(gender);
 
                     member.setDltYn('N');
                     member.setUseYn('Y');

@@ -55,11 +55,12 @@
       <div class="table-responsive">
         <table class="table table-hover table-striped">
           <thead>
-            <tr v-if="answerList > 0">
+            <tr v-if="answerList.length > 0">
               <th>제목</th>
               <th>작성자</th>
               <th>등록일</th>
               <th>조회수</th>
+              <th>추천수</th>
               <th>채택여부</th>
             </tr>
             <tr v-else>
@@ -67,16 +68,29 @@
             </tr>
           </thead>
           <tbody v-if="answerList.length > 0">
-            <tr v-for="board in boardList" :key="board.brdSq">
-              <td class="title-cell">
-                <router-link :to="`/board/qna/${board.brdSq}`">
-                  {{ board.brdTtl }}
-                </router-link>
+            <tr v-for="answer in answerList" :key="answer.answrSq">
+              <td class="title-cell" @click="showAnswer()">
+                
+                  {{ answer.answrTtl }}
+                
               </td>
-              <td class="small-text">{{ board.createdBy }}</td>
-              <td class="small-text">{{ board.insrtDtm.slice(0, 10) }}</td>
-              <td class="small-text">{{ board.brdHits }}</td>
-              <td class="small-text">채택</td>
+              <td class="small-text">{{ answer.createdBy }}</td>
+              <td class="small-text">{{ answer.insrtDtm.slice(0, 10) }}</td>
+              <td class="small-text">{{ answer.answrHits }}</td>
+              <td class="small-text">{{ answer.answrRcmndtns }}</td>
+
+              <td v-if="answer.answrSlctnYn == 'Y'" class="small-text">
+                <img
+                    alt="Check"
+                    width="20"
+                    height="20"
+                    data-sticky-width="82"
+                    data-sticky-height="40"
+                    src="/img/check.png"
+                  />
+
+              </td>
+              <td v-else></td>
             </tr>
           </tbody>
           <tbody v-else>
@@ -87,7 +101,7 @@
 
         </table>
       </div>
-      <div class="pagination-wrapper">
+      <div v-if="answerList.length > 0" class="pagination-wrapper">
         <ul class="pagination justify-content-center">
           <li class="page-item" :class="{ disabled: curPage === 1 }">
             <button
@@ -302,6 +316,14 @@
 
     </div>
   </div>
+
+  <!-- 답변보기 시작 -->
+  <div v-show="showAnswer" class="answer">
+    <div class="answerModal">
+      <h1>안녕하세요</h1>
+
+    </div>
+  </div>
 </template>
 
 <script setup>
@@ -384,6 +406,9 @@ const openEditorModal = () => {
 //   }
 // }
 
+const showAnswer = ref(false);
+
+
 const backToDetail = () => {
   showConfirm("작성을 취소 하시겠습니까?", () => {
     const brdSq = board.value.brdSq;
@@ -400,6 +425,8 @@ const editedContent = ref("");
 const goToPage = (page) => {
   if (page >= 1 && page <= lastPage.value) {
     search.value.page = page;
+    console.log("현재페이지 : " + page);
+    getAnswerList();
   }
 };
 
@@ -557,19 +584,23 @@ const boardDelete = () => {
 
 const answerList = ref([]);
 const pageList = ref([]);
-const curPage = ref(0);
+const curPage = ref(1);
 const prevBlock = ref(0);
 const nextBlock = ref(0);
 const lastPage = ref(0);
-const search = ref({ page: 1, brdSq: "${board.brdSq}" });
+const search = ref({ page: 1 });
 
 
 const getAnswerList = async () => {
+  const queryString = Object.entries(search.value)
+    .map((e) => e.join("="))
+    .join("&");
   try{
-    console.log("brdSq" + route.params.id );
-    const data = await api.$get("/answer/qna/" + route.params.id);
+    // console.log("답변하는곳 : ", queryString);
+    // console.log("brdSq" + route.params.id );
+    const data = await api.$get("/answer/qna/" + route.params.id + "?" + queryString);
     answerList.value = data.data || [];
-    console.log(answerList.value.length);
+    console.log(answerList);
     if(data.pagination){
       const {
         endPage,
@@ -578,6 +609,7 @@ const getAnswerList = async () => {
         startPage,
         totalPageCnt,
       } = data.pagination;
+      curPage.value = search.value.page;
       prevBlock.value = previousBlock;
       nextBlock.value = nextPageBlock;
       lastPage.value = totalPageCnt;
@@ -586,6 +618,7 @@ const getAnswerList = async () => {
         tmpPages.push(i);
       }
       pageList.value = tmpPages;
+      console.log("tmpPages", tmpPages);
     }else{
       console.error("Pagination data is missing.");
     }
@@ -870,7 +903,7 @@ section {
   vertical-align: middle;
 }
 .title-cell {
-  width: 70%;
+  width: 60%;
 }
 .title-cell:hover {
   cursor: pointer;

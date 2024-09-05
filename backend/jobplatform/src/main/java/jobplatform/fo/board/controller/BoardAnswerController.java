@@ -68,6 +68,9 @@ public class BoardAnswerController {
      }
 
 
+     /*
+      * 답변 List 불러오기
+      */
 
      @GetMapping("/qna/{brdSq}")
      public ResponseEntity<?> answerList(@PathVariable int brdSq,
@@ -75,12 +78,9 @@ public class BoardAnswerController {
                                          @RequestParam(defaultValue = "5") int size) {
 
         try{
-            System.out.println("brdSq : " + brdSq);
-            System.out.println("page : " + page);
-            System.out.println("size : " + size);
-
             Header<List<BoardAnswerEntity>> answerList = boardAnswerService.List(page, size, brdSq);
 
+            System.out.println("페이지 숫자 : " + page);
             System.out.println("잘 굴러는가나"+ answerList);
             return ResponseEntity.ok(answerList);
         }catch(Exception e){

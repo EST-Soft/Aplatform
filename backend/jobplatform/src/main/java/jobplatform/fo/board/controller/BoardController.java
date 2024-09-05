@@ -38,8 +38,10 @@ public class BoardController {
                                        Search search) {
         try {
             System.out.println(brdTypCode);
+            System.out.println("page : " + page);
+            System.out.println("size : "+ size);
             Header<List<BoardEntity>> boardList = boardService.List(page, size, search, brdTypCode);
-            System.out.println("게시판에서는 어떻게 출력? " + boardList);
+            System.out.println("aaaaaaaaaa" + boardList);
             return ResponseEntity.ok(boardList);
         } catch (Exception e) {
             System.out.println("Error during fetching board list: " + e.getMessage());

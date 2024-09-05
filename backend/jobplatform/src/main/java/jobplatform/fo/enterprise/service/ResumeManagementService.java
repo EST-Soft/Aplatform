@@ -2,16 +2,27 @@ package jobplatform.fo.enterprise.service;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.transaction.Transactional;
 import jobplatform.fo.enterprise.common.Pagination;
+import jobplatform.fo.enterprise.domain.dto.ResumeDataDTO;
 import jobplatform.fo.enterprise.domain.dto.ResumeSearchDataDTO;
+import jobplatform.fo.enterprise.domain.entity.AttachmentEntity;
+import jobplatform.fo.enterprise.domain.entity.ResumeEntity;
 import jobplatform.fo.enterprise.domain.mapper.ResumeMapper;
+import jobplatform.fo.enterprise.domain.repository.AttachmentRepository;
+import jobplatform.fo.enterprise.domain.repository.ResumeRepository;
 import jobplatform.fo.enterprise.domain.vo.ResumeAttachmentDataVO;
 import jobplatform.fo.enterprise.domain.vo.ResumeCareerDataVO;
 import jobplatform.fo.enterprise.domain.vo.ResumeCertificateDataVO;
@@ -19,14 +30,22 @@ import jobplatform.fo.enterprise.domain.vo.ResumeEducationDataVO;
 import jobplatform.fo.enterprise.domain.vo.ResumeListVO;
 import jobplatform.fo.enterprise.domain.vo.ResumeSelfintroductionDataVO;
 import jobplatform.fo.enterprise.domain.vo.ResumeSkillCodeDataVO;
+import jobplatform.fo.user.domain.repository.MemberRepository;
 
 @Service
 public class ResumeManagementService {
 
 	private final ResumeMapper resumeMapper;
+	private final MemberRepository memberRepository;
+	private final ResumeRepository resumeRepository;
+	private final AttachmentRepository attachmentRepository;
 
-	public ResumeManagementService(ResumeMapper resumeMapper) {
+
+	public ResumeManagementService(ResumeMapper resumeMapper, MemberRepository memberRepository, ResumeRepository resumeRepository, AttachmentRepository attachmentRepository) {
+		this.memberRepository = memberRepository;
+		this.resumeRepository = resumeRepository;
 		this.resumeMapper = resumeMapper;
+		this.attachmentRepository = attachmentRepository;
 	}
 	
 	//이력서 리스트 데이터 얻기
@@ -131,5 +150,70 @@ public class ResumeManagementService {
 		
 		return result;
 	}
-	
+
+	@Transactional
+	public void insertResume(Long mbrSq, ResumeDataDTO resumeDataDTO) {
+
+		String fileUrl = null;
+        String originalFileName = null;
+
+		if(resumeDataDTO.getRsmImgFileUrl() != null && resumeDataDTO.getRsmImgOrgnlFn() != null) {
+			fileUrl = resumeDataDTO.getRsmImgFileUrl();
+			originalFileName = resumeDataDTO.getRsmImgOrgnlFn();
+		}
+
+		ResumeEntity resumeEntity = new ResumeEntity();
+		//resumeEntity.setMbrSq(resumeDataDTO.getMbrSq());
+		resumeEntity.setMbrSq(mbrSq);
+		resumeEntity.setRsmImgOrgnlFn(originalFileName);
+		resumeEntity.setRsmImgFileUrl(fileUrl);
+		resumeEntity.setRsmFnlEdctnCode(resumeDataDTO.getRsmFnlEdctnCode());
+		resumeEntity.setRsmGrd(resumeDataDTO.getRsmGrd());
+		resumeEntity.setRsmEs(resumeDataDTO.getRsmEs());
+		resumeEntity.setRsmTtl(resumeDataDTO.getRsmTtl());
+		resumeEntity.setRsmName(resumeDataDTO.getRsmName());
+		resumeEntity.setRsmGndrCode(resumeDataDTO.getRsmGndrCode());
+		resumeEntity.setRsmBd(resumeDataDTO.getRsmBd());
+		resumeEntity.setRsmMp(resumeDataDTO.getRsmMp());
+		resumeEntity.setRsmAdrs(resumeDataDTO.getRsmAdrs());
+		resumeEntity.setRsmEml(resumeDataDTO.getRsmEml());
+		resumeEntity.setInsrtMbrSq(mbrSq);
+		resumeEntity.setInsrtDtm(LocalDateTime.now());
+		resumeEntity.setInsrtMbrSq(mbrSq);
+
+		Long rsmSq = resumeRepository.save(resumeEntity).getRsmSq();
+
+		AttachmentEntity attachmentEntity = new AttachmentEntity();
+		attachmentEntity.setRsmSq(rsmSq);
+		attachmentEntity.setAtchmntOrgnlFn(originalFileName);
+		attachmentEntity.setAtchmntUrl(fileUrl);
+		attachmentEntity.setInsrtMbrSq(mbrSq);
+		attachmentRepository.save(attachmentEntity);
+	} // insertResume
+
+	// 이력서 가져오기
+	public ResumeEntity getRsmByRsmSq(Long rsmSq) {
+		Optional<ResumeEntity> resumeEntity = null;
+
+		resumeEntity = resumeRepository.findByRsmSq(rsmSq);
+		return resumeEntity.orElse(null);
+	} // getRsmByRsmSq
+
+	/* // 이력서 이미지 등록
+	@Transactional
+	public ResumeEntity insertImage(MultipartFile file, ResumeEntity resumeEntity){
+		String fileUrl = resumeEntity.getRsmImgFileUrl();
+		String originalFileName = resumeEntity.getRsmImgOrgnlFn();
+		
+		if (file != null && !file.isEmpty()) {
+			// 파일을 S3에 업로드하고 URL을 반환받음
+			fileUrl = fileServiceImpl.uploadImage(file);
+			originalFileName = file.getOriginalFilename();
+		}
+
+		resumeEntity.setRsmImgFileUrl(fileUrl);
+		resumeEntity.setRsmImgOrgnlFn(originalFileName);
+
+		return resumeEntity;
+	} // insertImage */
 }

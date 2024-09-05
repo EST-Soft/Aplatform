@@ -15,20 +15,20 @@ public interface JobPostingService {
 
 	// public int insertJobPosting(JobPostingEntity jpe);
 
-	public JobPostingDTO jobPostingDetail(int jbpSq);
+	public JobPostingDTO jobPostingDetail(Long jbpSq);
 
-	public int increaseHits(int jbpSq);
+	public Long increaseHits(Long jbpSq);
 
 	public void updateJobPosting(JobPostingEntity jpe);
 
-	public void deleteJobPosting(int jbpSq);
+	public void deleteJobPosting(Long jbpSq);
 
 
 	public List<JobPostingEntity> searchJobPostings(String searchTerm, String searchField);
 
 	public Long insertApply(ApplyEntity ae);
 
-	public int insertJobPosting(JobPostingEntity jpe);
+	public Long insertJobPosting(JobPostingEntity jpe);
 
 
 

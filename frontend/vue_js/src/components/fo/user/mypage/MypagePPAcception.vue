@@ -1,5 +1,5 @@
 <template>
-    <div v-if="result">
+    <div v-if="result && result.rsmInfo">
         <div class="row">
             <div class="col-6">
                 <h4 style=" margin-bottom: 0; font-size: 23px; font-weight: bolder;">
@@ -154,12 +154,17 @@
              </div>
         </div>
     </div>
+    <div v-else>
+        <div>대표 이력서 없음</div>
+    </div>
+    
 </template>
 
 <script setup>
     import { ref, onMounted, computed, watch } from 'vue';
     import { api } from '@/axios.js';
     import { formatDateYMD } from '@/tools';
+import { useStore } from 'vuex';
 
     let result = ref(null);
     let parentAreaCode = ref(101000);
@@ -170,10 +175,12 @@
     let selectedArea = ref([]);
     let selectedJob = ref([]);
 
+    const store = useStore();
+
     onMounted(async() => {
         result.value = await api.$get("/user/mypage/ppAcception", {
                 params: {
-                    mbr_sq : 1
+                    mbr_sq : store.state.member.mbrSq
                 }
             });
 
@@ -184,8 +191,8 @@
 
     watch(ppAcceptYN, async (newValue, oldValue) => {
         if (newValue === oldValue) return;
-        if(newValue) await api.$patch("/user/mypage/ppAcception/Y", {mbr_sq : 1});
-        else await api.$patch("/user/mypage/ppAcception/N", {mbr_sq : 1});
+        if(newValue) await api.$patch("/user/mypage/ppAcception/Y", {mbr_sq : store.state.member.mbrSq});
+        else await api.$patch("/user/mypage/ppAcception/N", {mbr_sq : store.state.member.mbrSq});
     });
 
     function chooseParentArea(area_sq){

@@ -23,7 +23,7 @@ public class ApplyDetailDataVO {
 	// 이력서 희망연봉
 	private int rsm_es;
 	// 제목
-	private String rsm_tl;
+	private String rsm_ttl;
 	// 지원자 이름
 	private String rsm_name;
 	// 성별 코드를 통한 한글명

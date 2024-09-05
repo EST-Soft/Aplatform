@@ -69,7 +69,7 @@
         <result property="rsm_img_file_url" column="rsm_img_file_url" />
         <result property="rsm_fnl_edctn_cd" column="rsm_fnl_edctn_cd" />
         <result property="rsm_es" column="rsm_es" />
-        <result property="rsm_tl" column="rsm_tl" />
+        <result property="rsm_ttl" column="rsm_ttl" />
         <result property="rsm_eml" column="rsm_eml" />
         <result property="updt_dtm" column="updt_dtm" />
         <collection property="crtfct_name" ofType="string" column="crtfct_name" />
@@ -83,7 +83,7 @@
             SELECT FIRST.*, scr.skl_cd_sq
             FROM
                 (
-                SELECT r.rsm_sq, r.mbr_sq, r.rsm_img_file_url, r.rsm_fnl_edctn_cd, r.rsm_tl, r.rsm_eml, r.updt_dtm
+                SELECT r.rsm_sq, r.mbr_sq, r.rsm_img_file_url, r.rsm_fnl_edctn_cd, r.rsm_ttl, r.rsm_eml, r.updt_dtm
                 FROM p2_tbl_resume_m r
                 WHERE
                     r.rsm_rprsntv_yn = 'Y'

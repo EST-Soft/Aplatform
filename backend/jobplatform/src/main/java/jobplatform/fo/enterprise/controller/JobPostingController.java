@@ -61,7 +61,7 @@ public class JobPostingController {
 	// 공고 등록 메소드
 	@PostMapping("/board/jobPostingInsert")
 	public ResponseEntity<Map<String, Object>> insertJobPosting(@RequestBody JobPostingEntity jpe) {
-	    int insertedJbpSq = jobPostingService.insertJobPosting(jpe);
+	    Long insertedJbpSq = jobPostingService.insertJobPosting(jpe);
 	    
 	    // 상세 페이지로 이동
 	    String detailUrl = "/board/detail/jobPosting/" + insertedJbpSq;
@@ -93,7 +93,7 @@ public class JobPostingController {
 	
 	// 공고 상세 조회 메소드
 	@GetMapping("/board/detail/jobPosting/{jbpSq}")
-	public JobPostingDTO JobPostingDetail(@PathVariable int jbpSq) {
+	public JobPostingDTO JobPostingDetail(@PathVariable Long jbpSq) {
 		JobPostingDTO jpe = jobPostingService.jobPostingDetail(jbpSq);
 		
 		// 조회수 증가
@@ -111,7 +111,7 @@ public class JobPostingController {
 	
 	// 공고 삭제 메소드
 	@DeleteMapping("/board/jobPostingDelete/{jbpSq}")
-	public void deleteJobPosting(@PathVariable int jbpSq) {
+	public void deleteJobPosting(@PathVariable Long jbpSq) {
 		jobPostingService.deleteJobPosting(jbpSq);
 	}
 	
@@ -119,7 +119,7 @@ public class JobPostingController {
     @GetMapping("/board/search")
     public List<JobPostingEntity> searchJobPostings(
             @RequestParam(value = "searchTerm", required = false) String searchTerm,
-            @RequestParam(value = "searchField", defaultValue = "jbpTl_jbpCntnt") String searchField) {
+            @RequestParam(value = "searchField", defaultValue = "jbpTtl_jbpCntnt") String searchField) {
         	System.out.println("검색 잘 되니"+searchTerm);
         	System.out.println("검색 잘 되니"+searchField);
         return jobPostingService.searchJobPostings(searchTerm, searchField);

@@ -1,6 +1,7 @@
 <template>
     <div>
         <SelfintoductionsResume />
+        dvdvdbd
     </div>
 </template>
 

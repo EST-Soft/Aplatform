@@ -16,20 +16,24 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
 
 import jobplatform.fo.enterprise.domain.dto.ResumeDataDTO;
 import jobplatform.fo.enterprise.domain.dto.ResumeSearchDataDTO;
 import jobplatform.fo.enterprise.domain.dto.SelfintoductionsDataDTO;
+import jobplatform.fo.enterprise.domain.entity.ResumeEntity;
 import jobplatform.fo.enterprise.service.ResumeManagementService;
+import jobplatform.fo.user.domain.entity.MemberEntity;
 
 @RestController
 public class ResumeManagementController {
 	
 	private final ResumeManagementService resumeManagementService;
-	
+
 	public ResumeManagementController(ResumeManagementService resumeManagementService) {
 		this.resumeManagementService = resumeManagementService;
-	}
+	}  //inputResumeFullData
 	
 	// 이력서 목록 불러오기 (정렬 일반화)
 	@GetMapping("/resumes/resume-list/{mbr_sq}/{sort}/{pageNo}")
@@ -64,10 +68,12 @@ public class ResumeManagementController {
 	}
 	
 	// 이력서 등록
-	@PostMapping("/resumes")
-	public void inputResumeFullData(@RequestBody String Data) {
-		
-	}
+	@PostMapping("/resumes/insert-resume")
+	public void inputResumeFullData(@RequestParam("mbrSq") Long mbrSq, @RequestBody ResumeDataDTO resumeDataDTO) {
+		resumeManagementService.insertResume(mbrSq, resumeDataDTO);
+	} // inputResumeFullData
+
+
 	
 	// 이력서 등록  테스트 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	@PostMapping("/resumes/test")

@@ -9,7 +9,8 @@ const BoardDetail = () => {
   const [board, setBoard] = useState({});
   const getBoard = async () => {
     const resp = await (await axios.get(`/board/${idx}`)).data;
-    setBoard(resp.data);
+    console.log("디테일 데이터", resp)
+    setBoard(resp);
     setLoading(false);
   };
 
@@ -23,12 +24,12 @@ const BoardDetail = () => {
         <h2>loading...</h2>
       ) : (
         <Board
-          idx={board.idx}
-          title={board.title}
+          idx={board.brdSq}
+          title={board.brdTtl}
           contents={board.contents}
           createdBy={board.createdBy}
-          createdAt={board.createdAt}
-          hits={board.hits}
+          createdAt={board.insrtDtm}
+          hits={board.brdHits}
         />
       )}
     </div>

@@ -15,7 +15,7 @@
 	</select>
 	<!-- 이력서 중 대표 이력서 이력서 순번, 이력서 제목, 등록일시, 최종 수정일시, 이미지 -->
 	<select id="getRprsntvRsmInfo">
-		SELECT rsm_sq, rsm_tl, insrt_dtm, updt_dtm, rsm_img_file_url
+		SELECT rsm_sq, rsm_ttl, insrt_dtm, updt_dtm, rsm_img_file_url
 		FROM p2_tbl_resume_m
 		WHERE 
 			mbr_sq = #{mbr_sq}
@@ -26,7 +26,7 @@
 	카사디안 곱 결과물 만들고 where절 비교할듯.. 즉 성능면에서 더 떨어질 듯...
 	<select>
 	    SELECT 
-	        m.mbr_name, m.mbr_mp, m.mbr_eml_adrs, m.pstn_prpsl_accept_yn, r.rsm_sq, r.rsm_tl, r.insrt_dtm, r.updt_dtm, r.rsm_img_file_rul
+	        m.mbr_name, m.mbr_mp, m.mbr_eml_adrs, m.pstn_prpsl_accept_yn, r.rsm_sq, r.rsm_ttl, r.insrt_dtm, r.updt_dtm, r.rsm_img_file_rul
 	    FROM 
 	        p3_tbl_member_m m
 	    	LEFT JOIN p2_tbl_resume_m r ON m.mbr_sq = r.mbr_sq AND r.rsm_rprsntv_yn = 'Y'

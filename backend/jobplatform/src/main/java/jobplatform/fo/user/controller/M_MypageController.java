@@ -31,7 +31,7 @@ public class M_MypageController {
 	//마이페이지 메인 화면 데이터
 	//jwt 구현 전 까지 클라에서 mbr_sq 같이 넘겨주는 걸로!
 	@GetMapping("/")
-	public ResponseEntity<Map<String, Object>> getMainData(@RequestParam("mbr_sq") int mbr_sq, @RequestParam("month") int month) {
+	public ResponseEntity<Map<String, Object>> getMainData(@RequestParam("mbr_sq") Long mbr_sq, @RequestParam("month") int month) {
 		System.out.println("회원정보"+myPageService.getMyPageMainData(mbr_sq, month));
 		return ResponseEntity.ok(myPageService.getMyPageMainData(mbr_sq, month));
 	}
@@ -40,8 +40,8 @@ public class M_MypageController {
 	//달력 월별 데이터 제공 *mbr_sq, rsm_sq는 어떻게 처리할지 미정
 	@GetMapping("/calendar")
 	public ResponseEntity<List<Map<String, Object>>> getCalendarData(@RequestParam("month") int month) {
-		System.out.println("캘린더데이터"+myPageService.getToMakeCalendarData(1,1, month));
-		return ResponseEntity.ok(myPageService.getToMakeCalendarData(1,1, month));
+		System.out.println("캘린더데이터"+myPageService.getToMakeCalendarData((long)1,(long)1, month));
+		return ResponseEntity.ok(myPageService.getToMakeCalendarData((long)1,(long)1, month));
 	}
 
 	//마이페이지 포지션 제안 받기 화면 데이터(대표이력서, 제안 수락 여부, 선택했던 지역&직업 + 지역&직업 데이터)

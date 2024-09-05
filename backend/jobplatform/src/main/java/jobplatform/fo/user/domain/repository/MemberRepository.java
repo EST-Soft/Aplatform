@@ -12,7 +12,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 
-public interface MemberRepository extends JpaRepository<MemberEntity, Integer> {
+public interface MemberRepository extends JpaRepository<MemberEntity, Long> {
 
     MemberEntity findByMbrIdAndMbrPswrd(String mbrId, String mbrPswrd);
 

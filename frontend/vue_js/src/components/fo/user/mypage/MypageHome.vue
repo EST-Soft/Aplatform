@@ -24,11 +24,12 @@
             <tr>
               <th colspan="3">
                 <h2 class="font-weight-bold" style="margin-bottom: 10px">
-                  {{ result.rsmInfo.rsm_tl }}
+                  {{result.rsmInfo.rsm_ttl}}
                 </h2>
-                <span
+                <div v-bind:style="{display: 'flex', justifyContent: 'space-around'}">
+                  <span
                   >-최종 수정일자&nbsp;&nbsp;:&nbsp;&nbsp;{{
-                    formatDateYMD(result.rsmInfo.updt_dtm)
+                    (formatDateYMD(result.rsmInfo.updt_dtm) != null ? "없음" : formatDateYMD(result.rsmInfo.updt_dtm))
                   }}</span
                 ><span style="margin-left: 20px"
                   >-포지션 수락 여부&nbsp;&nbsp;:&nbsp;&nbsp;{{
@@ -37,6 +38,8 @@
                       : "거절")
                   }}</span
                 >
+                </div>
+                
               </th>
             </tr>
           </thead>
@@ -213,7 +216,7 @@ function makeCalendarDatas(toParsingData) {
         break;
     }
     event.date = temp.dtm;
-    event.description = temp.jbp_tl;
+    event.description = temp.jbp_ttl;
 
     events.push(event);
   }

@@ -8,8 +8,8 @@
       </section>
 
       <div class="mb-3">
-        <label for="jbpTl" class="form-label">제목</label>
-        <input type="text" v-model="jbpTl" class="form-control" id="jbpTl" placeholder="제목을 입력하세요">
+        <label for="jbpTtl" class="form-label">제목</label>
+        <input type="text" v-model="jbpTtl" class="form-control" id="jbpTtl" placeholder="제목을 입력하세요">
       </div>
 
       <div class="row">
@@ -60,20 +60,20 @@
         <div class="col-md-3 mb-3">
           <label for="cr" class="form-label">경력</label>
           <select v-model="cr" class="form-control" id="cr">
-            <option value="801">경력무관</option>
-            <option value="802">신입</option>
-            <option value="803">경력</option>
+            <option value="enr">경력무관</option>
+            <option value="exprncd">경력</option>
+            <option value="nwcmr">신입</option>
           </select>
         </div>
         <div class="col-md-3 mb-3">
           <label for="edctn" class="form-label">학력</label>
           <select v-model="edctn" class="form-control" id="edctn">
-            <option value="606">학력무관</option>
-            <option value="605">고등학교 이상</option>
-            <option value="604">대학교(2,3년제) 이상</option>
-            <option value="603">대학교(4년제) 이상</option>
-            <option value="602">석사</option>
-            <option value="601">박사</option>
+            <option value="denm">학력무관</option>
+            <option value="hs">고등학교 이상</option>
+            <option value="jc">대학교(2,3년제) 이상</option>
+            <option value="unvrsty">대학교(4년제) 이상</option>
+            <option value="mid">석사</option>
+            <option value="did">박사</option>
           </select>
         </div>
         <!-- <div class="col-md-3 mb-3">
@@ -164,11 +164,11 @@ const selectedJobs = ref([]);
 
 const jbpSq = ref(0);
 const entrprsSq = ref(1);
-const jbpTl = ref('');
+const jbpTtl = ref('');
 const jbpCntnt = ref('');
-const cr = ref(801);
+const crrDrtn = ref('drtn');
 const sklName = ref('');
-const edctn = ref(606);
+const edctn = ref('ednm');
 const workForm = ref('정규직');
 const slry = ref('');
 const workStartTime = ref('');
@@ -213,7 +213,7 @@ onMounted(() => {
 });
 
 const submitPost = () => {
-  if (jbpTl.value.trim() === '' || jbpCntnt.value.trim() === '') {
+  if (jbpTtl.value.trim() === '' || jbpCntnt.value.trim() === '') {
     alert('제목과 내용을 확인하세요.');
     return;
   }
@@ -226,9 +226,9 @@ const submitPost = () => {
       enterpriseMember: {
         entrprsSq: entrprsSq.value,
       },
-      jbpTl: jbpTl.value,
+      jbpTtl: jbpTtl.value,
       jbpCntnt: jbpCntnt.value,
-      cr: cr.value,
+      crrDrtn: crrDrtn.value,
       sklName: sklName.value,
       jobName: jobNames,
       edctn: edctn.value,
@@ -260,11 +260,11 @@ const submitPost = () => {
 };
 
 const clearForm = () => {
-  jbpTl.value = '';
+  jbpTtl.value = '';
   jbpCntnt.value = '';
-  cr.value = 801;
+  crrDrtn.value = '경력무관';
   sklName.value = '';
-  edctn.value = 606;
+  edctn.value = '학력무관';
   workForm.value = '정규직';
   slry.value = '';
   workStartTime.value = '';

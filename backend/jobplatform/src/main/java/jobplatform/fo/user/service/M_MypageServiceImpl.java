@@ -23,7 +23,7 @@ public class M_MypageServiceImpl implements M_MypageService{
 	
     //마이페이지 매인화면에 필요한 전체 데이터 가져오기
 	@Override
-	public Map<String, Object> getMyPageMainData(int mbr_sq, int month) {
+	public Map<String, Object> getMyPageMainData(Long mbr_sq, int month) {
 		
 		Map<String, Object> response = new HashMap<>();
 
@@ -31,30 +31,41 @@ public class M_MypageServiceImpl implements M_MypageService{
         Map<String, Object> mbrInfo = mypageMapper.getMbrInfo(mbr_sq);
         response.put("mbrInfo", mbrInfo);
 
+
         // 대표 이력서 정보
         Map<String, Object> rsmInfo = mypageMapper.getRprsntvRsmInfo(mbr_sq);
         response.put("rsmInfo", rsmInfo);
         
-        int rsm_sq = (int)rsmInfo.get("rsm_sq");
 
-        // 각 상태별 지원 개수
-        Map<String, Integer> EachCndtnApplyCount = mypageMapper.getEachCndtnApplyCount(rsm_sq);
-        response.put("EachCndtnApplyCount", EachCndtnApplyCount);
 
-        // 등록한 이력서, 스크랩한 공고, 포지션 제안 받은 개수
-        Map<String, Integer> myState = mypageMapper.getMyState(mbr_sq, rsm_sq);
-        response.put("myState", myState);
+        if(rsmInfo != null && rsmInfo.containsKey("rsm_sq")) {
+            Long rsm_sq = (Long) rsmInfo.get("rsm_sq");
 
-        // 월별 캘린더 데이터
-        List<Map<String, Object>> calendarData = mypageMapper.getToMakeCalendarData(mbr_sq,rsm_sq, month);
-        response.put("calendarData", calendarData);
+            // 각 상태별 지원 개수
+            Map<String, Integer> EachCndtnApplyCount = mypageMapper.getEachCndtnApplyCount(rsm_sq);
+            response.put("EachCndtnApplyCount", EachCndtnApplyCount);
+
+            // 등록한 이력서, 스크랩한 공고, 포지션 제안 받은 개수
+            Map<String, Integer> myState = mypageMapper.getMyState(mbr_sq, rsm_sq);
+            response.put("myState", myState);
+
+            // 월별 캘린더 데이터
+            List<Map<String, Object>> calendarData = mypageMapper.getToMakeCalendarData(mbr_sq,rsm_sq, month);
+            response.put("calendarData", calendarData);
+
+        } else {
+            response.put("rsmInfo", new HashMap<>());
+            response.put("EachCndtnApplyCount", new HashMap<>());
+            response.put("myState", new HashMap<>());
+            response.put("calendarData", new ArrayList<>());
+        }
 		
 		return response;
 	}
 
     //마이페이지 메인 화면 캘린더 데이터(월 이동시)
     @Override
-    public List<Map<String, Object>> getToMakeCalendarData(int mbr_sq, int rsm_sq, int month) {
+    public List<Map<String, Object>> getToMakeCalendarData(Long mbr_sq, Long rsm_sq, int month) {
         return mypageMapper.getToMakeCalendarData(mbr_sq,rsm_sq, month);
     }
 
@@ -68,7 +79,7 @@ public class M_MypageServiceImpl implements M_MypageService{
         Map<String, Object> response = new HashMap<>();
 
         response.put("ppAcceptYN", mypageMapper.getPstnPrpslAcceptYN(mbr_sq));
-        response.put("rsmInfo", mypageMapper.getRprsntvRsmInfo(mbr_sq));
+        response.put("rsmInfo", mypageMapper.getRprsntvRsmInfo((long)mbr_sq));
         response.put("selectedAreas", mypageMapper.getSelectedAreas(mbr_sq));
         response.put("selectedJobs", mypageMapper.getSelectedJobs(mbr_sq));
 

@@ -91,6 +91,9 @@ import { ref, computed, onMounted } from "vue";
 import JoinCompanyCondition from '@/components/fo/user/mypage/JoinCompanyCondition.vue';
 import ViewPaginate from '@/components/fo/user/common/ViewPaginate.vue';
 import axios from "axios";
+import { useStore } from "vuex";
+
+const store = useStore();
 
 
 
@@ -109,7 +112,7 @@ const resumeNotReadCnt = ref(0); // 이력서 미열람Cnt
 const searchType = ref(''); // 검색타입(이력서/공고)
 const search = ref(''); // 검색 내용
 
-const mbrSq= 1; // 회원순번
+const mbrSq= store.state.member.mbrSq; // 회원순번
 
 onMounted(async() => {
   axios.post('http://localhost:80/mypage/getApplyList', {mbrSq : mbrSq})

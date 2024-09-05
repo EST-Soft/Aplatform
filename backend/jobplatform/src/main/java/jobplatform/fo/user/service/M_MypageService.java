@@ -8,10 +8,10 @@ import jobplatform.fo.user.domain.vo.M_JobPosting_pp;
 public interface M_MypageService {
 
 	//마이페이지 매인화면에 필요한 전체 데이터 가져오기
-	public Map<String, Object> getMyPageMainData(int mbr_sq, int month);
+	public Map<String, Object> getMyPageMainData(Long mbr_sq, int month);
 
 	//마이페이지 메인 화면 캘린더 데이터(월 이동시)
-	public List<Map<String, Object>> getToMakeCalendarData(int mbr_sq, int rsm_sq, int month);
+	public List<Map<String, Object>> getToMakeCalendarData(Long mbr_sq, Long rsm_sq, int month);
 
 	//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 

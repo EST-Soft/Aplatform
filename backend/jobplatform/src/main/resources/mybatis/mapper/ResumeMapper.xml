@@ -22,7 +22,7 @@
 		rsm_sq,
 		mbr_sq,
 		rsm_rprsntv_yn,
-		rsm_tl,
+		rsm_ttl,
 		updt_dtm
 		from P2_TBL_RESUME_M
 		where mbr_sq = #{searchData.mbr_sq}
@@ -101,7 +101,7 @@
 		rsm_fnl_edctn_cd,
 		rsm_grd,
 		rsm_es,
-		rsm_tl,
+		rsm_ttl,
 		rsm_name,
 		rsm_gndr_cd,
 		rsm_bd,
@@ -115,7 +115,7 @@
 		rsm_fnl_edctn_cd,
 		rsm_grd,
 		rsm_es,
-		concat(rsm_tl, "[복사본]") as rsm_tl,
+		concat(rsm_ttl, "[복사본]") as rsm_ttl,
 		rsm_name,
 		rsm_gndr_cd,
 		rsm_bd,

@@ -14,11 +14,11 @@
             <strong class="font-weight-extra-bold"> 검색결과가 없습니다.</strong>
         </div>
         <!-- 자료있을때 for -->
-        <div v-else>
+        <div v-else class="list-wrap">
           <ul class="list-group" v-for="item in searchResult" :key="item.schoolName">
             <li class="list-group-item d-flex justify-content-between align-items-center">
               {{ item.schoolName + " ("+ item.campusName + ")"}}
-              <button type="button" class="btn btn-primary">선택</button>
+              <button type="button" class="btn btn-primary" @click="selectSchool(item)">선택</button>
             </li>
           </ul>
         </div>
@@ -100,6 +100,12 @@
       paginationData.pageGroupsOfCurrentPage = 1;
       performSearch();
     }
+
+    const selectSchool = (item) => {
+      console.log(item);
+      emit('setResult', item);
+      searchResult.value = [];
+    } // selectSchool
 
     //페이징 함수 (자식 컴포넌트가 호출)
     const changePageNo = (changePageNo) => {

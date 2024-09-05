@@ -42,7 +42,7 @@
           a.apy_sq, 
           a.rsm_sq, 
           r.mbr_sq, 
-          r.rsm_tl, 
+          r.rsm_ttl, 
           j.jbp_tl, 
           j.jbp_sq,
           Date(a.apy_dtm) as apy_dtm,
@@ -75,7 +75,7 @@
            a.apy_sq, 
            a.rsm_sq, 
            r.mbr_sq, 
-           r.rsm_tl, 
+           r.rsm_ttl, 
            j.jbp_tl, 
            j.jbp_sq,
            DATE(a.apy_dtm) AS apy_dtm,
@@ -100,11 +100,11 @@
            p2_tbl_common_code_dtl_s AS c 
            ON c.code_id = a.apy_cndtn
        WHERE 
-           <if test='searchType == "jbpTl"'>
+           <if test='searchType == "jbpTtl"'>
                j.jbp_tl LIKE CONCAT('%', #{search}, '%')
            </if>
            <if test='searchType == "rsmName"'>
-               r.rsm_tl LIKE CONCAT('%', #{search}, '%')
+               r.rsm_ttl LIKE CONCAT('%', #{search}, '%')
             </if>
             order by a.apy_dtm desc
    </select>

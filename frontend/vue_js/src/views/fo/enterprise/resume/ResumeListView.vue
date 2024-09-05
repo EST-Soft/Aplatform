@@ -46,8 +46,9 @@ import ResumeDatas from "@/components/fo/enterprise/resume/ResumeDatas.vue";
 import axios from "axios";
 
 import { onMounted, ref } from "vue";
+import { useStore } from "vuex";
 
-
+const store = useStore();
 
 const resumeListData = ref({
     resumeDatas: [],
@@ -57,7 +58,7 @@ const resumeListData = ref({
 
 onMounted(() => {
     // 첫페이지 입장시 정보 넣어주기 
-    resumeListData.value.searchData = { mbr_sq: 1, sort: "desc", pageNo: 1 };
+    resumeListData.value.searchData = { mbr_sq: store.state.member.mbrSq, sort: "desc", pageNo: 1 };
     callAxios();
 });
 
@@ -68,6 +69,7 @@ const callAxios = async () => {
         .then((success) => {
             console.log('axios 성공' + success.data);
             resumeListData.value = success.data;
+            console.log(resumeListData.value)
         })
         .catch((error) => {
             console.log('axios 실패' + error.data);

@@ -57,4 +57,7 @@ public class BoardAnswerEntity{
     private char dltYn = 'N';
 
 
+    private String createdBy;
+
+
 }

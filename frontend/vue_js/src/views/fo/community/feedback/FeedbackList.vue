@@ -150,6 +150,7 @@ const getBoardList = async () => {
         tmpPages.push(i);
       }
       pageList.value = tmpPages;
+      console.log(pageList);
     } else {
       console.error("Pagination data is missing.");
     }

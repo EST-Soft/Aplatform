@@ -57,7 +57,15 @@ INSERT INTO P3_TBL_BOARD_ANSWER (
 
 
 <select id="findAll" parameterType="map" resultMap="BoardAnswerResultMap">
-    SELECT * FROM P3_TBL_BOARD_ANSWER WHERE brd_sq = #{brdSq} and dlt_yn = 'N'
+    SELECT 
+    a.*,
+    COALESCE(m.mbr_id, e.entrprs_id) AS createdBy    
+    FROM P3_TBL_BOARD_ANSWER a
+    LEFT JOIN
+    p3_tbl_member_m m ON a.mbr_sq = m.mbr_sq
+    LEFT JOIN
+    p3_tbl_enterprise_member_m e ON a.entrprs_sq = e.entrprs_sq
+    WHERE brd_sq = #{brdSq} and a.dlt_yn = 'N'
     ORDER BY answr_slctn_yn DESC, answr_sq DESC
     LIMIT #{page}, #{size}
 </select>

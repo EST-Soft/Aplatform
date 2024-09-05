@@ -472,5 +472,6 @@
   .col-auto.flex-grow-1 {
     flex-grow: 1; /* 빈 공간을 채우기 위한 div가 남은 공간을 채우도록 설정 */
   }
+  
   </style>
   

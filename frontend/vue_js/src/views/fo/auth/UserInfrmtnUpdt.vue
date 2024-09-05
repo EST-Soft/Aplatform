@@ -151,7 +151,6 @@ const handleSubmit = async() => {
 //   }
 
 
-
 //   if (!/^01([0|1|6|7|8|9]?)?([0-9]{3,4})?([0-9]{4})$/.test(entrprsPicMp.value)) {
 //     errorEntrprsPicMp.value =
 //         "휴대폰 번호 형식이 올바르지 않습니다. (-를 제외한 10자리 또는 11자리 숫자)";

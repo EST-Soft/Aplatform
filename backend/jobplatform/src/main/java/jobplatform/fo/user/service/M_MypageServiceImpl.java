@@ -64,7 +64,7 @@ public class M_MypageServiceImpl implements M_MypageService{
     public Map<String, Object> findResumeM(int mbr_sq) {
         // 회원 정보
         return mypageMapper.getMbrInfo(mbr_sq);
-    }
+    } 
 
 
 //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

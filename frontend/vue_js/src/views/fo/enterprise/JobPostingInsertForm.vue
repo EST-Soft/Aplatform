@@ -17,7 +17,8 @@
           <label for="jobName" class="form-label">모집 직군</label>
           <div id="jobName" class="form-control" style="height: auto;">
             <div v-for="job in jobs" :key="job.jobSq" class="form-check">
-              <input type="checkbox" v-model="selectedJobs" :value="job" class="form-check-input" :id="'job-' + job.jobSq">
+              <input type="checkbox" v-model="selectedJobs" :value="job" class="form-check-input"
+                :id="'job-' + job.jobSq">
               <label class="form-check-label" :for="'job-' + job.jobSq">{{ job.jobScName }}</label>
             </div>
           </div>
@@ -26,7 +27,8 @@
           <label for="workArea" class="form-label">근무지역</label>
           <div id="workArea" class="form-control" style="height: auto;">
             <div v-for="area in areas" :key="area.areaSq" class="form-check">
-              <input type="checkbox" v-model="selectedWorkAreas" :value="area" class="form-check-input" :id="'area-' + area.areaSq">
+              <input type="checkbox" v-model="selectedWorkAreas" :value="area" class="form-check-input"
+                :id="'area-' + area.areaSq">
               <label class="form-check-label" :for="'area-' + area.areaSq">{{ area.areaName }}</label>
             </div>
           </div>
@@ -96,7 +98,8 @@
         <div class="col-md-3 mb-3">
           <label class="form-label">급여</label>
           <div class="input-group">
-            <input type="text" v-model="slry" class="form-control" id="slry" placeholder="연봉" :disabled="interviewAgreement">
+            <input type="text" v-model="slry" class="form-control" id="slry" placeholder="연봉"
+              :disabled="interviewAgreement">
             <div class="input-group-text">
               <input type="checkbox" v-model="interviewAgreement"> 면접 후 협의
             </div>
@@ -113,9 +116,9 @@
       </div>
 
       <div class="mb-3">
-    <label for="jbpCntnt" class="form-label">내용</label>
-    <QuillEditorComponent v-model="jbpCntnt" />
-  </div>
+        <label for="jbpCntnt" class="form-label">내용</label>
+        <QuillEditorComponent v-model="jbpCntnt" />
+      </div>
       <div class="row">
         <div class="col-md-6 mb-3">
           <label for="regstrStrtDtm" class="form-label">공고 시작일</label>
@@ -222,29 +225,29 @@ const submitPost = () => {
   const areaNames = selectedWorkAreas.value.map(area => area.areaName);
 
   api.$post('/board/jobPostingInsert', {
-      jbpSq: jbpSq.value,
-      enterpriseMember: {
-        entrprsSq: entrprsSq,
-      },
-      jbpTl: jbpTl.value,
-      jbpCntnt: jbpCntnt.value,
-      cr: cr.value,
-      sklName: sklName.value,
-      jobName: jobNames,
-      edctn: edctn.value,
-      workArea: areaNames,
-      workForm: workForm.value,
-      slry: interviewAgreement.value ? '면접 후 협의' : slry.value +" 만원",
-      workHour: `${workStartTime.value} ~ ${workEndTime.value}`,
-      regstrStrtDtm: regstrStrtDtm.value,
-      regstrDlnDtm: regstrDlnDtm.value,
-      picName: picName.value,
-      picMp: picMp.value,
-      picEml: picEml.value,
-      jbpEndYn: jbpEndYn.value,
-      jbpCndtn: jbpCndtn.value,
-      insrtMbrSq: insrtMbrSq.value,
-    })
+    jbpSq: jbpSq.value,
+    enterpriseMember: {
+      entrprsSq: entrprsSq,
+    },
+    jbpTl: jbpTl.value,
+    jbpCntnt: jbpCntnt.value,
+    cr: cr.value,
+    sklName: sklName.value,
+    jobName: jobNames,
+    edctn: edctn.value,
+    workArea: areaNames,
+    workForm: workForm.value,
+    slry: interviewAgreement.value ? '면접 후 협의' : slry.value + " 만원",
+    workHour: `${workStartTime.value} ~ ${workEndTime.value}`,
+    regstrStrtDtm: regstrStrtDtm.value,
+    regstrDlnDtm: regstrDlnDtm.value,
+    picName: picName.value,
+    picMp: picMp.value,
+    picEml: picEml.value,
+    jbpEndYn: jbpEndYn.value,
+    jbpCndtn: jbpCndtn.value,
+    insrtMbrSq: insrtMbrSq.value,
+  })
     .then(response => {
       const { detailUrl, jbpSq: insertedJbpSq } = response;
       jbpSq.value = insertedJbpSq;
@@ -284,25 +287,29 @@ const clearForm = () => {
 </script>
 
 <style>
-.form-control{
+.form-control {
   background-color: #f9f9f9;
   min-width: 160px;
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-  max-height: 200px; /* 드롭다운의 최대 높이 설정 */
-  overflow-y: auto; /* 세로 스크롤 처리 */
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  max-height: 200px;
+  /* 드롭다운의 최대 높이 설정 */
+  overflow-y: auto;
+  /* 세로 스크롤 처리 */
 }
 
 /* Quill 에디터 스타일 수정 */
 .quill-editor .ql-container {
   background-color: #f9f9f9;
   min-width: 160px;
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
   height: 200px;
 }
 
 .quill-editor .ql-editor {
   min-height: 200px;
-  max-height: 400px; /* 에디터의 최대 높이 설정 */
-  overflow-y: auto; /* 세로 스크롤 처리 */
+  max-height: 400px;
+  /* 에디터의 최대 높이 설정 */
+  overflow-y: auto;
+  /* 세로 스크롤 처리 */
 }
 </style>

@@ -1,20 +1,55 @@
 <template>
     <div class="col pb-3 pt-1">
-        <div class="col-lg-4">
-            <h4 class="mb-0">
-                기술 &nbsp;
-                <a href="#" class="btn btn-primary btn-circle mb-2" @click="addComponents()">
-                    <i class="fa fa-plus"></i>
-                </a>
-            </h4>
-            <hr class="mt-1 mb-2" />
-            <div>
-                <div v-for="(skillsData, index) in skillsDatas" :key="index">
-                    <div>
-                        <a class="btn btn-outline btn-rounded btn-light" @click="removeComponents(skillsData.id)">
-                            데이터 뿌려주기
-                        </a>
+        <h4 class="mb-0">
+            스킬 &nbsp;
+            <div class="btn btn-primary btn-circle mb-2" @click="toggleSkills">
+                <i class="fa fa-plus"></i>
+            </div>
+        </h4>
+        <hr class="mt-1 mb-2" />
+        <div v-if="skillsVisible" class="skills-container">
+            <div class="skill-card">
+                <div class="skill-category">
+                    <h5>language</h5>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="java" value="Java" v-model="localSkills['language']"
+                            @change="updateParent">
+                        <label for="java">Java</label>
+                        <input type="checkbox" id="c" value="C" v-model="localSkills['language']"
+                            @change="updateParent">
+                        <label for="c">C</label>
+                        <input type="checkbox" id="cpp" value="C++" v-model="localSkills['language']"
+                            @change="updateParent">
+                        <label for="cpp">C++</label>
                     </div>
+                </div>
+                <div class="skill-category">
+                    <h5>framework</h5>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="spring" value="Spring Boot" v-model="localSkills['framework']"
+                            @change="updateParent">
+                        <label for="spring">Spring Boot</label>
+                        <input type="checkbox" id="react" value="React" v-model="localSkills['framework']"
+                            @change="updateParent">
+                        <label for="react">React</label>
+                        <input type="checkbox" id="vue" value="Vue" v-model="localSkills['framework']"
+                            @change="updateParent">
+                        <label for="vue">Vue</label>
+                    </div>
+                </div>
+                <div class="skill-category">
+                    <h5>UI</h5>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="figma" value="Figma" v-model="localSkills['UI']"
+                            @change="updateParent">
+                        <label for="figma">Figma</label>
+                        <input type="checkbox" id="photoshop" value="Photoshop" v-model="localSkills['UI']"
+                            @change="updateParent">
+                        <label for="photoshop">Photoshop</label>
+                    </div>
+                </div>
+                <div class="mt-2">
+                    <button class="btn btn-outline btn-danger" @click="removeComponents">삭제</button>
                 </div>
             </div>
         </div>
@@ -22,30 +57,85 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, watch } from 'vue';
+import { defineEmits } from 'vue';
 
-const skillsDatas = ref([]);
-let count = 1;
+const emit = defineEmits(['updateSkills', 'removeSkills']);
 
-// 입력창 생성
-const addComponents = () => {
-    skillsDatas.value.push({ id: count });
-    count++;
+const localSkills = ref({
+    'language': [],
+    'framework': [],
+    'UI': []
+});
+
+const skillsVisible = ref(false);
+
+const toggleSkills = () => {
+    skillsVisible.value = !skillsVisible.value;
 };
 
-// // 입력창 생성   ================>>>>>>>   삭제기능 넣으면 너무 어려워지는데?
-// const removeComponents = (event) => {
-//     let index = 0;
+const updateParent = () => {
+    emit('updateSkills', localSkills.value);
+};
 
-//     skillsDatas.value.forEach((skillsData, dataIndex) => {
-//         if (skillsData.id == event) {
-//             index = dataIndex;
-//             return;
-//         }
-//     });
+const removeComponents = () => {
+    emit('removeSkills');
+};
 
-//     skillsDatas.value.splice(index, 1);
-// };
+// Watch localSkills to emit changes to the parent
+watch(localSkills, (newSkills) => {
+    emit('updateSkills', newSkills);
+}, { deep: true });
 </script>
 
-<style scoped></style>
+<style scoped>
+.skills-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.skill-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    background-color: #f9f9f9;
+}
+
+.skill-category {
+    margin-bottom: 1rem;
+}
+
+.skill-category h5 {
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+}
+
+.checkbox-group {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.checkbox-group input[type="checkbox"] {
+    margin-right: 0.5rem;
+}
+
+.checkbox-group label {
+    margin-right: 1rem;
+    font-size: 0.9rem;
+}
+
+.mt-2 {
+    margin-top: 0.5rem;
+}
+
+.btn-circle {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+}
+
+.skill-card .btn-outline {
+    margin-left: 0.5rem;
+}
+</style>

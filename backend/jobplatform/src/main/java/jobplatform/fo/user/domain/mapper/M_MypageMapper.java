@@ -8,6 +8,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import jobplatform.fo.user.domain.vo.M_JobPosting_pp;
+import jobplatform.fo.user.domain.vo.MemberVO;
 
 @Mapper
 public interface M_MypageMapper {
@@ -15,6 +16,9 @@ public interface M_MypageMapper {
 //	회원 정보 중 이름, 전화번호, 이메일, 포지션 제안 수락여부
 //	mbr_name, mbr_mp, mbr_eml_adrs, pstn_prpsl_accept_yn
 	public Map<String, Object> getMbrInfo(Long mbr_sq);
+
+	// 비밀번호 수정
+	public int pwUpdate(Long mbr_sq, String mbr_pswrd);
 	
 //	이력서 중 대표 이력서 이력서 순번, 이력서 제목, 등록일시, 최종 수정일시, 이미지
 //	rsm_sq, rsm_tl, insrt_dtm, updt_dtm, rsm_img_file_rul

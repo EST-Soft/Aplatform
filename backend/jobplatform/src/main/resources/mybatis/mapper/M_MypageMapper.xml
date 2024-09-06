@@ -8,7 +8,7 @@
 
 	<!-- 회원 정보 중 이름, 전화번호, 이메일, 포지션 제안 수락여부 -->
 	<select id="getMbrInfo">
-		SELECT mbr_name, mbr_mp, mbr_eml_adrs, pstn_prpsl_accept_yn
+		SELECT mbr_name, mbr_mp, mbr_eml_adrs, pstn_prpsl_accept_yn, mbr_adrs
 		FROM p3_tbl_member_m
 		WHERE
 			mbr_sq = #{mbr_sq}
@@ -35,7 +35,11 @@
 	</select>
 	-->
 	
-
+	<update id="pwUpdate">
+		UPDATE P3_TBL_MEMBER_M
+		SET mbr_pswrd = #{mbr_pswrd}
+		WHERE mbr_sq = #{mbr_sq}
+	</update>
 
 
 	<!--대표 이력서 -> 지원 테이블에서 각 상태별 데이터 개수 가지고 오기(미열람:401, 열람:402, 면접대기:405, 면접완료:406, 합격:407, 불합격:408) -->

@@ -2,7 +2,6 @@
     <div class="heading heading-border heading-middle-border">
         <h1 class="font-weight-normal">회원정보 수정<strong class="font-weight-extra-bold"></strong></h1>
     </div>
-
     <div class="d-flex justify-content-center mb-4">
         <div class="profile-image-outer-container">
             <div class="profile-image-inner-container bg-color-primary">
@@ -24,7 +23,7 @@
                 <div class="form-group row">
                     <label class="col-lg-3 col-form-label form-control-label line-height-9 pt-2 text-2 required">아이디</label>
                     <div class="col-lg-9">
-                        <input class="form-control text-3 h-auto py-2" type="text" name="mbr_id">
+                        <input class="form-control text-3 h-auto py-2" type="text" name="mbr_id" :value="member.mbrId">
                     </div>
                     <!--아이디 중복체크-->
                     <!-- <div class="col-lg-7" v-if="repetitionCheck == 1">
@@ -45,38 +44,81 @@
                 <div class="form-group row">
                     <label class="col-lg-3 col-form-label form-control-label line-height-9 pt-2 text-2 required">이름</label>
                     <div class="col-lg-9">
-                        <input class="form-control text-3 h-auto py-2" type="text" name="mbr_name">
+                        <input class="form-control text-3 h-auto py-2" type="text" name="mbr_name" :value="member.mbrName">
                     </div>
                 </div>
-                <div class="form-group row">
-                    <label class="col-lg-3 col-form-label form-control-label line-height-9 pt-2 text-2">이메일주소</label>
-                    <div class="col-lg-9">
-                        <input class="form-control text-3 h-auto py-2" type="url" name="mbr_eml_adrs">
+                
+                <div v-if="result.mbr_eml_adrs != null">
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-form-label form-control-label line-height-9 pt-2 text-2">이메일주소</label>
+                        <div class="col-lg-9">
+                            <input class="form-control text-3 h-auto py-2" type="url" name="mbr_eml_adrs" :value="result.mbr_eml_adrs">
+                        </div>
                     </div>
                 </div>
-                <div class="form-group row">
-                    <label class="col-lg-3 col-form-label form-control-label line-height-9 pt-2 text-2">휴대폰번호</label>
-                    <div class="col-lg-9">
-                        <input class="form-control text-3 h-auto py-2" type="url" name="mbr_mp">
-                    </div>
-                </div>
-                <div class="form-group row mb-4">
-                    <label class="col-lg-3 col-form-label form-control-label line-height-9 pt-2 text-2 required">주소</label>
-                    <div class="col-lg-7">
-                        <input class="form-control text-3 h-auto py-2" type="text" name="mbr_adrs_post" placeholder="우편번호">
-                    </div>
-                    <div class="col-lg-2">
-                        <input class="btn btn-modern btn-light mb-2" 
-                        type="button" name="entrprsId" value="검 색"
-                        @click="openPostcode">
+                <div v-else>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-form-label form-control-label line-height-9 pt-2 text-2">이메일주소</label>
+                        <div class="col-lg-9">
+                            <input class="form-control text-3 h-auto py-2" type="url" name="mbr_eml_adrs" value="">
+                        </div>
                     </div>
                 </div>
 
-                <div class="form-group row">
-                    <label
-                        class="col-lg-3 col-form-label form-control-label line-height-9 pt-2 text-2 "></label>
-                    <div class="col-lg-9">
-                        <input class="form-control text-3 h-auto py-2" type="text" name="mbr_adrs" placeholder="상세주소">
+                <div v-if="result.mbr_mp != null">
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-form-label form-control-label line-height-9 pt-2 text-2">휴대폰번호</label>
+                        <div class="col-lg-9">
+                            <input class="form-control text-3 h-auto py-2" type="url" name="mbr_mp" :value="result.mbr_mp">
+                        </div>
+                    </div>
+                </div>
+                <div v-else>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-form-label form-control-label line-height-9 pt-2 text-2">휴대폰번호</label>
+                        <div class="col-lg-9">
+                            <input class="form-control text-3 h-auto py-2" type="url" name="mbr_mp" value="">
+                        </div>
+                    </div>
+                </div>
+                
+                <div v-if="result.mbr_adrs != null">
+                    <div class="form-group row mb-4">
+                        <label class="col-lg-3 col-form-label form-control-label line-height-9 pt-2 text-2">주소</label>
+                        <div class="col-lg-7">
+                            <input class="form-control text-3 h-auto py-2" type="text" name="mbr_adrs_post" placeholder="우편번호" :value="result.mbr_adrs">
+                        </div>
+                        <div class="col-lg-2">
+                            <input class="btn btn-modern btn-light mb-2" type="button" name="entrprsId" value="검 색" @click="openPostcode">
+                        </div>
+                    </div>
+                </div>
+                <div v-else>
+                    <div class="form-group row mb-4">
+                        <label class="col-lg-3 col-form-label form-control-label line-height-9 pt-2 text-2">주소</label>
+                        <div class="col-lg-7">
+                            <input class="form-control text-3 h-auto py-2" type="url" name="mbr_adrs_post" value="">
+                        </div>
+                        <div class="col-lg-2">
+                            <input class="btn btn-modern btn-light mb-2" type="button" name="entrprsId" value="검 색" @click="openPostcode">
+                        </div>
+                    </div>
+                </div>
+
+                <div v-if="result.mbr_adrs != null">
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-form-label form-control-label line-height-9 pt-2 text-2"></label>
+                        <div class="col-lg-9">
+                            <input class="form-control text-3 h-auto py-2" type="text" name="mbr_adrs" placeholder="상세주소" :value="result.mbr_adrs">
+                        </div>
+                    </div>
+                </div>
+                <div v-else>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-form-label form-control-label line-height-9 pt-2 text-2"></label>
+                        <div class="col-lg-9">
+                            <input class="form-control text-3 h-auto py-2" type="url" name="mbr_adrs" value="">
+                        </div>
                     </div>
                 </div>
 
@@ -84,7 +126,7 @@
                 
                 <div class="form-group row">
                     <div class="button-container">
-                        <a href="#" id="abtn1" class="btn btn-modern btn-light mb-2">수정한다</a>
+                        <a href="#" id="abtn1" class="btn btn-modern btn-light mb-2">수정하기</a>
                         <a href="#" id="abtn2" class="btn btn-modern btn-dark mb-2">취소</a>
                     </div>
                 </div>
@@ -115,16 +157,16 @@ const file = ref(''); // 파일저장
 
 let result = ref({});
 const member = computed(() => store.getters.getMember);
-const isLoggedIn = computed(() => member.value !== null);
 
 onMounted(async () => {
   try {
-    const response = await api.$get("/user/mypage/infrmtn", {
+    const response = await api.$get('/user/mypage/infrmtn', {
       params: {
-        mbr_sq: isLoggedIn.value.mbrSq
+        mbr_sq: store.state.member.mbrSq,
       },
     });
     result.value = response || {};  // 데이터를 받지 못했을 때 기본 빈 객체로 설정
+    console.log(result.value);
   } catch (error) {
     console.error("API 호출 오류:", error);
     result.value = {};  // 오류가 발생했을 때 기본 빈 객체로 설정
@@ -149,6 +191,7 @@ const handleSubmit = async() => {
 //     alert('필수 항목을 모두 입력해 주세요.');
 //     return;
 //   }
+
 
 
 //   if (!/^01([0|1|6|7|8|9]?)?([0-9]{3,4})?([0-9]{4})$/.test(entrprsPicMp.value)) {

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import jobplatform.fo.user.domain.entity.MemberEntity;
 import jobplatform.fo.user.domain.vo.M_JobPosting_pp;
 import jobplatform.fo.user.service.M_MypageService;
 
@@ -80,10 +81,8 @@ public class M_MypageController {
 	//마이페이지 개인정보 수정
 	@GetMapping("/infrmtn")
 	public ResponseEntity<Map<String, Object>> userInfrmtn(@RequestParam("mbr_sq") Long mbr_sq) {
-		System.out.println("어휴ㅡㅜㅜㅜ======="+mbr_sq);
-		Map<String, Object> userInfrmtn = myPageService.findResumeM(mbr_sq);
-		System.out.println(userInfrmtn);
-		return ResponseEntity.ok(userInfrmtn);
+
+		return ResponseEntity.ok(myPageService.findResumeM(mbr_sq));
 	}
 	
 	

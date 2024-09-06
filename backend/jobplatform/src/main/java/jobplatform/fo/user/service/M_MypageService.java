@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import jobplatform.fo.user.domain.vo.M_JobPosting_pp;
+import jobplatform.fo.user.domain.vo.MemberVO;
 
 public interface M_MypageService {
 
@@ -35,5 +36,8 @@ public interface M_MypageService {
 
 	//회원 정보 받아오기
 	public Map<String, Object> findResumeM(Long mbr_sq);
+
+	//비밀번호 수정
+	public int pwUpdate(Long mbr_sq, String mbr_pswrd);
 
 }

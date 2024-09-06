@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jobplatform.fo.user.domain.mapper.M_MypageMapper;
 import jobplatform.fo.user.domain.vo.M_JobPosting_pp;
+import jobplatform.fo.user.domain.vo.MemberVO;
 
 
 @Service
@@ -170,6 +171,12 @@ public class M_MypageServiceImpl implements M_MypageService{
     
     public int refuseProposedPostion(int pstn_prpsl_sq) {
     	return mypageMapper.refuseProposedPostion(pstn_prpsl_sq);
+    }
+
+    @Override
+    public int pwUpdate(Long mbr_sq, String newPassword) {
+        // 비밀번호 업데이트 쿼리 호출
+        return mypageMapper.pwUpdate(mbr_sq, newPassword);
     }
 
 

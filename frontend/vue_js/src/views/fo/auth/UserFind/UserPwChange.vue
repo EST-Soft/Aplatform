@@ -9,7 +9,7 @@
                 <div class="form-group row">
                     <label class="col-lg-3 col-form-label form-control-label line-height-9 pt-2 text-2 required">기존 번호</label>
                     <div class="col-lg-9">
-                        <input class="form-control text-3 h-auto py-2" type="password" name="password" value="" required="">
+                        <input class="form-control text-3 h-auto py-2" type="password" id="currentPw" name="currentPw" value="" v-model="currentPw">
                     </div>
                 </div>
             </div>
@@ -19,7 +19,7 @@
                 <div class="form-group row">
                     <label class="col-lg-3 col-form-label form-control-label line-height-9 pt-2 text-2 required">변경할 번호</label>
                     <div class="col-lg-9">
-                        <input class="form-control text-3 h-auto py-2" type="password" name="password" value="" required="">
+                        <input class="form-control text-3 h-auto py-2" type="password" id="newPw" name="newPw" value="" v-model="newPw" @focus="handleFocus" @blur="handleBlur">
                     </div>
                 </div>
             </div>
@@ -29,7 +29,7 @@
                 <div class="form-group row">
                     <label class="col-lg-3 col-form-label form-control-label line-height-9 pt-2 text-2 required">번호 재확인</label>
                     <div class="col-lg-9">
-                        <input class="form-control text-3 h-auto py-2" type="password" name="password" value="" required="">
+                        <input class="form-control text-3 h-auto py-2" type="password" id="checkPw" name="checkPw" value="" v-model="checkPw" @focus="handleFocus" @blur="handleBlur" @change="validatePassword">
                     </div>
                 </div>
             </div>
@@ -46,26 +46,75 @@
   </template>
   
   <script>
-  import { ref } from "vue";
+  import { ref, computed } from "vue";
   import { showAlert } from "../../../../utill/utillModal";
   import { useRouter } from "vue-router";
-  
+  import { api } from "@/axios";
+// import store from '@/store'
+  import { useStore } from "vuex";
+
   export default {
-    name: "UserPwUpdate",
+    name: "UserPwChange",
     setup() {
-      const newPw = ref("");
-      const checkPw = ref("");
-      const pwError = ref("");
-      const router = useRouter();
-      const onSubmit = () => {
+
+        const currentPw = ref("");
+        const newPw = ref("");
+        const checkPw = ref("");
+        const pwError = ref("");
+        const router = useRouter();
+        const store = useStore();
+
+        const member = computed(() => store.getters['getMember']);
+
+        const onSubmit = async () => {
         if (newPw.value !== checkPw.value) {
-          showAlert("비밀번호가 일치하지 않습니다.");
-          return;
+            showAlert('비밀번호가 일치하지 않습니다.');
+            return;
         }
-        // 비밀번호 재설정 로직 추가
-        showAlert("비밀번호가 성공적으로 재설정되었습니다.");
-        router.push("/user/login");
-      };
+        const params = {
+            mbrId: member.value.mbrId,
+            currentPassword: currentPw.value,
+            newPassword: newPw.value
+        };
+        
+        try {
+            const response = await api.$put('/member/pwUpdate', params);
+
+            console.log(response);
+
+            if (response.status === 200) {
+                showAlert(response.message); // 성공 메시지 표시
+                logout();
+            } else if (response.status === 300) {
+                showAlert(response.message); // 실패 메시지 표시
+            } else {
+                showAlert('알 수 없는 오류가 발생했습니다.'); // 기타 오류 처리
+            }
+            
+        } catch (error) {
+            if (error.response.data.status == 400) {
+            // 서버 응답이 있는 경우
+            console.error('Error response:', error.response.data);
+            showAlert(`${error.response.data.message}`);
+            } else if (error.request) {
+            // 요청이 있었지만 응답이 없는 경우
+            console.error('Error request:', error.request);
+            showAlert('서버 응답이 없습니다.');
+            } else {
+            // 요청을 설정할 때 문제가 발생한 경우
+            console.error('Error message:', error.message);
+            showAlert('요청 설정 중 오류가 발생했습니다.');
+            }
+        }
+        };
+
+        function logout() {
+            router.push('/user/login').then(() => {
+            store.commit("clearMember");
+            store.commit("changeUserType", "user");
+        })
+}
+
       const validatePassword = () => {
         if (newPw.value !== checkPw.value) {
           pwError.value = "비밀번호가 일치하지 않습니다.";
@@ -73,6 +122,7 @@
           pwError.value = "";
         }
       };
+
       const handleFocus = (event) => {
         event.target.placeholder = "";
       };
@@ -88,20 +138,22 @@
         handleBlur,
         handleFocus,
         newPw,
+        currentPw,
         checkPw,
         pwError,
         validatePassword,
         router,
+        member,
       };
     },
   };
   </script>
   
   <style scoped>
-  .form-container {
+    .form-container {
         display: flex;
         justify-content: center;
-        max-width: 800px;
+        max-width: 600px;
         margin: 0 auto;
         padding: 20px;
     }
@@ -113,12 +165,16 @@
   
   .form-control {
     box-shadow: none;
-    width: 280px;
+    width: 350px;
   }
   
-  .form-control:focus {
-    background-color: #f4f4f4;
+  .form-control:focus{
+    background-color: #ffffff;
+    box-shadow: none;
+    border: 1px solid #ddd;
+    border-radius: 4px;
   }
+
   .button-wrapper {
     display: flex;
     justify-content: center;

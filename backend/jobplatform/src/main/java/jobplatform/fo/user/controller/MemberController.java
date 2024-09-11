@@ -89,21 +89,24 @@ public class MemberController {
         return ResponseEntity.ok("로그아웃되었습니다.");
     }
 
-    @PutMapping("/update")
+    @PostMapping("/update")
     public ResponseEntity<?> updateMember(@RequestBody MemberEntity updatedMember) {
         try {
             MemberEntity existingMember = memberRepository.findById(updatedMember.getMbrSq())
                     .orElseThrow(() -> new IllegalArgumentException("회원을 찾을 수 없습니다. 회원 순번: " + updatedMember.getMbrSq()));
 
             // 업데이트할 필드 설정
+            existingMember.setMbrId(updatedMember.getMbrId());
+            existingMember.setMbrName(updatedMember.getMbrName());
+            existingMember.setMbrAdrs(updatedMember.getMbrPswrd() + " " + updatedMember.getMbrAdrs());
             existingMember.setMbrEmlAdrs(updatedMember.getMbrEmlAdrs());
-            existingMember.setMbrPswrd(updatedMember.getMbrPswrd());
             existingMember.setMbrMp(updatedMember.getMbrMp());
-            existingMember.setUpdtMbrSq(updatedMember.getMbrSq());
+            existingMember.setMbrImgFileUrl(updatedMember.getMbrImgFileUrl());
+            existingMember.setMbrImgOrgnlFn(updatedMember.getMbrImgOrgnlFn());
             existingMember.setUpdtDtm(LocalDateTime.now()); // 수정 일시 설정
 
             MemberEntity updatedEntity = memberRepository.save(existingMember);
-            return ResponseEntity.ok(updatedEntity);
+            return ResponseEntity.ok("수정완료");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();
         } catch (Exception e) {
@@ -309,11 +312,8 @@ public class MemberController {
     @PutMapping("/pwUpdate")
     public ResponseEntity<Map<String, Object>> pwUpdate(@RequestBody Map<String, String> params, HttpSession session) {
         Map<String, Object> map = new HashMap<>();
-        System.out.println("이게 안가는구나:"+params);
         // 사용자와 비밀번호 확인
         MemberEntity mpw = memberRepository.findByMbrIdAndMbrPswrd(params.get("mbrId"), params.get("currentPassword"));
-
-        System.out.println("이건뭔데??"+mpw);
 
         if (mpw != null) {
 

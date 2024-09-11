@@ -82,7 +82,7 @@ public class M_MypageController {
 	@GetMapping("/infrmtn")
 	public ResponseEntity<Map<String, Object>> userInfrmtn(@RequestParam("mbr_sq") Long mbr_sq) {
 
-		return ResponseEntity.ok(myPageService.findResumeM(mbr_sq));
+		return ResponseEntity.ok(myPageService.findUserINfo(mbr_sq));
 	}
 	
 	

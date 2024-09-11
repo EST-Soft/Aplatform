@@ -73,6 +73,18 @@ public class MemberEntity {
     @Column(name = "mbr_prvcy_trms_yn", nullable = false, columnDefinition = "char(1)")
     private String mbrPrvcyTrmsChck;
 
+    //주소
+    @Column(name = "mbr_adrs", nullable = true, columnDefinition = "varchar(50)")
+    private String mbrAdrs;
+
+    //회원 이미지 원본 파일 명
+    @Column(name = "mbr_img_orgnl_fn", nullable = true, columnDefinition = "varchar(50)")
+    private String mbrImgOrgnlFn;
+
+    //회원 이미지 파일 url
+    @Column(name = "mbr_img_file_url", nullable = true, columnDefinition = "varchar(100)")
+    private String mbrImgFileUrl;
+
     // 등록_회원_순번
     @Column(name = "insrt_mbr_sq", nullable = false)
     private Long insrtMbrSq;

@@ -8,7 +8,7 @@
 
 	<!-- 회원 정보 중 이름, 전화번호, 이메일, 포지션 제안 수락여부 -->
 	<select id="getMbrInfo">
-		SELECT mbr_name, mbr_mp, mbr_eml_adrs, pstn_prpsl_accept_yn, mbr_adrs
+		SELECT mbr_name, mbr_mp, mbr_eml_adrs, pstn_prpsl_accept_yn, mbr_adrs, mbr_img_file_url, mbr_img_orgnl_fn
 		FROM p3_tbl_member_m
 		WHERE
 			mbr_sq = #{mbr_sq}
@@ -37,7 +37,8 @@
 	
 	<update id="pwUpdate">
 		UPDATE P3_TBL_MEMBER_M
-		SET mbr_pswrd = #{mbr_pswrd}
+		SET mbr_pswrd = #{mbr_pswrd},
+		updt_dtm = NOW()
 		WHERE mbr_sq = #{mbr_sq}
 	</update>
 

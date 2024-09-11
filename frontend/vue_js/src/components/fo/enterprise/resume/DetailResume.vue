@@ -1,12 +1,13 @@
 <template>
     <div v-if="result">
         <div class="row">
-          <h1 class="form-group col-md-12">
+          <h2 class="form-group col-md-12">
             <strong class="font-weight-extra-bold"> {{ result.rsmInfo.rsm_ttl }} </strong>
-          </h1>
+          </h2>
           <hr class="gradient" />
         </div>
-        <div class="col pb-3 pt-3">
+
+        <div class="col pb-3 pt-3" id="basicInfo">
           <div class="row">
             <section class="call-to-action with-full-borders mb-2 mainContainer">
                 <span class="img-thumbnail d-block">
@@ -66,6 +67,7 @@
           </div>
         </div>
 
+      <div class="adinfo">
         <!-- 학력 정보 -->
         <div v-if="result.rsmedctnInfo" class="titem">
           <div v-if="result.rsmedctnInfo.length > 0">
@@ -278,7 +280,7 @@
             <div class="attachment-container">
               <div v-for="item in result.rsmatchmntInfo" :key="item.id" class="attachment-item">
                 <div id="rsm_atchmnt">
-                    <a :href="item.atchmnt_url" :download="item.atchmnt_orgnl_fn" id="bbtn" class="btn btn-outline btn-rounded btn-primary  btn-with-arrow mb-2">{{item.atchmnt_orgnl_fn}}<span><i class="fas fa-chevron-right"></i></span></a>
+                    <a :href="item.atchmnt_url" :download="item.atchmnt_orgnl_fn" id="bbtn" class="btn btn-outline btn-rounded btn-quaternary  btn-with-arrow mb-2">{{item.atchmnt_orgnl_fn}}<span><i class="fas fa-chevron-right"></i></span></a>
                 </div>
               </div>
             </div>
@@ -294,6 +296,7 @@
         </div>
 
         <hr>
+      </div>
     </div>
   </template>
   
@@ -369,6 +372,11 @@
     padding-left: 10px;
     padding-right: 10px;
   }
+  .adinfo{
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
   
   .imgContainer {
     padding-right: 5px;
@@ -413,13 +421,14 @@
   }
 
   .titem {
-    margin-bottom: 50px;
+    margin-bottom: 80px;
+    width: 100%;
   }
   .skitem{
     margin-bottom: 20px;
   }
   .llabel{
-    margin-bottom: 20px;
+    margin-bottom: 50px;
     font-size: 30px;
   }
   

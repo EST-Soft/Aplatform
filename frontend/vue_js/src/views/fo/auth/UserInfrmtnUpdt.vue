@@ -7,8 +7,8 @@
             <div class="profile-image-inner-container bg-color-dark">
                 <img src="@/assets/avatar.jpg" alt="Profile Image" v-if="img==0">
                 <img :src="imgUrl" alt="Profile Image" id="mbrImgFileUrl" v-if="img==1">
-                <input type="hidden" name="mbrImgOrgnlFn" id="mbrImgOrgnlFn">
-                <input type="hidden" name="mbrImgFileUrl" id="mbrImgFileUrl">
+                <input type="hidden" name="mbrImgOrgnlFn" id="mbrImgOrgnlFn" v-model="mbrImgOrgnlFn">
+                <input type="hidden" name="mbrImgFileUrl" id="mbrImgFileUrl" v-model="mbrImgFileUrl">
                 <span class="profile-image-button bg-color-dark">
                     <i class="fas fa-camera text-light"></i>
                 </span>
@@ -155,6 +155,8 @@ const mbrEml = ref(''); // 회원 이메일
 const mbrMp = ref(''); //회원 전화번호
 const mbrPost = ref(''); //회원 우편번호
 const mbrAdrs = ref(''); //회원 주소
+const mbrImgOrgnlFn = ref(''); //이미지명
+const mbrImgFileUrl = ref(''); //이미지 url
 
 let result = ref({});
 const member = computed(() => store.getters.getMember);
@@ -175,7 +177,8 @@ onMounted(async () => {
     mbrMp.value = result.value.mbr_mp;
     mbrAdrs.value = result.value.mbr_adrs.substr(6);
     mbrPost.value = result.value.mbr_adrs.substring(0,5);
-    
+    mbrImgOrgnlFn.value = result.value.mbrImgOrgnlFn;
+    mbrImgFileUrl.value = result.value.mbrImgFileUrl;
   } catch (error) {
     console.error("API 호출 오류:", error);
     result.value = {};  // 오류가 발생했을 때 기본 빈 객체로 설정
@@ -248,27 +251,29 @@ const handleSubmit = async(e) => {
         return alert('휴대폰 번호 형식이 올바르지 않습니다. \n (-를 제외한 10자리 또는 11자리 숫자)');
     }
 
+    if(file.value && file.value.size > 0){
   // 파일 업로드
-  try {
-    const formData = new FormData();
-    if (file.value) {
-      formData.append('file', file.value);
-    }
+        try {
+            const formData = new FormData();
+            if (file.value) {
+                    formData.append('file', file.value);
+            }
 
-    const response = await axios.post('http://localhost:80/file/upload-image', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      }
-    });
+        const response = await axios.post('http://localhost:80/file/upload-image', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        });
 
-     // 서버 응답 처리
-     const newImageUrl = response.data.imgFileUrl;
-        imgUrl.value = newImageUrl;
-        mbrImgOrgnlFn.value = file.value ? file.value.name : '';
-        mbrImgFileUrl.value = newImageUrl;
-    } catch (error) {
-        console.error('Error uploading file:', error);
-        img.value = 0; // 이미지 표시 상태 초기화
+            // 서버 응답 처리
+        const newImageUrl = response.data.imgFileUrl;
+            imgUrl.value = newImageUrl;
+            mbrImgOrgnlFn.value = file.value ? file.value.name : '';
+            mbrImgFileUrl.value = newImageUrl;
+        } catch (error) {
+            console.error('Error uploading file:', error);
+            img.value = 0; // 이미지 표시 상태 초기화
+        }
     }
 
   try {
@@ -305,72 +310,6 @@ const handleSubmit = async(e) => {
     console.log(error);
   }
 };
-
-//이미지 업로드
-// const uploadImg = async (e) => {
-    // const mbrImgOrgnlFn = document.getElementById('mbrImgOrgnlFn');
-    // const mbrImgFileUrl = document.getElementById('mbrImgFileUrl');
-    // if (file.value) {
-        //     let url = URL.createObjectURL(file.value);
-        //     imgUrl.value = url;
-    //     img.value = 1;
-    //     console.log(imgUrl);
-    //     console.log(imgUrl.value);
-    //     console.log(file);
-    //     mbrImgOrgnlFn.value = file.value.name;
-    // } else {
-        //     console.error('No file selected');
-        //     img.value = 0;
-        // }
-
-    // const fileInput = e.target; // 파일 입력 요소
-    // const file = fileInput.files[0]; // 선택된 파일
-
-    // if (file) {
-    //     try {
-    //         // 파일 리더 생성
-    //         const reader = new FileReader();
-
-    //         // 파일 리더가 파일을 읽은 후 처리
-    //         reader.onloadend = async () => {
-    //             try {
-    //                 // FormData 객체 생성
-    //                 const formData = new FormData();
-    //                 formData.append('file', file);
-
-    //                 // 서버에 파일 업로드
-    //                 const response = await axios.post('http://localhost:80/file/upload-image', formData, {
-    //                     headers: {
-    //                         'Content-Type': 'multipart/form-data'
-    //                     }
-    //                 });
-
-    //                 // 서버가 반환한 이미지 URL을 업데이트
-    //                 const newImageUrl = response.data.imgFileUrl; // 서버에서 반환하는 URL 필드 이름에 맞게 수정하세요.
-    //                 imgUrl.value = newImageUrl; // Vue 데이터 속성에 이미지 URL 설정
-    //                 mbrImgFileUrl.value = newImageUrl;
-    //                 mbrImgOrgnlFn.value = file.name; // 파일 이름 설정
-    //                 img.value = 1; // 이미지 표시 상태로 변경
-    //                 console.log(response.data);
-
-    //             } catch (error) {
-    //                 console.error('Error uploading file:', error);
-    //                 img.value = 0; // 이미지 표시 상태를 기본으로 변경
-    //             }
-    //         };
-
-    //         // 파일을 Data URL로 읽어 미리보기
-    //         reader.readAsDataURL(file);
-
-    //     } catch (error) {
-    //         console.error('Error reading file:', error);
-    //     }
-    // } else {
-    //     console.error('No file selected');
-    //     img.value = 0; // 이미지 표시 상태를 기본으로 변경
-    // }
-    
-// };
 
 //아이디 중복확인
 const idRepetitionCheck = async() => {

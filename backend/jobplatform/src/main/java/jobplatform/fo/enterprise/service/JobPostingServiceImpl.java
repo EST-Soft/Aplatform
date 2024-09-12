@@ -100,8 +100,9 @@ public class JobPostingServiceImpl implements JobPostingService {
 	@Override
 	@Transactional
 	public Long increaseHits(Long jbpSq) {
-		return jobPostingRepository.increaseHits(jbpSq);
-		
+		int updatedRows = jobPostingRepository.increaseHits(jbpSq);
+        // int to Long conversion
+        return (long) updatedRows;
 	}
 	
 	// 공고 수정

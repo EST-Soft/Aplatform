@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import jobplatform.fo.enterprise.domain.entity.JobEntity;
 
-public interface JobRepository extends JpaRepository<JobEntity, Integer> {
+public interface JobRepository extends JpaRepository<JobEntity, Long> {
 
 	
 }

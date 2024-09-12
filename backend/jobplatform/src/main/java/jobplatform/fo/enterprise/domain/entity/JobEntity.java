@@ -19,7 +19,7 @@ public class JobEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "job_sq", nullable = false)
-    private int jobSq;
+    private Long jobSq;
 
     @Column(name = "job_lc_name", nullable = false, length = 50)
     private String jobLcName;
@@ -31,7 +31,7 @@ public class JobEntity {
     private String jobScName;
 
     @Column(name = "insrt_mbr_sq", nullable = false)
-    private int insrtMbrSq = 0;
+    private long insrtMbrSq = 0;
 
     @Column(name = "insrt_dtm", nullable = false)
     private LocalDateTime insrtDtm = LocalDateTime.now();

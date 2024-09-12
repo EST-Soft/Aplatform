@@ -92,12 +92,8 @@ public class EnterMemberEntity {
     private LocalDateTime updtEntrptsDtm; // 수정_일시
 
     @Column(name = "dlt_yn", nullable = true)
-    private char dltYn = 'N'; // 삭제 여부
+    private Character dltYn = 'N'; // 삭제 여부
 
     @Column(name = "use_yn", nullable = true)
-    private char useYn = 'Y'; // 사용 여부
-
-    @Column(name = "del", nullable = true)
-    private String del; // 삭제 여부
-
+    private Character useYn = 'Y'; // 사용 여부
 }

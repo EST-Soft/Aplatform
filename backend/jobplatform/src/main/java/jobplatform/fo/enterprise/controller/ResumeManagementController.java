@@ -18,21 +18,44 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import jobplatform.fo.enterprise.domain.dto.AttachmentDto;
+import jobplatform.fo.enterprise.domain.dto.CareerDto;
+import jobplatform.fo.enterprise.domain.dto.ResumeCertificateSDto;
 import jobplatform.fo.enterprise.domain.dto.ResumeDataDTO;
+import jobplatform.fo.enterprise.domain.dto.ResumeDataResponseDto;
 import jobplatform.fo.enterprise.domain.dto.ResumeSearchDataDTO;
-import jobplatform.fo.enterprise.domain.dto.SelfintoductionsDataDTO;
+import jobplatform.fo.enterprise.domain.dto.SelfIntroductionsDataDTO;
+import jobplatform.fo.enterprise.domain.dto.SkillCodeSDto;
 import jobplatform.fo.enterprise.domain.entity.ResumeEntity;
+import jobplatform.fo.enterprise.service.AttachmentService;
+import jobplatform.fo.enterprise.service.CareerService;
+import jobplatform.fo.enterprise.service.ResumeCertificateSService;
 import jobplatform.fo.enterprise.service.ResumeManagementService;
+import jobplatform.fo.enterprise.service.SelfIntroductionService;
+import jobplatform.fo.enterprise.service.SkillCodeResumeRService;
 import jobplatform.fo.user.domain.entity.MemberEntity;
+import jobplatform.fo.user.domain.vo.EducationDto;
+import jobplatform.fo.user.service.EducationService;
+import lombok.RequiredArgsConstructor;
 
 @RestController
+@RequiredArgsConstructor
 public class ResumeManagementController {
 
 	private final ResumeManagementService resumeManagementService;
+	private final AttachmentService attachmentService;
+	private final EducationService educationService;
+	private final SkillCodeResumeRService skillCodeResumeRService;
+	private final ResumeCertificateSService resumeCertificateSService;
+	private final SelfIntroductionService selfIntroductionService;
+	private final CareerService careerService;
 
-	public ResumeManagementController(ResumeManagementService resumeManagementService) {
-		this.resumeManagementService = resumeManagementService;
-	} // inputResumeFullData
+	/*
+	 * public ResumeManagementController(ResumeManagementService
+	 * resumeManagementService) {
+	 * this.resumeManagementService = resumeManagementService;
+	 * } // inputResumeFullData
+	 */
 
 	// 이력서 목록 불러오기 (정렬 일반화)
 	@GetMapping("/resumes/resume-list/{mbr_sq}/{sort}/{pageNo}")
@@ -71,24 +94,48 @@ public class ResumeManagementController {
 	}
 
 	// 이력서 등록
+	/*
+	 * @PostMapping("/resumes/insert-resume/test")
+	 * public Long inputResumeFullData(@RequestParam("mbrSq") Long mbrSq,
+	 * 
+	 * @RequestBody ResumeDataDTO resumeDataDTO) {
+	 * Long rsmSq = resumeManagementService.insertResume(mbrSq, resumeDataDTO);
+	 * System.out.println(rsmSq + ": 이력서번호");
+	 * return rsmSq;
+	 * } // inputResumeFullData
+	 */
+
+	// 이력서 등록
 	@PostMapping("/resumes/insert-resume")
-	public Long inputResumeFullData(@RequestParam("mbrSq") Long mbrSq,
-			@RequestBody ResumeDataDTO resumeDataDTO) {
+	public void insertResumeFullData(@RequestParam("mbrSq") Long mbrSq, @RequestBody ResumeDataResponseDto requestDto) {
+		// 이력서 인적사항 및 이미지 처리
+		ResumeDataDTO resumeDataDTO = requestDto.getResumeDataDTO();
 		Long rsmSq = resumeManagementService.insertResume(mbrSq, resumeDataDTO);
-		System.out.println(rsmSq + ": 이력서번호");
-		return rsmSq;
-	} // inputResumeFullData
 
-	// 이력서 등록 테스트 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	@PostMapping("/resumes/test")
-	public void test(
-			@ModelAttribute ResumeDataDTO resumeDataDTO
-	// @ModelAttribute List<SelfintoductionsDataDTO> selfintoductionsDataDTO
-	) {
-		System.out.println("test 도착");
-		System.out.println(resumeDataDTO);
+		// 이미지가 있을 시 첨부파일
+		if (resumeDataDTO.getRsmImgOrgnlFn() != null && resumeDataDTO.getRsmImgFileUrl() != null) {
+			attachmentService.insertImageAttachment(mbrSq, rsmSq, resumeDataDTO);
+		}
 
-	}
+		List<EducationDto> educationDtos = requestDto.getEducationDtoList();
+		educationService.insertEducation(mbrSq, rsmSq, educationDtos);
+
+		List<SkillCodeSDto> skilsDataDtos = requestDto.getSkilsDataDtoList();
+		skillCodeResumeRService.insertSkillCodeResume(rsmSq, skilsDataDtos);
+
+		List<ResumeCertificateSDto> resumeCertificateSDtos = requestDto.getCertificateDtoList();
+		resumeCertificateSService.insertResumeCertificateS(mbrSq, rsmSq, resumeCertificateSDtos);
+
+		List<SelfIntroductionsDataDTO> selfIntroductionsDataDTOs = requestDto.getSelfIntroductionDtoList();
+		selfIntroductionService.insertSelfIntroduction(mbrSq, rsmSq, selfIntroductionsDataDTOs);
+
+		List<CareerDto> careerDtos = requestDto.getCareerDtoList();
+		careerService.insertCareerData(mbrSq, rsmSq, careerDtos);
+
+		List<AttachmentDto> attachmentDtos = requestDto.getAttachmentDtoList();
+		attachmentService.insertResumeAttachment(mbrSq, rsmSq, attachmentDtos);
+
+	} // insertResumeFullData
 
 	// 이력서 수정
 	@PatchMapping("/resumes/{rsm_sq}")

@@ -1,8 +1,6 @@
 package jobplatform.fo.enterprise.domain.dto;
 
-import java.sql.Date;
-import java.util.List;
-
+import jobplatform.fo.enterprise.domain.entity.ResumeEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,9 +10,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ResumeDataDTO {
 	// 이력서 순번
-	//private Long rsmSq;
+	// private Long rsmSq;
 	// 회원_순번
-	//private Long mbrSq;
+	// private Long mbrSq;
 	// 이력서_이미지_원본_파일명
 	private String rsmImgOrgnlFn;
 	// 이력서_이미지_파일_url
@@ -38,13 +36,6 @@ public class ResumeDataDTO {
 	// 이력서_주소
 	private String rsmAdrs;
 	// 이력서_이메일
-	private String rsmEml;	
-	// 자기소개서 리스트
-	//private List<SelfintoductionsDataDTO> selfintoductionData;
-	
-	
-	
-	
+	private String rsmEml;
 
-	
 } // ResumeDataDTO

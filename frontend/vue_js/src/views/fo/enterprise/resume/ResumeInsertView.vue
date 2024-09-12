@@ -128,12 +128,12 @@
         <div class="col-md-12">
           <div class="row">
             <div class="col-md-3">
-              <label for="schlAdmsnDate-{{ index }}" class="form-label">시작 날짜</label>
+              <label for="schlAdmsnDate-{{ index }}" class="form-label">입학 날짜</label>
               <input type="date" id="schlAdmsnDate-{{ index }}" class="form-control"
                 v-model="education.schlAdmsnDate" />
             </div>
             <div class="col-md-3">
-              <label for="schlGrdtnDate-{{ index }}" class="form-label">종료 날짜</label>
+              <label for="schlGrdtnDate-{{ index }}" class="form-label">졸업 날짜</label>
               <input type="date" id="schlGrdtnDate-{{ index }}" class="form-control"
                 v-model="education.schlGrdtnDate" />
             </div>
@@ -147,70 +147,121 @@
       <SearchPopup :isVisible="isSearchPopupModalOpen" @setResult="handleSchoolSelection"
         @update:isVisible="isSearchPopupModalOpen = $event" />
     </div>
+
+    <!--       entrprsName: '', entrprsPstn: '', entrprsJacDate: '', entrprsRsgntnDate: ''  -->
     <div class="col pb-3 pt-1">
       <h4 class="mb-0">
         경력 &nbsp;
-        <a href="#" class="btn btn-primary btn-circle mb-2">
+        <div class="btn btn-primary btn-circle mb-2" @click="addCareer">
           <i class="fa fa-plus"></i>
-        </a>
+        </div>
       </h4>
       <hr class="mt-1 mb-2" />
-      <div>여기에 컴포넌트</div>
-    </div>
-    <SkillsResume @updateSkills="handleUpdateSkills" @removeSkills="handleRemoveSkills" />
-    <!-- <div class="col pb-3 pt-1">
-        <h4 class="mb-0">
-          기술 &nbsp;
-          <a href="#" class="btn btn-primary btn-circle mb-2">
-            <i class="fa fa-plus"></i>
-          </a>
-        </h4>
-        <hr class="mt-1 mb-2" />
-        <div>여기에 컴포넌트</div>
-      </div> -->
-
-    <CertificatesResume />
-    <!-- <div class="col pb-3 pt-1">
-        <h4 class="mb-0">
-          자격/면허증 &nbsp;
-          <a href="#" class="btn btn-primary btn-circle mb-2">
-            <i class="fa fa-plus"></i>
-          </a>
-        </h4>
-        <hr class="mt-1 mb-2" />
-        <div>여기에 컴포넌트</div>
-      </div> -->
-    <SelfintoductionsResume />
-    <!-- <div class="col pb-3 pt-1">
-                  <h4 class="mb-0">
-                      자기소개서 &nbsp;
-                      <a href="#" class="btn btn-primary btn-circle mb-2">
-                          <i class="fa fa-plus"></i>
-                      </a>
-                  </h4>
-                  <hr class="mt-1 mb-2" />
-                  <div>여기에 컴포넌트</div>
-              </div>  -->
-    <div class="col pb-3 pt-1">
-      <!-- 여긴 다시 생각해봐야할듯 드래그인 드랍으로 하면 될꺼같기도?-->
-      <AttachmentsResume />
-      <!-- <div class="col-lg-4">
-                      <h4 class="mb-0">
-                          첨부파일 &nbsp;
-                          <a href="#" class="btn btn-primary btn-circle mb-2">
-                              <i class="fa fa-plus"></i>
-                          </a>
-                      </h4>
-                      <hr class="mt-1 mb-2" />
-                      <div>여기에 컴포넌트</div>
-                  </div> -->
-      <div class="col-lg-12">
-        <div class="float-end">
-          <div class="btn btn-outline btn-xl btn-primary mb-2">저장</div>
-          <div class="btn btn-outline btn-xl btn-light mb-2">취소</div>
-          <button @click="submitPost">테스트</button>
-          <button @click="testtest">테스트test</button>
+      <div v-for="(careerData, index) in careerDatas" :key="index" class="career-item">
+        <div class="form-group">
+          <label for="entrprsName-{{ index }}" class="form-label">회사 이름</label>
+          <div class="input-group">
+            <input type="text" v-model="careerData.entrprsName" placeholder="회사 이름" class="form-control" />
+            <button class="btn btn-outline-secondary ml-2" @click="openSearchModal(index)">
+              검색
+            </button>
+          </div>
         </div>
+
+        <div class="form-group mt-3">
+          <label for="entrprsPstn-{{ index }}" class="form-label">발행기관</label>
+          <input type="text" v-model="careerData.entrprsPstn" placeholder="직책" class="form-control" />
+        </div>
+
+        <div class="form-group mt-3">
+          <label for="entrprsJacDate-{{ index }}" class="form-label">입사일</label>
+          <input type="date" v-model="careerData.entrprsJacDate" class="form-control" />
+        </div>
+
+        <div class="form-group mt-3">
+          <label for="entrprsRsgntnDate-{{ index }}" class="form-label">퇴사일</label>
+          <input type="date" v-model="careerData.entrprsRsgntnDate" class="form-control" />
+        </div>
+
+        <button class="btn btn-outline-danger mt-3" @click="removeComponents(careerData.id)">
+          삭제
+        </button>
+      </div>
+
+
+    </div>
+
+
+    <SkillsResume @updateSkills="handleUpdateSkills" />
+
+
+
+    <div class="col pb-3 pt-1">
+      <h4 class="mb-0">
+        자격/면허증 &nbsp;
+        <div class="btn btn-primary btn-circle mb-2" @click="addComponents">
+          <i class="fa fa-plus"></i>
+        </div>
+      </h4>
+      <hr class="mt-1 mb-2" />
+      <div v-for="(certificateData, index) in certificateDatas" :key="certificateData.id" class="certificate-item">
+        <input type="text" v-model="certificateData.crtfctName" placeholder="자격증 이름" class="form-control" />
+        <button class="btn btn-outline-secondary ml-2" @click="openSearchModal(index)">
+          검색
+        </button>
+        <input type="text" v-model="certificateData.crtfctIsr" placeholder="발행기관" class="form-control mt-2" />
+        <input type="date" v-model="certificateData.crtfctAd" class="form-control mt-2" />
+        <button class="btn btn-outline-danger mt-2" @click="removeComponents(certificateData.id)">
+          삭제
+        </button>
+      </div>
+
+      <SearchCertificates v-if="showSearchModal" @update:isVisible="showSearchModal = false"
+        @setResult="updateCertificateName" :isVisible="showSearchModal" />
+    </div>
+
+
+    <div class="col pb-3 pt-1">
+      <h4 class="mb-0">
+        자기소개서 &nbsp;
+        <div class="btn btn-primary btn-circle mb-2" @click="addSelfIntroduction">
+          <i class="fa fa-plus"></i>
+        </div>
+      </h4>
+      <hr class="mt-1 mb-2" />
+      <div v-for="(selfIntroductionData, index) in selfIntroductionDatas" :key="index">
+        <SelfintoductionsResume :index="index" :data="selfIntroductionData" @update="updateSelfIntroductionData"
+          @remove="removeSelfIntroductionData" />
+      </div>
+    </div>
+
+    <div class="col pb-3 pt-1">
+
+      <h4 class="mb-0">
+        첨부파일 &nbsp;
+        <div class="btn btn-primary btn-circle mb-2" @click="openAttachmentModal">
+          <i class="fa fa-plus"></i>
+        </div>
+      </h4>
+      <hr class="mt-1 mb-2" />
+      <div v-for="(attachment, index) in attachmentDatas" :key="index" class="attachment-item">
+        <p style="display: flex; flex: 1; width: 100%; justify-content: space-between; align-items: center;">{{
+          attachment.name }}
+          <button class="btn btn-outline-danger mt-3" @click="removeAttachment(index)">
+            삭제
+          </button>
+        </p>
+      </div>
+      <AttachmentsResume :isVisible="showCareerModal" :attachmentDatas="attachmentDatas"
+        @update:isVisible="showCareerModal = $event" @update:attachmentDatas="updateAttachmentData" />
+
+    </div>
+
+    <div class="col-lg-12">
+      <div class="float-end">
+        <div class="btn btn-outline btn-xl btn-primary mb-2" @click="submitPost">저장</div>
+        <div class="btn btn-outline btn-xl btn-light mb-2">취소</div>
+        <button @click="testtest">테스트test</button>
       </div>
     </div>
 
@@ -221,15 +272,14 @@
 <script setup>
 import AttachmentsResume from "@/components/fo/enterprise/resume/AttachmentsResume.vue";
 import SelfintoductionsResume from "@/components/fo/enterprise/resume/SelfintoductionsResume.vue";
-import CertificatesResume from "@/components/fo/enterprise/resume/CertificatesResume.vue";
 import SkillsResume from "@/components/fo/enterprise/resume/SkillsResume.vue";
 import SearchPopup from "@/components/fo/user/common/SearchPopup.vue";
+import SearchCertificates from "../../../../components/fo/user/common/SearchCertificates.vue";
 import ResumeImageModalView from "./ResumeImageModalView.vue";
 import axios from "axios";
 import { onMounted, ref } from "vue";
 import store from "../../../../store";
 
-const rsmSq = ref(null);
 
 const rsmImgOrgnlFn = ref(null);
 const rsmImgFileUrl = ref(null);
@@ -250,12 +300,17 @@ const imageUrl = ref('');
 const isSearchPopupModalOpen = ref(false);
 const selectedEducationIndex = ref(null);
 const educationsList = ref([]);
+// 경력
+const careerDatas = ref([]);
 // 스킬
-const skillsData = ref({
-  'language': [],
-  'framework': [],
-  'UI': []
-});
+const skillsData = ref({});
+// 자격 면허증
+const certificateDatas = ref([]);
+// 자기소개서
+const selfIntroductionDatas = ref([]);
+// 첨부파일
+const showCareerModal = ref(false);
+const attachmentDatas = ref([]);
 
 // 최종 학력 목록
 const educationOptions = [
@@ -272,33 +327,11 @@ onMounted(() => {
   console.log("온마운트");
 });
 
-const handleUpdateSkills = (skills) => {
-  console.log('Updated skills data:', skills);
-  skillsData.value = skills;
-};
-const handleRemoveSkills = () => {
-  console.log('Remove skill request received');
-};
-
 const testtest = () => {
-  console.log(skillsData.value)
-}
+  event.preventDefault();
 
-
-// form submit 함수
-const submitPost = () => {
-  console.log("오나?/");
-  // form 정보 formData화
-  const formData = new FormData(document.getElementById('completeForm'));
-
-  // 자기소개서 List 형식으로 추가시키기
-  for (let i = 0; i < formData.getAll("title").length; i++) {
-    formData.append("selfintoductionData[" + i + "].title", formData.getAll("title")[i]);
-    formData.append("selfintoductionData[" + i + "].content", formData.getAll("content")[i]);
-  }
-
-  axios.post("http://localhost:80/resumes/insert-resume",
-    {
+  console.log({
+    resumeDataDTO: {
       rsmImgOrgnlFn: rsmImgOrgnlFn.value,
       rsmImgFileUrl: rsmImgFileUrl.value,
       rsmFnlEdctnCode: rsmFnlEdctnCode.value,
@@ -312,6 +345,75 @@ const submitPost = () => {
       rsmAdrs: rsmAdrs.value,
       rsmEml: rsmEml.value
     },
+    educationDtoList: educationsList.value,
+    skilsDataDtoList: skillsData.value,
+    certificateDtoList: certificateDatas.value,
+    selfIntroductionDtoList: selfIntroductionDatas.value,
+    careerDtoList: careerDatas.value,
+  })
+}
+
+
+// form submit 함수
+const submitPost = async () => {
+
+  const formData = new FormData();
+  attachmentDatas.value.forEach(attachment => {
+    formData.append('file', attachment);
+  })
+  const attachmentList = [];
+
+  try {
+    const response = await axios.post('http://localhost:80/file/upload-attachment', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    }).then((response) => {
+      console.log(response.data)
+    }).catch((error) => {
+      console.error('Error: ', error)
+    });
+
+    const responseAttachment = response.data;
+
+    if (Array.isArray(responseAttachment)) {
+      responseAttachment.forEach(attachment => {
+        attachmentList.push({
+          atchmntOrgnlFn: attachment.atchmntOrgnlFn,
+          atchmntUrl: attachment.atchmntUrl
+        });
+      });
+    } else {
+      console.error('Expected an array but received:', responseAttachment);
+    }
+
+  } catch (error) {
+    console.log('Error: ', error)
+  }
+
+  await axios.post("http://localhost:80/resumes/insert-resume",
+    {
+      resumeDataDTO: {
+        rsmImgOrgnlFn: rsmImgOrgnlFn.value,
+        rsmImgFileUrl: rsmImgFileUrl.value,
+        rsmFnlEdctnCode: rsmFnlEdctnCode.value,
+        rsmGrd: rsmGrd.value,
+        rsmEs: rsmEs.value,
+        rsmTtl: rsmTtl.value,
+        rsmName: rsmName.value,
+        rsmGndrCode: rsmGndrCode.value,
+        rsmBd: rsmBd.value,
+        rsmMp: rsmMp.value,
+        rsmAdrs: rsmAdrs.value,
+        rsmEml: rsmEml.value
+      },
+      educationDtoList: educationsList.value,
+      skilsDataDtoList: skillsData.value,
+      certificateDtoList: certificateDatas.value,
+      selfIntroductionDtoList: selfIntroductionDatas.value,
+      careerDtoList: careerDatas.value,
+      attachmentDtoList: attachmentList
+    },
     {
       params: {
         mbrSq: store.state.member.mbrSq
@@ -319,27 +421,10 @@ const submitPost = () => {
     }
   ).then(response => {
     console.log(response.data)
-    rsmSq.value = response.data;
-    //clearForm();
-    console.log('Response:', response.data);
+    educationsList.value = [];
+    clearForm();
 
-    axios.post("http://localhost:80/education/insert-education",
-      educationsList.value
-      ,
-      {
-        params: {
-          mbrSq: store.state.member.mbrSq,
-          rsmSq: rsmSq.value,
-        }
-      }
-    ).then(response => {
-      educationsList.value = [];
-      rsmSq.value = '';
-      console.log('Response:', response.data);
-    })
-      .catch(error => {
-        console.error('Error:', error);
-      });
+    console.log('Response:', response.data);
   })
     .catch(error => {
       console.error('Error:', error);
@@ -347,6 +432,23 @@ const submitPost = () => {
 
 }
 
+
+
+const clearForm = () => {
+  rsmImgFileUrl.value = null
+  rsmFnlEdctnCode.value = null
+  rsmGrd.value = ''
+  rsmEs.value = ''
+  rsmTtl.value = ''
+  rsmName.value = ''
+  rsmGndrCode.value = ''
+  rsmBd.value = ''
+  rsmMp.value = ''
+  rsmAdrs.value = ''
+  rsmEml.value = ''
+};
+
+// 이미지
 const updateImageUrl = (newImageUrl) => {
   imageUrl.value = newImageUrl.imgFileUrl;
   rsmImgOrgnlFn.value = newImageUrl.imgOrgnlFn;
@@ -359,22 +461,6 @@ const delImg = () => {
   rsmImgFileUrl.value = '';
 }; // delImg
 
-/* const clearForm = () => {
-  rsmImgFileUrl.value = null
-  rsmFnlEdctnCode.value = null
-  rsmGrd.value = ''
-  rsmEs.value = ''
-  rsmTtl.value = ''
-  rsmName.value = ''
-  rsmGndrCode.value = ''
-  rsmBd.value = ''
-  rsmMp.value = ''
-  rsmAdrs.value = ''
-  rsmEml.value = ''
-}; */
-
-
-
 const addEducation = () => {
   educationsList.value.push({
     schlName: '',
@@ -385,6 +471,7 @@ const addEducation = () => {
   });
 };
 
+// 학력
 const openModal = (index) => {
   selectedEducationIndex.value = index;
   isSearchPopupModalOpen.value = true;
@@ -392,14 +479,83 @@ const openModal = (index) => {
 
 const handleSchoolSelection = (selectedSchool) => {
   if (selectedEducationIndex.value !== null) {
-    educationsList.value[selectedEducationIndex.value].schlName = selectedSchool.schlName;
+    educationsList.value[selectedEducationIndex.value].schlName = selectedSchool.schoolName;
   }
   isSearchPopupModalOpen.value = false;
 };
 
+// 경력
+const addCareer = () => {
+  careerDatas.value.push({ entrprsName: '', entrprsPstn: '', entrprsJacDate: '', entrprsRsgntnDate: '' });
+};
 
+// 스킬
 const removeEducation = (index) => {
   educationsList.value.splice(index, 1);
+};
+
+const handleUpdateSkills = (selectedSkills) => {
+  const allSelectedSkills = Object.values(selectedSkills).flat();
+  skillsData.value = allSelectedSkills;
+};
+
+// 자격증
+const showSearchModal = ref(false);
+const selectedCertificateIndex = ref(null);
+// 입력창 생성
+const addComponents = () => {
+  certificateDatas.value.push({ crtfctName: '', crtfctIsr: '', crtfctAd: '' });
+};
+// 검색 모달 열기
+const openSearchModal = (index) => {
+  event.preventDefault();
+  selectedCertificateIndex.value = index;
+  showSearchModal.value = true;
+};
+// 자격증 검색 결과 업데이트
+const updateCertificateName = (item) => {
+  if (selectedCertificateIndex.value !== null) {
+    certificateDatas.value[selectedCertificateIndex.value].crtfctName = item.종목명;
+  }
+  showSearchModal.value = false;
+};
+const removeComponents = (event) => {
+  let index = 0;
+
+  certificateDatas.value.forEach((certificateData, dataIndex) => {
+    if (certificateData.id == event) {
+      index = dataIndex;
+      return;
+    }
+  });
+
+  certificateDatas.value.splice(index, 1);
+};
+// 자기소개서
+// 항목 추가
+const addSelfIntroduction = () => {
+  selfIntroductionDatas.value.push({ siTtl: '', siCntnt: '' });
+}; // addSelfIntroduction
+// 업데이트
+const updateSelfIntroductionData = (index, updatedData) => {
+  selfIntroductionDatas.value[index] = updatedData;
+}; // updateSelfIntroduction
+// 삭제
+const removeSelfIntroductionData = (index) => {
+  selfIntroductionDatas.value.splice(index, 1);
+}; // removeSelfIntroduction
+
+// 첨부파일
+const openAttachmentModal = () => {
+  showCareerModal.value = true;
+};
+
+const updateAttachmentData = (newAttachments) => {
+  attachmentDatas.value = newAttachments;
+};
+
+const removeAttachment = (index) => {
+  attachmentDatas.value.splice(index, 1);
 };
 
 </script>
@@ -456,5 +612,36 @@ const removeEducation = (index) => {
   width: 2rem;
   height: 2rem;
   border-radius: 50%;
+}
+
+.certificate-item,
+.career-item,
+.attachment-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.certificate-item input[type="text"],
+.certificate-item input[type="date"],
+.career-item input[type="text"],
+.career-item input[type="date"],
+.attachment-item input[type="text"] {
+  margin-right: 0.5rem;
+  flex: 1;
+}
+
+.input-group .btn {
+  margin-left: 0.5rem;
+}
+
+.certificate-item button,
+.career-item button,
+.attachment-item button {
+  margin-left: 0.5rem;
+}
+
+.modal-dialog {
+  max-width: 600px;
 }
 </style>

@@ -8,8 +8,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jobplatform.fo.enterprise.domain.dto.AttachmentDto;
-import jobplatform.fo.enterprise.domain.dto.ResumeDataDTO;
+import jobplatform.fo.enterprise.domain.dto.SelfIntroductionsDataDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,26 +17,26 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "p2_tbl_resume_attachment_s")
-public class AttachmentEntity {
+@Table(name = "p2_tbl_resume_selfintroduction_s")
+public class SelfIntroductionEntity {
 
-    // 첨부파일_순번
+    // 자기소개서_순번
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "atchmnt_sq", nullable = false)
-    private Long atchmntSq;
+    @Column(name = "si_sq", nullable = false)
+    private Long siSq;
 
     // 이력서_순번
-    @Column(name = "rsm_sq", nullable = true)
+    @Column(name = "rsm_sq", nullable = false)
     private Long rsmSq;
 
-    // 첨부파일_원본_파일명
-    @Column(name = "atchmnt_orgnl_fn", nullable = false, length = 50)
-    private String atchmntOrgnlFn;
+    // 자기소개서_제목
+    @Column(name = "si_ttl", nullable = false, length = 30)
+    private String siTtl;
 
-    // 첨부파일_url
-    @Column(name = "atchmnt_url", nullable = false, length = 100)
-    private String atchmntUrl;
+    // 자기소개서_내용
+    @Column(name = "si_cntnt", nullable = false, length = 1000)
+    private String siCntnt;
 
     // 등록_회원_순번
     @Column(name = "insrt_mbr_sq", nullable = false)
@@ -63,18 +62,13 @@ public class AttachmentEntity {
     @Column(name = "use_yn", nullable = false, length = 1)
     private String useYn = "Y";
 
-    public AttachmentEntity(Long mbrSq, Long rsmSq, ResumeDataDTO resumeDataDTO) {
+    public SelfIntroductionEntity(Long mbrSq, Long rsmSq, SelfIntroductionsDataDTO selfIntroductionsDataDTO) {
         this.rsmSq = rsmSq;
-        this.atchmntOrgnlFn = resumeDataDTO.getRsmImgOrgnlFn();
-        this.atchmntUrl = resumeDataDTO.getRsmImgFileUrl();
+        this.siTtl = selfIntroductionsDataDTO.getSiTtl();
+        this.siCntnt = selfIntroductionsDataDTO.getSiCntnt();
         this.insrtMbrSq = mbrSq;
-    } // AttachmentEntity
+        this.updtMbrSq = mbrSq;
+        this.updtDtm = LocalDateTime.now();
+    } // SelfIntroductionEntity
 
-    public AttachmentEntity(Long mbrSq, Long rsmSq, AttachmentDto attachmentDto) {
-        this.rsmSq = rsmSq;
-        this.atchmntOrgnlFn = attachmentDto.getAtchmntOrgnlFn();
-        this.atchmntUrl = attachmentDto.getAtchmntUrl();
-        this.insrtMbrSq = mbrSq;
-    } // AttachmentEntity
-
-} // Attachment
+} // SelfIntroductionEntity

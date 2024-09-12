@@ -8,6 +8,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jobplatform.fo.enterprise.domain.dto.ResumeDataDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -105,10 +106,37 @@ public class ResumeEntity {
 
     // 사용_여부
     @Column(name = "use_yn", nullable = false, length = 1)
-    private String useYn = "N";
+    private String useYn = "Y";
 
     public enum YesNo {
         Y, N
     } // YesNo
+
+    public ResumeEntity(Long mbrSq, ResumeDataDTO resumeDataDTO) {
+        String fileUrl = null;
+        String originalFileName = null;
+
+        if (resumeDataDTO.getRsmImgOrgnlFn() != null && resumeDataDTO.getRsmImgFileUrl() != null) {
+            fileUrl = resumeDataDTO.getRsmImgOrgnlFn();
+            originalFileName = resumeDataDTO.getRsmImgFileUrl();
+        }
+
+        this.mbrSq = mbrSq;
+        this.rsmImgOrgnlFn = fileUrl;
+        this.rsmImgFileUrl = originalFileName;
+        this.rsmFnlEdctnCode = resumeDataDTO.getRsmFnlEdctnCode();
+        this.rsmGrd = resumeDataDTO.getRsmGrd();
+        this.rsmEs = resumeDataDTO.getRsmEs();
+        this.rsmTtl = resumeDataDTO.getRsmTtl();
+        this.rsmName = resumeDataDTO.getRsmName();
+        this.rsmGndrCode = resumeDataDTO.getRsmGndrCode();
+        this.rsmBd = resumeDataDTO.getRsmBd();
+        this.rsmMp = resumeDataDTO.getRsmMp();
+        this.rsmAdrs = resumeDataDTO.getRsmAdrs();
+        this.rsmEml = resumeDataDTO.getRsmEml();
+        this.insrtMbrSq = mbrSq;
+        this.updtMbrSq = mbrSq;
+        this.updtDtm = LocalDateTime.now();
+    } // ResumeEntity
 
 } // ResumeEntity

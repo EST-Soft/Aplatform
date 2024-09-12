@@ -9,64 +9,81 @@
         <hr class="mt-1 mb-2" />
         <div v-if="skillsVisible" class="skills-container">
             <div class="skill-card">
-                <div class="skill-category">
-                    <h5>language</h5>
+                <div v-for="(skills, category) in localSkills" :key="category" class="skill-category">
+                    <h5>{{ category }}</h5>
                     <div class="checkbox-group">
-                        <input type="checkbox" id="java" value="Java" v-model="localSkills['language']"
-                            @change="updateParent">
-                        <label for="java">Java</label>
-                        <input type="checkbox" id="c" value="C" v-model="localSkills['language']"
-                            @change="updateParent">
-                        <label for="c">C</label>
-                        <input type="checkbox" id="cpp" value="C++" v-model="localSkills['language']"
-                            @change="updateParent">
-                        <label for="cpp">C++</label>
+                        <div v-for="skill in skills" :key="skill.sklScName" class="checkbox-item">
+                            <input type="checkbox" :id="skill.sklScName" :value="skill"
+                                v-model="selectedSkills[category]" @change="updateParent" />
+                            <label :for="skill.sklScName">{{ skill.sklScName }}</label>
+                        </div>
                     </div>
-                </div>
-                <div class="skill-category">
-                    <h5>framework</h5>
-                    <div class="checkbox-group">
-                        <input type="checkbox" id="spring" value="Spring Boot" v-model="localSkills['framework']"
-                            @change="updateParent">
-                        <label for="spring">Spring Boot</label>
-                        <input type="checkbox" id="react" value="React" v-model="localSkills['framework']"
-                            @change="updateParent">
-                        <label for="react">React</label>
-                        <input type="checkbox" id="vue" value="Vue" v-model="localSkills['framework']"
-                            @change="updateParent">
-                        <label for="vue">Vue</label>
-                    </div>
-                </div>
-                <div class="skill-category">
-                    <h5>UI</h5>
-                    <div class="checkbox-group">
-                        <input type="checkbox" id="figma" value="Figma" v-model="localSkills['UI']"
-                            @change="updateParent">
-                        <label for="figma">Figma</label>
-                        <input type="checkbox" id="photoshop" value="Photoshop" v-model="localSkills['UI']"
-                            @change="updateParent">
-                        <label for="photoshop">Photoshop</label>
-                    </div>
-                </div>
-                <div class="mt-2">
-                    <button class="btn btn-outline btn-danger" @click="removeComponents">삭제</button>
                 </div>
             </div>
         </div>
     </div>
 </template>
 
+
+
 <script setup>
-import { ref, watch } from 'vue';
+import axios from 'axios';
+import { onMounted, ref, watch } from 'vue';
 import { defineEmits } from 'vue';
 
-const emit = defineEmits(['updateSkills', 'removeSkills']);
+const emit = defineEmits(['updateSkills']);
 
 const localSkills = ref({
-    'language': [],
-    'framework': [],
-    'UI': []
+    'Language': [],
+    'Framework': [],
+    'Tool': []
 });
+
+const selectedSkills = ref({
+    'Language': [],
+    'Framework': [],
+    'Tool': []
+});
+
+
+onMounted(async () => {
+    try {
+        const response = await axios.get("http://localhost:80/skl-cd/list");
+        console.log(response.data);
+        insertSklData(response.data);
+    } catch (error) {
+        console.error('Error:', error);
+    }
+});
+
+const insertSklData = (data) => {
+    data.forEach(item => {
+        const { sklLcName, sklScName } = item;
+        if (sklLcName === "언어") {
+            if (!localSkills.value['Language'].includes(sklScName)) {
+                localSkills.value['Language'].push(item);
+            }
+        } else if (sklLcName === "프레임워크") {
+            if (!localSkills.value['Framework'].includes(sklScName)) {
+                localSkills.value['Framework'].push(item);
+            }
+        } else if (sklLcName === "툴") {
+            if (!localSkills.value['Tool'].includes(sklScName)) {
+                localSkills.value['Tool'].push(item);
+            }
+        }
+    });
+
+    console.log(localSkills.value)
+};
+
+/* const clearSkills = () => {
+    for (const category in selectedSkills.value) {
+        selectedSkills.value[category] = [];
+    }
+    emit('updateSkills', selectedSkills.value);
+}; */
+
 
 const skillsVisible = ref(false);
 
@@ -74,17 +91,12 @@ const toggleSkills = () => {
     skillsVisible.value = !skillsVisible.value;
 };
 
-const updateParent = () => {
+/* const updateParent = () => {
     emit('updateSkills', localSkills.value);
-};
+}; */
 
-const removeComponents = () => {
-    emit('removeSkills');
-};
-
-// Watch localSkills to emit changes to the parent
-watch(localSkills, (newSkills) => {
-    emit('updateSkills', newSkills);
+watch(selectedSkills, (newVal) => {
+    emit('updateSkills', newVal);
 }, { deep: true });
 </script>
 

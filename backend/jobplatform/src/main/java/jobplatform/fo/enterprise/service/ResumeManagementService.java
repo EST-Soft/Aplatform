@@ -30,8 +30,10 @@ import jobplatform.fo.enterprise.domain.vo.ResumeListVO;
 import jobplatform.fo.enterprise.domain.vo.ResumeSelfintroductionDataVO;
 import jobplatform.fo.enterprise.domain.vo.ResumeSkillCodeDataVO;
 import jobplatform.fo.user.domain.repository.MemberRepository;
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
 public class ResumeManagementService {
 
 	private final ResumeMapper resumeMapper;
@@ -39,13 +41,17 @@ public class ResumeManagementService {
 	private final ResumeRepository resumeRepository;
 	private final AttachmentRepository attachmentRepository;
 
-	public ResumeManagementService(ResumeMapper resumeMapper, MemberRepository memberRepository,
-			ResumeRepository resumeRepository, AttachmentRepository attachmentRepository) {
-		this.memberRepository = memberRepository;
-		this.resumeRepository = resumeRepository;
-		this.resumeMapper = resumeMapper;
-		this.attachmentRepository = attachmentRepository;
-	}
+	/*
+	 * public ResumeManagementService(ResumeMapper resumeMapper, MemberRepository
+	 * memberRepository,
+	 * ResumeRepository resumeRepository, AttachmentRepository attachmentRepository)
+	 * {
+	 * this.memberRepository = memberRepository;
+	 * this.resumeRepository = resumeRepository;
+	 * this.resumeMapper = resumeMapper;
+	 * this.attachmentRepository = attachmentRepository;
+	 * }
+	 */
 
 	// 이력서 리스트 데이터 얻기
 	public Map<String, Object> findResumeData(ResumeSearchDataDTO resumeSearchDataDTO)
@@ -154,47 +160,13 @@ public class ResumeManagementService {
 		return result;
 	}
 
+	// 이력서 등록
 	@Transactional
 	public Long insertResume(Long mbrSq, ResumeDataDTO resumeDataDTO) {
 
-		String fileUrl = null;
-		String originalFileName = null;
-
-		if (resumeDataDTO.getRsmImgFileUrl() != null && resumeDataDTO.getRsmImgOrgnlFn() != null) {
-			fileUrl = resumeDataDTO.getRsmImgFileUrl();
-			originalFileName = resumeDataDTO.getRsmImgOrgnlFn();
-		}
-
-		ResumeEntity resumeEntity = new ResumeEntity();
-		// resumeEntity.setMbrSq(resumeDataDTO.getMbrSq());
-		resumeEntity.setMbrSq(mbrSq);
-		resumeEntity.setRsmImgOrgnlFn(originalFileName);
-		resumeEntity.setRsmImgFileUrl(fileUrl);
-		resumeEntity.setRsmFnlEdctnCode(resumeDataDTO.getRsmFnlEdctnCode());
-		resumeEntity.setRsmGrd(resumeDataDTO.getRsmGrd());
-		resumeEntity.setRsmEs(resumeDataDTO.getRsmEs());
-		resumeEntity.setRsmTtl(resumeDataDTO.getRsmTtl());
-		resumeEntity.setRsmName(resumeDataDTO.getRsmName());
-		resumeEntity.setRsmGndrCode(resumeDataDTO.getRsmGndrCode());
-		resumeEntity.setRsmBd(resumeDataDTO.getRsmBd());
-		resumeEntity.setRsmMp(resumeDataDTO.getRsmMp());
-		resumeEntity.setRsmAdrs(resumeDataDTO.getRsmAdrs());
-		resumeEntity.setRsmEml(resumeDataDTO.getRsmEml());
-		resumeEntity.setInsrtMbrSq(mbrSq);
-		resumeEntity.setUpdtDtm(LocalDateTime.now());
-		resumeEntity.setUpdtMbrSq(mbrSq);
-		resumeEntity.setInsrtMbrSq(mbrSq);
+		ResumeEntity resumeEntity = new ResumeEntity(mbrSq, resumeDataDTO);
 
 		Long rsmSq = resumeRepository.save(resumeEntity).getRsmSq();
-
-		if (fileUrl != null && originalFileName != null) {
-			AttachmentEntity attachmentEntity = new AttachmentEntity();
-			attachmentEntity.setRsmSq(rsmSq);
-			attachmentEntity.setAtchmntOrgnlFn(originalFileName);
-			attachmentEntity.setAtchmntUrl(fileUrl);
-			attachmentEntity.setInsrtMbrSq(mbrSq);
-			attachmentRepository.save(attachmentEntity);
-		}
 
 		return rsmSq;
 	} // insertResume

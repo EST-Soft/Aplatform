@@ -76,8 +76,8 @@ public class EducationEntity {
     private String useYn = "Y";
 
     public EducationEntity(Long mbrSq, Long rsmSq, EducationDto educationDto) {
-        LocalDateTime now = LocalDateTime.now();
-        String insrtNow = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        // LocalDateTime now = LocalDateTime.now();
+        // String insrtNow = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 
         this.rsmSq = rsmSq;
         this.schlName = educationDto.getSchlName();

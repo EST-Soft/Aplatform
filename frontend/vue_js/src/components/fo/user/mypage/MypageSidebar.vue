@@ -15,8 +15,7 @@
                 <li class="nav-item"><router-link class="nav-link" to="/mypage/applycompanylist">입사지원현황</router-link></li>
                 <li class="nav-item"><router-link class="nav-link" to="/mypage/ppAcception">포지션 제안</router-link>
                     <ul>
-                        <li class="nav-item"><router-link class="nav-link" to="/mypage/ppAcception">포지션 제안
-                                설정</router-link></li>
+                        <li class="nav-item"><router-link class="nav-link" to="/mypage/ppAcception">포지션 제안 설정</router-link></li>
                         <li class="nav-item"><router-link class="nav-link" to="/mypage/proposedPosition">제안 받은 포지션</router-link></li>
                     </ul>
                 </li>
@@ -24,7 +23,7 @@
                 <li class="nav-item">
                     <router-link class="nav-link" to="#">회원정보 관리</router-link>
                     <ul>
-                        <li class="nav-item"><router-link class="nav-link" to="/mypage/userInfmtn">회원정보 수정</router-link></li>
+                        <li class="nav-item"><router-link class="nav-link" :to="{ name: 'userInfmtn', query: { modal: 'true' } }">회원정보 수정</router-link></li>
                         <li class="nav-item"><router-link class="nav-link" to="/mypage/userPwChange">비밀번호 변경</router-link></li>
                         <li class="nav-item"><router-link class="nav-link" to="/mypage/userSingout">회원탈퇴</router-link></li>
                     </ul>

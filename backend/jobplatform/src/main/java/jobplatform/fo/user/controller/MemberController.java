@@ -314,6 +314,18 @@ public class MemberController {
         }
     }
 
+    @GetMapping("/pwCk")
+    public ResponseEntity<String> pwCk(@RequestParam("mbr_id") String mbrId, @RequestParam("mbr_pw") String mbrPw){
+        // 사용자와 비밀번호 확인
+        MemberEntity mpw = memberRepository.findByMbrIdAndMbrPswrd(mbrId, mbrPw);
+        System.out.println(mpw);
+        if (mpw != null){
+            return ResponseEntity.ok("성공");
+        }else{
+            return ResponseEntity.ok("실패");
+        }
+    }
+
     @PutMapping("/pwUpdate")
     public ResponseEntity<Map<String, Object>> pwUpdate(@RequestBody Map<String, String> params, HttpSession session) {
         Map<String, Object> map = new HashMap<>();

@@ -33,7 +33,7 @@ public class M_MypageController {
 	//jwt 구현 전 까지 클라에서 mbr_sq 같이 넘겨주는 걸로!
 	@GetMapping("/")
 	public ResponseEntity<Map<String, Object>> getMainData(@RequestParam("mbr_sq") Long mbr_sq, @RequestParam("month") int month) {
-		System.out.println("회원정보"+myPageService.getMyPageMainData(mbr_sq, month));
+		// System.out.println("회원정보"+myPageService.getMyPageMainData(mbr_sq, month));
 		return ResponseEntity.ok(myPageService.getMyPageMainData(mbr_sq, month));
 	}
 

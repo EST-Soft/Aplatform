@@ -46,12 +46,12 @@
 			rsm_sq = #{rsm_sq}
 		GROUP BY apy_cndtn -->
 		SELECT
-			SUM(CASE WHEN apy_cndtn = 'unrd' THEN 1 ELSE 0 END) AS cndtn_401,
-			SUM(CASE WHEN apy_cndtn = 'read' THEN 1 ELSE 0 END) AS cndtn_401,
-			SUM(CASE WHEN apy_cndtn = 'iw' THEN 1 ELSE 0 END) AS cndtn_405,
-			SUM(CASE WHEN apy_cndtn = 'ic' THEN 1 ELSE 0 END) AS cndtn_406,
-			SUM(CASE WHEN apy_cndtn = 'pass' THEN 1 ELSE 0 END) AS cndtn_407,
-			SUM(CASE WHEN apy_cndtn = 'np' THEN 1 ELSE 0 END) AS cndtn_408
+			SUM(CASE WHEN apy_cndtn = 'unrd' THEN 1 ELSE 0 END) AS cndtn_unrd,
+			SUM(CASE WHEN apy_cndtn = 'read' THEN 1 ELSE 0 END) AS cndtn_read,
+			SUM(CASE WHEN apy_cndtn = 'iw' THEN 1 ELSE 0 END) AS cndtn_iw,
+			SUM(CASE WHEN apy_cndtn = 'ic' THEN 1 ELSE 0 END) AS cndtn_ic,
+			SUM(CASE WHEN apy_cndtn = 'pass' THEN 1 ELSE 0 END) AS cndtn_pass,
+			SUM(CASE WHEN apy_cndtn = 'np' THEN 1 ELSE 0 END) AS cndtn_np
 		FROM p2_tbl_apply_h
 		WHERE
 			rsm_sq = #{rsm_sq}
@@ -93,7 +93,7 @@
 		WHERE
 			a.rsm_sq = #{rsm_sq}
 			AND
-			apy_cndtn = 405
+			apy_cndtn = 'iw'
 			AND
 			MONTH(intv_dtm) = #{month}
 		UNION

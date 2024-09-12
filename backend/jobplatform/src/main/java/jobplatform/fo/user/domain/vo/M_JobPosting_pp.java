@@ -14,9 +14,9 @@ public class M_JobPosting_pp {
     private String crr;
     private String edctn;
     private Timestamp regstr_dln_dtm;
-    private int pstn_prpsl_sq;
+    private Long pstn_prpsl_sq;
     private Timestamp prpsl_dtm;
-    private int pstn_prpsl_cndtn;
+    private String pstn_prpsl_cndtn;
     private String entrprs_name;
     private List<String> areas;
     private List<String> jobs;

@@ -107,22 +107,22 @@
                 {{ applyStateSum }}
               </td>
               <td>
-                {{ result.EachCndtnApplyCount.cndtn_402 }}
+                {{ result.EachCndtnApplyCount.cndtn_read }}
               </td>
               <td>
-                {{ result.EachCndtnApplyCount.cndtn_401 }}
+                {{ result.EachCndtnApplyCount.cndtn_unrd }}
               </td>
               <td>
-                {{ result.EachCndtnApplyCount.cndtn_405 }}
+                {{ result.EachCndtnApplyCount.cndtn_iw }}
               </td>
               <td>
-                {{ result.EachCndtnApplyCount.cndtn_406 }}
+                {{ result.EachCndtnApplyCount.cndtn_ic }}
               </td>
               <td>
-                {{ result.EachCndtnApplyCount.cndtn_408 }}
+                {{ result.EachCndtnApplyCount.cndtn_pass }}
               </td>
               <td>
-                {{ result.EachCndtnApplyCount.cndtn_407 }}
+                {{ result.EachCndtnApplyCount.cndtn_np }}
               </td>
               <td>(준비중)</td>
             </tr>
@@ -265,7 +265,7 @@ onMounted(async () => {
         month: month,
       },
     });
-    result.value = response.data || {};  // 데이터를 받지 못했을 때 기본 빈 객체로 설정
+    result.value = response || {};  // 데이터를 받지 못했을 때 기본 빈 객체로 설정
   } catch (error) {
     console.error("API 호출 오류:", error);
     result.value = {};  // 오류가 발생했을 때 기본 빈 객체로 설정

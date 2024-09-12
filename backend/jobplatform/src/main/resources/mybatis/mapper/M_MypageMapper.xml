@@ -51,12 +51,12 @@
 			rsm_sq = #{rsm_sq}
 		GROUP BY apy_cndtn -->
 		SELECT
-			COALESCE(SUM(CASE WHEN apy_cndtn = 401 THEN 1 ELSE 0 END), 0) AS cndtn_401,
-		    COALESCE(SUM(CASE WHEN apy_cndtn = 402 THEN 1 ELSE 0 END), 0) AS cndtn_402,
-		    COALESCE(SUM(CASE WHEN apy_cndtn = 405 THEN 1 ELSE 0 END), 0) AS cndtn_405,
-		    COALESCE(SUM(CASE WHEN apy_cndtn = 406 THEN 1 ELSE 0 END), 0) AS cndtn_406,
-		    COALESCE(SUM(CASE WHEN apy_cndtn = 407 THEN 1 ELSE 0 END), 0) AS cndtn_407,
-		    COALESCE(SUM(CASE WHEN apy_cndtn = 408 THEN 1 ELSE 0 END), 0) AS cndtn_408
+			COALESCE(SUM(CASE WHEN apy_cndtn = 'unrd' THEN 1 ELSE 0 END), 0) AS cndtn_unrd,
+		    COALESCE(SUM(CASE WHEN apy_cndtn = 'read' THEN 1 ELSE 0 END), 0) AS cndtn_read,
+		    COALESCE(SUM(CASE WHEN apy_cndtn = 'iw' THEN 1 ELSE 0 END), 0) AS cndtn_iw,
+		    COALESCE(SUM(CASE WHEN apy_cndtn = 'ic' THEN 1 ELSE 0 END), 0) AS cndtn_ic,
+		    COALESCE(SUM(CASE WHEN apy_cndtn = 'pass' THEN 1 ELSE 0 END), 0) AS cndtn_pass,
+		    COALESCE(SUM(CASE WHEN apy_cndtn = 'np' THEN 1 ELSE 0 END), 0) AS cndtn_np
 		FROM p2_tbl_apply_h
 		WHERE
 			rsm_sq = #{rsm_sq}
@@ -69,7 +69,7 @@
 		SELECT
 			(SELECT COUNT(*) FROM p2_tbl_resume_m WHERE mbr_sq = #{mbr_sq} AND use_yn = 'Y') rsm_cnt,
 			(SELECT COUNT(*) FROM p2_tbl_scrap_s WHERE mbr_sq = #{mbr_sq}) scrap_cnt,
-			(SELECT COUNT(*) FROM p2_tbl_position_proposal_m WHERE rsm_sq = #{rsm_sq} AND pstn_prpsl_cndtn = 301) prpsl_cnt
+			(SELECT COUNT(*) FROM p2_tbl_position_proposal_m WHERE rsm_sq = #{rsm_sq} AND pstn_prpsl_cndtn = 'ppw') prpsl_cnt
 		FROM dual
 	</select>
 
@@ -98,7 +98,7 @@
 		WHERE
 			a.rsm_sq = #{rsm_sq}
 			AND
-			apy_cndtn = 405
+			apy_cndtn = 'iw'
 			AND
 			MONTH(intv_dtm) = #{month}
 		UNION
@@ -253,7 +253,7 @@
 			FROM
 				p2_tbl_job_posting_m jp, p2_tbl_position_proposal_m pp
 			WHERE 
-				jp.jbp_sq IN (SELECT jbp_sq FROM p2_tbl_position_proposal_m WHERE rsm_sq = #{rsm_sq} AND pstn_prpsl_cndtn = 301)
+				jp.jbp_sq IN (SELECT jbp_sq FROM p2_tbl_position_proposal_m WHERE rsm_sq = #{rsm_sq} AND pstn_prpsl_cndtn = 'ppw')
 				AND
 				jp.jbp_sq = pp.jbp_sq
 			) sjp
@@ -270,13 +270,13 @@
 		FROM
 			p2_tbl_job_posting_m jp, p2_tbl_position_proposal_m pp
 		WHERE 
-			jp.jbp_sq IN (SELECT jbp_sq FROM p2_tbl_position_proposal_m WHERE rsm_sq = #{rsm_sq} AND pstn_prpsl_cndtn = 301)
+			jp.jbp_sq IN (SELECT jbp_sq FROM p2_tbl_position_proposal_m WHERE rsm_sq = #{rsm_sq} AND pstn_prpsl_cndtn = 'ppw')
 			AND
 			jp.jbp_sq = pp.jbp_sq
 	</select>
 	
 	<update id="refuseProposedPostion">
-		UPDATE p2_tbl_position_proposal_m SET pstn_prpsl_cndtn = 303 WHERE pstn_prpsl_sq = #{pstn_prpsl_sq}
+		UPDATE p2_tbl_position_proposal_m SET pstn_prpsl_cndtn = 'ppr' WHERE pstn_prpsl_sq = #{pstn_prpsl_sq}
 	</update>
 
 	<!-- 공고-지역 관계 가지고오기 -->

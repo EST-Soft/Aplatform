@@ -40,11 +40,11 @@ public class M_MypageServiceImpl implements M_MypageService{
             Long rsm_sq = (Long)rsmInfo.get("rsm_sq");
 
             // 각 상태별 지원 개수
-            Map<String, Integer> EachCndtnApplyCount = mypageMapper.getEachCndtnApplyCount(rsm_sq);
+            Map<String, Object> EachCndtnApplyCount = mypageMapper.getEachCndtnApplyCount(rsm_sq);
             response.put("EachCndtnApplyCount", EachCndtnApplyCount);
     
             // 등록한 이력서, 스크랩한 공고, 포지션 제안 받은 개수
-            Map<String, Integer> myState = mypageMapper.getMyState(mbr_sq, rsm_sq);
+            Map<String, Object> myState = mypageMapper.getMyState(mbr_sq, rsm_sq);
             response.put("myState", myState);
     
             // 월별 캘린더 데이터
@@ -143,7 +143,7 @@ public class M_MypageServiceImpl implements M_MypageService{
     //검색에 사용하기 위해 vo에 추가 변수(forSearch)
     @Override
     public Map<String, Object> getPPJopPostingData(Long mbr_sq, int page_num){
-        int rsm_sq = mypageMapper.getRRsm_sq(mbr_sq);
+        Long rsm_sq = mypageMapper.getRRsm_sq(mbr_sq);
         
         int limit = 5; //한페이지에 보여줄 글 수
         int offset = limit * (page_num - 1);
@@ -151,10 +151,10 @@ public class M_MypageServiceImpl implements M_MypageService{
         List<M_JobPosting_pp> result = mypageMapper.getPPJopPostingData(rsm_sq, limit, offset);
         
         for(M_JobPosting_pp temp : result){
-            int jbp_sq = temp.getJbp_sq();
-            List<Integer> areas = mypageMapper.getAreasOfJobPost(jbp_sq);
-            List<Integer> jobs = mypageMapper.getJobsOfJobPost(jbp_sq);
-            List<Integer> skills = mypageMapper.getSkillsOfJobPost(jbp_sq);
+            Long jbp_sq = temp.getJbp_sq();
+            List<Long> areas = mypageMapper.getAreasOfJobPost(jbp_sq);
+            List<Long> jobs = mypageMapper.getJobsOfJobPost(jbp_sq);
+            List<Long> skills = mypageMapper.getSkillsOfJobPost(jbp_sq);
             if(areas.size() != 0) temp.setAreas(mypageMapper.areaCodeToName(areas));
             if(jobs.size() != 0) temp.setJobs(mypageMapper.jobCodeToName(jobs));
             if(skills.size() != 0) temp.setSkills(mypageMapper.skillCodeToName(skills));
@@ -169,7 +169,7 @@ public class M_MypageServiceImpl implements M_MypageService{
         return response;
     };
     
-    public int refuseProposedPostion(int pstn_prpsl_sq) {
+    public int refuseProposedPostion(Long pstn_prpsl_sq) {
     	return mypageMapper.refuseProposedPostion(pstn_prpsl_sq);
     }
 

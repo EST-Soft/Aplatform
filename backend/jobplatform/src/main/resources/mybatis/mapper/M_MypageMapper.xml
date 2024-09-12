@@ -242,13 +242,13 @@
 	<select id="getPPJopPostingData" resultType="jobplatform.fo.user.domain.vo.M_JobPosting_pp">
 		SELECT
 			sjp.jbp_sq, sjp.entrprs_sq, sjp.jbp_ttl, sjp.jbp_cntnt,
-			(SELECT code_name FROM p2_tbl_common_code_dtl_s ccd WHERE ccd.code_id = sjp.cr) cr,
+			(SELECT code_name FROM p2_tbl_common_code_dtl_s ccd WHERE ccd.code_id = sjp.crr_drtn) cr,
 			(SELECT code_name FROM p2_tbl_common_code_dtl_s ccd WHERE ccd.code_id = sjp.edctn) edctn,
 			sjp.regstr_dln_dtm, sjp.pstn_prpsl_sq, sjp.pstn_prpsl_cndtn, sjp.prpsl_dtm, em.entrprs_name,
 			sjp.hits, sjp.work_form, sjp.slry
 		FROM
 			(SELECT 
-				jp.jbp_sq, jp.entrprs_sq, jp.jbp_ttl, jp.jbp_cntnt, jp.cr, jp.edctn, jp.regstr_dln_dtm, jp.hits, jp.work_form, jp.slry,
+				jp.jbp_sq, jp.entrprs_sq, jp.jbp_ttl, jp.jbp_cntnt, jp.crr_drtn, jp.edctn, jp.regstr_dln_dtm, jp.hits, jp.work_form, jp.slry,
 				pp.pstn_prpsl_sq, pp.pstn_prpsl_cndtn, pp.prpsl_dtm
 			FROM
 				p2_tbl_job_posting_m jp, p2_tbl_position_proposal_m pp

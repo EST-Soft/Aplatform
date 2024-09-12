@@ -7,8 +7,8 @@ import lombok.Data;
 
 @Data
 public class M_JobPosting_pp {
-    private int jbp_sq;
-    private int entrprs_sq;
+    private Long jbp_sq;
+    private Long entrprs_sq;
     private String jbp_ttl;
     private String jbp_cntnt;
     private String crr;

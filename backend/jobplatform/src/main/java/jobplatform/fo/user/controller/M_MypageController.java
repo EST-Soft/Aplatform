@@ -55,8 +55,26 @@ public class M_MypageController {
 	//포지션 제안받기 상태 변경
 	@PatchMapping("/ppAcception/{ppyn}")
 	public int putMethodName(@PathVariable String ppyn, @RequestBody Map<String, Object> data) {
-		Long mbr_sq = (Long)data.get("mbr_sq");
-		return myPageService.updatePstnPrpslAcceptYN(mbr_sq, ppyn);
+		Object mbrSqObj = data.get("mbr_sq");
+		Long mbrSq = null;
+
+		if (mbrSqObj instanceof String) {
+			try {
+				mbrSq = Long.parseLong((String) mbrSqObj);
+			} catch (NumberFormatException e) {
+				// 잘못된 형식의 mbr_sq가 전달된 경우 처리
+				throw new IllegalArgumentException("Invalid format for mbr_sq: " + mbrSqObj, e);
+			}
+		} else if (mbrSqObj instanceof Integer) {
+			// mbr_sq가 Integer 타입인 경우, Long으로 변환
+			mbrSq = ((Integer) mbrSqObj).longValue();
+		} else {
+			throw new IllegalArgumentException("Invalid data type for mbr_sq");
+		}
+		
+		return myPageService.updatePstnPrpslAcceptYN(mbrSq, ppyn);
+		// Long mbr_sq = (Long)data.get("mbr_sq");
+		// return myPageService.updatePstnPrpslAcceptYN(mbr_sq, ppyn);
 	}
 
 	//포지션 제안 받기 설정 후 원하는 지역, 직종 선택 -> 기존 데이터 삭제 후 재입력
@@ -74,8 +92,8 @@ public class M_MypageController {
 	//제안 받은 포지션 거절
 	@PatchMapping("/refusePp")
 	public int refuseProposedPostion(@RequestBody Map<String, Object> data) {
-		System.out.println((int)data.get("pstn_prpsl_sq") + "번 제안이 거절되었습니다.");
-		return myPageService.refuseProposedPostion((int)data.get("pstn_prpsl_sq"));
+		System.out.println((Long)data.get("pstn_prpsl_sq") + "번 제안이 거절되었습니다.");
+		return myPageService.refuseProposedPostion((Long)data.get("pstn_prpsl_sq"));
 	};
 	
 	//마이페이지 개인정보 수정

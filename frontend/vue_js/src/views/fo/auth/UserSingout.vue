@@ -70,6 +70,10 @@ onMounted(async() => {
 const handleSubmit = async() => {
     if(confirm("정말 탈퇴하시겠습니까?")==true){ // 탈퇴신청 여부 
 
+        if(mbrPswrd.value == ""){
+            alert("비밀번호를 입력해주세요.")
+        }
+
         const data = {
             mbrPswrd : mbrPswrd.value,
             mbrId : member.value?.mbrId
@@ -134,9 +138,6 @@ function logout() {
 .form-control:focus {
     background-color: #ffffff;
     box-shadow: none;
+    outline: none;
 }
-.form-control {
-    box-shadow: none;
-    width: 350px;
-  }
 </style>

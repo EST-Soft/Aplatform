@@ -25,7 +25,7 @@
 
 
     <div v-if="showPage">
-        <div class="heading heading-border heading-middle-border">
+        <div class="heading heading-border heading-middle-border" style="margin-bottom: 50px;">
             <h1 class="font-weight-normal">회원정보 수정<strong class="font-weight-extra-bold"></strong></h1>
         </div>
         <div class="d-flex justify-content-center mb-4">
@@ -159,8 +159,8 @@
                     
                     <div class="form-group row">
                         <div class="button-container">
-                            <router-link class="btn btn-modern btn-light mb-2" to="/mypage/home">취소</router-link>
                             <input type="submit" value="수정하기" id="abtn1" class="btn btn-modern btn-dark mb-2" data-loading-text="Loading...">
+                            <router-link class="btn btn-modern btn-light mb-2" to="/mypage/home">취소</router-link>
                         </div>
                     </div>
                 </form>
@@ -256,6 +256,11 @@ const closeModal = () => {
 
 // 제출 처리
 const pwSubmit = async () => {
+    if (inputValue.value == ""){
+       alert('비밀번호를 입력해주세요.');
+       return;
+    }
+
     try{
         const response = await api.$get('/member/pwCk', {
             params:{
@@ -532,6 +537,7 @@ const idRepetitionCheck = async() => {
   
 .button-container {
     display: flex;
+    justify-content: center;
 }
 
 #abtn1, #abtn2 {

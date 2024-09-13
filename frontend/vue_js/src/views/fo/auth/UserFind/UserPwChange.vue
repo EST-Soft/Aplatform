@@ -1,5 +1,5 @@
 <template>
-    <div class="heading heading-border heading-middle-border">
+    <div class="heading heading-border heading-middle-border" style="margin-bottom: 100px;">
         <h1 class="font-weight-normal">비밀번호 변경<strong class="font-weight-extra-bold"></strong></h1>
     </div>
       <div class="form-container">
@@ -7,7 +7,7 @@
             <div class="row">
             <div class="form-group col">
                 <div class="form-group row">
-                    <label class="col-lg-3 col-form-label form-control-label line-height-9 pt-2 text-2 required">기존 번호</label>
+                    <label class="col-lg-3 col-form-label form-control-label line-height-9 pt-2 text-2">기존 비밀번호</label>
                     <div class="col-lg-9">
                         <input class="form-control text-3 h-auto py-2" type="password" id="currentPw" name="currentPw" value="" v-model="currentPw">
                     </div>
@@ -17,7 +17,7 @@
           <div class="row">
             <div class="form-group col">
                 <div class="form-group row">
-                    <label class="col-lg-3 col-form-label form-control-label line-height-9 pt-2 text-2 required">변경할 번호</label>
+                    <label class="col-lg-3 col-form-label form-control-label line-height-9 pt-2 text-2">변경 비밀번호</label>
                     <div class="col-lg-9">
                         <input class="form-control text-3 h-auto py-2" type="password" id="newPw" name="newPw" value="" v-model="newPw" @focus="handleFocus" @blur="handleBlur">
                     </div>
@@ -27,16 +27,15 @@
           <div class="row">
             <div class="form-group col">
                 <div class="form-group row">
-                    <label class="col-lg-3 col-form-label form-control-label line-height-9 pt-2 text-2 required">번호 재확인</label>
+                    <label class="col-lg-3 col-form-label form-control-label line-height-9 pt-2 text-2">변경 번호 재확인</label>
                     <div class="col-lg-9">
                         <input class="form-control text-3 h-auto py-2" type="password" id="checkPw" name="checkPw" value="" v-model="checkPw" @focus="handleFocus" @blur="handleBlur" @change="validatePassword">
                     </div>
                 </div>
             </div>
           </div>
-          <br>
           <div v-if="pwError" class="text-danger mt-1">{{ pwError }}</div>
-          <div class="button-wrapper">
+          <div class="button-wrapper" style="margin-top: 50px;">
             <button type="submit" class="btn btn-outline btn-dark btn-xl mb-2">
               비밀번호 재설정
             </button>
@@ -70,6 +69,11 @@
         if (newPw.value !== checkPw.value) {
             showAlert('비밀번호가 일치하지 않습니다.');
             return;
+        }
+
+        if(currentPw.value == "" || newPw.value == "" || checkPw.value == ""){
+          showAlert('비어있는 입력칸이 있습니다.');
+          return;
         }
         const params = {
             mbrId: member.value.mbrId,
@@ -117,7 +121,7 @@
 
       const validatePassword = () => {
         if (newPw.value !== checkPw.value) {
-          pwError.value = "비밀번호가 일치하지 않습니다.";
+          pwError.value = "변경할 비밀번호가 일치하지 않습니다.";
         } else {
           pwError.value = "";
         }
@@ -148,39 +152,4 @@
     },
   };
   </script>
-  
-  <style scoped>
-    .form-container {
-        display: flex;
-        justify-content: center;
-        max-width: 600px;
-        margin: 0 auto;
-        padding: 20px;
-    }
-
-    .form-group {
-        width: 100%;
-        margin-bottom: 15px;
-    }
-  
-  .form-control {
-    box-shadow: none;
-    width: 350px;
-  }
-  
-  .form-control:focus{
-    background-color: #ffffff;
-    box-shadow: none;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-  }
-
-  .button-wrapper {
-    display: flex;
-    justify-content: center;
-  }
-  .row{
-    width: 500px;
-  }
-  </style>
   

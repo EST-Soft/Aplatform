@@ -199,6 +199,19 @@
         </div>
       </h4>
       <hr class="mt-1 mb-2" />
+      <div v-for="(skill, category) in skillsData" :key="category">
+        <div v-if="skill.length > 0">
+          <h5>{{ category }}</h5>
+          <div class="skill-container">
+            <div v-for="(item, index) in skill" :key="index" class="skill-item">
+              <div>
+                <span>{{ item.sklScName }}</span>
+                <div class="btn btn-outline-danger" @click="removeSkills(category, index)">X</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <SkillsResume :isVisible="showSkillsModal" @update:isVisible="showSkillsModal = $event"
@@ -529,6 +542,10 @@ const handleSchoolSelection = (selectedSchool) => {
   isSearchPopupModalOpen.value = false;
 };
 
+const removeEducation = (index) => {
+  educationsList.value.splice(index, 1);
+};
+
 // 경력
 const addCareer = () => {
   careerDatas.value.push({ entrprsName: '', entrprsPstn: '', entrprsJacDate: '', entrprsRsgntnDate: '' });
@@ -543,13 +560,10 @@ const updateSkillsData = (newSkills) => {
   skillsData.value = newSkills;
 };
 
-/* const removeSkills = (index) => {
-  skillsData.value.splice(index, 1);
-}; */
-
-const removeEducation = (index) => {
-  educationsList.value.splice(index, 1);
+const removeSkills = (category, index) => {
+  skillsData.value[category].splice(index, 1);
 };
+
 
 /* const handleUpdateSkills = (selectedSkills) => {
   const allSelectedSkills = Object.values(selectedSkills).flat();
@@ -700,5 +714,26 @@ const removeAttachment = (index) => {
 
 .modal-dialog {
   max-width: 600px;
+}
+
+.skill-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.skill-item {
+  display: flex;
+  align-items: center;
+  background-color: #f8f9fa;
+  border: 1px solid #ccc;
+  padding: 5px;
+  border-radius: 5px;
+}
+
+.skill-item .btn {
+  padding: 3px 5px;
+  border-radius: 3px;
+  margin-left: 15px;
 }
 </style>

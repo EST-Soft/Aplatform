@@ -17,7 +17,7 @@
       </li>
       <li class="page-item"
         v-if="props.paginationData.endNumOfPageGroups < props.paginationData.totalPageGroupsCount"
-        :value="props.paginationData.startNumOfPageGroups + props.paginationData.showPageGroupsCoun"
+        :value="props.paginationData.startNumOfPageGroups + props.paginationData.showPageGroupsCount"
         @click="$emit('changePageNo', props.paginationData.startNumOfPageGroups + props.paginationData.showPageGroupsCount)">
         <a href="#" class="page-link">
           <i class="fas fa-angle-right"></i>
@@ -30,7 +30,12 @@
 <script setup>
 import { defineProps } from "vue";
 
-const props = defineProps(["paginationData"]);
+const props = defineProps({
+  paginationData: {
+    type: Object,
+    required: true, // props가 필수로 들어와야 함을 명시
+  },
+});
 </script>
 
 <style scoped></style>

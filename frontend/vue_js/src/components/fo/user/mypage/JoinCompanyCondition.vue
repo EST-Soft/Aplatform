@@ -15,7 +15,7 @@
                 </div>
                 <h5 class="mb-2">{{ props.data.entrprs_name }}</h5>
                 <p class="mb-2"><router-link :to="`/board/detail/jobPosting/${props.data.jbp_sq}`">{{ props.data.jbp_ttl }}</router-link></p>
-                <a href="#" class="popup-with-zoom-anim text-primary">지원한 이력서 | {{ props.data.rsm_ttl }}</a>
+                <a @click="toDtlPage()" class="popup-with-zoom-anim text-primary">지원한 이력서 | {{ props.data.rsm_ttl }}</a>
                 <hr class="my-2">
                 <div class="d-flex justify-content-between align-items-center pt-2">
                     <div class="d-flex align-items-center">
@@ -52,12 +52,27 @@
 import axios from 'axios';
 // import { apply } from 'core-js/fn/reflect';
 import { defineProps, ref, onMounted ,defineEmits } from 'vue';
+import { useRouter } from "vue-router";
+
+const router = useRouter();
 
 const props = defineProps(['data'])
 
 const applyCancel = ref(''); // 지원취소
 const applyCount = ref(''); //공고 지원자 수
 const apySq = ref('');
+
+const dtlInfo = {
+  name :'resumeDetailView',
+  params : {
+    resSq : props.data.rsm_sq
+  }
+}
+
+const toDtlPage = () => {
+  
+  router.push(dtlInfo);
+};
 
  
 const emit = defineEmits(["applyCancelCnt"]);

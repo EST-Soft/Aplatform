@@ -1,12 +1,18 @@
 package jobplatform.fo.user.domain.mapper;
 
 
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import jobplatform.fo.enterprise.domain.dto.JobPostingDTO;
+import jobplatform.fo.enterprise.domain.dto.ResumeSearchDataDTO;
+import jobplatform.fo.enterprise.domain.vo.ResumeListVO;
+import jobplatform.fo.enterprise.domain.vo.ScrapVO;
 import jobplatform.fo.user.domain.vo.M_JobPosting_pp;
 import jobplatform.fo.user.domain.vo.MemberVO;
 
@@ -97,5 +103,12 @@ public interface M_MypageMapper {
 	public List<String> jobCodeToName(@Param("jobs") List<Long> jobs);
 //	스킬 코드 -> 스킬 이름
 	public List<String> skillCodeToName(@Param("skills") List<Long> skills);
+
+	// 페이지네이션을 위한 데이터 수 얻기
+	int loadScrapListCount(ResumeSearchDataDTO resumeSearchDataDTO) throws SQLException, IOException;
+	// 스크랩 리스트 데이터 얻기
+	List<ScrapVO> selectScrapData(Map<String, Object> map) throws SQLException, IOException;
+	// 공고 상세 정보
+	public List<M_JobPosting_pp> selectJobPosting(List<Long> jbpSqList);
 
 }

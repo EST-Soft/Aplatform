@@ -1,8 +1,11 @@
 package jobplatform.fo.user.service;
 
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
+import jobplatform.fo.enterprise.domain.dto.ResumeSearchDataDTO;
 import jobplatform.fo.user.domain.vo.M_JobPosting_pp;
 import jobplatform.fo.user.domain.vo.MemberVO;
 
@@ -39,5 +42,10 @@ public interface M_MypageService {
 
 	//비밀번호 수정
 	public int pwUpdate(Long mbr_sq, String mbr_pswrd);
+
+	//스크랩 목록
+	public Map<String, Object> findScrapData(ResumeSearchDataDTO resumeSearchDataDTO) throws SQLException, IOException;
+	// 학력, 경력 공통코드 모음
+	public Map<String, Object> findCommonCode();
 
 }

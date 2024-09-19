@@ -4,14 +4,25 @@
     </div>
     <div class="col-lg-12">
         <div class="float-end">
-            <router-link class="btn btn-outline btn-xl btn-light mb-2" to="/resumes/resume-list">확인</router-link>
+            <button @click="goBack" class="btn btn-outline btn-xl btn-light mb-2">확인</button>
         </div>
     </div>
 </template>
 
 <script setup>
 import DetailResume from '../../../../components/fo/enterprise/resume/DetailResume.vue';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
+
+const goBack = () => {
+  router.back(); // 또는 router.go(-1);
+};
 
 </script>
 
-<style scoped></style>
+<style scoped>
+    button{
+        margin-right: 40px;
+    }
+</style>

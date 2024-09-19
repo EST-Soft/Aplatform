@@ -17,7 +17,7 @@
                         <li class="nav-item"><router-link class="nav-link" to="/mypage/proposedPosition">제안 받은 포지션</router-link></li>
                     </ul>
                 </li>
-                <li class="nav-item"><router-link class="nav-link" to="#" id="menu5">스크랩 공고</router-link></li>
+                <li class="nav-item"><router-link class="nav-link" to="/mypage/scrapList" id="menu5">스크랩 공고</router-link></li>
                 <li class="nav-item"><router-link class="nav-link"  :to="{ name: 'userInfmtn', query: { modal: 'true' } }" id="menu6">회원정보 관리</router-link>
                     <ul>
                         <li class="nav-item"><router-link class="nav-link" :to="{ name: 'userInfmtn', query: { modal: 'true' } }">회원정보 수정</router-link></li>
@@ -54,7 +54,7 @@
                                 <li class="nav-item"><router-link class="nav-link" to="/mypage/proposedPosition">제안 받은 포지션</router-link></li>
                             </ul>
                         </li>
-                        <li class="nav-item"><router-link class="nav-link" to="#" id="menu5">스크랩 공고</router-link></li>
+                        <li class="nav-item"><router-link class="nav-link" to="/mypage/scrapList" id="menu5">스크랩 공고</router-link></li>
                         <li class="nav-item"><router-link class="nav-link"  :to="{ name: 'userInfmtn', query: { modal: 'true' } }" id="menu6">회원정보 관리</router-link>
                             <ul>
                                 <li class="nav-item"><router-link class="nav-link" :to="{ name: 'userInfmtn', query: { modal: 'true' } }">회원정보 수정</router-link></li>

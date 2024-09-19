@@ -1,5 +1,7 @@
 package jobplatform.fo.user.service;
 
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,6 +13,15 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import jobplatform.fo.enterprise.common.Pagination;
+import jobplatform.fo.enterprise.domain.dto.JobPostingDTO;
+import jobplatform.fo.enterprise.domain.dto.ResumeSearchDataDTO;
+import jobplatform.fo.enterprise.domain.entity.JobPostingEntity;
+import jobplatform.fo.enterprise.domain.mapper.CommonCodeMapper;
+import jobplatform.fo.enterprise.domain.repository.JobPostingRepository;
+import jobplatform.fo.enterprise.domain.vo.CommonCodeVO;
+import jobplatform.fo.enterprise.domain.vo.ResumeListVO;
+import jobplatform.fo.enterprise.domain.vo.ScrapVO;
 import jobplatform.fo.user.domain.mapper.M_MypageMapper;
 import jobplatform.fo.user.domain.vo.M_JobPosting_pp;
 import jobplatform.fo.user.domain.vo.MemberVO;
@@ -21,6 +32,8 @@ public class M_MypageServiceImpl implements M_MypageService{
 
 	@Autowired
     private M_MypageMapper mypageMapper;
+    @Autowired
+    private CommonCodeMapper commonCodeMapper;
 	
     //마이페이지 매인화면에 필요한 전체 데이터 가져오기
 	@Override
@@ -179,6 +192,41 @@ public class M_MypageServiceImpl implements M_MypageService{
         return mypageMapper.pwUpdate(mbr_sq, newPassword);
     }
 
+    // 이력서 리스트 데이터 얻기
+	public Map<String, Object> findScrapData(ResumeSearchDataDTO resumeSearchDataDTO) throws SQLException, IOException {
+		Map<String, Object> map = new HashMap<String, Object>();
+		// 총 데이터 갯수
+		int totalCount = mypageMapper.loadScrapListCount(resumeSearchDataDTO);
+		// 페이지네이션 정보 생성 (기본 1페이지 = 데이터10 / 페이지그룹= 페이지5)
+		Pagination pagination = new Pagination(totalCount, resumeSearchDataDTO.getPageNo());
+		// 페이지네이션 정보 map 추가
+		map.put("paginationData", pagination);
+		// 검색/정렬 정보 map 추가
+		map.put("searchData", resumeSearchDataDTO);
+		// 스크랩 리스트 정보 얻기
+		List<ScrapVO> scrapVO = mypageMapper.selectScrapData(map);
+		// 스크랩 리스트 정보 map 추가
+		map.put("scrapDatas", scrapVO);
+
+        // jbp_sq 리스트를 Long으로 변환하여 생성
+        List<Long> jbpSqList = new ArrayList<>();
+        for (ScrapVO scrap : scrapVO) {
+            jbpSqList.add(scrap.getJbp_sq());
+        }
+        // 공고 정보 가져오기
+        List<M_JobPosting_pp> JobPostingDTO = mypageMapper.selectJobPosting(jbpSqList);
+        //공고 정보 map에 추가
+        map.put("jobPostingData", JobPostingDTO);
+
+		return map;
+	}
+
+    public Map<String, Object> findCommonCode(){
+        Map<String, Object> map = new HashMap<String, Object>();
+        List<CommonCodeVO> commonCodeVO = commonCodeMapper.findCommonCode();
+        map.put("commonCodeList", commonCodeVO);
+        return map;
+    }
 
 
 }

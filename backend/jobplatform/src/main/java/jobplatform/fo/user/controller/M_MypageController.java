@@ -1,9 +1,12 @@
 package jobplatform.fo.user.controller;
 
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -15,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import jobplatform.fo.enterprise.domain.dto.ResumeSearchDataDTO;
 import jobplatform.fo.user.domain.entity.MemberEntity;
 import jobplatform.fo.user.domain.vo.M_JobPosting_pp;
 import jobplatform.fo.user.service.M_MypageService;
@@ -102,7 +106,33 @@ public class M_MypageController {
 
 		return ResponseEntity.ok(myPageService.findUserINfo(mbr_sq));
 	}
-	
-	
+
+	// 스크랩 목록 불러오기 (정렬 일반화)
+	@GetMapping("/scrap/scrapList-list/{mbr_sq}/{sort}/{pageNo}")
+	public ResponseEntity<Map<String, Object>> findResumeListData(
+			@PathVariable("mbr_sq") int mbr_sq,
+			@PathVariable("sort") String sort,
+			@PathVariable("pageNo") int pageNo) throws SQLException, IOException {
+
+		ResumeSearchDataDTO resumeSearchDataDTO = new ResumeSearchDataDTO(mbr_sq, sort, pageNo);
+		Map<String, Object> map = null;
+		HttpStatus httpStatus = null;
+
+		map = myPageService.findScrapData(resumeSearchDataDTO);
+		httpStatus = HttpStatus.OK;
+		System.out.println("머야==================================="+map);
+
+		return new ResponseEntity<Map<String, Object>>(map, httpStatus);
+
+	}
+
+	//공고 학력, 경력 공통코드 불러오기
+	@GetMapping("/scrap/commonCode")
+	public ResponseEntity<Map<String, Object>> findCommonCode(){
+		Map<String, Object> map = null;
+		map = myPageService.findCommonCode();
+		System.out.println("흠"+map);
+		return ResponseEntity.ok(map);
+	}
 	
 }

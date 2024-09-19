@@ -332,5 +332,34 @@
 
 	<!-- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@tools END@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ -->
 	
+	<!-- 스크랩 리스트 데이터 갯수 구해오기 -->
+	<select id="loadScrapListCount" resultType="int">
+		select count(1)
+		from
+		p2_tbl_scrap_s
+		where mbr_sq = #{mbr_sq}
+	</select>
+
+	<!-- 스크랩 리스트 데이터 얻기 -->
+	<select id="selectScrapData" resultType="jobplatform.fo.enterprise.domain.vo.ScrapVO">
+		select scrap_sq, mbr_sq, jbp_sq, scrap_dtm
+		from p2_tbl_scrap_s
+		where mbr_sq = #{searchData.mbr_sq}
+		order by scrap_dtm desc
+		limit #{paginationData.startRowIndex},#{paginationData.showDataCountPerPage}
+	</select>
+
+	<!-- 공고 정보 가져오기 -->
+	<select id="selectJobPosting" resultType="jobplatform.fo.user.domain.vo.M_JobPosting_pp">
+		select p.jbp_sq, p.entrprs_sq, p.jbp_ttl, em.entrprs_name, p.jbp_cntnt, p.hits, p.crr_drtn, p.skl_name, p.job_name, p.edctn, p.work_area, p.work_form, p.slry, p.work_hour, p.regstr_strt_dtm, p.regstr_dln_dtm, p.pic_name, p.pic_mp, p.pic_eml, p.jbp_end_yn, p.jbp_cndtn
+		from p2_tbl_job_posting_m p, p3_tbl_enterprise_member_m em
+		where p.jbp_sq IN 
+        <foreach item="id" collection="jbpSqList" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+		and p.dlt_yn = 'N'
+		and p.use_yn = 'Y'
+		and em.entrprs_sq = p.entrprs_sq
+	</select>
 	
 </mapper>

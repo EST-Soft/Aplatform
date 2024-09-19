@@ -20,6 +20,8 @@ public class ResumeListVO {
 	private String rsm_ttl;
 	// 수정일
 	private Timestamp updt_dtm;
+	// 등록일
+	private Timestamp insrt_dtm;
 	
 	
 }

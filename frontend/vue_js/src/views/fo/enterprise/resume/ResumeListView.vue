@@ -30,12 +30,10 @@
             </div>
         </div>
     </div>
-    <hr class="gradient" />
-    <div class="row">
-        <div
-            v-if="resumeListData.paginationData.totalDataCount != undefined && resumeListData.paginationData.totalDataCount != 0">
-            <PaginationData :paginationData="resumeListData.paginationData"
-                @change-page-no="changePageNo" />
+    <br/>
+    <div class="row" id="pagination-container">
+        <div class="pagination-wrapper" v-if="resumeListData.paginationData.totalDataCount > 1">
+            <PaginationData :paginationData="resumeListData.paginationData" @change-page-no="changePageNo" />
         </div>
     </div>
 </template>
@@ -118,6 +116,7 @@ const copyResumes = async (emit) => {
         })
         .catch((error) => {
             console.log('axios 실패' + error);
+            alert("복제가 불가능합니다.");
         });
 };
 // 이력서 수정 (rsm_sq 들고 페이지 이동)
@@ -137,4 +136,16 @@ const deleteResumes = async (emit) => {
 
 </script>
 
-<style scoped></style>
+<style scoped>
+#pagination-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.pagination-wrapper {
+  display: flex;
+  justify-content: center;
+}
+</style>

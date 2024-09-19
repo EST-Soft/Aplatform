@@ -208,12 +208,11 @@ public class ResumeManagementController {
 				// 성공
 				httpStatus = HttpStatus.OK;
 			} else {
-				// 실패 로직
+				httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
 			}
 
 		} catch (SQLException | IOException e) {
-			// TODO Auto-generated catch block
-			// e.printStackTrace();
+			httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
 		}
 
 		return new ResponseEntity<HttpStatus>(httpStatus);

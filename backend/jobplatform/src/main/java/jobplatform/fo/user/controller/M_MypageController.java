@@ -120,7 +120,6 @@ public class M_MypageController {
 
 		map = myPageService.findScrapData(resumeSearchDataDTO);
 		httpStatus = HttpStatus.OK;
-		System.out.println("머야==================================="+map);
 
 		return new ResponseEntity<Map<String, Object>>(map, httpStatus);
 
@@ -131,7 +130,6 @@ public class M_MypageController {
 	public ResponseEntity<Map<String, Object>> findCommonCode(){
 		Map<String, Object> map = null;
 		map = myPageService.findCommonCode();
-		System.out.println("흠"+map);
 		return ResponseEntity.ok(map);
 	}
 	

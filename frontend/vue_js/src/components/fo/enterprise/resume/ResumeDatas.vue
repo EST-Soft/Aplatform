@@ -21,7 +21,8 @@
     </div>
     <div class="row col-sm-12 col-lg-12">
       <div class="col-sm-4 col-lg-4">
-        <p class="mb-0">{{ fomatDate(props.resumeData.updt_dtm) }}</p>
+        <p v-if="!props.resumeData.updt_dtm || props.resumeData.updt_dtm.length === 0" class="mb-0">{{ fomatDate(props.resumeData.insrt_dtm) }}</p>
+        <p v-else class="mb-0">{{ fomatDate(props.resumeData.updt_dtm) }}</p>
       </div>
       <div class="col-sm-5 col-lg-5"></div>
       <div class="col-sm-1 col-lg-1">

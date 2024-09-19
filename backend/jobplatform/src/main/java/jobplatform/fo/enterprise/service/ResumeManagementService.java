@@ -153,9 +153,12 @@ public class ResumeManagementService {
 
 		// 이력서 메인 + 자식 테이블 전부 insert
 		if (resumeMapper.insertCopyResume(rsm_sq) == 1) {
-			// 이력서 아랫 테이블 전부 만들어야함.
+			result = true; // 성공했음을 나타냄
+			// 후속 작업 수행
+		} else {
+			// 삽입 실패 로그 추가
+			System.out.println("Resume insert failed for rsm_sq: " + rsm_sq);
 		}
-		;
 
 		return result;
 	}

@@ -36,12 +36,10 @@
             </div>
         </div>
     </div>
-    <hr class="gradient" />
-    <div class="row">
-        <div
-            v-if="scrapListData.paginationData.totalDataCount != undefined && scrapListData.paginationData.totalDataCount != 0">
-            <PaginationData :paginationData="scrapListData.paginationData"
-                @change-page-no="changePageNo" />
+    <br/>
+    <div class="row" id="pagination-container">
+        <div class="pagination-wrapper" v-if="scrapListData.paginationData.totalDataCount > 1">
+            <PaginationData :paginationData="scrapListData.paginationData" @change-page-no="changePageNo" />
         </div>
     </div>
 </template>
@@ -84,7 +82,6 @@ const callAxios = async () => {
         .then((success) => {
             console.log('axios 성공' + success.data);
             scrapListData.value = success.data;
-            console.log(success.data);
         })
         .catch((error) => {
             console.log('axios 실패' + error.data);
@@ -107,4 +104,16 @@ const changeSort = (event) => {
 
 </script>
 
-<style scoped></style>
+<style scoped>
+#pagination-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.pagination-wrapper {
+  display: flex;
+  justify-content: center;
+}
+</style>

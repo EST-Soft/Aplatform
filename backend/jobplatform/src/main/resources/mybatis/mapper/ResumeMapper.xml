@@ -23,7 +23,8 @@
 		mbr_sq,
 		rsm_rprsntv_yn,
 		rsm_ttl,
-		updt_dtm
+		updt_dtm,
+		insrt_dtm
 		from P2_TBL_RESUME_M
 		where mbr_sq = #{searchData.mbr_sq}
 		and use_yn = 'Y'
@@ -173,7 +174,9 @@
 		rsm_bd,
 		rsm_mp,
 		rsm_adrs,
-		rsm_eml
+		rsm_eml,
+		insrt_mbr_sq,
+		insrt_dtm
 		)
 		select mbr_sq,
 		rsm_img_orgnl_fn,
@@ -187,7 +190,9 @@
 		rsm_bd,
 		rsm_mp,
 		rsm_adrs,
-		rsm_eml from P2_TBL_RESUME_M where rsm_sq = #{rsm_sq};
+		rsm_eml,
+		insrt_mbr_sq,
+		NOW() from P2_TBL_RESUME_M where rsm_sq = #{rsm_sq};
 	</insert>
 
 </mapper>

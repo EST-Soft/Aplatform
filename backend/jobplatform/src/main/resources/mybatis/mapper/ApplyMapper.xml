@@ -75,7 +75,7 @@
 				left outer join P2_TBL_POSITION_PROPOSAL_M as posi
 					on posi.rsm_sq = resume.rsm_sq
 		where apply.jbp_sq = #{jbp_sq}
-			and apply.apy_cndtn != 403
+			and apply.apy_cndtn != 'ac'
 			<if test = "condition != 0">
 				and apply.apy_cndtn = #{condition}
 			</if>
@@ -110,7 +110,7 @@
 				left outer join p3_tbl_member_m as member
 					on member.mbr_sq = resume.mbr_sq
 		where apply.jbp_sq = #{searchData.jbp_sq}
-			and apply.apy_cndtn != 403
+			and apply.apy_cndtn != 'ac'
 			<if test = "searchData.condition != 0">
 				and apply.apy_cndtn = #{searchData.condition}
 			</if>

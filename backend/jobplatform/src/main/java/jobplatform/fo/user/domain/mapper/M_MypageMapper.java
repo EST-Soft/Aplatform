@@ -25,10 +25,10 @@ public interface M_MypageMapper {
 	public Map<String, Object> getRprsntvRsmInfo(Long mbr_sq);
 
 //	대표 이력서 -> 지원 테이블에서 각 상태별 데이터 개수 가지고 오기(미열람:401, 열람:402, 면접대기:405, 면접완료:406, 합격:407, 불합격:408)
-	public Map<String, Integer> getEachCndtnApplyCount(Long rsm_sq);
+	public Map<String, Object> getEachCndtnApplyCount(Long rsm_sq);
 
 //	등록한 이력서 개수(rsm_cnt), 스크랩한 공고 개수(scrap_cnt), 포지션 제안 받은 개수(대가 상태(301)인 제안)(prpsl_cnt), (추후 AI추천 공고 개수)
-	public Map<String, Integer> getMyState(@Param("mbr_sq")Long mbr_sq,@Param("rsm_sq") Long rsm_sq);
+	public Map<String, Object> getMyState(@Param("mbr_sq")Long mbr_sq,@Param("rsm_sq") Long rsm_sq);
 	
 	
 //	월별 스크랩한 공고 마감일자 : S`
@@ -51,7 +51,7 @@ public interface M_MypageMapper {
 	public List<Map<String, Object>> getJobCodes();
 
 // 	설정했던 지역 검색
-	public List<Integer> getSelectedAreas(Long mbr_sq);
+	public List<Long> getSelectedAreas(Long mbr_sq);
 
 // 	선택했던 지역 초기화
 	public int resetSelectedAreas(Long mbr_sq);
@@ -60,7 +60,7 @@ public interface M_MypageMapper {
 	public int insertSelectAreas(@Param("mbr_sq") Long mbr_sq, @Param("areaList") List<Integer> areaList);
 
 // 	설정했던 직업 검색
-	public List<Integer> getSelectedJobs(Long mbr_sq);
+	public List<Long> getSelectedJobs(Long mbr_sq);
 
 // 	선택했던 직업 초기화
 	public int resetSelectedJobs(Long mbr_sq);
@@ -69,33 +69,33 @@ public interface M_MypageMapper {
 	public int insertSelectJobs(@Param("mbr_sq") Long mbr_sq, @Param("jobList") List<Integer> jobList);
 
 //	포지션 제안 받은 공고 리스트 출력(해당 페이지 데이터)
-	public List<M_JobPosting_pp> getPPJopPostingData(@Param("rsm_sq") int rsm_sq, @Param("limit") int limit, @Param("offset") int offset);
+	public List<M_JobPosting_pp> getPPJopPostingData(@Param("rsm_sq") Long rsm_sq, @Param("limit") int limit, @Param("offset") int offset);
 
 //	포지션 제안 받은 공고 총 개수
-	public int getPPPostsCount(@Param("rsm_sq") int rsm_sq);
+	public int getPPPostsCount(@Param("rsm_sq") Long rsm_sq);
 	
 //	제안 받은 포지션 거절
-	public int refuseProposedPostion(@Param("pstn_prpsl_sq") int pstn_prpsl_sq);
+	public int refuseProposedPostion(@Param("pstn_prpsl_sq") Long pstn_prpsl_sq);
 	
 	
 //	공고-지역 관계 가지고오기
-	public List<Integer> getAreasOfJobPost(int jbp_sq);
+	public List<Long> getAreasOfJobPost(Long jbp_sq);
 //	공고-직업 관계 가지고오기
-	public List<Integer> getJobsOfJobPost(int jbp_sq);
+	public List<Long> getJobsOfJobPost(Long jbp_sq);
 //	공고-스킬 관계 가지고오기
-	public List<Integer> getSkillsOfJobPost(int jbp_sq);
+	public List<Long> getSkillsOfJobPost(Long jbp_sq);
 
 	
 	
 	
 // 	@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@tools@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 //	대표이력서 rsm_sq 구하는 메서드
-	public int getRRsm_sq(Long mbr_sq);
+	public Long getRRsm_sq(Long mbr_sq);
 //	지역 코드 -> 지역 이름
-	public List<String> areaCodeToName(@Param("areas") List<Integer> areas);
+	public List<String> areaCodeToName(@Param("areas") List<Long> areas);
 //	직업 코드 -> 직업 이름
-	public List<String> jobCodeToName(@Param("jobs") List<Integer> jobs);
+	public List<String> jobCodeToName(@Param("jobs") List<Long> jobs);
 //	스킬 코드 -> 스킬 이름
-	public List<String> skillCodeToName(@Param("skills") List<Integer> skills);
+	public List<String> skillCodeToName(@Param("skills") List<Long> skills);
 
 }

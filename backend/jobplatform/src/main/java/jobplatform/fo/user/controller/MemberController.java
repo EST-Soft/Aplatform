@@ -91,18 +91,23 @@ public class MemberController {
 
     @PostMapping("/update")
     public ResponseEntity<?> updateMember(@RequestBody MemberEntity updatedMember) {
+        System.out.println("머냐아아:"+updatedMember);
         try {
             MemberEntity existingMember = memberRepository.findById(updatedMember.getMbrSq())
                     .orElseThrow(() -> new IllegalArgumentException("회원을 찾을 수 없습니다. 회원 순번: " + updatedMember.getMbrSq()));
 
+            if ((updatedMember.getMbrImgFileUrl() != null && updatedMember.getMbrImgFileUrl().length() > 0) ||
+            (updatedMember.getMbrImgOrgnlFn() != null && updatedMember.getMbrImgOrgnlFn().length() > 0)){
+                existingMember.setMbrImgFileUrl(updatedMember.getMbrImgFileUrl());
+                existingMember.setMbrImgOrgnlFn(updatedMember.getMbrImgOrgnlFn());
+            }
+            
             // 업데이트할 필드 설정
             existingMember.setMbrId(updatedMember.getMbrId());
             existingMember.setMbrName(updatedMember.getMbrName());
             existingMember.setMbrAdrs(updatedMember.getMbrPswrd() + " " + updatedMember.getMbrAdrs());
             existingMember.setMbrEmlAdrs(updatedMember.getMbrEmlAdrs());
             existingMember.setMbrMp(updatedMember.getMbrMp());
-            existingMember.setMbrImgFileUrl(updatedMember.getMbrImgFileUrl());
-            existingMember.setMbrImgOrgnlFn(updatedMember.getMbrImgOrgnlFn());
             existingMember.setUpdtDtm(LocalDateTime.now()); // 수정 일시 설정
 
             MemberEntity updatedEntity = memberRepository.save(existingMember);
@@ -306,6 +311,18 @@ public class MemberController {
             return ResponseEntity.ok().body(mbr.getMbrSq());
         } catch (Exception e) {
             return ResponseEntity.status(500).body("조회에 실패했습니다: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/pwCk")
+    public ResponseEntity<String> pwCk(@RequestParam("mbr_id") String mbrId, @RequestParam("mbr_pw") String mbrPw){
+        // 사용자와 비밀번호 확인
+        MemberEntity mpw = memberRepository.findByMbrIdAndMbrPswrd(mbrId, mbrPw);
+        System.out.println(mpw);
+        if (mpw != null){
+            return ResponseEntity.ok("성공");
+        }else{
+            return ResponseEntity.ok("실패");
         }
     }
 

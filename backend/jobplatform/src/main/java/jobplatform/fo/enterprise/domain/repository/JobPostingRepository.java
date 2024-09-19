@@ -26,7 +26,7 @@ public interface JobPostingRepository extends JpaRepository<JobPostingEntity, Lo
     // 조회수 증가
 	@Modifying
     @Query("UPDATE JobPostingEntity j SET j.hits = j.hits + 1 WHERE j.jbpSq = :jbpSq")
-    Long increaseHits(@Param("jbpSq") Long jbpSq);
+    int increaseHits(@Param("jbpSq") Long jbpSq);
     
     // 검색
     List<JobPostingEntity> findByJbpTtlContainingOrJbpCntntContaining(String jbpTtl, String jbpCntnt);

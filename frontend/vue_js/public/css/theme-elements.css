@@ -13873,7 +13873,6 @@ ul.nav-list li {
 
 ul.nav-list li a {
 	transition: background 0.1s;
-	border-bottom: 1px solid rgba(0, 0, 0, 0.06);
 	padding: 8px 0 8px 22px;
 	display: block;
 	color: #666;
@@ -13920,7 +13919,7 @@ ul.nav-list li > a.active {
 
 ul.nav-list li ul {
 	list-style: none;
-	margin: 0 0 0 25px;
+	margin: 0 0 0 40px;
 	padding: 0;
 }
 

@@ -56,7 +56,7 @@
 	
 	<!--지원 취소-->
 	<select id="delAppy" parameterType="Integer">
-		update p2_tbl_apply_h set apy_cndtn ='403'  where apy_sq = #{apySq}
+		update p2_tbl_apply_h set apy_cndtn ='ac'  where apy_sq = #{apySq}
 	</select>
 
 

@@ -122,7 +122,7 @@ const saveBoard = async () => {
     } else if (member.value.pk) {
       board.value.entrprsSq = member.value.pk;
     }
-    console.log(board);
+    console.log(board.value);
     try {
       board.value.brdCntnt = contentHtml;
       await api.$post("/board", board.value);

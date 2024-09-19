@@ -101,7 +101,7 @@ onMounted(() => {
 const board = ref({
   brdTtl: "",
   brdCntnt: "",
-  brdGnrCd: "general",
+  brdTypCode: "general",
 });
 
 // 게시글 작성 폼 입력값 처리

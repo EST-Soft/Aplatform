@@ -26,13 +26,7 @@
 
       <div class="form-group mb-4">
         <label for="contents" class="form-label">내용</label>
-        <!-- <textarea
-          id="brdCntnt"
-          v-model="board.brdCntnt"
-          placeholder="내용을 입력하세요"
-          class="form-control"
-          rows="10"
-        ></textarea> -->
+      
         <div class="editer">
           <!-- 툴바 -->
           <div id="toolbar">

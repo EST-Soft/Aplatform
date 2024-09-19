@@ -420,4 +420,13 @@ hr {
   display: flex;
   gap: 10px;
 }
+
+.ql-size-large{
+  font-size: 2rem;
+}
+
+.ql-size-huge{
+  font-size: 3rem;
+}
+
 </style>

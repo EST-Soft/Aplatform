@@ -48,8 +48,10 @@ public class BoardServiceImp implements BoardService{
         System.out.println("보드서비스 : " + paramMap);
         // 데이터 가져오기
         List<BoardEntity> boardList = boardMapper.findAll(paramMap);
+        System.out.println("abc" + boardList);
 
         int totalCount = boardMapper.getBoardTotalCount(paramMap);
+        System.out.println("ㅁㄴㅇㄴㅁㅇ" + totalCount);
         Pagination pagination = new Pagination(totalCount, page, size, 10);
 
         return Header.OK(boardList, pagination);

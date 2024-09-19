@@ -52,7 +52,7 @@ INSERT INTO P3_TBL_BOARD_ANSWER (
 <select id="countAnswer" resultType="int">
     SELECT COUNT(*)
     FROM P3_TBL_BOARD_ANSWER
-    WHERE brd_sq = #{brdSq}
+    WHERE brd_sq = #{brdSq} and dlt_yn = 'N'
 </select>
 
 
@@ -69,6 +69,80 @@ INSERT INTO P3_TBL_BOARD_ANSWER (
     ORDER BY answr_slctn_yn DESC, answr_sq DESC
     LIMIT #{page}, #{size}
 </select>
+
+<select id="answer" parameterType="int" resultMap="BoardAnswerResultMap">
+    select a.*,
+    coalesce(m.mbr_id, e.entrprs_id) as createdBy
+    from p3_tbl_board_answer a
+    left join
+    p3_tbl_member_m m ON a.mbr_sq = m.mbr_sq
+    LEFT JOIN
+    p3_tbl_enterprise_member_m e ON a.entrprs_sq = e.entrprs_sq
+    where a.answr_sq = #{answrSq}
+</select>
+
+<update id="updateHits">
+    UPDATE P3_TBL_BOARD_ANSWER
+    SET
+    answr_hits = answr_hits + 1
+    WHERE
+    answr_sq = #{answrSq}
+</update>
+
+<update id="updateRcmndtns">
+    UPDATE P3_TBL_BOARD_ANSWER
+    SET
+    answr_rcmndtns = answr_rcmndtns + #{value}
+    WHERE
+    answr_sq = #{answrSq}
+</update>
+
+<insert id="insertRecommendation" useGeneratedKeys="true" >
+    INSERT INTO P3_TBL_BOARD_ANSWER_RECOMMENDATION(
+        answr_sq,
+        mbr_sq,
+        rcmndtns_dtm
+    ) VALUES (
+        #{answrSq},
+        #{mbrSq},
+        NOW()
+    )
+</insert>
+
+<select id="checkRecommendation">
+    SELECT COUNT(*) FROM P3_TBL_BOARD_ANSWER_RECOMMENDATION
+    WHERE answr_sq = #{answrSq} and mbr_sq = #{mbrSq}
+</select>
+
+<delete id="deleteRecommendation">
+    DELETE FROM P3_TBL_BOARD_ANSWER_RECOMMENDATION
+    where answr_sq = #{answrSq} and mbr_sq = #{mbrSq}
+</delete>
+
+<update id="selectRecommendation">
+    UPDATE P3_TBL_BOARD_ANSWER
+    SET answr_slctn_yn = 'Y'
+    where answr_sq = #{answrSq}
+</update>
+
+
+<update id="deleteAnswer">
+    UPDATE P3_TBL_BOARD_ANSWER
+    SET dlt_yn = 'Y',
+    dlt_dtm = NOW()
+    WHERE answr_sq = #{answrSq}
+</update>
+
+<update id="editAnswer">
+    UPDATE P3_TBL_BOARD_ANSWER
+    SET 
+    answr_ttl = #{answrTtl},
+    answr_cntnt = #{answrCntnt},
+    updt_dtm = NOW()
+    WHERE
+    answr_sq = #{answrSq}
+
+</update>
 
 </mapper>
 

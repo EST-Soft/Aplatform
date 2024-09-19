@@ -75,6 +75,66 @@ public class BoardAnswerServiceImp implements BoardAnswerService {
         return Header.OK(answerList, pagination);
 
     }
-    
 
+
+    @Override
+    public BoardAnswerEntity answer(int answrSq) {
+        // boardAnswerMapper.updateHits(answrSq);
+        BoardAnswerEntity answer = boardAnswerMapper.answer(answrSq);
+        return answer;
+    }
+
+
+
+
+    @Override
+    public int checkRecommendation(int answrSq, int mbrSq) {
+       int result = boardAnswerMapper.checkRecommendation(answrSq, mbrSq);
+        return result;
+    }
+
+
+    @Override
+    public int updateRecommendation(int answrSq, int mbrSq, int value) {
+        int result;
+        /* 추천이 안됐을 경우 */ 
+        if(value == 1){
+            result = boardAnswerMapper.insertRecommendation(answrSq, mbrSq);
+        }else/* 이미 추천이 됐을 경우 */{
+            result = boardAnswerMapper.deleteRecommendation(answrSq, mbrSq);
+        }
+        boardAnswerMapper.updateRcmndtns(answrSq, value);
+        return result;
+    }
+
+
+    @Override
+    public int selectRecommendation(int answrSq) {
+        int result = boardAnswerMapper.selectRecommendation(answrSq);
+        return result;
+        
+    }
+
+
+    @Override
+    public int deleteAnswer(int answrSq) {
+        
+        int result = boardAnswerMapper.deleteAnswer(answrSq);
+        return result;
+    }
+
+
+    @Override
+    public int updateHits(int answrSq) {
+        int result = boardAnswerMapper.updateHits(answrSq);
+        return result;
+    }
+
+
+    @Override
+    public int editAnswer(BoardAnswerEntity boardAnswerEntity) {
+        int result = boardAnswerMapper.editAnswer(boardAnswerEntity);
+        return result;
+    }
+    
 }

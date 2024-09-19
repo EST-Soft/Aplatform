@@ -133,6 +133,7 @@ public class ResumeManagementController {
 		careerService.insertCareerData(mbrSq, rsmSq, careerDtos);
 
 		List<AttachmentDto> attachmentDtos = requestDto.getAttachmentDtoList();
+		System.out.println("첨부파일 이름: " + attachmentDtos);
 		attachmentService.insertResumeAttachment(mbrSq, rsmSq, attachmentDtos);
 
 	} // insertResumeFullData

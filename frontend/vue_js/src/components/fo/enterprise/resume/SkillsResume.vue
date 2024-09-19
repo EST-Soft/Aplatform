@@ -1,25 +1,22 @@
 <template>
-    <div class="col pb-3 pt-1">
-        <h4 class="mb-0">
-            스킬 &nbsp;
-            <div class="btn btn-primary btn-circle mb-2" @click="toggleSkills">
-                <i class="fa fa-plus"></i>
-            </div>
-        </h4>
-        <hr class="mt-1 mb-2" />
-        <div v-if="skillsVisible" class="skills-container">
-            <div class="skill-card">
-                <div v-for="(skills, category) in localSkills" :key="category" class="skill-category">
-                    <h5>{{ category }}</h5>
-                    <div class="checkbox-group">
-                        <div v-for="skill in skills" :key="skill.sklScName" class="checkbox-item">
-                            <input type="checkbox" :id="skill.sklScName" :value="skill"
-                                v-model="selectedSkills[category]" @change="updateParent" />
-                            <label :for="skill.sklScName">{{ skill.sklScName }}</label>
+    <div v-if="isVisible" class="modal-overlay" @click.self="close">
+        <div class="modal-content">
+            <div class="skills-container">
+                <div class="skill-card">
+                    <div v-for="(skills, category) in localSkills" :key="category" class="skill-category">
+                        <h5>{{ category }}</h5>
+                        <div class="checkbox-group">
+                            <div v-for="skill in skills" :key="skill.sklScName" class="checkbox-item">
+                                <input type="checkbox" :id="skill.sklScName" :value="skill"
+                                    v-model="selectedSkills[category]" @change="updateParent" />
+                                <label :for="skill.sklScName">{{ skill.sklScName }}</label>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
+            <div class="btn btn-secondary mt-3" @click="skillsSave">저장</div>
+            <div class="btn btn-secondary mt-3" @click="close">닫기</div>
         </div>
     </div>
 </template>
@@ -28,10 +25,23 @@
 
 <script setup>
 import axios from 'axios';
-import { onMounted, ref, watch } from 'vue';
-import { defineEmits } from 'vue';
+import { onMounted, ref } from 'vue';
+import { defineEmits, defineProps } from 'vue';
 
-const emit = defineEmits(['updateSkills']);
+const props = defineProps({
+    isVisible: {
+        type: Boolean,
+        required: true
+    },
+    skillsData: {
+        type: Array,
+        required: true
+    }
+})
+
+console.log(props.isVisible)
+
+const emit = defineEmits(['update:isVisible, update:skillsDatas']);
 
 const localSkills = ref({
     'Language': [],
@@ -77,30 +87,46 @@ const insertSklData = (data) => {
     console.log(localSkills.value)
 };
 
-/* const clearSkills = () => {
-    for (const category in selectedSkills.value) {
-        selectedSkills.value[category] = [];
-    }
-    emit('updateSkills', selectedSkills.value);
-}; */
 
-
-const skillsVisible = ref(false);
-
-const toggleSkills = () => {
-    skillsVisible.value = !skillsVisible.value;
+const close = () => {
+    emit('update:isVisible', false);
 };
 
-/* const updateParent = () => {
-    emit('updateSkills', localSkills.value);
-}; */
+const skillsSave = () => {
+    console.log(selectedSkills.value)
+    emit('update:skillsDatas', selectedSkills.value);
+    close()
+}
 
-watch(selectedSkills, (newVal) => {
-    emit('updateSkills', newVal);
-}, { deep: true });
+/* watch(selectedSkills, (newVal) => {
+    emit('update:skillsDatas', newVal);
+}); */
+
+
 </script>
 
 <style scoped>
+.modal-overlay {
+    position: fixed;
+    z-index: 10000;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 500px;
+}
+
 .skills-container {
     display: flex;
     flex-direction: column;

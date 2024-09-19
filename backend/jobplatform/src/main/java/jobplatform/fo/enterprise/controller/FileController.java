@@ -41,7 +41,7 @@ public class FileController {
     @PostMapping("/upload-attachment")
     public List<AttachmentDto> uploadAttachment(@RequestParam("file") MultipartFile[] files) {
         List<AttachmentDto> attachmentDtos = fileService.uploadAttachment(files);
-
+        System.out.println("첨부파일" + attachmentDtos);
         return attachmentDtos;
     } // uploadImage
 

@@ -191,10 +191,19 @@
 
     </div>
 
+    <div class="col pb-3 pt-1">
+      <h4 class="mb-0">
+        스킬 &nbsp;
+        <div class="btn btn-primary btn-circle mb-2" @click="openSkillsModal">
+          <i class="fa fa-plus"></i>
+        </div>
+      </h4>
+      <hr class="mt-1 mb-2" />
+    </div>
 
-    <SkillsResume @updateSkills="handleUpdateSkills" />
-
-
+    <SkillsResume :isVisible="showSkillsModal" @update:isVisible="showSkillsModal = $event"
+      @update:skillsDatas="updateSkillsData" />
+    <!-- @updateSkills="handleUpdateSkills" -->
 
     <div class="col pb-3 pt-1">
       <h4 class="mb-0">
@@ -252,8 +261,8 @@
           </button>
         </p>
       </div>
-      <AttachmentsResume :isVisible="showCareerModal" :attachmentDatas="attachmentDatas"
-        @update:isVisible="showCareerModal = $event" @update:attachmentDatas="updateAttachmentData" />
+      <AttachmentsResume :isVisible="showAttachmentModal" :attachmentDatas="attachmentDatas"
+        @update:isVisible="showAttachmentModal = $event" @update:attachmentDatas="updateAttachmentData" />
 
     </div>
 
@@ -303,13 +312,14 @@ const educationsList = ref([]);
 // 경력
 const careerDatas = ref([]);
 // 스킬
+const showSkillsModal = ref(false);
 const skillsData = ref({});
 // 자격 면허증
 const certificateDatas = ref([]);
 // 자기소개서
 const selfIntroductionDatas = ref([]);
 // 첨부파일
-const showCareerModal = ref(false);
+const showAttachmentModal = ref(false);
 const attachmentDatas = ref([]);
 
 // 최종 학력 목록
@@ -327,8 +337,41 @@ onMounted(() => {
   console.log("온마운트");
 });
 
-const testtest = () => {
+const testtest = async () => {
   event.preventDefault();
+
+  const formData = new FormData();
+  attachmentDatas.value.forEach(attachment => {
+    formData.append('file', attachment);
+  })
+  const attachmentList = [];
+
+  console.log(formData)
+
+  const response = await axios.post('http://localhost:80/file/upload-attachment', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  }).then((response) => {
+    console.log(response.data)
+    return response.data;
+  }).catch((error) => {
+    console.error('Error: ', error)
+  });
+  console.log(response)
+  const responseAttachment = response;
+
+
+  if (Array.isArray(responseAttachment)) {
+    responseAttachment.forEach(attachment => {
+      attachmentList.push({
+        atchmntOrgnlFn: attachment.atchmntOrgnlFn,
+        atchmntUrl: attachment.atchmntUrl
+      });
+    });
+  } else {
+    console.error('Expected an array but received:', responseAttachment);
+  }
 
   console.log({
     resumeDataDTO: {
@@ -350,6 +393,7 @@ const testtest = () => {
     certificateDtoList: certificateDatas.value,
     selfIntroductionDtoList: selfIntroductionDatas.value,
     careerDtoList: careerDatas.value,
+    attachmentDtoList: attachmentList
   })
 }
 
@@ -370,11 +414,12 @@ const submitPost = async () => {
       }
     }).then((response) => {
       console.log(response.data)
+      return response.data;
     }).catch((error) => {
       console.error('Error: ', error)
     });
 
-    const responseAttachment = response.data;
+    const responseAttachment = response;
 
     if (Array.isArray(responseAttachment)) {
       responseAttachment.forEach(attachment => {
@@ -421,8 +466,8 @@ const submitPost = async () => {
     }
   ).then(response => {
     console.log(response.data)
-    educationsList.value = [];
-    clearForm();
+    //educationsList.value = [];
+    //clearForm();
 
     console.log('Response:', response.data);
   })
@@ -434,7 +479,7 @@ const submitPost = async () => {
 
 
 
-const clearForm = () => {
+/* const clearForm = () => {
   rsmImgFileUrl.value = null
   rsmFnlEdctnCode.value = null
   rsmGrd.value = ''
@@ -446,7 +491,7 @@ const clearForm = () => {
   rsmMp.value = ''
   rsmAdrs.value = ''
   rsmEml.value = ''
-};
+}; */
 
 // 이미지
 const updateImageUrl = (newImageUrl) => {
@@ -490,14 +535,26 @@ const addCareer = () => {
 };
 
 // 스킬
+const openSkillsModal = () => {
+  showSkillsModal.value = true
+};
+
+const updateSkillsData = (newSkills) => {
+  skillsData.value = newSkills;
+};
+
+/* const removeSkills = (index) => {
+  skillsData.value.splice(index, 1);
+}; */
+
 const removeEducation = (index) => {
   educationsList.value.splice(index, 1);
 };
 
-const handleUpdateSkills = (selectedSkills) => {
+/* const handleUpdateSkills = (selectedSkills) => {
   const allSelectedSkills = Object.values(selectedSkills).flat();
   skillsData.value = allSelectedSkills;
-};
+}; */
 
 // 자격증
 const showSearchModal = ref(false);
@@ -547,7 +604,7 @@ const removeSelfIntroductionData = (index) => {
 
 // 첨부파일
 const openAttachmentModal = () => {
-  showCareerModal.value = true;
+  showAttachmentModal.value = true;
 };
 
 const updateAttachmentData = (newAttachments) => {

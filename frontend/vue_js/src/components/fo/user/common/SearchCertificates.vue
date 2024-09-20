@@ -33,8 +33,8 @@
                         <div
                             v-if="paginationData.totalPageGroupsCount != undefined && paginationData.totalPageGroupsCount != 0">
                             <!-- <BasePagination :currentPage="currentPage" :goToPage="goToPage" :totalPages="totalPages"/> -->
-                            <PaginationData :paginationData="paginationData" @change-page-no="changePageNo"
-                                style="margin: 0 auto;" />
+                            <!-- <PaginationData :paginationData="paginationData" @change-page-no="changePageNo"
+                                style="margin: 0 auto;" /> -->
                         </div>
                     </div>
                 </section>
@@ -51,7 +51,7 @@
 <script setup>
 import { defineProps, reactive, ref, onMounted } from 'vue';
 //import { api } from '@/axios.js';
-import PaginationData from "@/components/fo/enterprise/common/PaginationData.vue";
+//import PaginationData from "@/components/fo/enterprise/common/PaginationData.vue";
 import axios from 'axios';
 /* eslint-disable */
 

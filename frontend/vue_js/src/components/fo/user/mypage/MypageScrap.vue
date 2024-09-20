@@ -35,7 +35,8 @@
                     {{ fomatDate(props.jobPostingData.regstr_dln_dtm) }} 까지
                 </td>
                 <td>
-                    <button>지원하기</button>
+                    <button v-if="props.jobPostingData.regstr_dln_dtm >= new Date().toISOString()" @click="$emit('scrapApy', props.jobPostingData.jbp_sq)" class="btn btn-modern btn-light mb-2">지원하기</button>
+                    <button v-else class="btn btn-modern btn-dark mb-2">지원불가</button>
                 </td>
             </tr>
         </tbody>

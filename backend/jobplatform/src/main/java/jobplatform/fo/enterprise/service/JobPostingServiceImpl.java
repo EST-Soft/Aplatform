@@ -178,6 +178,10 @@ public class JobPostingServiceImpl implements JobPostingService {
 	    // 지원테이블에 이력서 번호 설정
 	    ae.setResume(resume);
 
+		if (applyRepository.existsByResumeRsmSqAndJobPostingJbpSq(ae.getResume().getRsmSq(), ae.getJobPosting().getJbpSq())) {
+			throw new IllegalArgumentException("이미 지원한 이력서입니다.");
+		}
+
 	    ApplyEntity saveApply = applyRepository.save(ae);
 
 	    return saveApply.getApySq();

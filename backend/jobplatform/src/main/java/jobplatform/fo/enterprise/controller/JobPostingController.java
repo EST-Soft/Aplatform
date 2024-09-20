@@ -125,24 +125,23 @@ public class JobPostingController {
         return jobPostingService.searchJobPostings(searchTerm, searchField);
     }
     
-    // 입사지원 메소드
     @PostMapping("/apply/insert")
-    public ResponseEntity<String> insertApply(@RequestBody ApplyEntity ae) {
-        
-        Optional<ResumeEntity> optionalResume = resumeRepository.findByRsmSq(ae.getResume().getRsmSq());
-        if (optionalResume.isPresent()) {
-            ae.setResume(optionalResume.get());
-            Long apySq = jobPostingService.insertApply(ae);
-
-            if (apySq != null) {
-                return ResponseEntity.status(HttpStatus.CREATED).body("입사지원 성공 : " + apySq);
-            } else {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("입사지원 실패");
-            }
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("이력서 찾을 수 없음");
-        }
-    }
+	public ResponseEntity<String> insertApply(@RequestBody ApplyEntity ae) {
+		try {
+			Optional<ResumeEntity> optionalResume = resumeRepository.findByRsmSq(ae.getResume().getRsmSq());
+			if (optionalResume.isPresent()) {
+				ae.setResume(optionalResume.get());
+				Long apySq = jobPostingService.insertApply(ae);
+				return ResponseEntity.status(HttpStatus.CREATED).body("입사지원 성공 : " + apySq);
+			} else {
+				return ResponseEntity.status(HttpStatus.NOT_FOUND).body("이력서 찾을 수 없음");
+			}
+		} catch (IllegalArgumentException e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage()); // 예외 메시지 반환
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("입사지원 실패");
+		}
+	}
 
 	
 }

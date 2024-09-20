@@ -32,7 +32,7 @@
         <!-- 자료있을때 for -->
         <div v-else>
             <div v-for="jobPostingData in scrapListData.jobPostingData" :key="jobPostingData.jbp_sq">
-                <MypageScrap :jobPostingData="jobPostingData"/>
+                <MypageScrap :jobPostingData="jobPostingData" @scrap-apy="scrapApy"/>
             </div>
         </div>
     </div>
@@ -87,6 +87,43 @@ const callAxios = async () => {
             console.log('axios 실패' + error.data);
 
         });
+};
+
+// 스크랩 공고에 지원
+const scrapApy = async (emit) => {
+    const resumeId = prompt('이력서 번호를 입력하세요:');
+    if (resumeId) {
+        insertApply(resumeId, emit);
+    }
+};
+
+const insertApply = async (resumeId, emit) => {
+    
+  const applyData = {
+    resume: { rsmSq: resumeId }, 
+    jobPosting: { jbpSq: emit },
+    apyDtm: new Date().toISOString()
+  };
+  try {
+    const response = await axios.post('http://localhost:80/apply/insert', applyData);
+    alert(response.data); 
+  } catch (error) {
+    // 서버에서 보낸 오류 메시지를 활용
+    if (error.response) {
+      const errorMessage = error.response.data;
+
+      if (error.response.status === 404) {
+        alert("이력서 찾을 수 없음");
+      } else if (error.response.status === 400) {
+        alert("이미 지원한 이력서입니다.");
+      } else {
+        alert('입사지원을 처리하는 중 오류가 발생했습니다: ' + errorMessage);
+      }
+    } else {
+      console.error('Error applying job:', error);
+      alert('입사지원을 처리하는 중 오류가 발생했습니다.');
+    }
+  }
 };
 
 // 이벤트 함수

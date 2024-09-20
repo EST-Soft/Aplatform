@@ -106,7 +106,7 @@
           <div class="row">
             <div class="col-md-4">
               <label for="schlName-{{ index }}" class="form-label">학교 이름</label>
-              <input type="text" id="schlName-{{ index }}" class="form-control" v-model="education.schlName"
+              <input type="text" :id="'schlName-' + index" class="form-control" v-model="education.schlName"
                 @click="openModal(index)" placeholder="학교 이름" />
             </div>
             <div class="col-md-2">
@@ -214,8 +214,8 @@
       </div>
     </div>
 
-    <SkillsResume :isVisible="showSkillsModal" @update:isVisible="showSkillsModal = $event"
-      @update:skillsDatas="updateSkillsData" />
+    <SkillsResume :isVisible="showSkillsModal" :skillsData="skillsData" @update:isVisible="showSkillsModal = $event"
+      @update:skillsData="updateSkillsData" />
     <!-- @updateSkills="handleUpdateSkills" -->
 
     <div class="col pb-3 pt-1">
@@ -229,6 +229,7 @@
       <div v-for="(certificateData, index) in certificateDatas" :key="certificateData.id" class="certificate-item">
         <input type="text" v-model="certificateData.crtfctName" placeholder="자격증 이름" class="form-control" />
         <button class="btn btn-outline-secondary ml-2" @click="openSearchModal(index)">
+          <!-- 회사 정보 api 없어서 자격증 api로 임시 -->
           검색
         </button>
         <input type="text" v-model="certificateData.crtfctIsr" placeholder="발행기관" class="form-control mt-2" />
@@ -326,7 +327,7 @@ const educationsList = ref([]);
 const careerDatas = ref([]);
 // 스킬
 const showSkillsModal = ref(false);
-const skillsData = ref({});
+const skillsData = ref([]);
 // 자격 면허증
 const certificateDatas = ref([]);
 // 자기소개서
@@ -359,31 +360,35 @@ const testtest = async () => {
   })
   const attachmentList = [];
 
+  skillsData.value = Object.values(skillsData.value).flat();
+
   console.log(formData)
 
-  const response = await axios.post('http://localhost:80/file/upload-attachment', formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data'
-    }
-  }).then((response) => {
-    console.log(response.data)
-    return response.data;
-  }).catch((error) => {
-    console.error('Error: ', error)
-  });
-  console.log(response)
-  const responseAttachment = response;
-
-
-  if (Array.isArray(responseAttachment)) {
-    responseAttachment.forEach(attachment => {
-      attachmentList.push({
-        atchmntOrgnlFn: attachment.atchmntOrgnlFn,
-        atchmntUrl: attachment.atchmntUrl
-      });
+  if (attachmentDatas.value.length != 0) {
+    const response = await axios.post('http://localhost:80/file/upload-attachment', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    }).then((response) => {
+      console.log(response.data)
+      return response.data;
+    }).catch((error) => {
+      console.error('Error: ', error)
     });
-  } else {
-    console.error('Expected an array but received:', responseAttachment);
+    console.log(response)
+    const responseAttachment = response;
+
+
+    if (Array.isArray(responseAttachment)) {
+      responseAttachment.forEach(attachment => {
+        attachmentList.push({
+          atchmntOrgnlFn: attachment.atchmntOrgnlFn,
+          atchmntUrl: attachment.atchmntUrl
+        });
+      });
+    } else {
+      console.error('Expected an array but received:', responseAttachment);
+    }
   }
 
   console.log({
@@ -420,34 +425,39 @@ const submitPost = async () => {
   })
   const attachmentList = [];
 
-  try {
-    const response = await axios.post('http://localhost:80/file/upload-attachment', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      }
-    }).then((response) => {
-      console.log(response.data)
-      return response.data;
-    }).catch((error) => {
-      console.error('Error: ', error)
-    });
+  skillsData.value = Object.values(skillsData.value).flat();
 
-    const responseAttachment = response;
-
-    if (Array.isArray(responseAttachment)) {
-      responseAttachment.forEach(attachment => {
-        attachmentList.push({
-          atchmntOrgnlFn: attachment.atchmntOrgnlFn,
-          atchmntUrl: attachment.atchmntUrl
-        });
+  if (attachmentDatas.value.length != 0) {
+    try {
+      const response = await axios.post('http://localhost:80/file/upload-attachment', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      }).then((response) => {
+        console.log(response.data)
+        return response.data;
+      }).catch((error) => {
+        console.error('Error: ', error)
       });
-    } else {
-      console.error('Expected an array but received:', responseAttachment);
-    }
 
-  } catch (error) {
-    console.log('Error: ', error)
+      const responseAttachment = response;
+
+      if (Array.isArray(responseAttachment)) {
+        responseAttachment.forEach(attachment => {
+          attachmentList.push({
+            atchmntOrgnlFn: attachment.atchmntOrgnlFn,
+            atchmntUrl: attachment.atchmntUrl
+          });
+        });
+      } else {
+        console.error('Expected an array but received:', responseAttachment);
+      }
+
+    } catch (error) {
+      console.log('Error: ', error)
+    }
   }
+
 
   await axios.post("http://localhost:80/resumes/insert-resume",
     {
@@ -540,6 +550,12 @@ const handleSchoolSelection = (selectedSchool) => {
     educationsList.value[selectedEducationIndex.value].schlName = selectedSchool.schoolName;
   }
   isSearchPopupModalOpen.value = false;
+  const inputId = 'schlName-' + selectedEducationIndex.value
+  const inputElement = document.getElementById(inputId);
+  console.log(inputElement)
+  if (inputElement) {
+    inputElement.focus();
+  }
 };
 
 const removeEducation = (index) => {
@@ -558,6 +574,8 @@ const openSkillsModal = () => {
 
 const updateSkillsData = (newSkills) => {
   skillsData.value = newSkills;
+  //const allSelectedSkills = Object.values(newSkills).flat();
+  //skillsData.value = allSelectedSkills;
 };
 
 const removeSkills = (category, index) => {

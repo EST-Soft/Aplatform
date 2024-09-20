@@ -6,9 +6,9 @@
                 <div class="row">
                     <div class="input-group mb-3">
                         <input type="text" v-model="searchTerm" class="form-control" placeholder="검색어를 입력해주세요.">
-                        <button class="btn btn-primary" @click="$emit('setResult', searchTerm)">직접입력</button>
-                        <button class="btn btn-primary" @click="doNewSearch">검색</button>
-                        <button class="btn btn-primary" @click="$emit('update:isVisible', false)">취소</button>
+                        <div class="btn btn-primary" @click="$emit('setResult', searchTerm)">직접입력</div>
+                        <div class="btn btn-primary" @click="performSearch">검색</div>
+                        <div class="btn btn-primary" @click="$emit('update:isVisible', false)">취소</div>
                     </div>
                 </div>
                 <section class="call-to-action with-full-borders mb-2">
@@ -49,7 +49,7 @@
 </template>
 
 <script setup>
-import { defineProps, reactive, ref } from 'vue';
+import { defineProps, reactive, ref, onMounted } from 'vue';
 //import { api } from '@/axios.js';
 import PaginationData from "@/components/fo/enterprise/common/PaginationData.vue";
 import axios from 'axios';
@@ -79,14 +79,39 @@ const paginationData = reactive({
     totalPageGroupsCount: 0,
 });
 
+onMounted(
+    async () => {
+        try {
+            const url = `https://api.odcloud.kr/api/15082998/v1/uddi:6569a851-1216-48d0-a76b-87ac2ee24f07?page=${paginationData.pageGroupsOfCurrentPage}&perPage=5&returnType=JSON&serviceKey=Rdp%2B6D4z4OrIhzIApel52dKDn3rEeTq4Akt0hW6vCmD16vVP6PwmdWqo69jANEEkL0sne7yv1%2B%2FyA%2FvBuysw1g%3D%3D&certificationName=${searchTerm.value}`;
+            const response = await axios.get(url);
+            console.log('Search response:', response.data);
+            searchResult.value = response.data.data;
+            if (response.data.data.length > 0) {
+                paginationData.totalPageGroupsCount = Math.ceil(response.data.totalCount / 10); // Update based on response
+            } else {
+                initPage();
+            }
+        } catch (error) {
+            console.error('Error searching:', error);
+        }
+    }
+);
+
 //검색 함수
 const performSearch = async () => {
     try {
         const url = `https://api.odcloud.kr/api/15082998/v1/uddi:6569a851-1216-48d0-a76b-87ac2ee24f07?page=${paginationData.pageGroupsOfCurrentPage}&perPage=5&returnType=JSON&serviceKey=Rdp%2B6D4z4OrIhzIApel52dKDn3rEeTq4Akt0hW6vCmD16vVP6PwmdWqo69jANEEkL0sne7yv1%2B%2FyA%2FvBuysw1g%3D%3D&certificationName=${searchTerm.value}`;
-        const response = await axios.get(url);
-        console.log('Search response:', response.data);
+        const response = await axios.get(url).then(response => { console.log('Search response:', response.data); return response.data; });
 
-        searchResult.value = response.data.data;
+
+        if (searchTerm.value.trim() === '') {
+            searchResult.value = response.data; // 검색어가 비어있다면 모든 결과
+        } else {
+            searchResult.value = response.data.filter(item =>
+                item.종목명.includes(searchTerm.value) // 검색어가 포함된 요소만
+            );
+        }
+
         if (response.data.data.length > 0) {
             paginationData.totalPageGroupsCount = Math.ceil(response.data.totalCount / 10); // Update based on response
         } else {
@@ -97,12 +122,12 @@ const performSearch = async () => {
     }
 };
 
-//검색 새로 실시 할때
+/* //검색 새로 실시 할때
 const doNewSearch = () => {
     event.preventDefault();
     paginationData.pageGroupsOfCurrentPage = 1;
     performSearch();
-}
+} */
 
 const selectCertification = (item) => {
     console.log(item);

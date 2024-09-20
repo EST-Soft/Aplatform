@@ -34,14 +34,14 @@ const props = defineProps({
         required: true
     },
     skillsData: {
-        type: Array,
+        type: Object,
         required: true
     }
 })
 
 console.log(props.isVisible)
 
-const emit = defineEmits(['update:isVisible, update:skillsDatas']);
+const emit = defineEmits(['update:isVisible', 'update:skillsData']);
 
 const localSkills = ref({
     'Language': [],
@@ -94,7 +94,7 @@ const close = () => {
 
 const skillsSave = () => {
     console.log(selectedSkills.value)
-    emit('update:skillsDatas', selectedSkills.value);
+    emit('update:skillsData', selectedSkills.value);
     close()
 }
 

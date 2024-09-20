@@ -6,9 +6,9 @@
         <div class="row">
           <div class="input-group mb-3">
             <input type="text" v-model="searchTerm" class="form-control" placeholder="검색어를 입력해주세요.">
-            <button class="btn btn-primary" @click="$emit('setResult', searchTerm)">직접입력</button>
-            <button class="btn btn-primary" @click="doNewSearch">검색</button>
-            <button class="btn btn-primary" @click="$emit('update:isVisible', false)">취소</button>
+            <div class="btn btn-primary" @click="$emit('setResult', searchTerm)">직접입력</div>
+            <div class="btn btn-primary" @click="doNewSearch">검색</div>
+            <div class="btn btn-primary" @click="$emit('update:isVisible', false)">취소</div>
           </div>
         </div>
         <section class="call-to-action with-full-borders mb-2">
@@ -19,7 +19,7 @@
             </div>
             <!-- 자료있을때 for -->
             <div v-else class="list-wrap">
-              <ul class="list-group" v-for="item in searchResult" :key="item.schoolName">
+              <ul class="list-group" v-for="(item, index) in searchResult" :key="index">
                 <li class="list-group-item d-flex justify-content-between align-items-center">
                   {{ item.schoolName + " (" + item.campusName + ")" }}
                   <button type="button" class="btn btn-primary" @click="selectSchool(item)">선택</button>
@@ -45,7 +45,7 @@
 </template>
 
 <script setup>
-import { defineProps, reactive, ref } from 'vue';
+import { defineProps, reactive, ref, onMounted } from 'vue';
 import { api } from '@/axios.js';
 import PaginationData from "@/components/fo/enterprise/common/PaginationData.vue";
 /* eslint-disable */
@@ -75,6 +75,29 @@ const paginationData = reactive({
   showPageGroupsCount: 10,
   totalPageGroupsCount: 0,
 });
+
+onMounted(
+  async () => {
+    try {
+      const url = `http://www.career.go.kr/cnet/openapi/getOpenApi?apiKey=b5e83526a03f37b8349141b21fa2f6e7&svcType=api&svcCode=` + "SCHOOL" + `&contentType=json&perPage=5&gubun=univ_list&searchSchulNm=` + searchTerm.value + '&thisPage=1';
+      api.$get(url).then(response => {
+        console.log('Search response:', response);
+        searchResult.value = response.dataSearch.content;
+        if (response.dataSearch.content.length > 0) {
+          paginationData.totalPageGroupsCount = Math.ceil(response.dataSearch.content[0].totalCount / 10);
+
+        } else {
+          //초기화
+          initPage();
+        }
+      }).catch(error => {
+        console.error('Error searching:', error);
+      });
+    } catch (error) {
+      console.error('Error searching:', error);
+    }
+  }
+);
 
 //검색 함수
 const performSearch = () => {
@@ -113,6 +136,7 @@ const selectSchool = (item) => {
   emit('setResult', item);
   searchResult.value = [];
 } // selectSchool
+
 
 //페이징 함수 (자식 컴포넌트가 호출)
 const changePageNo = (changePageNo) => {

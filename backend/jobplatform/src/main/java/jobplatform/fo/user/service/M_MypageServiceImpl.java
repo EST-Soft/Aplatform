@@ -228,5 +228,17 @@ public class M_MypageServiceImpl implements M_MypageService{
         return map;
     }
 
+    //스크랩 등록
+    @Override
+    public void scrapInsert(Long mbr_sq, Long jbp_sq) {
+        mypageMapper.scrapInsert(mbr_sq, jbp_sq);
+    }
+
+    //스크랩 취소
+    @Override
+    public void scrapDelete(Long mbr_sq, Long jbp_sq) {
+        mypageMapper.scrapDelete(mbr_sq, jbp_sq);
+    }
+
 
 }

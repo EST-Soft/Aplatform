@@ -110,5 +110,9 @@ public interface M_MypageMapper {
 	List<ScrapVO> selectScrapData(Map<String, Object> map) throws SQLException, IOException;
 	// 공고 상세 정보
 	public List<M_JobPosting_pp> selectJobPosting(List<Long> jbpSqList);
+	//스크랩 등록
+	public void scrapInsert(Long mbr_sq, Long jbp_sq);
+	//스크랩 취소
+    public void scrapDelete(Long mbr_sq, Long jbp_sq);
 
 }

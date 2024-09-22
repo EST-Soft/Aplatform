@@ -48,4 +48,14 @@ public interface M_MypageService {
 	// 학력, 경력 공통코드 모음
 	public Map<String, Object> findCommonCode();
 
+	//스크랩 추가
+	public void scrapInsert(Long mbr_sq, Long jbp_sq);
+
+	//스크랩 삭제
+	public void scrapDelete(Long mbr_sq, Long jbp_sq);
+
+
+
+
+
 }

@@ -361,5 +361,16 @@
 		and p.use_yn = 'Y'
 		and em.entrprs_sq = p.entrprs_sq
 	</select>
+
+
+	<!-- 스크랩 INSERT -->
+	<insert id="scrapInsert">
+		INSERT INTO p2_tbl_scrap_s (mbr_sq, jbp_sq)
+		VALUES (#{mbr_sq}, #{jbp_sq})
+	</insert>
 	
+	<!-- 스크랩 취소 -->
+	<delete id="scrapDelete">
+		DELETE FROM p2_tbl_scrap_s WHERE mbr_sq = #{mbr_sq} and jbp_sq = #{jbp_sq}
+	</delete>
 </mapper>

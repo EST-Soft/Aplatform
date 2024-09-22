@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import jobplatform.fo.enterprise.domain.dto.ResumeSearchDataDTO;
+import jobplatform.fo.enterprise.domain.entity.ApplyEntity;
 import jobplatform.fo.user.domain.entity.MemberEntity;
 import jobplatform.fo.user.domain.vo.M_JobPosting_pp;
 import jobplatform.fo.user.service.M_MypageService;
@@ -132,5 +133,28 @@ public class M_MypageController {
 		map = myPageService.findCommonCode();
 		return ResponseEntity.ok(map);
 	}
-	
+
+	//스크랩
+	@PostMapping("/scrap/insert/{mbr_sq}/{jbp_sq}")
+	public ResponseEntity<String> ScrapIn(@PathVariable("mbr_sq") Long mbr_sq, @PathVariable("jbp_sq") Long jbp_sq){
+		try {
+			myPageService.scrapInsert(mbr_sq, jbp_sq);
+			return ResponseEntity.status(HttpStatus.CREATED).body("스크랩 등록 성공");
+		} catch (Exception e) {
+			System.err.println("스크랩 등록 오류: " + e.getMessage());
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("스크랩 등록 실패: " + e.getMessage());
+		}
+	}
+
+	//스크랩 취소
+	@PostMapping("/scrap/delete/{mbr_sq}/{jbp_sq}")
+	public ResponseEntity<String> ScrapOut(@PathVariable("mbr_sq") Long mbr_sq, @PathVariable("jbp_sq") Long jbp_sq){
+		try {
+			myPageService.scrapDelete(mbr_sq, jbp_sq);
+			return ResponseEntity.status(HttpStatus.OK).body("스크랩 취소 성공");
+		} catch (Exception e) {
+			System.err.println("스크랩 취소 오류: " + e.getMessage());
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("스크랩 취소 실패: " + e.getMessage());
+		}
+	}
 }

@@ -6,7 +6,7 @@
                 {{ props.jobPostingData.entrprs_name }}
             </div>
             <div class="col">
-                {{ props.jobPostingData.jbp_ttl }}
+                <router-link :to="`/board/detail/jobPosting/${props.jobPostingData.jbp_sq}`">{{ props.jobPostingData.jbp_ttl }}</router-link>
             </div>
             <div class="col-1" @click="toggleImage">
                 <img :src="currentImage" alt="" style="width: 20px;">

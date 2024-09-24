@@ -24,7 +24,7 @@
 
 
 <script setup>
-import axios from 'axios';
+import { api } from '../../../../axios';
 import { onMounted, ref } from 'vue';
 import { defineEmits, defineProps } from 'vue';
 
@@ -58,9 +58,9 @@ const selectedSkills = ref({
 
 onMounted(async () => {
     try {
-        const response = await axios.get("http://localhost:80/skl-cd/list");
-        console.log(response.data);
-        insertSklData(response.data);
+        const response = await api.$get('/skl-cd/list');
+        console.log(response);
+        insertSklData(response);
     } catch (error) {
         console.error('Error:', error);
     }

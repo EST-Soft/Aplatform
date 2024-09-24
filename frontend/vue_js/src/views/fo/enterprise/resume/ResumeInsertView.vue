@@ -293,13 +293,13 @@
 </template>
 
 <script setup>
+import { api } from "../../../../axios";
 import AttachmentsResume from "@/components/fo/enterprise/resume/AttachmentsResume.vue";
 import SelfintoductionsResume from "@/components/fo/enterprise/resume/SelfintoductionsResume.vue";
 import SkillsResume from "@/components/fo/enterprise/resume/SkillsResume.vue";
 import SearchPopup from "@/components/fo/user/common/SearchPopup.vue";
 import SearchCertificates from "../../../../components/fo/user/common/SearchCertificates.vue";
 import ResumeImageModalView from "./ResumeImageModalView.vue";
-import axios from "axios";
 import { onMounted, ref } from "vue";
 import store from "../../../../store";
 
@@ -351,7 +351,7 @@ onMounted(() => {
   console.log("온마운트");
 });
 
-const testtest = async () => {
+/* const testtest = async () => {
   event.preventDefault();
 
   const formData = new FormData();
@@ -413,7 +413,7 @@ const testtest = async () => {
     careerDtoList: careerDatas.value,
     attachmentDtoList: attachmentList
   })
-}
+} */
 
 
 // form submit 함수
@@ -429,13 +429,13 @@ const submitPost = async () => {
 
   if (attachmentDatas.value.length != 0) {
     try {
-      const response = await axios.post('http://localhost:80/file/upload-attachment', formData, {
+      const response = await api.$post('/file/upload-attachment', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
       }).then((response) => {
-        console.log(response.data)
-        return response.data;
+        console.log(response)
+        return response;
       }).catch((error) => {
         console.error('Error: ', error)
       });
@@ -459,7 +459,7 @@ const submitPost = async () => {
   }
 
 
-  await axios.post("http://localhost:80/resumes/insert-resume",
+  await api.$post(`/resumes/insert-resume?mbrSq=${store.state.member.mbrSq}`,
     {
       resumeDataDTO: {
         rsmImgOrgnlFn: rsmImgOrgnlFn.value,
@@ -482,17 +482,12 @@ const submitPost = async () => {
       careerDtoList: careerDatas.value,
       attachmentDtoList: attachmentList
     },
-    {
-      params: {
-        mbrSq: store.state.member.mbrSq
-      }
-    }
   ).then(response => {
-    console.log(response.data)
+    console.log(response)
     //educationsList.value = [];
     //clearForm();
 
-    console.log('Response:', response.data);
+    console.log('Response:', response);
   })
     .catch(error => {
       console.error('Error:', error);

@@ -138,7 +138,7 @@
                 v-model="education.schlGrdtnDate" />
             </div>
             <div class="col-md-6 text-end">
-              <button type="button" class="btn btn-danger" @click="removeEducation(index)">삭제</button>
+              <div type="button" class="btn btn-danger" @click="removeEducation(index)">삭제</div>
             </div>
           </div>
         </div>
@@ -162,9 +162,9 @@
           <label for="entrprsName-{{ index }}" class="form-label">회사 이름</label>
           <div class="input-group">
             <input type="text" v-model="careerData.entrprsName" placeholder="회사 이름" class="form-control" />
-            <button class="btn btn-outline-secondary ml-2" @click="openSearchModal(index)">
+            <div class="btn btn-outline-secondary ml-2" @click="openSearchModal(index)">
               검색
-            </button>
+            </div>
           </div>
         </div>
 
@@ -183,9 +183,9 @@
           <input type="date" v-model="careerData.entrprsRsgntnDate" class="form-control" />
         </div>
 
-        <button class="btn btn-outline-danger mt-3" @click="removeComponents(careerData.id)">
+        <div class="btn btn-outline-danger mt-3" @click="removeCareerComponents(careerData.id)">
           삭제
-        </button>
+        </div>
       </div>
 
 
@@ -561,6 +561,9 @@ const removeEducation = (index) => {
 const addCareer = () => {
   careerDatas.value.push({ entrprsName: '', entrprsPstn: '', entrprsJacDate: '', entrprsRsgntnDate: '' });
 };
+const removeCareerComponents = (index) => {
+  careerDatas.value.splice(index, 1);
+};
 
 // 스킬
 const openSkillsModal = () => {
@@ -592,7 +595,6 @@ const addComponents = () => {
 };
 // 검색 모달 열기
 const openSearchModal = (index) => {
-  event.preventDefault();
   selectedCertificateIndex.value = index;
   showSearchModal.value = true;
 };
@@ -748,5 +750,9 @@ const removeAttachment = (index) => {
   padding: 3px 5px;
   border-radius: 3px;
   margin-left: 15px;
+}
+
+.form-control {
+  width: 180px !important;
 }
 </style>

@@ -7,7 +7,7 @@
             <h5 class="modal-title" id="formModalLabel">회원정보수정을 위해서 비밀번호를 입력해주세요.</h5>
         </div>
         <div class="modal-body">
-            <form id="demo-form" class="mb-4" novalidate="novalidate">
+            <form id="demo-form" class="mb-4" novalidate="novalidate" @keydown.enter.prevent="pwSubmit">
                 <div class="form-group row align-items-center">
                     <label class="col-sm-3 text-start text-sm-end mb-0">비밀번호</label>
                     <div class="col-sm-9">

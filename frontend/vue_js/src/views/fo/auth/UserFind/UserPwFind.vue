@@ -138,7 +138,7 @@ export default {
       loading.value = true; // 로딩 시작
       // 이메일로 인증번호 요청 로직 추가
       api
-        .$post("http://localhost:80/member/emlRegister", {
+        .$post("/member/emlRegister", {
           mbrEmlAdrs: formData.value.mbrEmlAdrs,
           purpose: "check",
         })

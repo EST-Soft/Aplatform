@@ -103,7 +103,7 @@ const handleSubmit = async() => {
 
             if(res == '탈퇴완료'){
                 alert('탈퇴 되었습니다')
-                location.href = "http://localhost:8080/enter/login";
+                window.location.href = `/enter/login`;
             }
 
         }catch(error){

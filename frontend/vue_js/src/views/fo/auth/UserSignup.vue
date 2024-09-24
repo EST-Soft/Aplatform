@@ -330,7 +330,7 @@ const requestAuthCode = () => {
   };
   loading.value = true;
   api
-    .$post("http://localhost:80/member/emlRegister", map)
+    .$post("/member/emlRegister", map)
     .then((response) => {
       emailCode.value = response.key;
       emailSent.value = true;

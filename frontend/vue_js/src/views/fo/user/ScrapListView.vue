@@ -47,7 +47,7 @@
 <script setup>
 import PaginationData from "@/components/fo/enterprise/common/PaginationData.vue";
 import MypageScrap from "../../../components/fo/user/mypage/MypageScrap.vue";
-import axios from "axios";
+import { api } from '@/axios';
 
 import { onMounted, ref, computed } from "vue";
 import { useStore } from "vuex";
@@ -78,13 +78,13 @@ onMounted(() => {
 // axios 함수
 const callAxios = async () => {
     // 리스트 뿌려주는 기본 axios
-    await axios.get("http://localhost:80/user/mypage/scrap/scrapList-list/" + scrapListData.value.searchData.mbr_sq + "/" + scrapListData.value.searchData.sort + "/" + scrapListData.value.searchData.pageNo)
+    await api.$get("/user/mypage/scrap/scrapList-list/" + scrapListData.value.searchData.mbr_sq + "/" + scrapListData.value.searchData.sort + "/" + scrapListData.value.searchData.pageNo)
         .then((success) => {
-            console.log('axios 성공' + success.data);
-            scrapListData.value = success.data;
+            console.log('axios 성공' + success);
+            scrapListData.value = success;
         })
         .catch((error) => {
-            console.log('axios 실패' + error.data);
+            console.log('axios 실패' + error);
 
         });
 };
@@ -105,12 +105,12 @@ const insertApply = async (resumeId, emit) => {
     apyDtm: new Date().toISOString()
   };
   try {
-    const response = await axios.post('http://localhost:80/apply/insert', applyData);
-    alert(response.data); 
+    const response = await api.$post('/apply/insert', applyData);
+    alert(response); 
   } catch (error) {
     // 서버에서 보낸 오류 메시지를 활용
     if (error.response) {
-      const errorMessage = error.response.data;
+      const errorMessage = error.response;
 
       if (error.response.status === 404) {
         alert("이력서 찾을 수 없음");

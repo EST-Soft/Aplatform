@@ -11,7 +11,7 @@
 
 <script setup>
 import { ref, defineProps, defineEmits } from 'vue';
-import axios from 'axios';
+import { api } from '@/axios';
 
 const props = defineProps({
   isVisible: {
@@ -46,14 +46,14 @@ const handleFileChange = async (event) => {
         const formData = new FormData();
         formData.append('file', file);
 
-        const response = await axios.post('http://localhost:80/file/upload-image', formData, {
+        const response = await api.$post('/file/upload-image', formData, {
           headers: {
             'Content-Type': 'multipart/form-data'
           }
         });
 
-        const newImageUrl = response.data;
-        console.log(response.data)
+        const newImageUrl = response;
+        console.log(response)
         emit('update:imageSrc', newImageUrl);
         close();
       } catch (error) {

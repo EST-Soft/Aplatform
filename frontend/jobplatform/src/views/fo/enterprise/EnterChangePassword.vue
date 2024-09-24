@@ -60,7 +60,7 @@
 
 import { onMounted , ref , computed} from 'vue';
 import store from '@/store';
-import axios from 'axios';
+import {api} from '@/axios';
 
 
 
@@ -116,15 +116,15 @@ entrprsSp.value = test.value.pk;
     }
 
     try{
-    const res = await axios.post('http://localhost:80/enter/enterChangPassword', data );
-            console.log(res.data);
-            if(res.data == '수정완료'){
+    const res = await api.$post('/enter/enterChangPassword', data );
+            console.log(res);
+            if(res == '수정완료'){
                 alert('비밀번호가 변경되었습니다.');
                 entrprsPswrd.value = '';
                 entrprsPswrdChng.value = '';
                 entrprsPswrdChngCheck.value = '';
 
-            }else if(res.data == '비밀번호 불일치'){
+            }else if(res == '비밀번호 불일치'){
                 alert('비밀번호가 일치하지 않습니다.');
                 entrprsPswrd.value = '';
                 entrprsPswrdChng.value = '';

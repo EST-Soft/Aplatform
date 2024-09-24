@@ -51,7 +51,7 @@
 
 import { onMounted, ref ,computed} from 'vue';
 import store from '@/store';
-import axios from 'axios';
+import { api } from '@/axios';
 import { useStore } from "vuex";
 import { useRouter } from 'vue-router';
 
@@ -80,9 +80,9 @@ const handleSubmit = async() => {
         }
 
         try{
-            const res = await axios.put('http://localhost:80/member/delete', data);
-            console.log(res.data);
-            const responseData = res.data;
+            const res = await api.$put('/member/delete', data);
+            console.log(res);
+            const responseData = res;
             
             if (responseData === '회원을 찾을 수 없습니다.') {
                 alert("비밀번호가 일치하지 않습니다.");
@@ -98,7 +98,7 @@ const handleSubmit = async() => {
             console.error(error);
             if (error.response) {
                 // 서버가 상태 코드로 응답했지만 요청이 실패한 경우
-                console.error("Error response:", error.response.data);
+                console.error("Error response:", error.response);
                 console.error("Error status:", error.response.status);
                 console.error("Error headers:", error.response.headers);
                 alert(`서버 오류: ${error.response.data}`);

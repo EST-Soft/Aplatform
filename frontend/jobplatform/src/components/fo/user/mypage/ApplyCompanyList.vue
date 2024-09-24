@@ -90,7 +90,7 @@
 import { ref, computed, onMounted } from "vue";
 import JoinCompanyCondition from '@/components/fo/user/mypage/JoinCompanyCondition.vue';
 import ViewPaginate from '@/components/fo/user/common/ViewPaginate.vue';
-import axios from "axios";
+import { api } from '@/axios.js';
 
 
 
@@ -112,20 +112,20 @@ const search = ref(''); // 검색 내용
 const mbrSq= 1; // 회원순번
 
 onMounted(async() => {
-  axios.post('http://localhost:80/mypage/getApplyList', {mbrSq : mbrSq})
+  api.$post('/mypage/getApplyList', {mbrSq : mbrSq})
   .then((res) => {
-      console.log(res.data);
-        if(res.data === null || res.data.length === 0){
+      console.log(res);
+        if(res === null || res.length === 0){
         alert("사용자 없음");
         applyInfo.value = [];
         totalApplyCount.value = '';
       }else{
-        applyInfo.value = res.data.applyInfo;
-        totalApplyCount.value = res.data.totalApplyCount;
-        cancelApplyCnt.value = res.data.cancelApplyCnt;
-        resumeReadCnt.value = res.data.resumeReadCnt;
-        resumeNotReadCnt.value = res.data.resumeNotReadCnt;
-        pageCount.value = Math.ceil(res.data.applyInfo.length / itemsPerPage);
+        applyInfo.value = res.applyInfo;
+        totalApplyCount.value = res.totalApplyCount;
+        cancelApplyCnt.value = res.cancelApplyCnt;
+        resumeReadCnt.value = res.resumeReadCnt;
+        resumeNotReadCnt.value = res.resumeNotReadCnt;
+        pageCount.value = Math.ceil(res.applyInfo.length / itemsPerPage);
         // currentPage.value = 1;
       }
   })
@@ -167,23 +167,23 @@ if(search.value.length == 0){ // 검색어 입력안한경우
   return;
 }
 
-  axios.post("http://localhost:80/mypage/getSearchList",
+api.$post("/mypage/getSearchList",
   {serchType : searchType.value, search: search.value, mbrSq : mbrSq})
 .then(async (res) =>{
   console.log(res);
 
   currentPage.value = 1;
-      if(res.data === null || res.data.length === 0){
+      if(res === null || res.length === 0){
         alert("사용자 없음");
         applyInfo.value = [];
         totalApplyCount.value = '';
       }else{
-        applyInfo.value = res.data.applyInfo;
-        totalApplyCount.value = res.data.totalApplyCount;
-        cancelApplyCnt.value = res.data.cancelApplyCnt;
-        resumeReadCnt.value = res.data.resumeReadCnt;
-        resumeNotReadCnt.value = res.data.resumeNotReadCnt;
-        pageCount.value = Math.ceil(res.data.applyInfo.length / itemsPerPage);
+        applyInfo.value = res.applyInfo;
+        totalApplyCount.value = res.totalApplyCount;
+        cancelApplyCnt.value = res.cancelApplyCnt;
+        resumeReadCnt.value = res.resumeReadCnt;
+        resumeNotReadCnt.value = res.resumeNotReadCnt;
+        pageCount.value = Math.ceil(res.applyInfo.length / itemsPerPage);
       
       }
 

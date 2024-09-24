@@ -70,7 +70,7 @@ import { onMounted, ref } from "vue";
 
 import PaginationData from "@/components/fo/enterprise/common/PaginationData.vue";
 import ApplyDatas from "@/components/fo/enterprise/apply/ApplyDatas.vue";
-import axios from "axios";
+import { api } from '@/axios';
 
 const applyListData = ref({
   applyDatas: [],
@@ -103,7 +103,7 @@ onMounted(() => {
 
 // axios 함수
 const callAxios = async () => {
-  await axios.get("http://localhost:80/applys/apply-list/" +
+  await api.$get("/applys/apply-list/" +
     applyListData.value.searchData.jbp_sq +
     "/" +
     applyListData.value.searchData.division +
@@ -114,11 +114,11 @@ const callAxios = async () => {
     "/" +
     applyListData.value.searchData.pageNo)
     .then((success) => {
-      console.log('axios 성공' + success.data);
-      applyListData.value = success.data;
+      console.log('axios 성공' + success);
+      applyListData.value = success;
     })
     .catch((error) => {
-      console.log('axios 실패' + error.data);
+      console.log('axios 실패' + error);
 
     });
 

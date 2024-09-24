@@ -43,7 +43,7 @@
 <script setup>
 import PaginationData from "@/components/fo/enterprise/common/PaginationData.vue";
 import ResumeDatas from "@/components/fo/enterprise/resume/ResumeDatas.vue";
-import axios from "axios";
+import { api } from '@/axios.js';
 
 import { onMounted, ref } from "vue";
 
@@ -64,13 +64,13 @@ onMounted(() => {
 // axios 함수
 const callAxios = async () => {
     // 리스트 뿌려주는 기본 axios
-    await axios.get("http://localhost:80/resumes/resume-list/" + resumeListData.value.searchData.mbr_sq + "/" + resumeListData.value.searchData.sort + "/" + resumeListData.value.searchData.pageNo)
+    await api.$get("/resumes/resume-list/" + resumeListData.value.searchData.mbr_sq + "/" + resumeListData.value.searchData.sort + "/" + resumeListData.value.searchData.pageNo)
         .then((success) => {
-            console.log('axios 성공' + success.data);
-            resumeListData.value = success.data;
+            console.log('axios 성공' + success);
+            resumeListData.value = success;
         })
         .catch((error) => {
-            console.log('axios 실패' + error.data);
+            console.log('axios 실패' + error);
 
         });
 };
@@ -90,7 +90,7 @@ const changeSort = (event) => {
 
 // 대표 이력서 변경 클릭 (rsm_sq 들고 Axios)
 const modifyRepresentative = async (emit) => {
-    await axios.patch("http://localhost:80/resumes/representative/" + emit)
+    await api.$patch("/resumes/representative/" + emit)
         .then((success) => {
             console.log('axios 성공' + success);
             callAxios();
@@ -102,7 +102,7 @@ const modifyRepresentative = async (emit) => {
 
 // 이력서 복제 (rsm_sq 들고 Axios)
 const copyResumes = async (emit) => {
-    await axios.post("http://localhost:80/resumes/copy/" + emit)
+    await api.$post("/resumes/copy/" + emit)
         .then((success) => {
             console.log('axios 성공' + success);
             callAxios();
@@ -115,7 +115,7 @@ const copyResumes = async (emit) => {
 
 // 이력서 삭제 (rsm_sq 들고 Axios)
 const deleteResumes = async (emit) => {
-    await axios.delete("http://localhost:80/resumes/" + emit)
+    await api.$delete("/resumes/" + emit)
         .then((success) => {
             console.log('axios 성공' + success);
             callAxios();

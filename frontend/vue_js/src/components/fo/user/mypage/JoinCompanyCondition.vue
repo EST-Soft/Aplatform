@@ -49,7 +49,7 @@
 </template>
 
 <script setup>
-import axios from 'axios';
+import { api } from '@/axios.js';
 // import { apply } from 'core-js/fn/reflect';
 import { defineProps, ref, onMounted ,defineEmits } from 'vue';
 import { useRouter } from "vue-router";
@@ -89,7 +89,7 @@ onMounted( () => {
 const delapply = () => { // 지원취소
     console.log(props.data.apy_sq);
     if(confirm("정말 취소하시겠습니까?") == true){
-        axios.post("http://localhost:80/mypage/delApply",{apySq : props.data.apy_sq})
+        api.$post("/mypage/delApply",{apySq : props.data.apy_sq})
     .then(res => {
         console.log(res);
         applyCancel.value = '지원취소'

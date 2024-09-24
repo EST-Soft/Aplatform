@@ -111,7 +111,7 @@
   </template>
   
   <script setup>
-  import axios from "axios";
+  import { api } from '@/axios';
   import {  ref } from "vue";
   import { useRouter } from "vue-router";
   import store from "@/store";
@@ -145,15 +145,15 @@
 
     };
 
-     axios
-       .post("http://localhost:80/enter/login", loginData, {
+    api
+       .$post("/enter/login", loginData, {
          withCredentials: true,
        })
       
        .then(async(response) => {
 
      
-        store.commit("setEnter", response.data); // store에 기업 정보 저장(pk, id)
+        store.commit("setEnter", response); // store에 기업 정보 저장(pk, id)
  
   
        await router.push('/');

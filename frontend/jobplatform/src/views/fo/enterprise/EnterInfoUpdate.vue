@@ -135,7 +135,7 @@
 <script setup>
 import { onMounted , ref , computed} from 'vue';
 import store from '@/store'
-import axios from 'axios';
+import {api} from '@/axios';
 // import { useStore } from 'vuex';
 
 const entrprsSq = ref(''); //기업순번
@@ -172,21 +172,21 @@ return store.getters.enterMember
 console.log("pk:"+test.value.pk);
 
     try{
-    const res = await axios.get('http://localhost:80/enter/getEnterInfo', {
+    const res = await api.$get('/enter/getEnterInfo', {
                 params: {
                     entrprsSq : test.value.pk
                 }
             });
-    console.log(res.data);
-    entrprsSq.value = res.data.entrprs_sq;
-    entrprsId.value = res.data.entrprs_id;
-    entrprsName.value = res.data.entrprs_name;
-    entrprsAdrs.value = res.data.entrprs_adrs;
-    entrprsHp.value = res.data.entrprs_hp;
-    entrprsPicName.value = res.data.entrprs_pic_name;
-    entrprsPicEml.value = res.data.entrprs_pic_eml;
-    entrprsPicMp.value = res.data.entrprs_pic_mp;
-    zonecode.value = res.data.entrprs_zip_code;
+    console.log(res);
+    entrprsSq.value = res.entrprs_sq;
+    entrprsId.value = res.entrprs_id;
+    entrprsName.value = res.entrprs_name;
+    entrprsAdrs.value = res.entrprs_adrs;
+    entrprsHp.value = res.entrprs_hp;
+    entrprsPicName.value = res.entrprs_pic_name;
+    entrprsPicEml.value = res.entrprs_pic_eml;
+    entrprsPicMp.value = res.entrprs_pic_mp;
+    zonecode.value = res.entrprs_zip_code;
 
 
     }catch(error){
@@ -239,9 +239,9 @@ const handleSubmit = async() => {
     console.log(data);
 
     try{
-    const res = await axios.post('http://localhost:80/enter/updateEnterInfo',  data);
-            console.log(res.data);
-            if(res.data == '수정완료'){
+    const res = await api.$post('/enter/updateEnterInfo',  data);
+            console.log(res);
+            if(res == '수정완료'){
                 alert('수정완료 되었습니다.');
             }else{
                 alert('수정 실패');

@@ -174,7 +174,6 @@ import { onMounted , ref, computed} from 'vue';
 // import store from '@/store'
 import { api } from "@/axios";
 import { useStore } from "vuex";
-import axios from 'axios';
 import { useRouter, useRoute } from "vue-router";
 
 const store = useStore();
@@ -337,7 +336,7 @@ const requestAuthCode = () => {
   };
   loading.value = true;
   api
-    .$post("http://localhost:80/member/emlRegister", map)
+    .$post("/member/emlRegister", map)
     .then((response) => {
       emailCode.value = response.key;
       emailSent.value = true;
@@ -425,14 +424,14 @@ const handleSubmit = async(e) => {
                     formData.append('file', file.value);
             }
 
-        const response = await axios.post('http://localhost:80/file/upload-image', formData, {
+        const response = await api.$post('/file/upload-image', formData, {
             headers: {
                 'Content-Type': 'multipart/form-data'
             }
         });
 
             // 서버 응답 처리
-        const newImageUrl = response.data.imgFileUrl;
+        const newImageUrl = response.imgFileUrl;
             imgUrl.value = newImageUrl;
             mbrImgOrgnlFn.value = file.value ? file.value.name : '';
             mbrImgFileUrl.value = newImageUrl;
@@ -459,9 +458,9 @@ const handleSubmit = async(e) => {
     console.log(data);
 
     try{
-    const res = await axios.post('http://localhost:80/member/update',  data);
-            console.log(res.data);
-            if(res.data == '수정완료'){
+    const res = await api.$post('/member/update',  data);
+            console.log(res);
+            if(res == '수정완료'){
                 alert('수정 완료 되었습니다.');
                 if(repetitionCheck.value == 1){
                     router.push('/').then(() => {
@@ -494,9 +493,9 @@ const idRepetitionCheck = async() => {
     }
       
     try{
-    const res = await axios.post('http://localhost:80/member/idCheck', {mbrId : mbr_id.value});
-            console.log(res.data);
-            if(res.data == 0){
+    const res = await api.$post('/member/idCheck', {mbrId : mbr_id.value});
+            console.log(res);
+            if(res == 0){
                 idck.value = 0;
                 repetitionCheck.value = 1;
             }else{

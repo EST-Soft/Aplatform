@@ -225,7 +225,7 @@
   
   <script setup>
   import { ref, reactive, watch } from "vue";
-  import axios from "axios";
+  import {api} from '@/axios';
   import {  getTermsContents } from "@/api/member";
   import { useRouter } from "vue-router";
   
@@ -288,14 +288,14 @@
         console.log(num1.b_no);
         const data = num1; // json 을 string으로 변환하여 전송
   
-        axios
-          .post(URL, data, {
+        api
+          .$post(URL, data, {
             // config 
             headers: headers,
           })
           .then((response) => {
             //사업자 번호 조회 성공 시 match된 숫자 
-            if (response.data.match_cnt == 1) {
+            if (response.match_cnt == 1) {
               //사업자 번호 성공 후 register form v-if로 보여주기
               numState.value = true;
             } else {
@@ -316,7 +316,7 @@
   // id중복확인
   // 중복확인 후 entrprsId.value 변경시 다시 중복확인 문구 
     const idCheck = () => {
-      axios.get("http://localhost:80/enter/check", {
+      api.$get("/enter/check", {
         params: {
           entrprsId: entrprsId.value
         }
@@ -404,16 +404,16 @@
       entrprsPrvcyTrmsYn: entrprsPrvcyTrmsYn.value,
       gndrCtryCd: gndrCtryCd.value,
     };
-     axios
-      .post("http://localhost:80/enter/register", enterData)
+    api
+      .$post("/enter/register", enterData)
       .then((response) => {
-        console.log(response.data);
+        console.log(response);
             router.push("login");
   
       })
       .catch((error) => {
         // 컨트롤러에서 바디로 보내는건 없음. 
-        console.log(error.data);
+        console.log(error);
         
       });
   }
@@ -445,7 +445,7 @@
     const map = {
       entrprsPicEml : entrprsPicEml.value
     }
-    axios.post("http://localhost:80/enter/emlSend",map
+    api.$post("/enter/emlSend",map
 
     ).then((response) => { 
 
@@ -453,13 +453,13 @@
 
       //실제 이메일에도 보내짐 
       
-      alert("인증코드 : " + response.data.key);
+      alert("인증코드 : " + response.key);
 
-       emailCode.value = response.data.key;
+       emailCode.value = response.key;
 
     }).catch((error) => { 
 
-      console.error("이메일 전송 중 오류 발생:", error.data);
+      console.error("이메일 전송 중 오류 발생:", error);
     
       alert("이메일 전송 중 오류가 발생했습니다.");
     })

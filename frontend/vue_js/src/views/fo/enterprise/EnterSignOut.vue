@@ -54,7 +54,7 @@
 
 import { onMounted, ref ,computed} from 'vue';
 import store from '@/store';
-import axios from 'axios';
+import { api } from '@/axios';
 
 const entrprsId = ref(''); // 기업회원 아이디
 const entrprsPswrd = ref('');// 기업회원 비밀번호
@@ -71,13 +71,13 @@ entrprsSq.value = test.value.pk;
 console.log(entrprsSq.value);
 
     try{
-    const res = await axios.get('http://localhost:80/enter/getEnterInfo', {
+    const res = await api.$get('/enter/getEnterInfo', {
                 params: {
                     entrprsSq : entrprsSq.value,
                 }
             });
-            entrprsId.value = res.data.entrprs_id;
-            console.log(res.data);
+            entrprsId.value = res.entrprs_id;
+            console.log(res);
 
     }catch(error){
         console.error(error);
@@ -94,14 +94,14 @@ const handleSubmit = async() => {
         }
 
         try{
-        const res = await axios.post('http://localhost:80/enter/enterSignOut', data);
-            console.log(res.data);
-            if(res.data == '비밀번호 불일치'){
+        const res = await api.$post('/enter/enterSignOut', data);
+            console.log(res);
+            if(res == '비밀번호 불일치'){
                 alert("비밀번호가 일치하지 않습니다.")
                 entrprsPswrd.value = '';
             }
 
-            if(res.data == '탈퇴완료'){
+            if(res == '탈퇴완료'){
                 alert('탈퇴 되었습니다')
                 location.href = "http://localhost:8080/enter/login";
             }

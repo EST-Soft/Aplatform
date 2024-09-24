@@ -364,6 +364,7 @@
 
 <script setup>
 import { ref, reactive, watch } from "vue";
+import { api } from '@/axios';
 import axios from "axios";
 import { getTermsContents } from "@/api/member";
 import { useRouter } from "vue-router";
@@ -455,8 +456,8 @@ watch(cmnRgtrrtnNmbr, (newQuestion) => {
 // id중복확인
 // 중복확인 후 entrprsId.value 변경시 다시 중복확인 문구
 const idCheck = () => {
-  axios
-    .get("http://localhost:80/enter/check", {
+  api
+    .$get("/enter/check", {
       params: {
         entrprsId: entrprsId.value,
       },
@@ -535,15 +536,15 @@ const enterRegister = () => {
     entrprsPrvcyTrmsYn: entrprsPrvcyTrmsYn.value,
     gndrCtryCd: gndrCtryCd.value,
   };
-  axios
-    .post("http://localhost:80/enter/register", enterData)
+  api
+    .$post("/enter/register", enterData)
     .then((response) => {
-      console.log(response.data);
+      console.log(response);
       router.push("login");
     })
     .catch((error) => {
       // 컨트롤러에서 바디로 보내는건 없음.
-      console.log(error.data);
+      console.log(error);
     });
 };
 
@@ -572,19 +573,19 @@ const emlSend = () => {
   const map = {
     entrprsPicEml: entrprsPicEml.value,
   };
-  axios
-    .post("http://localhost:80/enter/emlSend", map)
+  api
+    .$post("/enter/emlSend", map)
     .then((response) => {
       alert("인증코드가 발송되었습니다.");
 
       //실제 이메일에도 보내짐
 
-      alert("인증코드 : " + response.data.key);
+      alert("인증코드 : " + response.key);
 
-      emailCode.value = response.data.key;
+      emailCode.value = response.key;
     })
     .catch((error) => {
-      console.error("이메일 전송 중 오류 발생:", error.data);
+      console.error("이메일 전송 중 오류 발생:", error);
 
       alert("이메일 전송 중 오류가 발생했습니다.");
     });

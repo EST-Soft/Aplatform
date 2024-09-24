@@ -293,7 +293,7 @@
 </template>
 
 <script setup>
-import { api } from "../../../../axios";
+import { api } from "@/axios";
 import AttachmentsResume from "@/components/fo/enterprise/resume/AttachmentsResume.vue";
 import SelfintoductionsResume from "@/components/fo/enterprise/resume/SelfintoductionsResume.vue";
 import SkillsResume from "@/components/fo/enterprise/resume/SkillsResume.vue";

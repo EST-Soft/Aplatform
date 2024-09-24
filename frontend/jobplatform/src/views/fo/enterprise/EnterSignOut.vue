@@ -35,11 +35,12 @@
                             </div>
                             <div class="form-group">
                                 <label for="applicant">비밀번호(필수)</label>
-                                <input type="password" class="form-control" v-model="entrprsPswrd" placeholder="비밀번호를 입력해주세요" required>
+                                <input type="password" class="form-control" v-model="entrprsPswrd"
+                                    placeholder="비밀번호를 입력해주세요" required>
                             </div>
                             <div class="form-check">
                                 <input type="checkbox" class="form-check-input" id="agree" v-model="agree" required>
-                                <label class="form-check-label" for="agree" >유의사항을 모두 확인 했으며, 이에 동의합니다.</label>
+                                <label class="form-check-label" for="agree">유의사항을 모두 확인 했으며, 이에 동의합니다.</label>
                             </div>
                             <button type="submit" class="btn btn-danger mt-3" :disabled="!agree">탈퇴하기</button>
                         </form>
@@ -52,9 +53,9 @@
 
 <script setup>
 
-import { onMounted, ref ,computed} from 'vue';
+import { onMounted, ref, computed } from 'vue';
 import store from '@/store';
-import {api} from '@/axios';
+import { api, baseUrl } from '@/axios';
 
 const entrprsId = ref(''); // 기업회원 아이디
 const entrprsPswrd = ref('');// 기업회원 비밀번호
@@ -62,54 +63,54 @@ const agree = ref(''); // 약관동의
 const entrprsSq = ref('');
 
 
-onMounted(async() => {
+onMounted(async () => {
 
-    const test = computed(()=> {
+    const test = computed(() => {
         return store.getters.enterMember
     })
-entrprsSq.value = test.value.pk;
-console.log(entrprsSq.value);
+    entrprsSq.value = test.value.pk;
+    console.log(entrprsSq.value);
 
-    try{
-    const res = await api.$get('/enter/getEnterInfo', {
-                params: {
-                    entrprsSq : entrprsSq.value,
-                }
-            });
-            entrprsId.value = res.entrprs_id;
-            console.log(res);
+    try {
+        const res = await api.$get('/enter/getEnterInfo', {
+            params: {
+                entrprsSq: entrprsSq.value,
+            }
+        });
+        entrprsId.value = res.entrprs_id;
+        console.log(res);
 
-    }catch(error){
+    } catch (error) {
         console.error(error);
     }
 });
 
 // 탈퇴하기
-const handleSubmit = async() => {
-    if(confirm("정말 탈퇴하시겠습니까?")==true){ // 탈퇴신청 여부 
+const handleSubmit = async () => {
+    if (confirm("정말 탈퇴하시겠습니까?") == true) { // 탈퇴신청 여부 
 
-            const data = {
-            entrprsPswrd : entrprsPswrd.value,
-            entrprsSq : entrprsSq
+        const data = {
+            entrprsPswrd: entrprsPswrd.value,
+            entrprsSq: entrprsSq
         }
 
-        try{
-        const res = await api.$post('/enter/enterSignOut', data);
+        try {
+            const res = await api.$post('/enter/enterSignOut', data);
             console.log(res);
-            if(res == '비밀번호 불일치'){
+            if (res == '비밀번호 불일치') {
                 alert("비밀번호가 일치하지 않습니다.")
                 entrprsPswrd.value = '';
             }
 
-            if(res == '탈퇴완료'){
+            if (res == '탈퇴완료') {
                 alert('탈퇴 되었습니다')
-                location.href = "http://localhost:8080/enter/login";
+                location.href = `${baseUrl}/enter/login`;
             }
 
-        }catch(error){
+        } catch (error) {
             console.error(error);
         }
-    }else{ // 취소
+    } else { // 취소
         entrprsPswrd.value = '';
         return false;
     }

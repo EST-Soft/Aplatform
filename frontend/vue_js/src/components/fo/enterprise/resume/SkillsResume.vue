@@ -24,7 +24,7 @@
 
 
 <script setup>
-import { api } from '../../../../axios';
+import { api } from '@/axios';
 import { onMounted, ref } from 'vue';
 import { defineEmits, defineProps } from 'vue';
 

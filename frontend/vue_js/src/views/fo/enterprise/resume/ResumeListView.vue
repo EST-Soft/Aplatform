@@ -30,7 +30,7 @@
             </div>
         </div>
     </div>
-    <br/>
+    <br />
     <div class="row" id="pagination-container">
         <div class="pagination-wrapper" v-if="resumeListData.paginationData.totalDataCount > 1">
             <PaginationData :paginationData="resumeListData.paginationData" @change-page-no="changePageNo" />
@@ -59,10 +59,10 @@ const isLoggedIn = computed(() => member.value !== null);
 
 onMounted(() => {
     if (isLoggedIn.value && member.value) {
-        resumeListData.value.searchData = { 
+        resumeListData.value.searchData = {
             mbr_sq: member.value.mbrSq, // member.value로 접근
-            sort: "desc", 
-            pageNo: 1 
+            sort: "desc",
+            pageNo: 1
         };
         callAxios();
     }
@@ -138,14 +138,14 @@ const deleteResumes = async (emit) => {
 
 <style scoped>
 #pagination-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
 }
 
 .pagination-wrapper {
-  display: flex;
-  justify-content: center;
+    display: flex;
+    justify-content: center;
 }
 </style>

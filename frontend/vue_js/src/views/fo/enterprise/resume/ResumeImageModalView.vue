@@ -2,7 +2,12 @@
   <div v-if="props.isVisible" class="modal-overlay" @click.self="close">
     <div class="modal-content">
       <span class="close-button" @click="close">&times;</span>
-      <img :src="props.imageSrc" alt="Modal Image" class="modal-image" @click="triggerFileInput" />
+      <div v-if="props.imageSrc == ''">
+        <img src="@/assets/avatar.jpg" alt="Modal Image" class="modal-image" @click="triggerFileInput" />
+      </div>
+      <div v-else>
+        <img :src="props.imageSrc" alt="Modal Image" class="modal-image" @click="triggerFileInput" />
+      </div>
       <!-- Hidden file input -->
       <input ref="fileInput" type="file" style="display: none;" @change="handleFileChange" />
     </div>
@@ -11,7 +16,6 @@
 
 <script setup>
 import { ref, defineProps, defineEmits } from 'vue';
-import { api } from '@/axios';
 
 const props = defineProps({
   isVisible: {
@@ -24,7 +28,7 @@ const props = defineProps({
   }
 });
 
-const emit = defineEmits(['update:isVisible', 'update:imageSrc']);
+const emit = defineEmits(['update:isVisible', 'update:imageSrc', 'change-image']);
 
 const fileInput = ref(null);
 
@@ -39,29 +43,8 @@ const triggerFileInput = () => {
 const handleFileChange = async (event) => {
   const file = event.target.files[0];
   if (file) {
-    const reader = new FileReader();
-
-    reader.onloadend = async () => {
-      try {
-        const formData = new FormData();
-        formData.append('file', file);
-
-        const response = await api.$post('/file/upload-image', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data'
-          }
-        });
-
-        const newImageUrl = response;
-        console.log(response)
-        emit('update:imageSrc', newImageUrl);
-        close();
-      } catch (error) {
-        console.error('Error uploading file:', error);
-      }
-    };
-
-    reader.readAsDataURL(file);
+    emit('change-image', file);
+    close();
   }
 };
 </script>
@@ -102,3 +85,27 @@ const handleFileChange = async (event) => {
   cursor: pointer;
 }
 </style>
+
+<!-- const reader = new FileReader();
+
+reader.onloadend = async () => {
+try {
+const formData = new FormData();
+formData.append('file', file);
+
+const response = await api.$post('/file/upload-image', formData, {
+headers: {
+'Content-Type': 'multipart/form-data'
+}
+});
+
+const newImageUrl = response;
+console.log(response)
+emit('update:imageSrc', newImageUrl);
+close();
+} catch (error) {
+console.error('Error uploading file:', error);
+}
+};
+
+reader.readAsDataURL(file); -->

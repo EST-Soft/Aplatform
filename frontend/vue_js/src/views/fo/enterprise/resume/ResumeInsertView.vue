@@ -20,18 +20,20 @@
           <div class="col-sm-2 col-lg-2">
             <div class="col-sm-12 col-lg-12 imgContainer">
               <div class="img-thumbnail d-block">
-                <!-- src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSdraZyZ8CC81iPsZST1_TLB0SBOXC6wfvQ_Exx1uKkGsFpi4t_Mj4o8HhM_vPwI60yBF8&usqp=CAU" -->
-                <img class="img-fluid"
-                  :src="imageUrl ? imageUrl : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSdraZyZ8CC81iPsZST1_TLB0SBOXC6wfvQ_Exx1uKkGsFpi4t_Mj4o8HhM_vPwI60yBF8&usqp=CAU'"
-                  alt style="width: 200px" @click="showModal = true" />
-                <div class="imgIcon" @click="delImg">
-                  <i class="fa-regular fa-trash-can"></i>
+                <div v-if="imageUrl == ''">
+                  <img class="img-fluid" src="@/assets/avatar.jpg" alt style="width: 200px" @click="showModal = true" />
+                </div>
+                <div v-else>
+                  <img class="img-fluid" :src="imageUrl" alt style="width: 200px" @click="showModal = true" />
+                  <div class="imgIcon" @click="delImg">
+                    <i class="fa-regular fa-trash-can"></i>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
           <ResumeImageModalView :isVisible="showModal" :imageSrc="imageUrl" @update:isVisible="showModal = $event"
-            @update:imageSrc="updateImageUrl" />
+            @change-image="changeimage" @update:imageSrc="updateImageUrl" />
           <div class="row col-sm-10 col-lg-10">
             <div class="col-sm-4 col-lg-4">
               <input type="text" value="" v-model="rsmName" maxlength="100" class="form-control text-3 h-auto py-2"
@@ -319,6 +321,7 @@ const rsmEml = ref('');
 // 이미지
 const showModal = ref(false);
 const imageUrl = ref('');
+const imageDatas = ref('');
 // 학력
 const isSearchPopupModalOpen = ref(false);
 const selectedEducationIndex = ref(null);
@@ -354,6 +357,23 @@ onMounted(() => {
 /* const testtest = async () => {
   event.preventDefault();
 
+  const imageFormData = new FormData();
+  if (imageDatas.value) {
+    imageFormData.append('file', imageDatas.value);
+    const response = await api.$post('/file/upload-image', imageFormData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    }).then((response) => {
+      console.log(response)
+      return response;
+    }).catch((error) => {
+      console.error('Error: ', error)
+    });
+    rsmImgOrgnlFn.value = response.imgOrgnlFn;
+    rsmImgFileUrl.value = response.imgFileUrl;
+  }
+
   const formData = new FormData();
   attachmentDatas.value.forEach(attachment => {
     formData.append('file', attachment);
@@ -365,7 +385,7 @@ onMounted(() => {
   console.log(formData)
 
   if (attachmentDatas.value.length != 0) {
-    const response = await axios.post('http://localhost:80/file/upload-attachment', formData, {
+    const response = await api.$post('http://localhost:80/file/upload-attachment', formData, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }
@@ -418,6 +438,22 @@ onMounted(() => {
 
 // form submit 함수
 const submitPost = async () => {
+  const imageFormData = new FormData();
+  if (imageDatas.value) {
+    imageFormData.append('file', imageDatas.value);
+    const response = await api.$post('/file/upload-image', imageFormData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    }).then((response) => {
+      console.log(response)
+      return response;
+    }).catch((error) => {
+      console.error('Error: ', error)
+    });
+    rsmImgOrgnlFn.value = response.imgOrgnlFn;
+    rsmImgFileUrl.value = response.imgFileUrl;
+  }
 
   const formData = new FormData();
   attachmentDatas.value.forEach(attachment => {
@@ -426,6 +462,8 @@ const submitPost = async () => {
   const attachmentList = [];
 
   skillsData.value = Object.values(skillsData.value).flat();
+
+
 
   if (attachmentDatas.value.length != 0) {
     try {
@@ -513,10 +551,22 @@ const submitPost = async () => {
 
 // 이미지
 const updateImageUrl = (newImageUrl) => {
-  imageUrl.value = newImageUrl.imgFileUrl;
+  //imageUrl.value = newImageUrl.imgFileUrl;
   rsmImgOrgnlFn.value = newImageUrl.imgOrgnlFn;
   rsmImgFileUrl.value = newImageUrl.imgFileUrl;
 }; // updateImageUrl
+
+const changeimage = (file) => {
+  imageDatas.value = file;
+  if (imageDatas.value) {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      imageUrl.value = reader.result;
+    }
+    reader.readAsDataURL(file)
+  }
+  console.log(imageDatas)
+}
 
 const delImg = () => {
   imageUrl.value = '';

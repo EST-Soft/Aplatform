@@ -280,7 +280,7 @@
             <div class="attachment-container">
               <div v-for="item in result.rsmatchmntInfo" :key="item.id" class="attachment-item">
                 <div id="rsm_atchmnt">
-                    <a :href="item.atchmnt_url" :download="getFileName(item.atchmnt_url)" id="bbtn" class="btn btn-outline btn-rounded btn-quaternary  btn-with-arrow mb-2">{{item.atchmnt_orgnl_fn}}<span><i class="fas fa-chevron-right"></i></span></a>
+                    <a :href="item.atchmnt_url" :download="item.atchmnt_orgnl_fn" id="bbtn" class="btn btn-outline btn-rounded btn-quaternary  btn-with-arrow mb-2">{{item.atchmnt_orgnl_fn}}<span><i class="fas fa-chevron-right"></i></span></a>
                 </div>
               </div>
             </div>
@@ -316,10 +316,6 @@
         console.error('Failed to fetch resume details:', error);
     }
     });
-
-    const getFileName = (url) => {
-      return url.split('/').pop();
-    };
 
     // computed로 각 항목별 필터링
     const filteredLanguages = computed(() => {

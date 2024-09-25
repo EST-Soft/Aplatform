@@ -694,9 +694,12 @@ const backToAnswerDetail = (answrSq) => {
 
 const backToDetail = () => {
   showConfirm("작성을 취소 하시겠습니까?", () => {
-    const brdSq = board.value.brdSq;
-    console.log("boardSq : " + brdSq);
-    window.location.href = `/board/qna/` + brdSq;
+    answer.value.answrTtl = '';
+    quillInstance.value.root.innerHTML = '';
+    // const brdSq = board.value.brdSq;
+    // console.log("boardSq : " + brdSq);
+    // window.location.href = `/board/qna/` + brdSq;
+    answerModal.value = false;
   })
 }
 

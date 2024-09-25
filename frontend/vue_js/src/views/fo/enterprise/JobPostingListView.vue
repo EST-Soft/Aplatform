@@ -85,12 +85,13 @@
           </div>
           <div class="list-body">
             <div v-if="paginatedItems.length > 0">
-              <div v-for="(item, idx) in paginatedItems" :key="idx" class="custom">
-                <div><router-link :to="`/board/detail/jobPosting/${item.jbpSq}`">{{ item.jbpTtl }}</router-link></div>
-                <div>{{ getEducationText(item.edctn) }}</div>
-                <div>{{ getCareerText(item.crrDrtn) }}</div>
-                <div>{{ formatJobName(item.jobName) }}</div>
-                <div>{{ formatWorkArea(item.workArea) }}</div>
+              <div v-for="(item, idx) in paginatedItems" :key="idx" class="custom" >
+                <router-link :to="`/board/detail/jobPosting/${item.jbpSq}`" class="routerLink">
+                  <div style="font-size: 38px;">{{ item.jbpTtl }}</div>
+                  <div style="font-size: 23px">{{ item.enterpriseMember.entrprsName }}</div>
+                  <div style="font-size: 18px">{{ formatWorkArea(item.workArea) }}&nbsp;/&nbsp;{{ getCareerText(item.crrDrtn) }}&nbsp;/&nbsp;{{ getEducationText(item.edctn) }}&nbsp;/&nbsp;{{ formatJobName(item.jobName) }}</div>
+                
+                </router-link>
               </div>
             </div>
             <!-- 검색 결과가 없을 때 표시될 메시지 -->
@@ -117,7 +118,7 @@ import moment from 'moment';
 const state = reactive({
   items: [],
   currentPage: 1,
-  itemsPerPage: 12
+  itemsPerPage: 10
 });
 
 const sortOption = ref('regstrStrtDtm');
@@ -129,6 +130,7 @@ const fetchItems = async () => {
       params: { sortBy: sortOption.value }
     });
     state.items = response;
+    console.log("asdasdas", response);
   } catch (error) {
     console.error('Error fetching items:', error);
   }
@@ -370,11 +372,10 @@ const getCareerText = (value) => {
   background-color: #ffffff;
   border-radius: 0.5rem;
   padding: 1rem;
-  margin: 15px;
-  width: calc(25% - 30px); /* 4개의 아이템이 한 줄에 나타나도록 설정 */
+  margin: 15px 0; /* 상하 여백만 설정 */
+  width: 100%; /* 한 줄에 하나의 아이템이 나오도록 설정 */
   border: 1px solid #002C7B;
-  text-align: center;
-  float: left;
+  text-align: left;
   height: 150px;
   overflow: hidden;
 }
@@ -447,4 +448,15 @@ const getCareerText = (value) => {
   position : relative;
   margin-bottom: 50px;
 }
+
+.routerLink{
+  color: black; /* 기본 텍스트 색상 */
+  text-decoration: none; /* 밑줄 제거 */
+}
+
+.routerLink:hover {
+  color: black; /* 호버 시 색상 변경 */
+  text-decoration: none; /* 호버 시에도 밑줄 제거 */
+}
+
 </style>

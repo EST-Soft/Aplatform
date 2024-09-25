@@ -8,8 +8,8 @@
       </section>
 
       <div class="mb-3">
-        <label for="jbpTl" class="form-label">제목</label>
-        <input type="text" v-model="jbpTl" class="form-control" id="jbpTl" placeholder="제목을 입력하세요">
+        <label for="jbpTtl" class="form-label">제목</label>
+        <input type="text" v-model="jbpTtl" class="form-control" id="jbpTtl" placeholder="제목을 입력하세요">
       </div>
 
       <div class="row">
@@ -122,11 +122,11 @@
       <div class="row">
         <div class="col-md-6 mb-3">
           <label for="regstrStrtDtm" class="form-label">공고 시작일</label>
-          <input type="date" v-model="regstrStrtDtm" class="form-control" id="regstrStrtDtm" :min="minRegstrStrtDtm">
+          <input type="datetime-local" v-model="regstrStrtDtm" class="form-control" id="regstrStrtDtm" :min="minRegstrStrtDtm" >
         </div>
         <div class="col-md-6 mb-3">
           <label for="regstrDlnDtm" class="form-label">공고 마감일</label>
-          <input type="date" v-model="regstrDlnDtm" class="form-control" id="regstrDlnDtm" :min="minRegstrStrtDtm">
+          <input type="datetime-local" v-model="regstrDlnDtm" class="form-control" id="regstrDlnDtm" :min="minRegstrStrtDtm">
         </div>
       </div>
 
@@ -167,7 +167,7 @@ const selectedJobs = ref([]);
 
 const jbpSq = ref(0);
 const entrprsSq = store.getters.getMember.pk;
-const jbpTl = ref('');
+const jbpTtl = ref('');
 const jbpCntnt = ref('');
 const cr = ref(801);
 const sklName = ref('');
@@ -188,13 +188,15 @@ const insrtMbrSq = ref(1);
 const interviewAgreement = ref(false);
 const router = useRouter();
 
-const today = new Date();
 const minRegstrStrtDtm = computed(() => {
-  const year = today.getFullYear();
-  const month = String(today.getMonth() + 1).padStart(2, '0');
-  const day = String(today.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
-});
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = String(today.getMonth() + 1).padStart(2, '0');
+      const day = String(today.getDate()).padStart(2, '0');
+      const hours = String(today.getHours()).padStart(2, '0');
+      const minutes = String(today.getMinutes()).padStart(2, '0');
+      return `${year}-${month}-${day}T${hours}:${minutes}`; // YYYY-MM-DDTHH:MM 형식
+    });
 
 const fetchAreasAndJobs = async () => {
   try {
@@ -216,7 +218,7 @@ onMounted(() => {
 });
 
 const submitPost = () => {
-  if (jbpTl.value.trim() === '' || jbpCntnt.value.trim() === '') {
+  if (jbpTtl.value.trim() === '' || jbpCntnt.value.trim() === '') {
     alert('제목과 내용을 확인하세요.');
     return;
   }
@@ -229,7 +231,7 @@ const submitPost = () => {
     enterpriseMember: {
       entrprsSq: entrprsSq,
     },
-    jbpTl: jbpTl.value,
+    jbpTtl: jbpTtl.value,
     jbpCntnt: jbpCntnt.value,
     cr: cr.value,
     sklName: sklName.value,
@@ -263,7 +265,7 @@ const submitPost = () => {
 };
 
 const clearForm = () => {
-  jbpTl.value = '';
+  jbpTtl.value = '';
   jbpCntnt.value = '';
   cr.value = 801;
   sklName.value = '';

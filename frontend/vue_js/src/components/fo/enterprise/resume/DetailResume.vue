@@ -280,7 +280,7 @@
             <div class="attachment-container">
               <div v-for="item in result.rsmatchmntInfo" :key="item.id" class="attachment-item">
                 <div id="rsm_atchmnt">
-                    <a :href="item.atchmnt_url" :download="item.atchmnt_orgnl_fn" id="bbtn" class="btn btn-outline btn-rounded btn-quaternary  btn-with-arrow mb-2">{{item.atchmnt_orgnl_fn}}<span><i class="fas fa-chevron-right"></i></span></a>
+                    <button @click="downloadImage(item.atchmnt_url, item.atchmnt_orgnl_fn)" id="bbtn" class="btn btn-outline btn-rounded btn-quaternary  btn-with-arrow mb-2">{{item.atchmnt_orgnl_fn}}<span><i class="fas fa-chevron-right"></i></span></button>
                 </div>
               </div>
             </div>
@@ -364,6 +364,56 @@
       }
       return ''; // 날짜가 없는 경우 빈 문자열 반환
     };
+
+    // const downloadImage = async(url, originalFN) => {
+    //   const filename = url.split('/').pop();
+    //   console.log(originalFN);
+    //   const response = await api.$get(`/file/${filename}`);
+    //   console.log(response.ok);
+
+    //   if (response){
+    //     const blob = await response.blob();
+    //     console.log("blob" + blob);
+    //     const url = window.URL.createObjectURL(blob);
+
+    //     const link = document.createElement('a');
+    //     link.href = url;
+    //     link.download = originalFN;
+    //     document.body.appendChild(link);
+    //     link.click();
+    //     document.body.removeChild(link);
+    //     window.URL.revokeObjectURL(url);
+    //   }else{
+    //     console.error('Image not found');
+    //   }
+    // }
+    const downloadImage = async (url, originalFN) => {
+    const filename = url.split('/').pop();
+    console.log(originalFN);
+    
+    try {
+        const response = await api.$get(`/file/${filename}`, { responseType: 'blob' }); // responseType을 blob으로 설정
+
+        // 응답이 유효한지 확인
+        if (response) {
+            const blob = response; // response가 blob이면 바로 사용
+            console.log("blob", blob);
+            const objectUrl = window.URL.createObjectURL(blob);
+
+            const link = document.createElement('a');
+            link.href = objectUrl;
+            link.download = originalFN;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(objectUrl);
+        } else {
+            console.error('Image not found');
+        }
+    } catch (error) {
+        console.error('Error downloading image:', error);
+    }
+};
   
   </script>
   

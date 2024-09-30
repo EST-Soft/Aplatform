@@ -23,8 +23,8 @@ public class BoardEntity {
     @Column(name = "entrprs_sq", nullable = true)
     private Long entrprsSq;      // 기업 순번 (null 가능)
 
-    @Column(name = "brd_gnr_cd", nullable = false, length = 50)
-    private String brdGnrCd;     // 게시글 분류 코드
+    @Column(name = "brd_typ_code", nullable = false, length = 50)
+    private String brdTypCode;     // 게시글 분류 코드
 
     @Column(name = "brd_ttl", nullable = false, length = 255)
     private String brdTtl;       // 게시글 제목
@@ -40,6 +40,7 @@ public class BoardEntity {
 
     @Column(name = "updt_dtm", nullable = false)
     private LocalDateTime updtDtm ;   // 수정 일시-수정시 업데이트
+    
 
     @Column(name = "dlt_dtm", nullable = true)
     private LocalDateTime dltDtm;    // 삭제 일시 - 삭제시 업데이트 시간

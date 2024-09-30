@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="jobplatform.fo.user.domain.mapper.MypageMapper">
+
     <resultMap id="MemberEntityResultMap" type="jobplatform.fo.user.domain.entity.MemberEntity">
         <id property="mbrSq" column="mbr_sq"/>
         <result property="sclCtgryCd" column="scl_ctgry_cd"/>
@@ -159,6 +160,7 @@
         SELECT * FROM p3_tbl_member_m WHERE mbr_sq=#{mbrSq}
 
     </select>
+
 
 
 </mapper>

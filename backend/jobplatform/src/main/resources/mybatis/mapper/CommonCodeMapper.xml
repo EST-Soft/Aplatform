@@ -8,10 +8,15 @@
 	<select id="selectCommonCodeApplyCategoryData" resultType="jobplatform.fo.enterprise.domain.vo.CommonCodeVO">
 		select code_id, code_name
 		from P2_TBL_COMMON_CODE_DTL_S 
-		where code_ctgry_id = 400 
-			and code_id != 403;
+		where code_type_id = 400 
+			and code_id != 'ac';
 	</select>
 	
-	
+	<!-- 학력, 경력 상태 가져오기 -->
+	<select id="findCommonCode" resultType="jobplatform.fo.enterprise.domain.vo.CommonCodeVO">
+		select code_id, code_name
+		from P2_TBL_COMMON_CODE_DTL_S
+		where code_typ_id in (600, 800)
+	</select>
 
 </mapper>

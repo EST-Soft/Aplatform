@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+
+  
+  // 사이드바 구동 로직
+
 import styles from './AdminSidebar.module.css';
 
 const AdminSidebar = () => {
@@ -26,7 +30,8 @@ const AdminSidebar = () => {
     setIsSidebarOpen((prevState) => !prevState); // 사이드바 열고 닫기
   };
 
-  // 화면 크기에 따라 사이드바 상태 유지
+  // 화면 크기에 따라 사이드바 상태 유지 ( 반응형 로직, 미완성 240930)
+
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth > 900) {
@@ -48,10 +53,12 @@ const AdminSidebar = () => {
 
   return (
     <div>
-      {/* 작은 화면에서 버튼을 눌러 사이드바를 여닫음 */}
+
+    {/* 작은 화면에서 버튼을 눌러 사이드바를 여닫음 , '◁' : '▷' 버튼안에 뜨는 여닫는 글자*/}
       <button className={styles.toggleButton} onClick={toggleSidebar}>
         {isSidebarOpen ? '◁' : '▷'}
       </button>
+
 
       {/* 사이드바 */}
       <div className={`${styles.adminSideBar} ${isSidebarOpen ? styles.open : styles.closed}`}>
@@ -95,7 +102,7 @@ const AdminSidebar = () => {
             {openMenus.customer && (
               <ul className={styles.subMenu}>
                 <li><Link to="#">문의 내역 게시판</Link></li>
-                <li><Link to="#">자주 묻는 질문 게시판</Link></li>
+                <li><Link to="/admin/FAQ">자주 묻는 질문 게시판</Link></li>
               </ul>
             )}
           </li>
@@ -106,4 +113,3 @@ const AdminSidebar = () => {
 };
 
 export default AdminSidebar;
-

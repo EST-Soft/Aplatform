@@ -12,7 +12,11 @@ import jobplatform.fo.common.config.JwtTokenProvider;
 import jobplatform.fo.enterprise.domain.dto.EnterRegisterDTO;
 import jobplatform.fo.user.domain.entity.MemberEntity;
 import jobplatform.fo.user.domain.repository.MemberRepository;
+import jobplatform.fo.user.domain.vo.MemberVO;
+import jobplatform.fo.user.service.M_MypageService;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -42,6 +46,8 @@ public class MemberController {
     private RestTemplate restTemplate;
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
+    @Autowired
+    private M_MypageService mypageService;
 
     @PostMapping("/login")
     public Map<String, Object> login(@RequestBody Map<String, String> params, HttpSession session, Model model) {
@@ -51,12 +57,12 @@ public class MemberController {
         if (member != null) {
             System.out.println("로그인 시도:" + params.get("mbrId") + "," + params.get("mbrPswrd"));
 
-            if (member.getDltChck()) {
+            if (member.getDltYn() == 'Y') {
                 System.out.println("로그인 실패: 탈퇴한 회원");
                 throw new ResponseStatusException(HttpStatus.FORBIDDEN, "탈퇴한 회원입니다.");
             }
 
-            if (!member.getUseChck()) {
+            if (member.getUseYn() == 'N') {
                 System.out.println("로그인 실패: 사용 중지된 회원");
                 throw new ResponseStatusException(HttpStatus.FORBIDDEN, "사용 중지된 회원입니다.");
             }
@@ -83,21 +89,29 @@ public class MemberController {
         return ResponseEntity.ok("로그아웃되었습니다.");
     }
 
-    @PutMapping("/update")
+    @PostMapping("/update")
     public ResponseEntity<?> updateMember(@RequestBody MemberEntity updatedMember) {
+        System.out.println("머냐아아:"+updatedMember);
         try {
             MemberEntity existingMember = memberRepository.findById(updatedMember.getMbrSq())
                     .orElseThrow(() -> new IllegalArgumentException("회원을 찾을 수 없습니다. 회원 순번: " + updatedMember.getMbrSq()));
 
+            if ((updatedMember.getMbrImgFileUrl() != null && updatedMember.getMbrImgFileUrl().length() > 0) ||
+            (updatedMember.getMbrImgOrgnlFn() != null && updatedMember.getMbrImgOrgnlFn().length() > 0)){
+                existingMember.setMbrImgFileUrl(updatedMember.getMbrImgFileUrl());
+                existingMember.setMbrImgOrgnlFn(updatedMember.getMbrImgOrgnlFn());
+            }
+            
             // 업데이트할 필드 설정
+            existingMember.setMbrId(updatedMember.getMbrId());
+            existingMember.setMbrName(updatedMember.getMbrName());
+            existingMember.setMbrAdrs(updatedMember.getMbrPswrd() + " " + updatedMember.getMbrAdrs());
             existingMember.setMbrEmlAdrs(updatedMember.getMbrEmlAdrs());
-            existingMember.setMbrPswrd(updatedMember.getMbrPswrd());
             existingMember.setMbrMp(updatedMember.getMbrMp());
-            existingMember.setUpdtMbrSq(updatedMember.getMbrSq());
             existingMember.setUpdtDtm(LocalDateTime.now()); // 수정 일시 설정
 
             MemberEntity updatedEntity = memberRepository.save(existingMember);
-            return ResponseEntity.ok(updatedEntity);
+            return ResponseEntity.ok("수정완료");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();
         } catch (Exception e) {
@@ -106,29 +120,37 @@ public class MemberController {
     }
 
     @PutMapping("/delete")
-    public ResponseEntity<String> deleteMember(@RequestBody MemberEntity deletedMember){
+    public ResponseEntity<String> deleteMember(@RequestBody MemberEntity deletedMember, HttpSession session){
+
         try {
             // 회원조회
-            MemberEntity existingMember = memberRepository.findById(deletedMember.getMbrSq())
-                    .orElseThrow(() -> new IllegalArgumentException("회원을 찾을 수 없습니다. 회원순번:" + deletedMember.getMbrSq()));
+            MemberEntity existingMember = memberRepository.findByMbrIdAndMbrPswrd(deletedMember.getMbrId(),deletedMember.getMbrPswrd());
+
+            if (existingMember == null) {
+                // 회원을 찾지 못한 경우
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("회원을 찾을 수 없습니다.");
+            }
 
             // 삭제,사용 여부 업데이트
-            existingMember.setDltChck(true); // 삭제 여부 true
-            existingMember.setUseChck(false); // 사용 여부 false
-            existingMember.setDltDtm(LocalDateTime.now()); // 삭제 일시 설정
+            existingMember.setDltYn('Y'); // 삭제 여부 true
+            existingMember.setUseYn('N'); // 사용 여부 false
+            existingMember.setUpdtDtm(LocalDateTime.now()); // 수정 일시 설정
 
             // 회원 정보 업데이트
             memberRepository.save(existingMember);
 
-            return ResponseEntity.ok("회원 탈퇴가 완료되었습니다.");
+            session.invalidate(); //세션 무효화
+
+            return ResponseEntity.ok("탈퇴완료");
+        } catch (DataAccessException e) {
+            // 데이터베이스 접근 문제
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("회원 탈퇴 중 오류가 발생했습니다.");
         } catch (IllegalArgumentException e) {
             // 회원을 찾지 못했을때
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("회원을 찾을 수 없습니다. 회원 순번:" + deletedMember.getMbrSq());
-        }
-        catch(Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("회원을 찾을 수 없습니다.");
+        } catch (Exception e) {
             // 기타 오류
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("회원 탈퇴 중 오류가 발생했습니다.");
-
         }
     }
 
@@ -141,7 +163,7 @@ public class MemberController {
         if (userData.getMbrPrvcyTrmsChck() == null || userData.getMbrPrvcyTrmsChck().isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("개인정보 약관 체크가 누락되었습니다.");
         }
-        if (userData.getGndrCtgryCd() == null || userData.getGndrCtgryCd().isEmpty()) {
+        if (userData.getGndrTypCd() == null || userData.getGndrTypCd().isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("성별 유형 코드가 누락되었습니다.");
         }
         // 아이디 중복 체크
@@ -152,9 +174,9 @@ public class MemberController {
 
         try {
             // admin일 경우 로직 추가해야함
-            userData.setInsrtMbrSq(99); // 임시 값 설정
-            userData.setDltChck(false);
-            userData.setUseChck(true);
+            userData.setInsrtMbrSq(99L); // 임시 값 설정
+            userData.setDltYn('N');
+            userData.setUseYn('Y');
 
             MemberEntity savedUser = memberRepository.save(userData); // 처음 저장
             savedUser.setInsrtMbrSq(savedUser.getMbrSq());
@@ -290,6 +312,49 @@ public class MemberController {
         } catch (Exception e) {
             return ResponseEntity.status(500).body("조회에 실패했습니다: " + e.getMessage());
         }
+    }
+
+    @GetMapping("/pwCk")
+    public ResponseEntity<String> pwCk(@RequestParam("mbr_id") String mbrId, @RequestParam("mbr_pw") String mbrPw){
+        // 사용자와 비밀번호 확인
+        MemberEntity mpw = memberRepository.findByMbrIdAndMbrPswrd(mbrId, mbrPw);
+        System.out.println(mpw);
+        if (mpw != null){
+            return ResponseEntity.ok("성공");
+        }else{
+            return ResponseEntity.ok("실패");
+        }
+    }
+
+    @PutMapping("/pwUpdate")
+    public ResponseEntity<Map<String, Object>> pwUpdate(@RequestBody Map<String, String> params, HttpSession session) {
+        Map<String, Object> map = new HashMap<>();
+        // 사용자와 비밀번호 확인
+        MemberEntity mpw = memberRepository.findByMbrIdAndMbrPswrd(params.get("mbrId"), params.get("currentPassword"));
+
+        if (mpw != null) {
+
+            // 비밀번호 재설정 로직 처리
+            int updatedRows = mypageService.pwUpdate(mpw.getMbrSq(), params.get("newPassword"));
+
+            if (updatedRows > 0) {
+                map.put("status", 200);
+                map.put("message", "비밀번호가 변경되었습니다.");
+                session.invalidate();
+                return ResponseEntity.ok(map); // 성공적으로 처리된 경우
+            } else {
+                // 업데이트가 실패한 경우
+                map.put("status", 300);
+                map.put("message", "비밀번호 변경중 오류가 발생했습니다. 다시 시도해 주세요.");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(map);
+            }
+        } else {
+            // 사용자 확인 실패
+            map.put("status", 400);
+            map.put("message", "현재 비밀번호를 잘 못 입력하였습니다.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(map);
+        }
+    
     }
 
     @PatchMapping("/PswrdReset")
@@ -432,11 +497,11 @@ public class MemberController {
                     member.setMbrEmlAdrs(email);
                     member.setMbrMp(mobile.replace("-", ""));
                     member.setMbrBd(birthDate);
-                    member.setGndrCtgryCd(gender);
+                    member.setGndrTypCd(gender);
 
-                    member.setSclCtgryCd("NAVER");
-                    member.setDltChck(false);
-                    member.setUseChck(true);
+                    // member.setSclCtgryCd("NAVER");
+                    member.setDltYn('N');
+                    member.setUseYn('Y');
                     member.setMbrEmlRcvChck("N");    // 임시 값 설정
                     member.setMbrPrvcyTrmsChck("Y");// 임시 값 설정
                     member.setMbrPswrd(name);       // 임시 값 설정
@@ -465,7 +530,7 @@ public class MemberController {
                 return new ResponseEntity<>(response, HttpStatus.OK);
             } else {
                 // 새로운 회원이면 회원 가입 처리 후 로그인 성공으로 처리
-                member.setInsrtMbrSq(99); // 임시 값 설정
+                member.setInsrtMbrSq(99L); // 임시 값 설정
                 MemberEntity savedUser = memberRepository.save(member); // 처음 저장
                 savedUser.setInsrtMbrSq(savedUser.getMbrSq());
                 memberRepository.save(savedUser);

@@ -28,7 +28,7 @@ public class M_MainPageController {
 
     //공고별 추천 인재 리스트 받기
     @GetMapping("/matchingResume/{jbp_sq}")
-    public String getMatchingResumeByJbp_sq(@PathVariable int jbp_sq) {
+    public String getMatchingResumeByJbp_sq(@PathVariable Long jbp_sq) {
         return new String();
     }
     

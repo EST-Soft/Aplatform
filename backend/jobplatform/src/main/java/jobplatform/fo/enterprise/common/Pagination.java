@@ -21,38 +21,21 @@ public class Pagination {
 	private int endNumOfPageGroups;      // 페이지 그룹의 마지막페이지 번호
 	
 	public Pagination(int totalDataCount, int showDataCountPerPage, int pageNo, int showPageGroupsCount) {
-		super();
-		this.totalDataCount = totalDataCount;
-		this.showDataCountPerPage = showDataCountPerPage;
-		this.totalPageCount = (int)Math.ceil((double)totalDataCount / (double)showDataCountPerPage);;
-		this.startRowIndex = (pageNo - 1) * showDataCountPerPage;
-		this.pageNo = pageNo;
-		
-		this.totalPageGroupsCount = (int)Math.ceil((double)totalPageCount /(double)showPageGroupsCount);
-		this.showPageGroupsCount = showPageGroupsCount;
-		this.pageGroupsOfCurrentPage = (int)Math.ceil((double)pageNo/(double)showPageGroupsCount);
-		this.startNumOfPageGroups = (int)Math.ceil(((double)(pageGroupsOfCurrentPage - 1) * (double)showPageGroupsCount) +1);
-		this.endNumOfPageGroups = pageGroupsOfCurrentPage * showPageGroupsCount;
-		if(this.endNumOfPageGroups > this.totalPageCount) {
-			this.endNumOfPageGroups = this.totalPageCount;
-		}
-	}
-	
-	public Pagination(int totalDataCount, int pageNo) {
-		super();
-		this.totalDataCount = totalDataCount;
-		this.showDataCountPerPage = 10;
-		this.totalPageCount = (int)Math.ceil((double)totalDataCount / 10);;
-		this.startRowIndex = (pageNo - 1) * 10;
-		this.pageNo = pageNo;
-		
-		this.totalPageGroupsCount = (int)Math.ceil((double)totalPageCount / 5);
-		this.showPageGroupsCount = 5;
-		this.pageGroupsOfCurrentPage = (int)Math.ceil((double)pageNo/5);
-		this.startNumOfPageGroups = (int)Math.ceil(((double)(pageGroupsOfCurrentPage - 1) * 5) +1);
-		this.endNumOfPageGroups = pageGroupsOfCurrentPage * 5;
-		if(this.endNumOfPageGroups > this.totalPageCount) {
-			this.endNumOfPageGroups = this.totalPageCount;
-		}
-	}	
+        this.totalDataCount = totalDataCount;
+        this.showDataCountPerPage = showDataCountPerPage;
+        this.totalPageCount = (int) Math.ceil((double) totalDataCount / showDataCountPerPage);
+        this.startRowIndex = (pageNo - 1) * showDataCountPerPage;
+        this.pageNo = pageNo;
+
+        this.showPageGroupsCount = Math.min(showPageGroupsCount, totalPageCount);
+        this.totalPageGroupsCount = (int) Math.ceil((double) totalPageCount / this.showPageGroupsCount);
+        this.pageGroupsOfCurrentPage = (int) Math.ceil((double) pageNo / this.showPageGroupsCount);
+        this.startNumOfPageGroups = (int) Math.ceil(((double) (pageGroupsOfCurrentPage - 1) * this.showPageGroupsCount) + 1);
+
+        this.endNumOfPageGroups = Math.min(pageGroupsOfCurrentPage * this.showPageGroupsCount, totalPageCount);
+    }
+
+    public Pagination(int totalDataCount, int pageNo) {
+        this(totalDataCount, 10, pageNo, 5);
+    }
 }

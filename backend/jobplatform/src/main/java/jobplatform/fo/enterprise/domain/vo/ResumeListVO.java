@@ -17,9 +17,11 @@ public class ResumeListVO {
 	// 대표여부
 	private String rsm_rprsntv_yn;
 	// 제목
-	private String rsm_tl;
+	private String rsm_ttl;
 	// 수정일
 	private Timestamp updt_dtm;
+	// 등록일
+	private Timestamp insrt_dtm;
 	
 	
 }

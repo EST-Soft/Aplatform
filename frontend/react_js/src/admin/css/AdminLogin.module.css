@@ -1,0 +1,336 @@
+/* 기존 로그인 스타일 유지 */
+.loginForm {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    width: 100%;
+    height: 60vh;
+}
+
+.loginBox {
+    width: 38em;
+    height: 50%;
+    margin: 0 auto;
+}
+
+.logo {
+    margin-top: 1em;
+    user-select: none;
+}
+
+.text {
+    padding: 0 0 0 5em;
+    margin: -1em 0 2em 0;
+    user-select: none;
+}
+
+.inputBox {
+    padding-left: 5px;
+    background-color: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    height: 35em;
+    border: 1px solid lightgrey;
+}
+
+.lineDiv {
+    border: 1px solid #0088CC;
+    background-color: #0088CC;
+    width: 100%;
+    height: 1em;
+    border-radius: 5px 5px 0 0;
+}
+
+.idInput, .pwInput {
+    width: 30rem;
+    height: 4rem;
+    outline: none;
+    border: 0.5px solid lightgrey;
+    border-radius: 5px;
+}
+
+.buttonDiv {
+    display: flex;
+    width: 100%;
+    justify-content: flex-end;
+}
+
+.underBar {
+    border: 0.5px solid lightgrey;
+    width: 90%;
+}
+
+button {
+    outline: none;
+    width: 8rem;
+    height: 3rem;
+    margin-right: 2em;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    background-color: #0088CC;
+}
+
+button:hover {
+    border: 1px solid #0088CC;
+    background-color: #ffffff;
+    color: #0088CC;
+}
+
+button:active {
+    border: none;
+    background-color: #0088CC;
+    color: #ffffff;
+}
+
+/* 아이디/비번 찾기 스타일 */
+
+.findAccountForm {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+
+    margin-top: 0;
+}
+
+.radius{
+
+    border: 1px solid lightgrey;
+    width: 40em;
+    height: 70%;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+}
+
+.formBox {
+    width: 38em;
+    height: auto;
+    margin: 0 auto;
+    padding: 2em;
+    border: 1px solid lightgrey;
+    border-radius: 5px;
+}
+
+.findInput {
+
+    width: 30rem;
+    height: 4rem;
+    outline: none;
+    border: 0.5px solid lightgrey;
+    border-radius: 5px;
+    padding: 0 1em;
+    margin-bottom: 1.5em;
+
+}
+
+.findMailInput {
+
+    width: 25rem;
+    height: 4rem;
+    outline: none;
+    border: 0.5px solid lightgrey;
+    border-radius: 5px;
+    padding: 0 1em;
+    margin-bottom: 1.5em;
+
+}
+
+.authBtn{
+    width: 5em;
+    height: 4rem;
+    margin-left: 1em;
+}
+
+.findButton {
+    outline: none;
+    width: 8rem;
+    height: 3rem;
+    margin-left: auto;
+    margin-right: auto;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    background-color: #0088CC;
+    cursor: pointer;
+}
+
+.tabButtons {
+    display: flex;
+    justify-content: center;
+    margin-bottom:1.5em;
+    padding: 5em 0 0 0;
+}
+
+.tabButtons button {
+    margin-right: 1em;
+    padding: 0.5em 1em;
+    cursor: pointer;
+    border: 1px solid #0088CC;
+    background: none;
+    color: #0088CC;
+}
+
+.activeTab {
+    background-color: #0088CC;
+    color: white;
+}
+
+@media (min-width:480px) and (max-width:768px)  {
+
+    .logo{
+        width: 35%;
+        height: 15%;
+        padding-left: 3.5em ;
+        
+    }
+
+    .text{
+        padding-left: 7em;
+    }
+
+    .lineDiv{
+        display: none;
+        
+        
+    }
+
+    .inputBox{
+        width: 90%;
+        padding-left: 5em;
+
+        border:none;
+    }
+
+    .idInput{
+        width: 30em;
+        
+    }
+    .pwInput{
+        width: 30em;
+    }
+
+    button{
+       width: 90%;
+       
+    }
+
+    /* ID, 비밀번호 찾기 반응형  */
+
+    .findInput{
+        width: 30em;
+    }
+
+    .radius{
+
+        border : none;
+        width: 40em;
+        height: 70%;
+    
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    
+    }
+
+}
+
+@media (min-width: 375px) and (max-width: 479px){
+
+    /* 로그인 반응형 컨트롤 css */
+    .logo{
+        width: 55%;
+        height: 20%;
+        padding-left: 3.5em ;
+
+        padding-left: 8em;
+        
+    }
+
+    .text{
+        padding-left: 13em;
+    }
+
+    .lineDiv{
+        display: none;
+               
+    }
+    
+    .idInput{
+        width: 20em;
+    }
+    .pwInput{
+        width: 20em;
+    
+    }
+    .inputBox{
+
+        width: 90%;
+        padding-left: 5em;
+
+        border:none;
+
+        display:flex;
+        justify-content: flex-start;
+        align-items: flex-start;
+    }
+
+    .underBar{
+        width: 68%;
+        margin-bottom: 2em;
+
+    }
+
+    .buttonDiv{
+        display: flex;
+
+        justify-content: flex-start;
+        padding: 2em;
+    }
+
+    button{
+        width: 60%;
+        
+     }
+
+     /* id,비밀번호찾기 반응형 컨트롤 css */
+
+     
+     .findInput{
+        width: 25em;
+        margin-left:1em;
+    }
+
+    .radius{
+
+        border : none;
+        width: 40em;
+        height: 70%;
+    
+    }
+    .findMailInput {
+
+        width: 15rem;
+        height: 4rem;
+        outline: none;
+        border: 0.5px solid lightgrey;
+        border-radius: 5px;
+        padding: 0 1em;
+        margin-bottom: 1.5em;
+        margin-left:1em;
+    }
+
+    .authBtn{
+        width: 5em;
+        height: 4rem;
+        margin-left:1em;
+    }
+}
+

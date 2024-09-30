@@ -35,7 +35,7 @@ public class JobPostingEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "jbp_sq", nullable = false)
-    private int jbpSq;
+    private Long jbpSq;
 
 //    @ManyToOne
 //    @JoinColumn(name = "entrprs_sq", referencedColumnName = "entrprs_sq", nullable = false)
@@ -47,23 +47,23 @@ public class JobPostingEntity {
 
     
     
-    @Column(name = "jbp_tl", nullable = false, length = 30)
-    private String jbpTl = "";
+    @Column(name = "jbp_ttl", nullable = false, length = 30)
+    private String jbpTtl = "";
 
     @Column(name = "jbp_cntnt", nullable = false, length = 500)
     private String jbpCntnt = "";
 
     @Column(name = "hits", nullable = false)
-    private int hits = 0;
+    private Long hits = (long) 0;
 
-    @Column(name = "cr", nullable = false, length = 20)
-    private String cr = "";
+    @Column(name = "crr_drtn", nullable = false, length = 10)
+    private String crrDrtn = "";
 
     @Column(name = "skl_name", nullable = false, length = 30)
     private String sklName = "";
 
     @Convert(converter = StringListConverter.class)
-    @Column(name = "job_name", nullable = false, length = 20)
+    @Column(name = "job_name", nullable = false, length = 200)
     private List<String> jobName;
 
     @Column(name = "edctn", nullable = false, length = 10)
@@ -79,7 +79,7 @@ public class JobPostingEntity {
     @Column(name = "slry", nullable = false, length = 10)
     private String slry = "";
 
-    @Column(name = "work_hour", nullable = false, length = 10)
+    @Column(name = "work_hour", nullable = false, length = 20)
     private String workHour = "";
 
     @Column(name = "regstr_strt_dtm", nullable = false)

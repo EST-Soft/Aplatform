@@ -15,18 +15,18 @@
 	</select>
 	<!-- 이력서 중 대표 이력서 이력서 순번, 이력서 제목, 등록일시, 최종 수정일시, 이미지 -->
 	<select id="getRprsntvRsmInfo">
-		SELECT rsm_sq, rsm_tl, insrt_dtm, updt_dtm, rsm_img_file_url
+		SELECT rsm_sq, rsm_ttl, insrt_dtm, updt_dtm, rsm_img_file_url
 		FROM p2_tbl_resume_m
 		WHERE 
 			mbr_sq = #{mbr_sq}
-			AND
+		AND
 			rsm_rprsntv_yn = 'Y'
 	</select>
 	<!--
 	카사디안 곱 결과물 만들고 where절 비교할듯.. 즉 성능면에서 더 떨어질 듯...
 	<select>
 	    SELECT 
-	        m.mbr_name, m.mbr_mp, m.mbr_eml_adrs, m.pstn_prpsl_accept_yn, r.rsm_sq, r.rsm_tl, r.insrt_dtm, r.updt_dtm, r.rsm_img_file_rul
+	        m.mbr_name, m.mbr_mp, m.mbr_eml_adrs, m.pstn_prpsl_accept_yn, r.rsm_sq, r.rsm_ttl, r.insrt_dtm, r.updt_dtm, r.rsm_img_file_rul
 	    FROM 
 	        p3_tbl_member_m m
 	    	LEFT JOIN p2_tbl_resume_m r ON m.mbr_sq = r.mbr_sq AND r.rsm_rprsntv_yn = 'Y'
@@ -46,12 +46,13 @@
 			rsm_sq = #{rsm_sq}
 		GROUP BY apy_cndtn -->
 		SELECT
-			COALESCE(SUM(CASE WHEN apy_cndtn = 401 THEN 1 ELSE 0 END), 0) AS cndtn_401,
-		    COALESCE(SUM(CASE WHEN apy_cndtn = 402 THEN 1 ELSE 0 END), 0) AS cndtn_402,
-		    COALESCE(SUM(CASE WHEN apy_cndtn = 405 THEN 1 ELSE 0 END), 0) AS cndtn_405,
-		    COALESCE(SUM(CASE WHEN apy_cndtn = 406 THEN 1 ELSE 0 END), 0) AS cndtn_406,
-		    COALESCE(SUM(CASE WHEN apy_cndtn = 407 THEN 1 ELSE 0 END), 0) AS cndtn_407,
-		    COALESCE(SUM(CASE WHEN apy_cndtn = 408 THEN 1 ELSE 0 END), 0) AS cndtn_408
+
+			SUM(CASE WHEN apy_cndtn = 'unrd' THEN 1 ELSE 0 END) AS cndtn_unrd,
+			SUM(CASE WHEN apy_cndtn = 'read' THEN 1 ELSE 0 END) AS cndtn_read,
+			SUM(CASE WHEN apy_cndtn = 'iw' THEN 1 ELSE 0 END) AS cndtn_iw,
+			SUM(CASE WHEN apy_cndtn = 'ic' THEN 1 ELSE 0 END) AS cndtn_ic,
+			SUM(CASE WHEN apy_cndtn = 'pass' THEN 1 ELSE 0 END) AS cndtn_pass,
+			SUM(CASE WHEN apy_cndtn = 'np' THEN 1 ELSE 0 END) AS cndtn_np
 		FROM p2_tbl_apply_h
 		WHERE
 			rsm_sq = #{rsm_sq}
@@ -64,7 +65,7 @@
 		SELECT
 			(SELECT COUNT(*) FROM p2_tbl_resume_m WHERE mbr_sq = #{mbr_sq} AND use_yn = 'Y') rsm_cnt,
 			(SELECT COUNT(*) FROM p2_tbl_scrap_s WHERE mbr_sq = #{mbr_sq}) scrap_cnt,
-			(SELECT COUNT(*) FROM p2_tbl_position_proposal_m WHERE rsm_sq = #{rsm_sq} AND pstn_prpsl_cndtn = 301) prpsl_cnt
+			(SELECT COUNT(*) FROM p2_tbl_position_proposal_m WHERE rsm_sq = #{rsm_sq} AND pstn_prpsl_cndtn = 'ppw') prpsl_cnt
 		FROM dual
 	</select>
 
@@ -77,7 +78,9 @@
 	월별 지원 공고 데이터 AC
 	s.mbr_sq = #{mbr_sq} 서브쿼리로 빼서 필터링 한다음 조인하는게 좋을까?--> 
 	<select id="getToMakeCalendarData">
-		SELECT "S" tbl_type, j.jbp_sq, j.jbp_tl, DATE_FORMAT(j.regstr_dln_dtm, '%Y-%m-%d') as dtm
+
+		SELECT "S" tbl_type, j.jbp_sq, j.jbp_ttl, DATE_FORMAT(j.regstr_dln_dtm, '%y-%m-%d') as dtm
+
 		FROM p2_tbl_scrap_s s,
 			 p2_tbl_job_posting_m j
 		WHERE
@@ -87,17 +90,18 @@
 			AND
 			MONTH(j.regstr_dln_dtm) = #{month}
 		UNION
-		SELECT "I" tbl_type, j.jbp_sq, j.jbp_tl, DATE_FORMAT(a.intv_dtm, '%Y-%m-%d') as dtm
+		SELECT "I" tbl_type, j.jbp_sq, j.jbp_ttl, DATE_FORMAT(a.intv_dtm, '%y-%m-%d') as dtm
 		FROM p2_tbl_apply_h a,
 			 p2_tbl_job_posting_m j
 		WHERE
 			a.rsm_sq = #{rsm_sq}
 			AND
-			apy_cndtn = 405
+			apy_cndtn = 'iw'
 			AND
 			MONTH(intv_dtm) = #{month}
 		UNION
-		SELECT "PP" tbl_type, j.jbp_sq, j.jbp_tl, DATE_FORMAT(j.regstr_dln_dtm, '%Y-%m-%d') as dtm
+
+		SELECT "PP" tbl_type, j.jbp_sq, j.jbp_ttl, DATE_FORMAT(j.regstr_dln_dtm, '%y-%m-%d') as dtm
 		FROM p2_tbl_position_proposal_m p,
 			 p2_tbl_job_posting_m j
 		WHERE 
@@ -107,7 +111,7 @@
 			AND
 			MONTH(j.regstr_dln_dtm) = #{month}
 		UNION
-		SELECT  "AC" tbl_type, j.jbp_sq, j.jbp_tl, DATE_FORMAT(a.apy_dtm, '%Y-%m-%d') as dtm
+		SELECT  "AC" tbl_type, j.jbp_sq, j.jbp_ttl, DATE_FORMAT(a.apy_dtm, '%y-%m-%d') as dtm
 		FROM p2_tbl_apply_h a,
 			 p2_tbl_job_posting_m j
 		WHERE
@@ -235,24 +239,16 @@
 	<!-- 포지션 제안 받은 공고 리스트 가져오기 -->
 	<!-- COUNT(*) OVER() as total_count 한번에 구하기 -> vo 등 다 바꿔줘야함 -->
 	<select id="getPPJopPostingData" resultType="jobplatform.fo.user.domain.vo.M_JobPosting_pp">
-		SELECT
-			sjp.jbp_sq, sjp.entrprs_sq, sjp.jbp_tl, sjp.jbp_cntnt,
-			(SELECT code_name FROM p2_tbl_common_code_dtl_s ccd WHERE ccd.code_id = sjp.cr) cr,
-			(SELECT code_name FROM p2_tbl_common_code_dtl_s ccd WHERE ccd.code_id = sjp.edctn) edctn,
-			sjp.regstr_dln_dtm, sjp.pstn_prpsl_sq, sjp.pstn_prpsl_cndtn, sjp.prpsl_dtm, em.entrprs_name,
-			sjp.hits, sjp.work_form, sjp.slry
+		SELECT 
+			sjp.jbp_sq, sjp.entrprs_sq, sjp.jbp_ttl, sjp.jbp_cntnt, sjp.crr_drtn, sjp.edctn, sjp.regstr_dln_dtm, sjp.pstn_prpsl_sq, sjp.pstn_prpsl_cndtn, sjp.prpsl_dtm, em.entrprs_name
 		FROM
 			(SELECT 
-				jp.jbp_sq, jp.entrprs_sq, jp.jbp_tl, jp.jbp_cntnt, jp.cr, jp.edctn, jp.regstr_dln_dtm, jp.hits, jp.work_form, jp.slry,
-				pp.pstn_prpsl_sq, pp.pstn_prpsl_cndtn, pp.prpsl_dtm
+				jp.jbp_sq, jp.entrprs_sq, jp.jbp_ttl, jp.jbp_cntnt, jp.crr_drtn, jp.edctn, jp.regstr_dln_dtm, pp.pstn_prpsl_sq, pp.pstn_prpsl_cndtn, pp.prpsl_dtm
 			FROM
 				p2_tbl_job_posting_m jp, p2_tbl_position_proposal_m pp
 			WHERE 
-				jp.jbp_sq IN (SELECT jbp_sq FROM p2_tbl_position_proposal_m WHERE rsm_sq = #{rsm_sq} AND pstn_prpsl_cndtn = 301)
-				AND
-				jp.jbp_sq = pp.jbp_sq
-			) sjp
-		LEFT OUTER JOIN p3_tbl_enterprise_member_m em ON sjp.entrprs_sq = em.entrprs_sq
+				jp.jbp_sq IN (SELECT jbp_sq FROM p2_tbl_position_proposal_m WHERE rsm_sq = #{rsm_sq} AND pstn_prpsl_cndtn = 'ppw')) sjp
+		LEFT OUTER JOIN p2_tbl_enterprise_member_m em ON sjp.entrprs_sq = em.entrprs_sq
 		ORDER BY sjp.prpsl_dtm DESC
 		LIMIT #{limit}
 		OFFSET #{offset}
@@ -284,7 +280,7 @@
 	</select>
 	<!-- 공고-스킬 관계 가지고오기 -->
 	<select id="getSkillsOfJobPost">
-		SELECT skl_cd_sq FROM p2_tbl_skill_code_posting_r WHERE jbp_sq = #{jbp_sq}
+		SELECT skl_code_sq FROM p2_tbl_skill_code_posting_r WHERE jbp_sq = #{jbp_sq}
 	</select>
 
 	<!-- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@마이페이지 제안 받은 포지션 리스트 화면 END@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ -->
@@ -318,8 +314,8 @@
 	<select id="skillCodeToName" parameterType="java.util.List" resultType="string">
         SELECT skl_sc_name
         FROM p2_tbl_skill_code_s
-        WHERE skl_cd_sq IN
-        <foreach item="item" index="index" collection="skills" open="(" separator="," close=")">
+        WHERE skl_code_sq IN
+        <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
             #{item}
         </foreach>
     </select>

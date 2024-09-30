@@ -13,7 +13,7 @@
     <resultMap id="myJobPostSimpleDataResultMap" type="jobplatform.fo.enterprise.domain.vo.MyJobPostSimpleDataVO">
         <id property="jbp_sq" column="jbp_sq" />
         <result property="entrprs_sq" column="entrprs_sq" />
-        <result property="jbp_tl" column="jbp_tl" />
+        <result property="jbp_ttl" column="jbp_ttl" />
         <result property="insrt_dtm" column="insrt_dtm" />
         <result property="jbp_cndtn" column="jbp_cndtn" />
         <collection property="applicationStatusList" ofType="jobplatform.fo.enterprise.domain.vo.ApplyConditionCount">
@@ -24,7 +24,7 @@
     
     <select id="getMyJobPostSimpleData" resultMap="myJobPostSimpleDataResultMap">    
         SELECT 
-            jpm.jbp_sq, jpm.entrprs_sq, jpm.jbp_tl, jpm.insrt_dtm, jpm.jbp_cndtn, aph.apy_cndtn, aph.cnt
+            jbp_sq, entrprs_sq, jbp_ttl, insrt_dtm, jbp_cndtn 
         FROM 
             p2_tbl_job_posting_m jpm
         LEFT JOIN(
@@ -56,7 +56,7 @@
     </resultMap>
 
     <select id="getJobPostData" resultMap="jobPostingResultMap">
-        SELECT jp.jbp_sq, jp.edctn, jp.slry, scp.skl_cd_sq
+        SELECT jp.jbp_sq, jp.edctn, jp.slry, scp.skl_code_sq
         FROM p2_tbl_job_posting_m jp
         LEFT JOIN p2_tbl_skill_code_posting_r scp ON jp.jbp_sq = scp.jbp_sq
         WHERE jp.jbp_sq = #{jbp_sq}
@@ -68,23 +68,23 @@
         <id property="rsm_sq" column="rsm_sq" />
         <result property="mbr_sq" column="mbr_sq" />
         <result property="rsm_img_file_url" column="rsm_img_file_url" />
-        <result property="rsm_fnl_edctn_cd" column="rsm_fnl_edctn_cd" />
+        <result property="rsm_fnl_edctn_code" column="rsm_fnl_edctn_code" />
         <result property="rsm_es" column="rsm_es" />
-        <result property="rsm_tl" column="rsm_tl" />
+        <result property="rsm_ttl" column="rsm_ttl" />
         <result property="rsm_eml" column="rsm_eml" />
         <result property="updt_dtm" column="updt_dtm" />
         <collection property="crtfct_name" ofType="string" column="crtfct_name" />
-        <collection property="skl_cd_sq" ofType="int" column="skl_cd_sq" />
+        <collection property="skl_code_sq" ofType="int" column="skl_code_sq" />
     </resultMap>
 
     <select id="getMatchResumes" resultMap="resumeResultMap">
         SELECT SECOND.*, rc.crtfct_name
         FROM 
             (
-            SELECT FIRST.*, scr.skl_cd_sq
+            SELECT FIRST.*, scr.skl_code_sq
             FROM
                 (
-                SELECT r.rsm_sq, r.mbr_sq, r.rsm_img_file_url, r.rsm_fnl_edctn_cd, r.rsm_tl, r.rsm_eml, r.updt_dtm
+                SELECT r.rsm_sq, r.mbr_sq, r.rsm_img_file_url, r.rsm_fnl_edctn_code, r.rsm_ttl, r.rsm_eml, r.updt_dtm
                 FROM p2_tbl_resume_m r
                 WHERE
                     r.rsm_rprsntv_yn = 'Y'

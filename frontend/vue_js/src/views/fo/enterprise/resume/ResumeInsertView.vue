@@ -451,6 +451,7 @@ const submitPost = async () => {
   const isValidCertificate = certificateDatas.value.length > 0 ? validateCertificateForm() : true;
   const isValidSelfIntroduction = selfIntroductionDatas.value.length > 0 ? validateSelfIntroductionForm() : true;
 
+
   if (!isValidForm || !isValidEducation || !isValidCareer || !isValidCertificate || !isValidSelfIntroduction) {
     console.log('Validation failed, aborting submission.');
     return; // 유효성 검사 실패 시 요청을 중단

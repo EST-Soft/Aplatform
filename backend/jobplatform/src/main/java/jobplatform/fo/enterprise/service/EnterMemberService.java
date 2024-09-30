@@ -6,7 +6,7 @@ import jobplatform.fo.enterprise.domain.dto.EnterRegisterDTO;
 public interface EnterMemberService {
 
     public void insert(EnterRegisterDTO enterMemberDTO);
-    
+
     
     public Long login(EnterLoginDTO enterLoginDTO);
 

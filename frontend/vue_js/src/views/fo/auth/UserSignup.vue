@@ -46,15 +46,15 @@
             <input
               type="radio"
               id="male"
-              value="1"
-              v-model="formData.gndrCtgryCd"
+              value="m"
+              v-model="formData.gndrTypCd"
             />
             <label for="male">남성</label>
             <input
               type="radio"
               id="female"
-              value="0"
-              v-model="formData.gndrCtgryCd"
+              value="f"
+              v-model="formData.gndrTypCd"
               class="ml-3"
             />
             <label for="2">여성</label>
@@ -196,7 +196,7 @@ const agreed = ref(false);
 const emailSent = ref(false);
 const emailError = ref("");
 const formData = ref({
-  gndrCtgryCd: "", //성별
+  gndrTypCd: "", //성별
   mbrBd: "", //생일
   mbrId: "",
   mbrPswrd: "",

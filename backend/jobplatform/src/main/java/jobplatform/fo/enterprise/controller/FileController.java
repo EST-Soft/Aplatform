@@ -44,7 +44,7 @@ public class FileController {
     @GetMapping("/{filename}")
     public ResponseEntity<?> downloadImage(@PathVariable String filename) {
         System.out.println("asdasadsds" + filename);
-        File file = new File("C:/Users/sun/Desktop/asddasdasd/" + filename);
+        File file = new File("/home/ubuntu/alpatform/file/" + filename);
         System.out.println(file);
         
 

@@ -640,4 +640,29 @@ const emlChck = () => {
 .form-group input[type="radio"]:nth-child(2) {
   margin-left: 10px;
 }
+
+.mb-2{
+  background-color: black;
+  color: white;
+}
+
+.form-control{
+  width: 450px;
+}
+
+.row{
+  flex-wrap: nowrap;
+}
+
+@media (max-width: 768px){
+  .form-control{
+    width:500px;
+  }
+
+  .mb-2{
+    background-color: black;
+    color: white;
+    margin-left:30px;
+  }
+}
 </style>

@@ -60,8 +60,8 @@
 
       <div class="row">
         <div class="col-md-3 mb-3">
-          <label for="cr" class="form-label">경력</label>
-          <select v-model="cr" class="form-control" id="cr">
+          <label for="crrDrtn" class="form-label">경력</label>
+          <select v-model="crrDrtn" class="form-control" id="crrDrtn">
             <option value="801">경력무관</option>
             <option value="802">신입</option>
             <option value="803">경력</option>
@@ -169,7 +169,7 @@ const jbpSq = ref(0);
 const entrprsSq = store.getters.getMember.pk;
 const jbpTtl = ref('');
 const jbpCntnt = ref('');
-const cr = ref(801);
+const crrDrtn = ref(801);
 const sklName = ref('');
 const edctn = ref(606);
 const workForm = ref('정규직');
@@ -226,6 +226,31 @@ const submitPost = () => {
   const jobNames = selectedJobs.value.map(job => job.jobScName);
   const areaNames = selectedWorkAreas.value.map(area => area.areaName);
 
+  console.log("전송할 데이터:", {
+  jbpSq: jbpSq.value,
+  enterpriseMember: {
+    entrprsSq: entrprsSq,
+  },
+  jbpTtl: jbpTtl.value,
+  jbpCntnt: jbpCntnt.value,
+  crrDrtn: crrDrtn.value,
+  sklName: sklName.value,
+  jobName: jobNames,
+  edctn: edctn.value,
+  workArea: areaNames,
+  workForm: workForm.value,
+  slry: interviewAgreement.value ? '면접 후 협의' : `${slry.value} 만원`,
+  workHour: `${workStartTime.value} ~ ${workEndTime.value}`,
+  regstrStrtDtm: regstrStrtDtm.value.split('T')[0],
+  regstrDlnDtm: regstrDlnDtm.value.split('T')[0],
+  picName: picName.value,
+  picMp: picMp.value,
+  picEml: picEml.value,
+  jbpEndYn: jbpEndYn.value,
+  jbpCndtn: jbpCndtn.value,
+  insrtMbrSq: insrtMbrSq.value,
+});
+
   api.$post('/board/jobPostingInsert', {
     jbpSq: jbpSq.value,
     enterpriseMember: {
@@ -233,7 +258,7 @@ const submitPost = () => {
     },
     jbpTtl: jbpTtl.value,
     jbpCntnt: jbpCntnt.value,
-    cr: cr.value,
+    crrDrtn: crrDrtn.value,
     sklName: sklName.value,
     jobName: jobNames,
     edctn: edctn.value,
@@ -241,8 +266,8 @@ const submitPost = () => {
     workForm: workForm.value,
     slry: interviewAgreement.value ? '면접 후 협의' : slry.value + " 만원",
     workHour: `${workStartTime.value} ~ ${workEndTime.value}`,
-    regstrStrtDtm: regstrStrtDtm.value,
-    regstrDlnDtm: regstrDlnDtm.value,
+    regstrStrtDtm: regstrStrtDtm.value.split('T')[0],
+    regstrDlnDtm: regstrDlnDtm.value.split('T')[0],
     picName: picName.value,
     picMp: picMp.value,
     picEml: picEml.value,
@@ -251,6 +276,7 @@ const submitPost = () => {
     insrtMbrSq: insrtMbrSq.value,
   })
     .then(response => {
+      console.log("bbbbbb");
       const { detailUrl, jbpSq: insertedJbpSq } = response;
       jbpSq.value = insertedJbpSq;
       console.log("글 번호: " + jbpSq.value);
@@ -267,9 +293,9 @@ const submitPost = () => {
 const clearForm = () => {
   jbpTtl.value = '';
   jbpCntnt.value = '';
-  cr.value = 801;
+  crrDrtn.value = 801;
   sklName.value = '';
-  edctn.value = 606;
+  edctn.value = "606";
   workForm.value = '정규직';
   slry.value = '';
   workStartTime.value = '';

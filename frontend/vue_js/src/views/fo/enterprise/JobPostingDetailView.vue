@@ -17,8 +17,8 @@
           <div class="row mt-3">
             <div class="col-md-3">
               <div class="mb-3">
-                <label for="jbpTl" class="form-label">제목</label>
-                <input type="text" v-model="jbp.jbpTl" class="form-control" id="jbpTl" placeholder="제목" readonly />
+                <label for="jbpTtl" class="form-label">제목</label>
+                <input type="text" v-model="jbp.jbpTtl" class="form-control" id="jbpTtl" placeholder="제목" readonly />
               </div>
             </div>
             <div class="col-md-3">
@@ -43,8 +43,8 @@
           <div class="row mt-3">
             <div class="col-md-4">
               <div class="mb-3">
-                <label for="cr" class="form-label">경력</label>
-                <input type="text" :value="careerText " class="form-control" id="cr" placeholder="경력" readonly />
+                <label for="crrDrtn" class="form-label">경력</label>
+                <input type="text" :value="careerText " class="form-control" id="crrDrtn" placeholder="경력" readonly />
               </div>
             </div>
             <div class="col-md-4">
@@ -90,14 +90,14 @@
           </div>
           
           <!-- 입사지원 버튼 -->
-        <div class="row mt-3">
+        <div v-show="isMember" class="row mt-3">
           <div class="col d-flex justify-content-end">
             <button class="btn btn-primary" @click="applyJob">입사지원</button>
           </div>
         </div>
 
           <!-- 수정, 삭제 버튼 -->
-          <div class="row mt-3">
+          <div v-show="checkEnter" class="row mt-3">
             <div class="col d-flex justify-content-end">
               <button class="btn btn-success" @click="goUpdatePage(jbp)">수정</button>
               <button class="btn btn-danger ms-2" @click="confirmDelete">삭제</button>
@@ -113,8 +113,10 @@
   import { api } from '@/axios.js';
   import { useRoute, useRouter } from 'vue-router';
   import QuillEditorComponent from '@/components/common/Editor.vue';
+  import { useStore } from 'vuex';
 
 
+  const store = useStore();
   const isEditable = ref(true);
 
   const route = useRoute();
@@ -122,17 +124,29 @@
   
   const loading = ref(true);
 
+  const isMember = computed(() => {
+  return store.getters.getMember?.mbrSq != null;
+  });
 
+  // const jobId = route.params.jbpSq;
+
+  const checkEnter = ref(false);
+
+  const enterCheck = () => {
+    if(store.getters.getMember?.pk == jbp.value.entrprsSq){
+      checkEnter.value = true;
+    }
+  };
 
 
   const jbp = ref({
     jbpSq: 0,
     entrprsSq : 0,
     enterpriseName: "",
-    jbpTl: "",
+    jbpTtl: "",
     jbpCntnt: "",
     hits: 0,
-    cr: "",
+    crrDrtn: "",
     edctn: "",
     workArea: "",
     jobName: "",
@@ -155,7 +169,7 @@
     try {
       const response = await api.$get(`/board/detail/jobPosting/${jbpSq}`);
       jbp.value = response;
-      
+      enterCheck();
     } catch (error) {
       console.error('Error fetching job posting detail:', error);
     } finally {
@@ -167,8 +181,12 @@
   
   onMounted(() => {
     fetchJobPostingDetail();
-    const entrprsSq = jbp.value.entrprsSq;
-    console.log("entrprsSqqqqqq", entrprsSq);
+    
+    // const entrprsSq = jbp.value.entrprsSq;
+    // console.log("entrprsSqqqqqq", entrprsSq);
+    // console.log("qqqq", store.getters.getMember?.pk);
+    // console.log("www", jbp.value.entrprsSq);
+    // console.log("asd : ", jobId);
   });
   
   const goUpdatePage = (jbp) => {
@@ -244,7 +262,7 @@ const getCareerText = (value) => {
 };
 
 const educationText = computed(() => getEducationText(jbp.value.edctn));
-const careerText = computed(() => getCareerText(jbp.value.cr));
+const careerText = computed(() => getCareerText(jbp.value.crrDrtn));
 
   </script>
   

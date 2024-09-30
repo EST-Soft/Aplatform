@@ -18,9 +18,7 @@
 
     <section class="card card-admin">
       <div class="container py-4">
-        <div class="d-flex justify-content-end">
-          <router-link to="/board/jobPostingInsert" class="btn btn-primary">등록</router-link>
-        </div>
+        
 
         <!-- 검색 옵션 UI -->
 
@@ -82,6 +80,9 @@
               </select>
               <button @click="clearAllFilter" class="btn btn-primary">초기화</button>
             </div>
+            <div v-show="isEnter">
+              <router-link to="/board/jobPostingInsert" class="btn btn-primary">공고 등록</router-link>
+            </div>
           </div>
           <div class="list-body">
             <div v-if="paginatedItems.length > 0">
@@ -114,6 +115,13 @@ import { api } from '@/axios.js';
 import BasePagination from "@/components/common/BasePagination.vue";
 import SearchComponent from '@/components/fo/enterprise/SearchComponent.vue';
 import moment from 'moment';
+import{ useStore } from "vuex";
+
+
+
+
+const store = useStore();
+// const enterprise = computed(() => store.getters.enterMember);
 
 const state = reactive({
   items: [],
@@ -122,6 +130,14 @@ const state = reactive({
 });
 
 const sortOption = ref('regstrStrtDtm');
+
+
+
+const isEnter = computed(() => {
+  return store.getters.getMember?.entrprsId != null;
+});
+
+
 
 // 초기 데이터 로드
 const fetchItems = async () => {
@@ -300,6 +316,8 @@ const handleSearchResult = (searchResults) => {
 
 // 드롭다운 토글 함수
 function toggleDropdown(type) {
+  // console.log("asdas : " , enterprise);
+  // console.log("aaaaaa : " , store.getters.getMember.entrprsId);
   for (const key in showDropdown) {
     if (key === type) {
       showDropdown[key] = !showDropdown[key];

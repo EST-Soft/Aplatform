@@ -78,7 +78,7 @@
                         </a>
                         <ul class="dropdown-menu">
                           <li>
-                            <router-link class="dropdown-item" to="/board">
+                            <router-link class="dropdown-item" to="/board/general">
                               일반게시판
                             </router-link>
                           </li>

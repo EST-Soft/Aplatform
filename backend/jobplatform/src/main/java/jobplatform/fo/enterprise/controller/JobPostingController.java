@@ -61,6 +61,9 @@ public class JobPostingController {
 	// 공고 등록 메소드
 	@PostMapping("/board/jobPostingInsert")
 	public ResponseEntity<Map<String, Object>> insertJobPosting(@RequestBody JobPostingEntity jpe) {
+
+		System.out.println("데이터 넘어오나" + jpe);
+
 	    Long insertedJbpSq = jobPostingService.insertJobPosting(jpe);
 	    
 	    // 상세 페이지로 이동

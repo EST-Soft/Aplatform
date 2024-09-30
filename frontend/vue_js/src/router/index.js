@@ -126,21 +126,42 @@ const routes = [
   {
     path: "/board",
     children: [
+      // {
+      //   path: "",
+      //   component: BoardList,
+      // },
+      // {
+      //   path: ":id",
+      //   component: BoardDetail,
+      // },
+      // {
+      //   path: "update/:id",
+      //   component: BoardUpdate,
+      // },
+      // {
+      //   path: "write",
+      //   component: BoardWrite,
+      // },
       {
-        path: "",
-        component: BoardList,
-      },
-      {
-        path: ":id",
-        component: BoardDetail,
-      },
-      {
-        path: "update/:id",
-        component: BoardUpdate,
-      },
-      {
-        path: "write",
-        component: BoardWrite,
+        path: "general",
+        children: [
+          {
+            path: "",
+            component: BoardList,
+          },
+          {
+            path: ":id",
+            component: BoardDetail,
+          },
+          {
+            path: "write",
+            component: BoardWrite,
+          },
+          {
+            path: "update/:id",
+            component: BoardUpdate,
+          },
+        ],
       },
       {
         path: "feedback",

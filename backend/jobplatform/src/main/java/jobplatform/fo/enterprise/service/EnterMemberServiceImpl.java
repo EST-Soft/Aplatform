@@ -37,6 +37,7 @@ public class EnterMemberServiceImpl implements EnterMemberService{
     @Override
     public void insert(EnterRegisterDTO enterMemberDTO) {
 
+        System.out.println("서비스로 넘어오는 DTO : " + enterMemberDTO );
         if(enterMemberDTO != null ){
            EnterMemberEntity enterMemberEntity = modelMapper.map(enterMemberDTO,EnterMemberEntity.class);
            

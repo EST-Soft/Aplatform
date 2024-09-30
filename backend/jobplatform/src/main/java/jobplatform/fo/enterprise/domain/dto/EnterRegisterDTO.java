@@ -30,5 +30,5 @@ public class EnterRegisterDTO {
 
     private String entrprsPrvcyTrmsYn; // 회원 개인정보 약관 동의 여부
 
-    private String gndrTypCd;
+    private String gndrCtryCd;
 }

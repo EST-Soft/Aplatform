@@ -128,7 +128,7 @@ const saveBoard = async () => {
       await api.$post("/board", board.value);
       showAlert("등록되었습니다.");
       setTimeout(() => {
-        window.location.href = `/board`; // 게시글 목록으로 이동
+        window.location.href = `/board/general`; // 게시글 목록으로 이동
       }, 2000);
     } catch (error) {
       console.error("Error saving board:", error);
@@ -142,7 +142,7 @@ const saveBoard = async () => {
 
 const backToList = () => {
   showConfirm("작성을 취소 하시겠습니까?", () => {
-    window.location.href = `/board`;
+    window.location.href = `/board/general`;
   });
 };
 </script>

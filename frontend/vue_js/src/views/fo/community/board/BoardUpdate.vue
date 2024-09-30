@@ -171,7 +171,7 @@ const updateBoard = async () => {
       await api.$patch(`/board`, board.value);
       showAlert("수정되었습니다.");
       setTimeout(() => {
-        window.location.href = `/board/${boardId.value}`;
+        window.location.href = `/board/general/${boardId.value}`;
       }, 2000);
     } catch (error) {
       console.error("Error updating board:", error);
@@ -183,7 +183,7 @@ const backToList = () => {
   showConfirm(
     "수정을 취소 하시겠습니까? 수정한 내용은 복구가 안됩니다.",
     () => {
-      window.location.href = `/board/${boardId.value}`;
+      window.location.href = `/board/general/${boardId.value}`;
     }
   );
 };

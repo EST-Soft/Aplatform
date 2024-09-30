@@ -22,7 +22,7 @@
           <button class="btn btn-primary" @click="onSearch">검색</button>
         </div>
         <div class="d-flex justify-content-end mb-4" v-if="isLoggedIn">
-          <router-link class="btn btn-primary" to="/board/write"
+          <router-link class="btn btn-primary" to="/board/general/write"
             >글쓰기</router-link
           >
         </div>
@@ -40,7 +40,7 @@
           <tbody>
             <tr v-for="board in boardList" :key="board.brdSq">
               <td class="title-cell">
-                <router-link :to="`/board/${board.brdSq}`">{{
+                <router-link :to="`/board/general/${board.brdSq}`">{{
                   board.brdTtl
                 }}</router-link>
               </td>
@@ -121,7 +121,7 @@ const curPage = ref(1);
 const prevBlock = ref(0);
 const nextBlock = ref(0);
 const lastPage = ref(0);
-const search = ref({ page: 1, sk: "", sv: "" });
+const search = ref({ page: 1, sk: "", sv: "", brdTypCode: "general" });
 
 const getBoardList = async () => {
   const queryString = Object.entries(search.value)

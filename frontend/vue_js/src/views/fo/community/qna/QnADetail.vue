@@ -372,7 +372,7 @@
     <div class="answerModal">
     <div class="container mt-5">
     <section
-      class="page-header page-header-modern bg-color-grey page-header-lg text-center"
+      class="page-header page-header-modern bg-color-white page-header-lg text-center"
     >
       <div class="container">
         <div class="row">
@@ -1062,7 +1062,7 @@ section {
   color: #333;
   min-height: 300px;
   text-align: left;
-  max-height: 400px; /* 최대 높이 설정 */
+  max-height: 300px; /* 최대 높이 설정 */
   overflow-y: auto; /* 수직 스크롤 활성화 */
   overflow-x: hidden; /* 수평 스크롤 숨김 */
 }
@@ -1198,9 +1198,33 @@ textarea {
 .answerModal {
   height: 800px; /* 모달의 높이 설정 */
   width: 60%; /* 모달의 너비 설정 */
-  background-color: #F2F2F2; /* 모달의 배경색 설정 */
+  /* background-color: #F2F2F2; */
+  background-color: white;
   text-align: center; /* 텍스트 중앙 정렬 */
   margin: auto; /* 자동 마진으로 중앙에 배치 */
+}
+
+@media (max-width: 768px) { /* 모바일 화면에 대한 스타일 */
+  .answerModal {
+    margin-top: 50px;
+    width: 100%;
+    max-height: 90%;
+    overflow-y: auto;
+  }
+
+  .answerModal{
+    width: 100%;
+  }
+
+  .page-header{
+    width: 100%;
+  }
+}
+
+@media (min-width: 576px) {
+    .container-sm, .container {
+        max-width: 100%;
+    }
 }
 
 section {

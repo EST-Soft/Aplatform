@@ -43,8 +43,11 @@ public class EnterMemberController {
             return ResponseEntity.badRequest().build();
         }
 
+        System.out.println("asdasd" + enterMemberDTO);
+
         try{
             enterMemberService.insert(enterMemberDTO);
+            System.out.println("이거 실행되나");
 
         }catch (Exception e){
             log.info("register sql 오류 "+e);

@@ -388,6 +388,7 @@
     //   }
     // }
     const downloadImage = async (url, originalFN) => {
+    console.log(url);
     const filename = url.split('/').pop();
     console.log(originalFN);
     

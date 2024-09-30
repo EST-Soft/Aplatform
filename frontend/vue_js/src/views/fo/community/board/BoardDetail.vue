@@ -34,7 +34,7 @@
       <div class="d-flex justify-content-end mt-4" v-if="isLoggedIn">
         <router-link
           class="btn btn-primary me-2"
-          :to="`/board/update/${boardId}`"
+          :to="`/board/general/update/${boardId}`"
           >수정</router-link
         >
         <button class="btn btn-danger me-2" @click="boardDelete">삭제</button>
@@ -282,7 +282,7 @@ const boardDelete = () => {
         await api.$delete(`board/${boardId.value}`);
         showAlert("삭제 완료되었습니다.");
         setTimeout(() => {
-          router.push("/board");
+          router.push("/board/general");
         }, 2000);
       } catch (error) {
         console.error("삭제 실패:", error);
@@ -302,7 +302,7 @@ onMounted(async () => {
 });
 
 const backToList = () => {
-  router.push("/board");
+  router.push("/board/general");
 };
 </script>
 

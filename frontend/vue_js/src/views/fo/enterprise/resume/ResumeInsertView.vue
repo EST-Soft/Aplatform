@@ -285,8 +285,8 @@
     <div class="col-lg-12">
       <div class="float-end">
         <div class="btn btn-outline btn-xl btn-primary mb-2" @click="submitPost">저장</div>
-        <div class="btn btn-outline btn-xl btn-light mb-2">취소</div>
-        <button @click="testtest">테스트test</button>
+        <div class="btn btn-outline btn-xl btn-light mb-2" @click="backToList">취소</div>
+        <!-- <button @click="testtest">테스트test</button> -->
       </div>
     </div>
 
@@ -436,6 +436,10 @@ onMounted(() => {
 } */
 
 
+const backToList = () =>{
+  window.location.href=`/resumes/resume-list`
+}
+
 // form submit 함수
 const submitPost = async () => {
   const imageFormData = new FormData();
@@ -447,7 +451,7 @@ const submitPost = async () => {
       }
     }).then((response) => {
       console.log(response)
-      return response;
+      window.location.href = `/resumes/resume-list` 
     }).catch((error) => {
       console.error('Error: ', error)
     });

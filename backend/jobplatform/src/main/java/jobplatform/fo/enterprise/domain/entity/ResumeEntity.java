@@ -130,13 +130,21 @@ public class ResumeEntity {
         this.rsmTtl = resumeDataDTO.getRsmTtl();
         this.rsmName = resumeDataDTO.getRsmName();
         this.rsmGndrCode = resumeDataDTO.getRsmGndrCode();
-        this.rsmBd = resumeDataDTO.getRsmBd();
-        this.rsmMp = resumeDataDTO.getRsmMp();
+        this.rsmBd = formatDateOfBirth(resumeDataDTO.getRsmBd());
+        this.rsmMp = formatPhoneNumber(resumeDataDTO.getRsmMp());
         this.rsmAdrs = resumeDataDTO.getRsmAdrs();
         this.rsmEml = resumeDataDTO.getRsmEml();
         this.insrtMbrSq = mbrSq;
         this.updtMbrSq = mbrSq;
         this.updtDtm = LocalDateTime.now();
     } // ResumeEntity
+
+    private String formatDateOfBirth(String rawBd) {
+        return String.format("%s-%s-%s", rawBd.substring(0, 4), rawBd.substring(4, 6), rawBd.substring(6, 8));
+    }
+
+    private String formatPhoneNumber(String rawMp) {
+        return String.format("%s-%s-%s", rawMp.substring(0, 3), rawMp.substring(3, 7), rawMp.substring(7, 11));
+    }
 
 } // ResumeEntity

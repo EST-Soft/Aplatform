@@ -85,27 +85,3 @@ const handleFileChange = async (event) => {
   cursor: pointer;
 }
 </style>
-
-<!-- const reader = new FileReader();
-
-reader.onloadend = async () => {
-try {
-const formData = new FormData();
-formData.append('file', file);
-
-const response = await api.$post('/file/upload-image', formData, {
-headers: {
-'Content-Type': 'multipart/form-data'
-}
-});
-
-const newImageUrl = response;
-console.log(response)
-emit('update:imageSrc', newImageUrl);
-close();
-} catch (error) {
-console.error('Error uploading file:', error);
-}
-};
-
-reader.readAsDataURL(file); -->

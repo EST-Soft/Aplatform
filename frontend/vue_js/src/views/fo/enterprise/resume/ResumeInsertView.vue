@@ -446,17 +446,10 @@ const backToList = () => {
 // form submit 함수
 const submitPost = async () => {
   const isValidForm = validateForm();
-<<<<<<< HEAD
-  const isValidEducation = validateEducationForm();
-  const isValidCareer = validateCareerForm();
-  const isValidCertificate = validateCertificateForm();
-  const isValidSelfIntroduction = validateSelfIntroductionForm();
-=======
   const isValidEducation = educationsList.value.length > 0 ? validateEducationForm() : true;
   const isValidCareer = careerDatas.value.length > 0 ? validateCareerForm() : true;
   const isValidCertificate = certificateDatas.value.length > 0 ? validateCertificateForm() : true;
   const isValidSelfIntroduction = selfIntroductionDatas.value.length > 0 ? validateSelfIntroductionForm() : true;
->>>>>>> parent of 3e7393f6 (등록 수정)
 
   if (!isValidForm || !isValidEducation || !isValidCareer || !isValidCertificate || !isValidSelfIntroduction) {
     console.log('Validation failed, aborting submission.');

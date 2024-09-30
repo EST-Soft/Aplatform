@@ -14,7 +14,7 @@ import jobplatform.fo.enterprise.domain.entity.EnterMemberEntity;
 import jobplatform.fo.enterprise.domain.entity.JobPostingEntity;
 
 @Repository
-public interface JobPostingRepository extends JpaRepository<JobPostingEntity, Integer>{
+public interface JobPostingRepository extends JpaRepository<JobPostingEntity, Long>{
 	
 
 	// 공고 리스트 조회 및 정렬
@@ -26,11 +26,11 @@ public interface JobPostingRepository extends JpaRepository<JobPostingEntity, In
     // 조회수 증가
 	@Modifying
     @Query("UPDATE JobPostingEntity j SET j.hits = j.hits + 1 WHERE j.jbpSq = :jbpSq")
-    int increaseHits(@Param("jbpSq") int jbpSq);
+    int increaseHits(@Param("jbpSq") Long jbpSq);
     
     // 검색
-    List<JobPostingEntity> findByJbpTlContainingOrJbpCntntContaining(String jbpTl, String jbpCntnt);
-	List<JobPostingEntity> findByJbpTlContaining(String jpbTl);
+    List<JobPostingEntity> findByJbpTtlContainingOrJbpCntntContaining(String jbpTtl, String jbpCntnt);
+	List<JobPostingEntity> findByJbpTtlContaining(String jpbTtl);
 	List<JobPostingEntity> findByJbpCntntContaining(String jbpCntnt);
 
 

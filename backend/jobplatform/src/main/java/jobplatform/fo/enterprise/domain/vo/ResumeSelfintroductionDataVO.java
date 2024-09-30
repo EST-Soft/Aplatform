@@ -11,7 +11,7 @@ public class ResumeSelfintroductionDataVO {
 	//자기소개서 순번
 	private int si_sq;
 	// 제목
-	private String si_tl;
+	private String si_ttl;
 	// 내용
 	private String si_cntnt;
 }

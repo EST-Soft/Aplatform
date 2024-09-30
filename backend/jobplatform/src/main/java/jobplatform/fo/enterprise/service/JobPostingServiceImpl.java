@@ -52,7 +52,7 @@ public class JobPostingServiceImpl implements JobPostingService {
 
     // 공고 등록
     @Override
-    public int insertJobPosting(JobPostingEntity jpe) {
+    public Long insertJobPosting(JobPostingEntity jpe) {
         EnterMemberEntity enterpriseMember = enterMemberRepository.findById(jpe.getEnterpriseMember().getEntrprsSq())
             .orElseThrow(() -> new RuntimeException("EnterpriseMember not found with id " + jpe.getEnterpriseMember().getEntrprsSq()));
         
@@ -68,7 +68,7 @@ public class JobPostingServiceImpl implements JobPostingService {
             jpe.setJbpCndtn("701");
         }    
                JobPostingEntity saveJbpSq = jobPostingRepository.save(jpe);
-        	int jbpSq = saveJbpSq.getJbpSq();
+        	Long jbpSq = saveJbpSq.getJbpSq();
         	
         	return jbpSq;
         
@@ -83,7 +83,7 @@ public class JobPostingServiceImpl implements JobPostingService {
     // 공고 상세
     @Override
     @Transactional
-    public JobPostingDTO jobPostingDetail(int jbpSq) {
+    public JobPostingDTO jobPostingDetail(Long jbpSq) {
         JobPostingEntity jpe = jobPostingRepository.findById(jbpSq)
                 .orElseThrow(() -> new RuntimeException("Job posting not found with id " + jbpSq));
 
@@ -99,9 +99,10 @@ public class JobPostingServiceImpl implements JobPostingService {
 	// 조회수 증가
 	@Override
 	@Transactional
-	public int increaseHits(int jbpSq) {
-		return jobPostingRepository.increaseHits(jbpSq);
-		
+	public Long increaseHits(Long jbpSq) {
+		int updatedRows = jobPostingRepository.increaseHits(jbpSq);
+        // int to Long conversion
+        return (long) updatedRows;
 	}
 	
 	// 공고 수정
@@ -116,10 +117,10 @@ public class JobPostingServiceImpl implements JobPostingService {
         LocalDate today = LocalDate.now();
          
         
-		updateJobPosting.setJbpTl(jpe.getJbpTl());
+		updateJobPosting.setJbpTtl(jpe.getJbpTtl());
 		updateJobPosting.setJbpCndtn(jpe.getJbpCndtn());
 		updateJobPosting.setJobName(jpe.getJobName());
-		updateJobPosting.setCr(jpe.getCr());
+		updateJobPosting.setCrrDrtn(jpe.getCrrDrtn());
 		updateJobPosting.setEdctn(jpe.getEdctn());
 		updateJobPosting.setWorkArea(jpe.getWorkArea());
 		updateJobPosting.setWorkForm(jpe.getWorkForm());
@@ -147,7 +148,7 @@ public class JobPostingServiceImpl implements JobPostingService {
 
 	// 공고 삭제 메소드
 	@Override
-	public void deleteJobPosting(int jbpSq) {
+	public void deleteJobPosting(Long jbpSq) {
 		jobPostingRepository.deleteById(jbpSq);
 		
 	}
@@ -156,11 +157,11 @@ public class JobPostingServiceImpl implements JobPostingService {
 	@Override
 	public List<JobPostingEntity> searchJobPostings(String searchTerm, String searchField) {
 	    //제목 또는 내용
-		if ("jbpTl_jbpCntnt".equals(searchField)) {
-	        return jobPostingRepository.findByJbpTlContainingOrJbpCntntContaining(searchTerm, searchTerm);
+		if ("jbpTtl_jbpCntnt".equals(searchField)) {
+	        return jobPostingRepository.findByJbpTtlContainingOrJbpCntntContaining(searchTerm, searchTerm);
 	    // 제목
-		} else if ("jbpTl".equals(searchField)) {
-	        return jobPostingRepository.findByJbpTlContaining(searchTerm);
+		} else if ("jbpTtl".equals(searchField)) {
+	        return jobPostingRepository.findByJbpTtlContaining(searchTerm);
 	    // 내용
 		} else if ("jbpCntnt".equals(searchField)) {
 	        return jobPostingRepository.findByJbpCntntContaining(searchTerm);
@@ -176,6 +177,10 @@ public class JobPostingServiceImpl implements JobPostingService {
 
 	    // 지원테이블에 이력서 번호 설정
 	    ae.setResume(resume);
+
+		if (applyRepository.existsByResumeRsmSqAndJobPostingJbpSq(ae.getResume().getRsmSq(), ae.getJobPosting().getJbpSq())) {
+			throw new IllegalArgumentException("이미 지원한 이력서입니다.");
+		}
 
 	    ApplyEntity saveApply = applyRepository.save(ae);
 

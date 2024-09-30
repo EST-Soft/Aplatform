@@ -7,7 +7,7 @@
         <result property="brdSq" column="brd_sq"/>  <!-- 게시글 고유 ID -->
         <result property="mbrSq" column="mbr_sq"/>  <!-- 회원 고유 ID -->
         <result property="entrprsSq" column="entrprs_sq"/>  <!-- 기업 회원 고유 ID -->
-        <result property="brdGnrCd" column="brd_gnr_cd"/>  <!-- 게시글 종류 코드 -->
+        <result property="brdTypCode" column="brd_typ_code"/>  <!-- 게시글 종류 코드 -->
         <result property="brdTtl" column="brd_ttl"/>  <!-- 게시글 제목 -->
         <result property="brdCntnt" column="brd_cntnt"/>  <!-- 게시글 내용 -->
         <result property="brdHits" column="brd_hits"/>  <!-- 조회수 -->
@@ -28,7 +28,7 @@
         INSERT INTO P3_TBL_BOARD (
         mbr_sq,
         entrprs_sq,
-        brd_gnr_cd,
+        brd_typ_code,
         brd_ttl,
         brd_cntnt,
         brd_hits,
@@ -40,7 +40,7 @@
         VALUES (
         #{mbrSq},
         #{entrprsSq},
-        #{brdGnrCd},
+        #{brdTypCode},
         #{brdTtl},
         #{brdCntnt},  <!-- 게시글 내용을 TEXT 대신 CLOB 타입으로 처리 -->
         #{brdHits},
@@ -91,15 +91,15 @@
         p3_tbl_enterprise_member_m e ON b.entrprs_sq = e.entrprs_sq  <!-- 기업 회원 테이블과 LEFT JOIN -->
         <where>
             b.dlt_yn = 'N'  <!-- 삭제되지 않은 게시글만 조회 -->
-            <if test="brdGnrCd != null and brdGnrCd != ''">
-                AND brd_gnr_cd = #{brdGnrCd}  <!-- 게시글 종류 코드로 필터링 -->
+            <if test="brdTypCode != null and brdTypCode != ''">
+                AND brd_typ_code = #{brdTypCode}  <!-- 게시글 종류 코드로 필터링 -->
             </if>
             <if test="sk != null and sk != ''">
                 <choose>
                     <when test="sk == 'title'">
                         AND brd_ttl LIKE CONCAT('%', #{sv}, '%')  <!-- 제목으로 필터링 -->
                     </when>
-                    <when test="sk == 'content'">
+                    <when test="sk == 'contents'">
                         AND brd_cntnt LIKE CONCAT('%', #{sv}, '%')  <!-- 내용으로 필터링 -->
                     </when>
                     <!-- 필요한 다른 조건 추가 가능 -->
@@ -115,15 +115,15 @@
         SELECT COUNT(*)
         FROM P3_TBL_BOARD
         <where>
-            <if test="brdGnrCd != null and brdGnrCd != ''">
-                brd_gnr_cd = #{brdGnrCd}  <!-- 게시글 종류 코드로 필터링 -->
+            <if test="brdTypCode != null and brdTypCode != ''">
+                brd_typ_code = #{brdTypCode}  <!-- 게시글 종류 코드로 필터링 -->
             </if>
             <if test="sk != null and sk != ''">
                 <choose>
                     <when test="sk == 'title'">
                         AND brd_ttl LIKE CONCAT('%', #{sv}, '%')  <!-- 제목으로 필터링 -->
                     </when>
-                    <when test="sk == 'content'">
+                    <when test="sk == 'contents'">
                         AND brd_cntnt LIKE CONCAT('%', #{sv}, '%')  <!-- 내용으로 필터링 -->
                     </when>
                     <!-- 필요한 다른 조건 추가 가능 -->

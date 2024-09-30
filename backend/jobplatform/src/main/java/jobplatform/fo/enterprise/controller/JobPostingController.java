@@ -61,7 +61,7 @@ public class JobPostingController {
 	// 공고 등록 메소드
 	@PostMapping("/board/jobPostingInsert")
 	public ResponseEntity<Map<String, Object>> insertJobPosting(@RequestBody JobPostingEntity jpe) {
-	    int insertedJbpSq = jobPostingService.insertJobPosting(jpe);
+	    Long insertedJbpSq = jobPostingService.insertJobPosting(jpe);
 	    
 	    // 상세 페이지로 이동
 	    String detailUrl = "/board/detail/jobPosting/" + insertedJbpSq;
@@ -93,7 +93,7 @@ public class JobPostingController {
 	
 	// 공고 상세 조회 메소드
 	@GetMapping("/board/detail/jobPosting/{jbpSq}")
-	public JobPostingDTO JobPostingDetail(@PathVariable int jbpSq) {
+	public JobPostingDTO JobPostingDetail(@PathVariable Long jbpSq) {
 		JobPostingDTO jpe = jobPostingService.jobPostingDetail(jbpSq);
 		
 		// 조회수 증가
@@ -111,7 +111,7 @@ public class JobPostingController {
 	
 	// 공고 삭제 메소드
 	@DeleteMapping("/board/jobPostingDelete/{jbpSq}")
-	public void deleteJobPosting(@PathVariable int jbpSq) {
+	public void deleteJobPosting(@PathVariable Long jbpSq) {
 		jobPostingService.deleteJobPosting(jbpSq);
 	}
 	
@@ -119,30 +119,29 @@ public class JobPostingController {
     @GetMapping("/board/search")
     public List<JobPostingEntity> searchJobPostings(
             @RequestParam(value = "searchTerm", required = false) String searchTerm,
-            @RequestParam(value = "searchField", defaultValue = "jbpTl_jbpCntnt") String searchField) {
+            @RequestParam(value = "searchField", defaultValue = "jbpTtl_jbpCntnt") String searchField) {
         	System.out.println("검색 잘 되니"+searchTerm);
         	System.out.println("검색 잘 되니"+searchField);
         return jobPostingService.searchJobPostings(searchTerm, searchField);
     }
     
-    // 입사지원 메소드
     @PostMapping("/apply/insert")
-    public ResponseEntity<String> insertApply(@RequestBody ApplyEntity ae) {
-        
-        Optional<ResumeEntity> optionalResume = resumeRepository.findByRsmSq(ae.getResume().getRsmSq());
-        if (optionalResume.isPresent()) {
-            ae.setResume(optionalResume.get());
-            Long apySq = jobPostingService.insertApply(ae);
-
-            if (apySq != null) {
-                return ResponseEntity.status(HttpStatus.CREATED).body("입사지원 성공 : " + apySq);
-            } else {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("입사지원 실패");
-            }
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("이력서 찾을 수 없음");
-        }
-    }
+	public ResponseEntity<String> insertApply(@RequestBody ApplyEntity ae) {
+		try {
+			Optional<ResumeEntity> optionalResume = resumeRepository.findByRsmSq(ae.getResume().getRsmSq());
+			if (optionalResume.isPresent()) {
+				ae.setResume(optionalResume.get());
+				Long apySq = jobPostingService.insertApply(ae);
+				return ResponseEntity.status(HttpStatus.CREATED).body("입사지원 성공 : " + apySq);
+			} else {
+				return ResponseEntity.status(HttpStatus.NOT_FOUND).body("이력서 찾을 수 없음");
+			}
+		} catch (IllegalArgumentException e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage()); // 예외 메시지 반환
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("입사지원 실패");
+		}
+	}
 
 	
 }

@@ -22,7 +22,7 @@ public class BoardController {
     @PostMapping("") // 등록
     public ResponseEntity<?> BoardInsert(@RequestBody BoardEntity boardEntity) {
         try {
-            System.out.println(boardEntity);
+            System.out.println("컨트롤러에서 : " + boardEntity);
             int result = boardService.register(boardEntity);
             return new ResponseEntity<>(result, HttpStatus.OK);
         } catch (Exception e) {
@@ -32,13 +32,15 @@ public class BoardController {
     }
 
     @GetMapping("") // 리스트
-    public ResponseEntity<?> boardList(@RequestParam(defaultValue = "general") String brdgnrCd,
+    public ResponseEntity<?> boardList(@RequestParam(defaultValue = "general") String brdTypCode,
                                        @RequestParam(defaultValue = "0") int page,
                                        @RequestParam(defaultValue = "10") int size,
                                        Search search) {
         try {
-            System.out.println(brdgnrCd);
-            Header<List<BoardEntity>> boardList = boardService.List(page, size, search, brdgnrCd);
+            System.out.println("현재 게시판 : " + brdTypCode);
+            System.out.println(search);
+            Header<List<BoardEntity>> boardList = boardService.List(page, size, search, brdTypCode);
+            System.out.println("보드컨트롤러 : " + boardList);
             return ResponseEntity.ok(boardList);
         } catch (Exception e) {
             System.out.println("Error during fetching board list: " + e.getMessage());

@@ -1,8 +1,6 @@
 package jobplatform.fo.enterprise.domain.dto;
 
-import java.sql.Date;
-import java.util.List;
-
+import jobplatform.fo.enterprise.domain.entity.ResumeEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,34 +9,33 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ResumeDataDTO {
-	// 이력서 제목
-	private String rsm_tl;
-	// 이력서 이름
-	private String rsm_name;
-	// 이력서 주소
-	private String rsm_adrs;
-	// 이력서 전화번호
-	private String rsm_mp;
-	// 이력서 이메일
-	private String rsm_eml;
+	// 이력서 순번
+	// private Long rsmSq;
+	// 회원_순번
+	// private Long mbrSq;
+	// 이력서_이미지_원본_파일명
+	private String rsmImgOrgnlFn;
+	// 이력서_이미지_파일_url
+	private String rsmImgFileUrl;
+	// 이력서_최종_학력_코드
+	private String rsmFnlEdctnCode;
+	// 이력서_학점
+	private int rsmGrd;
+	// 이력서_희망연봉
+	private int rsmEs;
+	// 이력서_제목
+	private String rsmTtl;
+	// 이력서_이름
+	private String rsmName;
+	// 이력서_성별_코드
+	private String rsmGndrCode;
 	// 이력서 생년월일
-	private String rsm_bd;
-	// 이력서 희망연봉
-	private String rsm_es;
-	// 이력서 학점
-	private String rsm_grd;
-	// 이력서 학점 코드
-	private int rsm_fnl_edctn_cd;
-	
-	// 이력서 성별 코드
-	private int rsm_gndr_cd;
-	
-	// 자기소개서 리스트
-	private List<SelfintoductionsDataDTO> selfintoductionData;
-	
-	
-	
-	
+	private String rsmBd;
+	// 이력서_휴대폰
+	private String rsmMp;
+	// 이력서_주소
+	private String rsmAdrs;
+	// 이력서_이메일
+	private String rsmEml;
 
-	
-}
+} // ResumeDataDTO

@@ -13,8 +13,10 @@ public class ResumeEducationDataVO {
 	private int edctn_sq;
 	// 학교명
 	private String schl_name;
-	// 학교 상태 코드에 따른 한글명
-	private String schl_cndtn_cd_name;
+	// 학교 상태 코드
+	private String schl_cndtn_code;
+	//학교 상태 코드에 따른 한글명
+	private String code_name;
 	// 학교 학과명
 	private String schl_dprtmnt;
 	// 학교 입학일

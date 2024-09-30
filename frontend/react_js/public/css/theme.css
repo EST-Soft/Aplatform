@@ -5912,7 +5912,7 @@ section.page-header.custom-product {
 /* Container */
 @media (min-width: 1200px) {
 	.container:not(.container-bs):not(.container-xl-custom):not(.container-xxl-custom) {
-		max-width: 1140px;
+		max-width: 1700px;
 	}
 }
 

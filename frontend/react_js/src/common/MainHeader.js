@@ -3,7 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 
-const Header = () => {
+const MainHeader = () => {
   const [userType, setUserType] = useState("user"); // 기본값을 'user'로 설정
   const [enterpriseData, setEnterpriseData] = useState(null);
   const [matchingResumes, setMatchingResumes] = useState([]);
@@ -190,7 +190,7 @@ const Header = () => {
                       data-focus="headerSearch"
                       aria-label="Search"
                     >
-                      홍길동님
+                      홍길동즈님
                     </span>
                     <Link
                       to="#"
@@ -292,4 +292,4 @@ const Header = () => {
   );
 };
 
-export default Header;
+export default MainHeader;

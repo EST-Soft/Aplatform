@@ -19,7 +19,7 @@ const UserLoginForm = () => {
     };
 
     axios
-      .post("http://localhost:80/user/login", loginData, {
+      .post("/user/login", loginData, {
         withCredentials: true,
       })
       .then(async (response) => {
@@ -27,12 +27,14 @@ const UserLoginForm = () => {
         await navigate("/");
       })
       .catch((error) => {
-        alert(error);
+        console.error(error.response); // 에러 응답을 출력
+        alert(error.response?.data?.message || error.message);
+        //alert(error);
       });
   };
 
   // 네이버 로그인 핸들러
-  const handleNaverLogin = () => {
+  //const handleNaverLogin = () => {
     //   // 데이터가 필요한 부분 주석 처리
     //   // const client_id = "TIwA7WnbAvnjEwnbPGZm"; // 본인 또는 회사 아이디로 교체
     //   // const redirect_uri = "http://localhost:8080/member/loginNCallback";
@@ -48,7 +50,7 @@ const UserLoginForm = () => {
     //   // const state = generateRandomState();
     //   // const apiURL = `https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=${client_id}&redirect_uri=${redirect_uri}&state=${state}`;
     //   // window.location.href = apiURL;
-  };
+  //};
 
   return (
     <>

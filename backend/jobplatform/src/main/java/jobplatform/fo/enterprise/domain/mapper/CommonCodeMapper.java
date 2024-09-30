@@ -12,6 +12,8 @@ import jobplatform.fo.enterprise.domain.vo.CommonCodeVO;
 public interface CommonCodeMapper {
 
 	//지원상태 정보 얻기
-	List<CommonCodeVO> selectCommonCodeApplyCategoryData() throws SQLException, IOException;;
+	List<CommonCodeVO> selectCommonCodeApplyCategoryData() throws SQLException, IOException;
+	//학력, 경력 정보 얻기
+    List<CommonCodeVO> findCommonCode();
 
 }

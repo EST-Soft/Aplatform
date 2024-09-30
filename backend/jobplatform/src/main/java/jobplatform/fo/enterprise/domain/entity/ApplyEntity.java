@@ -41,7 +41,7 @@ public class ApplyEntity {
     private LocalDateTime apyDtm;
 
     @Column(name = "apy_cndtn")
-    private String apyCndtn = "401"; // 기본값 설정
+    private String apyCndtn = "unrd"; // 기본값 설정
 
     @Column(name = "entrprs_read_dtm")
     private LocalDateTime entrprsReadDtm;

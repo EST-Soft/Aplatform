@@ -11,9 +11,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ApplyConditionDataDTO {
 	//지원 순번
-	private int apy_sq;
+	private Long apy_sq;
 	//지원 상태
-	private int apy_cndtn;
+	private String apy_cndtn;
 	//면접 일시
 	private Timestamp intv_dtm;
 }

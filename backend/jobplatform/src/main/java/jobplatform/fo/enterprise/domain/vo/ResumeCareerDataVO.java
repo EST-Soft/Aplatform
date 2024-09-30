@@ -10,11 +10,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ResumeCareerDataVO {
 	// 경력 순번
-	private int cr_sq;
+	private int crr_sq;
 	// 기업 이름
-	private int entrprs_name;
+	private String entrprs_name;
 	// 기업 직급
-	private int entrprs_pstn;
+	private String entrprs_pstn;
 	// 입사일
 	private Date entrprs_jac_date;
 	// 퇴사일

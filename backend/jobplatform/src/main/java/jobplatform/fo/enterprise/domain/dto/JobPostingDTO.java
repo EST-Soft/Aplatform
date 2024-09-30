@@ -20,11 +20,11 @@ import lombok.NoArgsConstructor;
 @Builder
 public class JobPostingDTO {
 
-    private int jbpSq;
-    private String jbpTl;
+    private Long jbpSq;
+    private String jbpTtl;
     private String jbpCntnt;
-    private int hits;
-    private String cr;
+    private Long hits;
+    private String crrDrtn;
     private String sklName;
     private List<String> jobName;
     private String edctn;
@@ -73,10 +73,10 @@ public class JobPostingDTO {
 
         return JobPostingDTO.builder()
                 .jbpSq(entity.getJbpSq())
-                .jbpTl(entity.getJbpTl())
+                .jbpTtl(entity.getJbpTtl())
                 .jbpCntnt(entity.getJbpCntnt())
                 .hits(entity.getHits())
-                .cr(entity.getCr())
+                .crrDrtn(entity.getCrrDrtn())
                 .sklName(entity.getSklName())
                 .jobName(entity.getJobName())
                 .workArea(entity.getWorkArea())

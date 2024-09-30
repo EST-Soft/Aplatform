@@ -46,6 +46,7 @@
 			rsm_sq = #{rsm_sq}
 		GROUP BY apy_cndtn -->
 		SELECT
+
 			SUM(CASE WHEN apy_cndtn = 'unrd' THEN 1 ELSE 0 END) AS cndtn_unrd,
 			SUM(CASE WHEN apy_cndtn = 'read' THEN 1 ELSE 0 END) AS cndtn_read,
 			SUM(CASE WHEN apy_cndtn = 'iw' THEN 1 ELSE 0 END) AS cndtn_iw,
@@ -77,7 +78,9 @@
 	월별 지원 공고 데이터 AC
 	s.mbr_sq = #{mbr_sq} 서브쿼리로 빼서 필터링 한다음 조인하는게 좋을까?--> 
 	<select id="getToMakeCalendarData">
+
 		SELECT "S" tbl_type, j.jbp_sq, j.jbp_ttl, DATE_FORMAT(j.regstr_dln_dtm, '%y-%m-%d') as dtm
+
 		FROM p2_tbl_scrap_s s,
 			 p2_tbl_job_posting_m j
 		WHERE
@@ -97,11 +100,14 @@
 			AND
 			MONTH(intv_dtm) = #{month}
 		UNION
+
 		SELECT "PP" tbl_type, j.jbp_sq, j.jbp_ttl, DATE_FORMAT(j.regstr_dln_dtm, '%y-%m-%d') as dtm
 		FROM p2_tbl_position_proposal_m p,
 			 p2_tbl_job_posting_m j
 		WHERE 
 			p.rsm_sq=#{rsm_sq}
+			AND
+			j.jbp_sq = p.jbp_sq
 			AND
 			MONTH(j.regstr_dln_dtm) = #{month}
 		UNION
@@ -110,6 +116,8 @@
 			 p2_tbl_job_posting_m j
 		WHERE
 			a.rsm_sq IN (SELECT rsm_sq FROM p2_tbl_resume_m WHERE mbr_sq = #{mbr_sq})
+			AND
+			a.jbp_sq = j.jbp_sq
 			AND
 			MONTH(a.apy_dtm) = #{month}
 	</select>  
@@ -155,7 +163,7 @@
 	<insert id="insertSelectAreas">
 		INSERT INTO p2_tbl_area_member_r (mbr_sq, area_sq)
 		VALUES
-		<foreach collection="areas" item="area" separator=",">
+		<foreach collection="areaList" item="area" separator=",">
 			(#{mbr_sq}, #{area})
 		</foreach>
 	</insert>
@@ -174,7 +182,7 @@
 	<insert id="insertSelectJobs">
 		INSERT INTO p2_tbl_job_member_r (mbr_sq, job_sq)
 		VALUES
-		<foreach collection="jobs" item="job" separator=",">
+		<foreach collection="jobList" item="job" separator=",">
 			(#{mbr_sq}, #{job})
 		</foreach>
 	</insert>
@@ -219,7 +227,7 @@
 				p2_tbl_job_posting_m jp, p2_tbl_position_proposal_m pp
 			WHERE 
 				jp.jbp_sq IN (SELECT jbp_sq FROM p2_tbl_position_proposal_m WHERE rsm_sq = #{rsm_sq} AND pstn_prpsl_cndtn = 301)) sjp
-		LEFT OUTER JOIN p2_tbl_enterprise_member_m em ON sjp.entrprs_sq = em.entrprs_sq
+		LEFT OUTER JOIN p3_tbl_enterprise_member_m em ON sjp.entrprs_sq = em.entrprs_sq
 		LEFT OUTER JOIN p2_tbl_area_posting_r apr ON sjp.jbp_sq = apr.jbp_sq
 		LEFT OUTER JOIN p2_tbl_job_posting_r jpr ON sjp.jbp_sq = jpr.jbp_sq
 		LEFT OUTER JOIN p2_tbl_skill_code_posting_r spr ON sjp.jbp_sq = spr.jbp_sq
@@ -229,6 +237,7 @@
 	</select> -->
 
 	<!-- 포지션 제안 받은 공고 리스트 가져오기 -->
+	<!-- COUNT(*) OVER() as total_count 한번에 구하기 -> vo 등 다 바꿔줘야함 -->
 	<select id="getPPJopPostingData" resultType="jobplatform.fo.user.domain.vo.M_JobPosting_pp">
 		SELECT 
 			sjp.jbp_sq, sjp.entrprs_sq, sjp.jbp_ttl, sjp.jbp_cntnt, sjp.crr_drtn, sjp.edctn, sjp.regstr_dln_dtm, sjp.pstn_prpsl_sq, sjp.pstn_prpsl_cndtn, sjp.prpsl_dtm, em.entrprs_name
@@ -241,7 +250,25 @@
 				jp.jbp_sq IN (SELECT jbp_sq FROM p2_tbl_position_proposal_m WHERE rsm_sq = #{rsm_sq} AND pstn_prpsl_cndtn = 'ppw')) sjp
 		LEFT OUTER JOIN p2_tbl_enterprise_member_m em ON sjp.entrprs_sq = em.entrprs_sq
 		ORDER BY sjp.prpsl_dtm DESC
+		LIMIT #{limit}
+		OFFSET #{offset}
 	</select>
+	
+	<!-- 포지션 제안 받은 공고 총 개수 -->
+	<select id="getPPPostsCount">
+		SELECT 
+			COUNT(*)
+		FROM
+			p2_tbl_job_posting_m jp, p2_tbl_position_proposal_m pp
+		WHERE 
+			jp.jbp_sq IN (SELECT jbp_sq FROM p2_tbl_position_proposal_m WHERE rsm_sq = #{rsm_sq} AND pstn_prpsl_cndtn = 301)
+			AND
+			jp.jbp_sq = pp.jbp_sq
+	</select>
+	
+	<update id="refuseProposedPostion">
+		UPDATE p2_tbl_position_proposal_m SET pstn_prpsl_cndtn = 303 WHERE pstn_prpsl_sq = #{pstn_prpsl_sq}
+	</update>
 
 	<!-- 공고-지역 관계 가지고오기 -->
 	<select id="getAreasOfJobPost">
@@ -270,7 +297,7 @@
         SELECT area_name
         FROM p2_tbl_area_code_s
         WHERE area_sq IN
-        <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+        <foreach item="item" index="index" collection="areas" open="(" separator="," close=")">
             #{item}
         </foreach>
     </select>
@@ -279,7 +306,7 @@
         SELECT job_sc_name
         FROM p2_tbl_job_code_s
         WHERE job_sq IN
-        <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+        <foreach item="item" index="index" collection="jobs" open="(" separator="," close=")">
             #{item}
         </foreach>
     </select>

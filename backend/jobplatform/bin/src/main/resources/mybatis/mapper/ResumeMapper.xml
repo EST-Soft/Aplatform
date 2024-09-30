@@ -2,18 +2,21 @@
 <!DOCTYPE mapper
     PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="jobplatform.fo.enterprise.domain.mapper.ResumeMapper">
+<mapper
+	namespace="jobplatform.fo.enterprise.domain.mapper.ResumeMapper">
 
 	<!-- 이력서 리스트 데이터 갯수 구해오기 -->
 	<select id="loadResumeListCount" resultType="int">
 		select count(1)
-		from P2_TBL_RESUME_M
+		from
+		P2_TBL_RESUME_M
 		where mbr_sq = #{mbr_sq}
-			and use_yn = 'Y'
-			and dlt_yn = 'N'
+		and use_yn = 'Y'
+		and dlt_yn = 'N'
 	</select>
-	
+
 	<!-- 이력서 리스트 데이터 얻기 -->
+
 	<select id="selectResumeData" resultType="jobplatform.fo.enterprise.domain.vo.ResumeListVO">
 		select 
 			rsm_sq,
@@ -21,63 +24,105 @@
 			rsm_rprsntv_yn,
 			rsm_ttl,
 			updt_dtm
+
 		from P2_TBL_RESUME_M
-		where mbr_sq = #{searchData.mbr_sq} 
-			and use_yn = 'Y'
-			and dlt_yn = 'N'
+		where mbr_sq = #{searchData.mbr_sq}
+		and use_yn = 'Y'
+		and dlt_yn = 'N'
 		order by rsm_rprsntv_yn desc, updt_dtm ${searchData.sort}
-		limit #{paginationData.startRowIndex},#{paginationData.showDataCountPerPage}
+		limit
+		#{paginationData.startRowIndex},#{paginationData.showDataCountPerPage}
 	</select>
-	
+
 	<!-- 대표 이력서 여부 변경 -->
 	<update id="updateResumeyRepresentative">
 		update P2_TBL_RESUME_M
-		set rsm_rprsntv_yn = 
-			CASE
-			WHEN rsm_sq = #{rsm_sq } THEN "Y"
-			ELSE "N"
-			END
-		where (mbr_sq = (select mbr_sq from P2_TBL_RESUME_M where rsm_sq = #{rsm_sq})
-			and rsm_rprsntv_yn = "Y") 
-			OR rsm_sq = #{rsm_sq} ;
+		set rsm_rprsntv_yn =
+		CASE
+		WHEN rsm_sq = #{rsm_sq } THEN "Y"
+		ELSE "N"
+		END
+		where (mbr_sq = (select mbr_sq from P2_TBL_RESUME_M where rsm_sq =
+		#{rsm_sq})
+		and rsm_rprsntv_yn = "Y")
+		OR rsm_sq = #{rsm_sq} ;
 	</update>
-	
+
 	<!-- 이력서 모든 데이터 삭제 -> YN 으로 구현 -->
 	<!-- 이력서 삭제 -->
 	<update id="deleteResumeFullData">
 		update P2_TBL_RESUME_M
-		set dlt_yn ="Y", use_yn ="N" 
+		set dlt_yn ="Y", use_yn ="N"
 		where rsm_sq = #{rsm_sq}
 	</update>
 	<!-- 이력서 첨부파일 삭제 -->
 	<update id="delectRsmAtchmnt">
 		update P2_TBL_RESUME_ATTACHMENT_S
-		set dlt_yn ="Y", use_yn ="N"
+		set dlt_yn ="Y",
+		use_yn ="N"
 		where rsm_sq = #{rsm_sq}
 	</update>
 	<!-- 이력서 자기소개서 삭제 -->
 	<update id="delectRsmSi">
 		update P2_TBL_RESUME_SELFINTRODUCTION_S
-		set dlt_yn ="Y", use_yn ="N" 
+		set dlt_yn
+		="Y", use_yn ="N"
 		where rsm_sq = #{rsm_sq}
 	</update>
 	<!-- 이력서 학력 삭제 -->
 	<update id="delectRsmEdctn">
 		update P2_TBL_RESUME_EDUCATION_S
-		set dlt_yn ="Y", use_yn ="N" 
+		set dlt_yn ="Y",
+		use_yn ="N"
 		where rsm_sq = #{rsm_sq}
 	</update>
 	<!-- 이력서 자격증 삭제 -->
 	<update id="delectRsmCrtfct">
 		update P2_TBL_RESUME_CERTIFICATE_S
-		set dlt_yn ="Y", use_yn ="N" 
+		set dlt_yn ="Y",
+		use_yn ="N"
 		where rsm_sq = #{rsm_sq}
 	</update>
 	<!-- 이력서 경력 삭제 -->
 	<update id="delectRsmCr">
 		update P2_TBL_RESUME_CAREER_S
-		set dlt_yn ="Y", use_yn ="N" 
+		set dlt_yn ="Y", use_yn
+		="N"
 		where rsm_sq = #{rsm_sq}
 	</update>
-	
+
+	<!-- 이력서 복사 처리 -->
+	<!-- 이력서 메인테이블 복사 -->
+	<insert id="insertCopyResume">
+		insert into
+		P2_TBL_RESUME_M (
+		mbr_sq,
+		rsm_img_orgnl_fn,
+		rsm_img_file_url,
+		rsm_fnl_edctn_cd,
+		rsm_grd,
+		rsm_es,
+		rsm_tl,
+		rsm_name,
+		rsm_gndr_cd,
+		rsm_bd,
+		rsm_mp,
+		rsm_adrs,
+		rsm_eml
+		)
+		select mbr_sq,
+		rsm_img_orgnl_fn,
+		rsm_img_file_url,
+		rsm_fnl_edctn_cd,
+		rsm_grd,
+		rsm_es,
+		concat(rsm_tl, "[복사본]") as rsm_tl,
+		rsm_name,
+		rsm_gndr_cd,
+		rsm_bd,
+		rsm_mp,
+		rsm_adrs,
+		rsm_eml from P2_TBL_RESUME_M where rsm_sq = #{rsm_sq};
+	</insert>
+
 </mapper>

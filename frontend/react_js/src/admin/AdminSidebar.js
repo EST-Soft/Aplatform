@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import styles from './css/AdminSidebar.module.css';
 
-const AdminSidebar = () => {
   
   // 사이드바 구동 로직
+
+import styles from './AdminSidebar.module.css';
+
+const AdminSidebar = () => {
+    
   const [openMenus, setOpenMenus] = useState({
     notice: false,
     user: false,
@@ -28,6 +31,7 @@ const AdminSidebar = () => {
   };
 
   // 화면 크기에 따라 사이드바 상태 유지 ( 반응형 로직, 미완성 240930)
+
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth > 900) {
@@ -49,12 +53,14 @@ const AdminSidebar = () => {
 
   return (
     <div>
-      {/* 작은 화면에서 버튼을 눌러 사이드바를 여닫음 , '◁' : '▷' 버튼안에 뜨는 여닫는 글자*/}
+
+    {/* 작은 화면에서 버튼을 눌러 사이드바를 여닫음 , '◁' : '▷' 버튼안에 뜨는 여닫는 글자*/}
       <button className={styles.toggleButton} onClick={toggleSidebar}>
         {isSidebarOpen ? '◁' : '▷'}
       </button>
 
-      {/* 사이드바 구조*/}
+
+      {/* 사이드바 */}
       <div className={`${styles.adminSideBar} ${isSidebarOpen ? styles.open : styles.closed}`}>
         <ul className={styles.menuDetail}>
           <li>
@@ -63,7 +69,7 @@ const AdminSidebar = () => {
             {openMenus.notice && (
               <ul className={styles.subMenu}>
                 <li>
-                  <Link to="#">공고 관리</Link>
+                  <Link to="/admin/board/JobPosting">공고 관리</Link>
                 </li>
               </ul>
             )}
@@ -73,9 +79,9 @@ const AdminSidebar = () => {
               className={activeMenu === 'user' ? styles.activeMenu : ''}>사용자 관리</div>
             {openMenus.user && (
               <ul className={styles.subMenu}>
-                <li><Link to="#">회원 관리</Link></li>
-                <li><Link to="#">기업 관리</Link></li>
-                <li><Link to="#">관리자 관리</Link></li>
+                <li><Link to="/admin/board/MemberAccount">회원 관리</Link></li>
+                <li><Link to="/admin/board/EnterPrise">기업 관리</Link></li>
+                <li><Link to="/admin/board/Manager">관리자 관리</Link></li>
               </ul>
             )}
           </li>
@@ -84,9 +90,9 @@ const AdminSidebar = () => {
               className={activeMenu === 'community' ? styles.activeMenu : ''}>커뮤니티 관리</div>
             {openMenus.community && (
               <ul className={styles.subMenu}>
-                <li><Link to="#">Q & A 게시판 관리</Link></li>
-                <li><Link to="#">일반 게시판 관리</Link></li>
-                <li><Link to="#">피드백 게시판 관리</Link></li>
+                <li><Link to="/admin/board/Qna">Q & A 게시판 관리</Link></li>
+                <li><Link to="/admin/board/General">일반 게시판 관리</Link></li>
+                <li><Link to="/admin/board/FeedBack">피드백 게시판 관리</Link></li>
               </ul>
             )}
           </li>
@@ -96,7 +102,7 @@ const AdminSidebar = () => {
             {openMenus.customer && (
               <ul className={styles.subMenu}>
                 <li><Link to="#">문의 내역 게시판</Link></li>
-              <li><Link to="/admin/FAQ">자주 묻는 질문 게시판</Link></li>
+                <li><Link to="/admin/FAQ">자주 묻는 질문 게시판</Link></li>
               </ul>
             )}
           </li>

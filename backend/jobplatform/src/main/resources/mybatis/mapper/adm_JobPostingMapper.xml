@@ -1,0 +1,46 @@
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jobplatform.bo.mapper.adm_JobPostingMapper">
+
+<!-- P2_TBL_JOB_POSTING_M 컬럼 자바 객체 매핑 -->
+<resultMap id="JobPostingDTOResultMap" type="jobplatform.bo.dto.adm_JobPostingDTO">
+		<id property="jbpSq" column="jbp_sq"/>
+        <result property="entrprsSq" column="entrprs_sq"/>
+        <result property="jbpTl" column="jbp_ttl"/>
+        <result property="jbpCntnt" column="jbp_cntnt"/>
+        <result property="hits" column="hits"/>
+        <result property="cr" column="crr_drtn"/>
+        <result property="sklName" column="skl_name"/>
+        <result property="jobName" column="job_name"/> 
+        <result property="edctn" column="edctn"/>
+        <result property="workArea" column="work_area"/> 
+        <result property="workForm" column="work_form"/>
+        <result property="slry" column="slry"/>
+        <result property="workHour" column="work_hour"/>
+        <result property="regstrStrtDtm" column="regstr_strt_dtm"/>
+        <result property="regstrDlnDtm" column="regstr_dln_dtm"/>
+        <result property="picName" column="pic_name"/>
+        <result property="picMp" column="pic_mp"/>
+        <result property="picEml" column="pic_eml"/>
+        <result property="jbpEndYn" column="jbp_end_yn"/>
+        <result property="jbpCndtn" column="jbp_cndtn"/>
+        <result property="insrtMbrSq" column="insrt_mbr_sq"/>
+        <result property="insrtDtm" column="insrt_dtm"/>
+        <result property="updtMbrSq" column="updt_mbr_sq"/>
+        <result property="updtDtm" column="updt_dtm"/>
+        <result property="dltYn" column="dlt_yn"/>
+        <result property="useYn" column="use_yn"/>
+    </resultMap>
+
+
+   <!-- 공고관리 리스트 다 가져오기 -->
+   <select id="selectAllJobPostings" resultMap="JobPostingDTOResultMap">
+        SELECT * FROM P2_TBL_JOB_POSTING_M
+    </select>
+
+
+
+
+
+</mapper>

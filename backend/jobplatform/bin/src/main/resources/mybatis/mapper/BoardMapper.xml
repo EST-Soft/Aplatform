@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="jobplatform.fo.board.mapper.BoardMapper">
+
+    <!-- BoardEntity와 데이터베이스 컬럼 간의 매핑을 정의 -->
+    <resultMap id="BoardEntityResultMap" type="jobplatform.fo.board.entity.BoardEntity">
+        <result property="brdSq" column="brd_sq"/>  <!-- 게시글 고유 ID -->
+        <result property="mbrSq" column="mbr_sq"/>  <!-- 회원 고유 ID -->
+        <result property="entrprsSq" column="entrprs_sq"/>  <!-- 기업 회원 고유 ID -->
+        <result property="brdGnrCd" column="brd_gnr_cd"/>  <!-- 게시글 종류 코드 -->
+        <result property="brdTtl" column="brd_ttl"/>  <!-- 게시글 제목 -->
+        <result property="brdCntnt" column="brd_cntnt"/>  <!-- 게시글 내용 -->
+        <result property="brdHits" column="brd_hits"/>  <!-- 조회수 -->
+        <result property="insrtDtm" column="insrt_dtm"/>  <!-- 작성 일자 -->
+        <result property="updtDtm" column="updt_dtm"/>  <!-- 수정 일자 -->
+        <result property="dltDtm" column="dlt_dtm"/>  <!-- 삭제 일자 -->
+        <result property="dltYn" column="dlt_yn"/>  <!-- 삭제 여부 -->
+        <result property="createdBy" column="createdBy"/> <!-- 작성자 (회원 또는 기업) ID -->
+
+        <!-- 게시글에 연관된 댓글 리스트를 가져오기 위한 매핑 -->
+        <collection property="comments" select="jobplatform.fo.board.mapper.BoardCommentMapper.findAll"
+                    column="brd_sq">
+        </collection>
+    </resultMap>
+
+    <!-- 게시글을 데이터베이스에 삽입하는 쿼리 -->
+    <insert id="insertOne" parameterType="jobplatform.fo.board.entity.BoardEntity">
+        INSERT INTO P3_TBL_BOARD (
+        mbr_sq,
+        entrprs_sq,
+        brd_gnr_cd,
+        brd_ttl,
+        brd_cntnt,
+        brd_hits,
+        insrt_dtm,
+        updt_dtm,
+        dlt_dtm,
+        dlt_yn
+        )
+        VALUES (
+        #{mbrSq},
+        #{entrprsSq},
+        #{brdGnrCd},
+        #{brdTtl},
+        #{brdCntnt},  <!-- 게시글 내용을 TEXT 대신 CLOB 타입으로 처리 -->
+        #{brdHits},
+        #{insrtDtm},
+        #{updtDtm},
+        #{dltDtm},
+        #{dltYn}
+        )
+    </insert>
+
+    <!-- 게시글을 업데이트하는 쿼리 -->
+    <update id="updateOne">
+        UPDATE P3_TBL_BOARD
+        SET
+        brd_ttl = #{brdTtl},  <!-- 제목 수정 -->
+        brd_cntnt = #{brdCntnt},  <!-- 내용 수정 -->
+        updt_dtm = NOW()  <!-- 수정 일자 업데이트 -->
+        WHERE brd_sq = #{brdSq}  <!-- 특정 게시글 선택 -->
+    </update>
+    <update id="hitUpdate">
+        UPDATE P3_TBL_BOARD
+        SET
+        brd_hits = brd_hits + 1
+        WHERE
+        brd_sq = #{brdSq}
+    </update>
+
+
+    <!-- 게시글을 논리적으로 삭제하는 쿼리 (dlt_yn을 'Y'로 변경) -->
+    <delete id="deleteOne">
+        UPDATE P3_TBL_BOARD
+        SET
+        dlt_dtm = NOW(),  <!-- 삭제 일자 설정 -->
+        dlt_yn = "Y"  <!-- 삭제 여부를 'Y'로 설정 -->
+        WHERE brd_sq = #{brdSq}  <!-- 특정 게시글 선택 -->
+    </delete>
+
+    <!-- 모든 게시글을 검색하고, 조건에 따라 필터링하는 쿼리 -->
+    <select id="findAll" parameterType="Map" resultMap="BoardEntityResultMap">
+        SELECT
+        b.*,
+        COALESCE(m.mbr_id, e.entrprs_id) AS createdBy  <!-- 작성자 ID 가져오기 -->
+        FROM
+        P3_TBL_BOARD b
+        LEFT JOIN
+        p3_tbl_member_m m ON b.mbr_sq = m.mbr_sq  <!-- 회원 테이블과 LEFT JOIN -->
+        LEFT JOIN
+        p3_tbl_enterprise_member_m e ON b.entrprs_sq = e.entrprs_sq  <!-- 기업 회원 테이블과 LEFT JOIN -->
+        <where>
+            b.dlt_yn = 'N'  <!-- 삭제되지 않은 게시글만 조회 -->
+            <if test="brdGnrCd != null and brdGnrCd != ''">
+                AND brd_gnr_cd = #{brdGnrCd}  <!-- 게시글 종류 코드로 필터링 -->
+            </if>
+            <if test="sk != null and sk != ''">
+                <choose>
+                    <when test="sk == 'title'">
+                        AND brd_ttl LIKE CONCAT('%', #{sv}, '%')  <!-- 제목으로 필터링 -->
+                    </when>
+                    <when test="sk == 'contents'">
+                        AND brd_cntnt LIKE CONCAT('%', #{sv}, '%')  <!-- 내용으로 필터링 -->
+                    </when>
+                    <!-- 필요한 다른 조건 추가 가능 -->
+                </choose>
+            </if>
+        </where>
+        ORDER BY b.brd_sq DESC  <!-- brd_sq 기준으로 내림차순 정렬 -->
+        LIMIT #{page}, #{size}  <!-- 페이지네이션 적용 -->
+    </select>
+
+    <!-- 총 게시글 수를 가져오는 쿼리 (검색 조건에 따라) -->
+    <select id="getBoardTotalCount" parameterType="Map" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM P3_TBL_BOARD
+        <where>
+            <if test="brdGnrCd != null and brdGnrCd != ''">
+                brd_gnr_cd = #{brdGnrCd}  <!-- 게시글 종류 코드로 필터링 -->
+            </if>
+            <if test="sk != null and sk != ''">
+                <choose>
+                    <when test="sk == 'title'">
+                        AND brd_ttl LIKE CONCAT('%', #{sv}, '%')  <!-- 제목으로 필터링 -->
+                    </when>
+                    <when test="sk == 'contents'">
+                        AND brd_cntnt LIKE CONCAT('%', #{sv}, '%')  <!-- 내용으로 필터링 -->
+                    </when>
+                    <!-- 필요한 다른 조건 추가 가능 -->
+                </choose>
+            </if>
+        </where>
+    </select>
+
+    <!-- 특정 게시글을 조회하는 쿼리 (게시글 ID로 조회) -->
+    <select id="findOne" resultMap="BoardEntityResultMap">
+        SELECT
+        b.*,
+        COALESCE(m.mbr_id, e.entrprs_id) AS createdBy  <!-- 작성자 ID 가져오기 -->
+        FROM
+        P3_TBL_BOARD b
+        LEFT JOIN
+        p3_tbl_member_m m ON b.mbr_sq = m.mbr_sq  <!-- 회원 테이블과 LEFT JOIN -->
+        LEFT JOIN
+        p3_tbl_enterprise_member_m e ON b.entrprs_sq = e.entrprs_sq  <!-- 기업 회원 테이블과 LEFT JOIN -->
+        WHERE
+        b.brd_sq = #{brdSq}  <!-- 특정 게시글 선택 -->
+    </select>
+
+</mapper>

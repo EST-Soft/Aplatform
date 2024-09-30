@@ -931,17 +931,23 @@ const answerSelection = (answrSq) => {
 }
 
 const answerRcmndtn = async (answrSq) =>{
-  // console.log("로그인 된 사람 Sq", member.value.mbrSq);
+  console.log("로그인 된 사람 Sq", member.value.mbrSq);
+  console.log("로그인 된 사람 pk : " , member.value.pk);
+  
   // console.log("답변 sq", answrSq);
   
+  const sq = ref(0);
+  sq.value = member.value.mbrSq || member.value.pk;
+  console.log(sq.value);
+
   showConfirm("답변을 추천하시겠습니까?", async() => {
     try{
-      const res1 = await api.$post("/answer/recommendationCheck?answrSq=" + `${answrSq}&mbrSq=` + member.value.mbrSq);
+      const res1 = await api.$post("/answer/recommendationCheck?answrSq=" + `${answrSq}&mbrSq=` + sq.value);
 
       if(res1 >= 1){
         showConfirm("이미 추천된 답변입니다. 추천을 취소하시겠습니까?", async() => {
           try{
-            await api.$post("/answer/recommendation/" + `${answrSq}?mbrSq=` + member.value.mbrSq + "&value=-1");
+            await api.$post("/answer/recommendation/" + `${answrSq}?mbrSq=` + sq.value + "&value=-1");
             showAlert("답글 추천이 취소됐습니다");
             showAnswerDetail(answrSq);
           }catch(error){
@@ -950,7 +956,7 @@ const answerRcmndtn = async (answrSq) =>{
         })
       }else{
         try{
-          await api.$post("/answer/recommendation/" + `${answrSq}?mbrSq=` + member.value.mbrSq + "&value=1");
+          await api.$post("/answer/recommendation/" + `${answrSq}?mbrSq=` + sq.value + "&value=1");
           showAlert("답글이 추천됐습니다");
           showAnswerDetail(answrSq);    
         }catch(error){

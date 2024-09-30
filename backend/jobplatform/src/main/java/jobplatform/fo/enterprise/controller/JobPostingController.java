@@ -108,6 +108,7 @@ public class JobPostingController {
 	// 공고 수정 메소드
 	@PostMapping("/board/jobPostingUpdate/{jbpSq}")
 	public void updateJobPosting(@PathVariable int jbpSq , @RequestBody JobPostingEntity jpe) {
+		System.out.println("여기서 받는 jpe : " + jpe);
 		jobPostingService.updateJobPosting(jpe);
 	}
 	

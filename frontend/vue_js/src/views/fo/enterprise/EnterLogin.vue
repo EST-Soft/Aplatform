@@ -156,7 +156,7 @@ const LoginSubmit = async () => {
       showAlert(`로그인 되었습니다. ${response.entrprsId} 님 환영합니다.`);
       store.commit("changeUserType", "enter");
 
-      router.push("/enter");
+      router.push("/enter/home");
     } else {
       pwError.value = "아이디 또는 비밀번호가 일치하지 않습니다.";
     }

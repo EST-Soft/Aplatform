@@ -83,7 +83,7 @@ public class EnterMypageController {
 	public ResponseEntity<?> enterChangPassword(@RequestBody Map<String, String> param )throws Exception{
 
 		System.out.println(param);
-
+		
 		int entrprsSp = Integer.parseInt(param.get("entrprsSp"));
 		String entrprsPswrd = param.get("entrprsPswrd");
 		String entrprsPswrdChng = param.get("entrprsPswrdChng");
@@ -108,7 +108,7 @@ public class EnterMypageController {
 	@PostMapping("/enterSignOut")
 	public ResponseEntity<?> enterSignOut(@RequestBody Map<String, String> param )throws Exception{
 
-		System.out.println(param); // 탈퇴자 정보
+		System.out.println("탈퇴자 정보 : " + param); // 탈퇴자 정보
 
 		int entrprsSp = Integer.parseInt(param.get("entrprsSq"));
 		String entrprsPswrd = param.get("entrprsPswrd");

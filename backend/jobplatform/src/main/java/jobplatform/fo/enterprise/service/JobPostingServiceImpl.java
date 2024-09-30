@@ -115,9 +115,12 @@ public class JobPostingServiceImpl implements JobPostingService {
 		
         //현재 날짜
         LocalDate today = LocalDate.now();
-         
+        
+		// System.out.println("서비스에서 받는 jpe ; " + jpe);
+		
         
 		updateJobPosting.setJbpTtl(jpe.getJbpTtl());
+		updateJobPosting.setJbpCntnt(jpe.getJbpCntnt());
 		updateJobPosting.setJbpCndtn(jpe.getJbpCndtn());
 		updateJobPosting.setJobName(jpe.getJobName());
 		updateJobPosting.setCrrDrtn(jpe.getCrrDrtn());

@@ -65,7 +65,7 @@ const entrprsSq = ref('');
 onMounted(async() => {
 
     const test = computed(()=> {
-        return store.getters.enterMember
+        return store.getters.getMember
     })
 entrprsSq.value = test.value.pk;
 console.log(entrprsSq.value);
@@ -92,6 +92,8 @@ const handleSubmit = async() => {
             entrprsPswrd : entrprsPswrd.value,
             entrprsSq : entrprsSq
         }
+        
+        console.log(data);
 
         try{
         const res = await api.$post('/enter/enterSignOut', data);

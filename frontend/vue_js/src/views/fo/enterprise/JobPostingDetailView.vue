@@ -190,8 +190,9 @@
   });
   
   const goUpdatePage = (jbp) => {
+    // console.log(jbp.jbpSq);
     isEditable.value = false;
-    router.push(`/board/jobPostingUpdate/${jbp.value.jbpSq}`);
+    router.push(`/board/jobPostingUpdate/${jbp.jbpSq}`);
   };
   
   const confirmDelete = () => {

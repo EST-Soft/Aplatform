@@ -173,7 +173,7 @@
                     <ul class="nav nav-pills" id="mainNav">
                       <li class="dropdown">
                         <router-link
-                          to="/enter"
+                          to="/enter/home"
                           class="dropdown-item dropdown-toggle font-weight-bold"
                         >
                           HOME
@@ -209,7 +209,7 @@
                         </a>
                         <ul class="dropdown-menu">
                           <li>
-                            <router-link class="dropdown-item" to="/board">
+                            <router-link class="dropdown-item" to="/board/general">
                               일반게시판
                             </router-link>
                           </li>

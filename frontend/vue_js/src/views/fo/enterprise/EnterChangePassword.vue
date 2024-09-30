@@ -77,7 +77,7 @@ const errorPswrdConfirm =ref(''); // 비밀번호 형식 에러
 onMounted(async() => {
     const test = computed(()=>{
 
-return store.getters.enterMember
+return store.getters.getMember
 })
 console.log(test.value.pk);
 entrprsSp.value = test.value.pk;

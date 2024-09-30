@@ -8,8 +8,8 @@
             </section>
 
             <div class="mb-3">
-                <label for="jbpTl" class="form-label">제목</label>
-                <input type="text" v-model="jbpTl" class="form-control" id="jbpTl" placeholder="제목을 입력하세요">
+                <label for="jbpTtl" class="form-label">제목</label>
+                <input type="text" v-model="jbpTtl" class="form-control" id="jbpTtl" placeholder="제목을 입력하세요">
             </div>
 
             <div class="row">
@@ -23,8 +23,8 @@
           </div>
         </div>
                 <div class="col-md-3 mb-3">
-                    <label for="cr" class="form-label">경력</label>
-                    <select v-model="cr" class="form-control" id="cr">
+                    <label for="crrDrtn" class="form-label">경력</label>
+                    <select v-model="crrDrtn" class="form-control" id="crrDrtn">
                         <option value="enr">경력무관</option>
                         <option value="nwcmr">신입</option>
                         <option value="exprncd">경력</option>
@@ -138,9 +138,9 @@ const jobs = ref([]);
 const selectedWorkAreas = ref([]);
 const selectedJobs = ref([]);
 
-const jbpTl = ref('');
+const jbpTtl = ref('');
 const jbpCntnt = ref('');
-const cr = ref(0);
+const crrDrtn = ref('');
 const sklName = ref('');
 const jobName = ref('');
 const edctn = ref(0);
@@ -185,9 +185,9 @@ onMounted(() => {
 const boardDetail = () => {
     api.$get(`/board/detail/jobPosting/${jbpSq}`)
     .then(response => {
-        jbpTl.value = response.jbpTl;
+        jbpTtl.value = response.jbpTtl;
         jbpCntnt.value = response.jbpCntnt;
-        cr.value = response.cr;
+        crrDrtn.value = response.crrDrtn;
         sklName.value = response.sklName;
         // 직종 정보
         selectedJobs.value = response.jobName.map(name => {
@@ -224,16 +224,17 @@ onMounted(() => {
 
 
 const submitPost = () => {
-    if (jbpTl.value.trim() === '' || jbpCntnt.value.trim() === '') {
+    if (jbpTtl.value.trim() === '' || jbpCntnt.value.trim() === '') {
         alert('제목과 내용을 확인하세요.');
         return;
     }
+    console.log("jbpCntnt : ", jbpCntnt.value);
 
     api.$post(`/board/jobPostingUpdate/${jbpSq}`, {
         jbpSq : jbpSq,
-        jbpTl: jbpTl.value,
+        jbpTtl: jbpTtl.value,
         jbpCntnt: jbpCntnt.value,
-        cr: cr.value,
+        crrDrtn: crrDrtn.value,
         sklName: sklName.value,
         jobName: selectedJobs.value.map(job => job.jobScName),
         edctn: edctn.value,
@@ -252,9 +253,9 @@ const submitPost = () => {
         alert('게시물이 수정되었습니다.');
 
         // 폼 리셋
-        jbpTl.value = '';
+        jbpTtl.value = '';
         jbpCntnt.value = '';
-        cr.value = '';
+        crrDrtn.value = '';
         sklName.value = '';
         jobName.value = '';
         edctn.value = '';

@@ -93,7 +93,7 @@ const routes = [
   {
     path: "/enter",
     children: [
-      { path: "", component: EnterMainView },
+      { path: "home", component: EnterMainView },
       {
         path: "signup",
         name: "enterRegister",

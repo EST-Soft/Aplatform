@@ -13,4 +13,5 @@ public class EnterInfoDTO {
 	private String entrprsPicName; // 담당자 이름
 	private String entrprsPicMp; // 담당자 전화번호
 	private String entrprsPicEml; // 담당자 이메일 주소
+	private String entrprsZipCode; // 기업 우편번호
 }

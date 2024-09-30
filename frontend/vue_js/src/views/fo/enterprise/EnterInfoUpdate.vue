@@ -11,16 +11,16 @@
 
     <div class="d-flex justify-content-center mb-4">
         <div class="profile-image-outer-container">
-            <div class="profile-image-inner-container bg-color-primary">
+            <div @click="uploadImg" class="profile-image-inner-container bg-color-primary">
                 <img src="@/assets/avatar.jpg" alt="Profile Image" v-if="img==0">
                 <img :src="imgUrl" alt="Profile Image" v-if="img==1">
                 <span class="profile-image-button bg-color-dark">
                     <i class="fas fa-camera text-light"></i>
                 </span>
             </div>
-            <input type="file" id="file" class="form-control profile-image-input"
+                <!-- <input type="file" id="file" class="form-control profile-image-input"             
                     @change="uploadImg"
-                    accept="image/gif, image/jpeg, image/png">
+                    accept="image/gif, image/jpeg, image/png"> -->
         </div>
     </div>
 
@@ -136,6 +136,7 @@
 import { onMounted , ref , computed} from 'vue';
 import store from '@/store'
 import { api } from '@/axios';
+import { showAlert } from '../../../utill/utillModal';
 // import { useStore } from 'vuex';
 
 const entrprsSq = ref(''); //기업순번
@@ -154,7 +155,7 @@ const imgUrl = ref(''); // 이미지 임시url 저장
 
 const img = ref(0);
 
-const file = ref(''); // 파일저장
+// const file = ref(''); // 파일저장
 
 const errorEntrprsPicMp = ref(''); // 핸드폰 번호 에러
 
@@ -167,9 +168,9 @@ const errorEntrprsPicMp = ref(''); // 핸드폰 번호 에러
 onMounted(async() => {
     const test = computed(()=>{
 
-return store.getters.enterMember
+return store.getters.getMember
 })
-console.log("pk:"+test.value.pk);
+console.log("pk:" + test.value.pk);
 
     try{
     const res = await api.$get('/enter/getEnterInfo', {
@@ -231,7 +232,7 @@ const handleSubmit = async() => {
       entrprsPicName: entrprsPicName.value,
       entrprsPicEml: entrprsPicEml.value,
       entrprsPicMp: entrprsPicMp.value,
-      entrprsZoneCode : zonecode.value
+      entrprsZipCode : zonecode.value
       
     };
 
@@ -258,20 +259,24 @@ const handleSubmit = async() => {
 
 
 
-const uploadImg = async (e) => {
-     file.value = e.target.files[0]; // files 배열에서 첫 번째 파일 선택
-    if (file.value) {
-        let url = URL.createObjectURL(file.value);
-        imgUrl.value = url;
-        img.value = 1;
-        console.log(imgUrl);
-        console.log(imgUrl.value);
-        console.log(file);
-    } else {
-        console.error('No file selected');
-        img.value = 0;
-    }
-};
+// const uploadImg = async (e) => {
+//      file.value = e.target.files[0]; // files 배열에서 첫 번째 파일 선택
+//     if (file.value) {
+//         let url = URL.createObjectURL(file.value);
+//         imgUrl.value = url;
+//         img.value = 1;
+//         console.log(imgUrl);
+//         console.log(imgUrl.value);
+//         console.log(file);
+//     } else {
+//         console.error('No file selected');
+//         img.value = 0;
+//     }
+// };
+
+const uploadImg = async () => {
+    showAlert("현재 준비중인 기능입니다");
+}
 
 //아이디 중복확인
 // 아이디중복확인

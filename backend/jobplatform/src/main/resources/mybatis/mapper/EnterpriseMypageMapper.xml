@@ -63,7 +63,7 @@
 		entrprs_pic_name = #{entrprsPicName},
 		entrprs_pic_mp = #{entrprsPicMp},
 		entrprs_pic_eml = #{entrprsPicEml},
-		entrprs_zip_code = #{entrprsZoneCode}
+		entrprs_zip_code = #{entrprsZipCode}
 		where
 		entrprs_sq = #{entrprsSq}
 	</update>

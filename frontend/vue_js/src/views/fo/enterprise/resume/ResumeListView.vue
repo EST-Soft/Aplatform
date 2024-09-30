@@ -26,7 +26,7 @@
         <div v-else>
             <div v-for="resumeData in resumeListData.resumeDatas" :key="resumeData.rsm_sq">
                 <ResumeDatas :resumeData="resumeData" @modify-representative="modifyRepresentative"
-                    @modify-resumes="modifyResumes" @delete-resumes="deleteResumes" @copy-resumes="copyResumes" />
+                    @delete-resumes="deleteResumes" @copy-resumes="copyResumes" />
             </div>
         </div>
     </div>
@@ -120,10 +120,6 @@ const copyResumes = async (emit) => {
         });
 };
 // 이력서 수정 (rsm_sq 들고 페이지 이동)
-const modifyResumes = async () => {
-    event.preventDefault();
-    alert('해당 기능은 현재 미구현 기능입니다.')
-} // modifyResume
 
 // 이력서 삭제 (rsm_sq 들고 Axios)
 const deleteResumes = async (emit) => {

@@ -117,42 +117,24 @@ public class ResumeManagementController {
 			attachmentService.insertImageAttachment(mbrSq, rsmSq, resumeDataDTO);
 		}
 
-		// 학력 정보 처리
 		List<EducationDto> educationDtos = requestDto.getEducationDtoList();
-		if (educationDtos != null && !educationDtos.isEmpty()) {
-			educationService.insertEducation(mbrSq, rsmSq, educationDtos);
-		}
+		educationService.insertEducation(mbrSq, rsmSq, educationDtos);
 
-		// 경력 정보 처리
-		List<CareerDto> careerDtos = requestDto.getCareerDtoList();
-		if (careerDtos != null && !careerDtos.isEmpty()) {
-			careerService.insertCareerData(mbrSq, rsmSq, careerDtos);
-		}
-
-		// 스킬 정보 처리
 		List<SkillCodeSDto> skilsDataDtos = requestDto.getSkilsDataDtoList();
-		if (skilsDataDtos != null && !skilsDataDtos.isEmpty()) {
-			skillCodeResumeRService.insertSkillCodeResume(rsmSq, skilsDataDtos);
-		}
+		skillCodeResumeRService.insertSkillCodeResume(rsmSq, skilsDataDtos);
 
-		// 자격증 정보 처리
 		List<ResumeCertificateSDto> resumeCertificateSDtos = requestDto.getCertificateDtoList();
-		if (resumeCertificateSDtos != null && !resumeCertificateSDtos.isEmpty()) {
-			resumeCertificateSService.insertResumeCertificateS(mbrSq, rsmSq, resumeCertificateSDtos);
-		}
+		resumeCertificateSService.insertResumeCertificateS(mbrSq, rsmSq, resumeCertificateSDtos);
 
-		// 자기소개서 정보 처리
 		List<SelfIntroductionsDataDTO> selfIntroductionsDataDTOs = requestDto.getSelfIntroductionDtoList();
-		if (selfIntroductionsDataDTOs != null && !selfIntroductionsDataDTOs.isEmpty()) {
-			selfIntroductionService.insertSelfIntroduction(mbrSq, rsmSq, selfIntroductionsDataDTOs);
-		}
+		selfIntroductionService.insertSelfIntroduction(mbrSq, rsmSq, selfIntroductionsDataDTOs);
 
-		// 첨부파일 정보 처리
+		List<CareerDto> careerDtos = requestDto.getCareerDtoList();
+		careerService.insertCareerData(mbrSq, rsmSq, careerDtos);
+
 		List<AttachmentDto> attachmentDtos = requestDto.getAttachmentDtoList();
-		if (attachmentDtos != null && !attachmentDtos.isEmpty()) {
-			System.out.println("첨부파일 이름: " + attachmentDtos);
-			attachmentService.insertResumeAttachment(mbrSq, rsmSq, attachmentDtos);
-		}
+		System.out.println("첨부파일 이름: " + attachmentDtos);
+		attachmentService.insertResumeAttachment(mbrSq, rsmSq, attachmentDtos);
 
 	} // insertResumeFullData
 

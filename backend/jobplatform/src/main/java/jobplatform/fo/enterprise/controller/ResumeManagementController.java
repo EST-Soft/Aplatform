@@ -109,6 +109,8 @@ public class ResumeManagementController {
 	@PostMapping("/resumes/insert-resume")
 	public void insertResumeFullData(@RequestParam("mbrSq") Long mbrSq, @RequestBody ResumeDataResponseDto requestDto) {
 		// 이력서 인적사항 및 이미지 처리
+		System.out.println(requestDto);
+		System.out.println(mbrSq);
 		ResumeDataDTO resumeDataDTO = requestDto.getResumeDataDTO();
 		Long rsmSq = resumeManagementService.insertResume(mbrSq, resumeDataDTO);
 

@@ -286,7 +286,7 @@
       <div class="float-end">
         <div class="btn btn-outline btn-xl btn-primary mb-2" @click="submitPost">저장</div>
         <div class="btn btn-outline btn-xl btn-light mb-2" @click="backToList">취소</div>
-        <!-- <button @click="testtest">테스트test</button> -->
+        <button @click="testtest">테스트test</button>
       </div>
     </div>
 
@@ -355,7 +355,7 @@ onMounted(() => {
 });
 
 
-/* const testtest = async () => {
+const testtest = async () => {
   event.preventDefault();
   validateForm();
   validateEducationForm();
@@ -439,7 +439,7 @@ onMounted(() => {
     careerDtoList: careerDatas.value,
     attachmentDtoList: attachmentList
   })
-} */
+}
 const backToList = () => {
   window.location.href = `/resumes/resume-list`
 }
@@ -461,18 +461,18 @@ const submitPost = async () => {
   const imageFormData = new FormData();
   if (imageDatas.value) {
     imageFormData.append('file', imageDatas.value);
-    const response = await api.$post('/file/upload-image', imageFormData, {
+    await api.$post('/file/upload-image', imageFormData, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }
     }).then((response) => {
       console.log(response)
-      window.location.href = `/resumes/resume-list`
+      rsmImgOrgnlFn.value = response.imgOrgnlFn;
+      rsmImgFileUrl.value = response.imgFileUrl;
     }).catch((error) => {
       console.error('Error: ', error)
     });
-    rsmImgOrgnlFn.value = response.imgOrgnlFn;
-    rsmImgFileUrl.value = response.imgFileUrl;
+
   }
 
   const formData = new FormData();
@@ -550,7 +550,6 @@ const submitPost = async () => {
     .catch(error => {
       console.error('Error:', error);
     });
-
 }
 
 // 이미지

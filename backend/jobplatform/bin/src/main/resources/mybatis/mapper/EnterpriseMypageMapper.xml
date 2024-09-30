@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jobplatform.fo.enterprise.domain.mapper.EnterpriseMypageMapper">
+	<resultMap id="EnterMemberEntityResultMap" type="jobplatform.fo.enterprise.domain.entity.EnterMemberEntity">
+		<id property="entrprsSq" column="entrprs_sq"/>
+		<result property="sclctGryCd" column="scl_ctgry_cd"/>
+		<result property="gndrCtryCd" column="gndr_ctgry_cd"/>
+		<result property="entrprsId" column="entrprs_id"/>
+		<result property="entrprsPswrd" column="entrprs_pswrd"/>
+		<result property="entrprsPicName" column="entrprs_pic_name"/>
+		<result property="entrprsPicEml" column="entrprs_pic_eml"/>
+		<result property="entrprsPicMp" column="entrprs_pic_mp"/>
+		<result property="entrprsName" column="entrprs_name"/>
+		<result property="entrprsAdrs" column="entrprs_adrs"/>
+		<result property="entrprsZipCode" column="entrprs_zip_code"/>
+		<result property="entrprsCeoName" column="entrprs_ceo_name"/>
+		<result property="cmnRgtrrtnNmbr" column="cmn_rgtrrtn_nmbr"/>
+		<result property="entrprsHp" column="entrprs_hp"/>
+		<result property="cmnRgtrtnCrtfctnNmbr" column="cmn_rgtrtn_crtfctn_nmbr"/>
+		<result property="logoFileUrl" column="logo_file_url"/>
+		<result property="entrprsEmlRcvYn" column="entrprs_eml_rcv_yn"/>
+		<result property="entrprsPrvcyTrmsYn" column="entrprs_prvcy_trms_yn"/>
+		<result property="insrtEntrprsSq" column="insrt_entrprs_sq"/>
+		<result property="insertEntrprsDtm" column="insrt_entrprs_dtm"/>
+		<result property="updtEntrprsSq" column="updt_entrprs_sq"/>
+		<result property="updtEntrptsDtm" column="updt_entrpts_dtm"/>
+		<result property="dltYn" column="dlt_yn"/>
+		<result property="useYn" column="use_yn"/>
+		<result property="del" column="del"/>
+		<result property="social" column="social"/>
+	</resultMap>
+
+	<!--기업회원정보 수정 -> 기업정보 가져오기 jobplatform.fo.enterprise.domain.dto.EnterInfoDTO-->
+	<select id="getEnterpriseInfo" parameterType="int" resultType="map">
+		select 
+		   entrprs_sq,
+		   entrprs_id,
+		   entrprs_name,
+		   entrprs_hp,
+		   entrprs_adrs,
+		   entrprs_pic_name,
+		   entrprs_pic_mp,
+		   entrprs_pic_eml,
+		   entrprs_zip_code
+		from p3_tbl_enterprise_member_m 
+		where entrprs_sq =#{entrprsSq};
+		   
+	</select>
+	
+	<!-- 기업회원 아이디 중복체크 -->
+	<select id="idRepetitionCheck" resultType="Integer">
+		select count(entrprs_sq)
+		from p3_tbl_enterprise_member_m 
+		where entrprs_id = #{entrprsId}
+	</select>
+	
+	<!-- 회원정보 수정 -->
+	<update id="updateEnterInfo" parameterType="jobplatform.fo.enterprise.domain.dto.EnterInfoDTO">
+		update p3_tbl_enterprise_member_m
+		SET 
+		entrprs_id = #{entrprsId},
+		entrprs_name = #{entrprsName},
+		entrprs_hp = #{entrprsHp},
+		entrprs_adrs = #{entrprsAdrs},
+		entrprs_pic_name = #{entrprsPicName},
+		entrprs_pic_mp = #{entrprsPicMp},
+		entrprs_pic_eml = #{entrprsPicEml},
+		entrprs_zip_code = #{entrprsZoneCode}
+		where
+		entrprs_sq = #{entrprsSq}
+	</update>
+	
+	<!-- 기업회원 비밀번호 -->
+	<select id="getEnterSq" resultType="String">
+		select entrprs_pswrd
+		from p3_tbl_enterprise_member_m
+		where entrprs_sq = #{entrprsSp}
+	</select>
+<!--	기업회원 정보조회-->
+    <select id="findByEntrprsSq" resultMap="EnterMemberEntityResultMap">
+		SELECT * FROM p3_tbl_enterprise_member_m WHERE entrprs_sq=#{entrprsSq}
+	</select>
+
+    <!-- 비밀번호 수정-->
+	<update id="passwordUpdate" parameterType="java.util.Map">
+		update p3_tbl_enterprise_member_m
+		set 
+		entrprs_pswrd = #{encodePswrd}
+		where entrprs_sq=#{entrprsSp}
+	</update>
+	
+	<!--기업회원 탈퇴-->
+	<update id="enterSignOut">
+		update p3_tbl_enterprise_member_m
+		set 
+		dlt_yn = 'Y',
+		updt_entrpts_dtm = NOW()
+		where entrprs_sq = #{entrprsSp}
+	</update>
+	
+</mapper>

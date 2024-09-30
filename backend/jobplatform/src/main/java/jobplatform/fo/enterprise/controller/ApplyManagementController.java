@@ -23,6 +23,7 @@ public class ApplyManagementController {
 	
 	private final ApplyManagementService applyManagementService;
 	
+	
 	public ApplyManagementController(ApplyManagementService applyManagementService) {
 		this.applyManagementService = applyManagementService;
 	}

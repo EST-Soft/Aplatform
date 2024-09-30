@@ -91,7 +91,8 @@ const BoardList = () => {
     if (search.page === curPage) return;
     const queryString = Object.entries(search)
       .map((e) => e.join("="))
-      .join("&");
+      .join("&"); 
+      
     const resp = await axios
       .get("/board?" + queryString)
       .then((res) => res.data);

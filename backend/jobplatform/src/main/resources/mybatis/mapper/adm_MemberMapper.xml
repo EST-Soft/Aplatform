@@ -1,0 +1,41 @@
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jobplatform.bo.mapper.adm_MemberMapper">
+
+<!-- P3_TBL_JOB_MEMBER_M 컬럼 자바 객체 매핑 -->
+ <resultMap id="MemberDTOResultMap" type="jobplatform.bo.dto.adm_MemberDTO">
+        <id property="mbrSq" column="mbr_sq"/>
+        <result property="gndrTypCd" column="gndr_typ_code"/> 
+        <result property="mbrId" column="mbr_id"/>
+        <result property="mbrName" column="mbr_name"/>
+        <result property="mbrPswrd" column="mbr_pswrd"/>
+        <result property="mbrMp" column="mbr_mp"/>
+        <result property="mbrBd" column="mbr_bd"/>
+        <result property="mbrAdrs" column="mbr_adrs"/>
+        <result property="mbrEmlAdrs" column="mbr_eml_adrs"/>
+        <result property="mbrEmlRcvYn" column="mbr_eml_rcv_yn"/> 
+        <result property="mbrPrvcyTrmsYn" column="mbr_prvcy_trms_yn"/> 
+        <result property="pstnPrpslAcptYn" column="pstn_prpsl_accept_yn"/>   
+        <result property="mbrImgOrgnlFn" column="mbr_img_orgnl_fn"/>
+        <result property="mbrImgFileUrl" column="mbr_img_file_url"/>
+        <result property="insrtMbrSq" column="insrt_mbr_sq"/>
+        <result property="insrtDtm" column="insrt_dtm"/>
+        <result property="updtMbrSq" column="updt_mbr_sq"/>
+        <result property="updtDtm" column="updt_dtm"/>
+        <result property="dltYn" column="dlt_yn"/>
+        <result property="useYn" column="use_yn"/>
+    </resultMap>
+
+    <!-- 회원관리 리스트 다 가져오기 -->
+   <select id="selectAllMember" resultMap="MemberDTOResultMap">
+        SELECT * FROM P3_TBL_MEMBER_M
+    </select>
+
+
+
+
+
+
+
+</mapper>

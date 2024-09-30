@@ -24,7 +24,7 @@
     
     <select id="getMyJobPostSimpleData" resultMap="myJobPostSimpleDataResultMap">    
         SELECT 
-            jbp_sq, entrprs_sq, jbp_tl, insrt_dtm, jbp_cndtn 
+            jpm.jbp_sq, jpm.entrprs_sq, jpm.jbp_tl, jpm.insrt_dtm, jpm.jbp_cndtn, aph.apy_cndtn, aph.cnt
         FROM 
             p2_tbl_job_posting_m jpm
         LEFT JOIN(
@@ -38,7 +38,8 @@
             AND
             jbp_cndtn != 704
         ORDER BY 
-            insrt_dtm
+            insrt_dtm DESC
+        LIMIT 5
     </select>
 
     <!-- 공고별 지원 현황 데이터 가져오기

@@ -1,0 +1,66 @@
+.adminSideBar {
+  width: 250px;  /* 고정된 너비 */
+  height: calc(100vh - 70px); /* 해더 높이만큼 빼고, 화면의 전체 높이를 차지 */
+  background-color: #333; /* 배경 색상 */
+  color: #fff; /* 텍스트 색상 */
+  padding: 10px; /* 안쪽 여백 */
+  position: relative;
+  
+  left: 0;
+  z-index: 9999;
+  transition: transform 0.3s ease-in-out; /* 애니메이션 효과 */
+}
+
+.adminSideBar.closed {
+  transform: translateX(-100%); /* 사이드바 숨기기 */
+}
+
+.adminSideBar.open {
+  transform: translateX(0); /* 사이드바 열기 */
+}
+
+.toggleButton {
+  display: none; /* 기본적으로 버튼 숨김 */
+  position: fixed;
+  left: 20px;
+  z-index: 10000;
+  background-color: none;
+  color: white;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  width: 3em;
+  height: 3em;
+}
+
+.menuDetail {
+  list-style: none; /* 목록 스타일 제거 */
+}
+
+.menuDetail li {
+  list-style: none; /* 목록 스타일 제거 */
+}
+
+@media (max-width: 900px) {
+  .adminSideBar {
+      position: fixed;
+      top: 120px; /* 해더 높이만큼 아래로 내림 */
+      left: 0;
+      height: calc(100% - 70px); /* 해더 높이만큼 빼고 전체 높이 설정 */
+      z-index: 9999;
+      transform: translateX(-100%); /* 기본적으로 숨김 */
+  }
+
+  .adminSideBar.open {
+      transform: translateX(0); /* 열렸을 때 */
+  }
+
+  .toggleButton {
+      display: block; /* 작은 화면에서 버튼 보이기 */
+      border:none ;
+      width : 4rem;
+      height : 3em;
+      margin-top : -45px;
+
+  }
+}

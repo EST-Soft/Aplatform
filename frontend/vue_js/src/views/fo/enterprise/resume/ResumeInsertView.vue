@@ -446,10 +446,10 @@ const backToList = () => {
 // form submit 함수
 const submitPost = async () => {
   const isValidForm = validateForm();
-  const isValidEducation = validateEducationForm();
-  const isValidCareer = validateCareerForm();
-  const isValidCertificate = validateCertificateForm();
-  const isValidSelfIntroduction = validateSelfIntroductionForm();
+  const isValidEducation = educationsList.value.length > 0 ? validateEducationForm() : true;
+  const isValidCareer = careerDatas.value.length > 0 ? validateCareerForm() : true;
+  const isValidCertificate = certificateDatas.value.length > 0 ? validateCertificateForm() : true;
+  const isValidSelfIntroduction = selfIntroductionDatas.value.length > 0 ? validateSelfIntroductionForm() : true;
 
   if (!isValidForm || !isValidEducation || !isValidCareer || !isValidCertificate || !isValidSelfIntroduction) {
     console.log('Validation failed, aborting submission.');
@@ -697,120 +697,125 @@ const removeAttachment = (index) => {
 const validateForm = () => {
   if (rsmTtl.value.trim() === '') {
     alert("제목을 입력하세요.");
-    return;
+    return false;
   }
   if (rsmName.value.trim() === '') {
     alert("이름을 입력하세요.");
-    return;
+    return false;
   }
   if (rsmGndrCode.value.trim() === '') {
     alert("성별을 선택하세요.");
-    return;
+    return false;
   }
   if (rsmBd.value.trim() === '' || !/^\d{8}$/.test(rsmBd.value.trim())) {
     alert("생년월일을 입력하세요. 8자리의 숫자만 입력 가능합니다.");
-    return;
+    return false;
   }
   if (rsmMp.value.trim() === '' || !/^\d{11}$/.test(rsmMp.value.trim())) {
     alert("전화번호를 입력하세요. 11자리의 숫자만 입력 가능합니다.");
-    return;
+    return false;
   }
   if (rsmAdrs.value.trim() === '') {
     alert("주소을 입력하세요.");
-    return;
+    return false;
   }
   if (rsmEml.value.trim() === '' || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(rsmEml.value.trim())) {
     alert(rsmEml.value.trim() === '' ? "이메일을 입력하세요." : "유효한 이메일 주소를 입력하세요.");
-    return;
+    return false;
   }
   if (rsmEs.value.trim() === '' || !/^\d+$/.test(rsmEs.value.trim())) {
     alert("희망연봉을 입력하세요. 숫자만 입력 가능합니다.");
-    return;
+    return false;
   }
   if (rsmFnlEdctnCode.value.trim() === '') {
     alert("최종학력을 선택해주세요.");
-    return;
+    return false;
   }
   if (rsmGrd.value.trim() === '' || !/^\d+$/.test(rsmGrd.value.trim())) {
     alert("학점을 입력하세요. 숫자만 입력 가능합니다.");
-    return;
+    return false;
   }
+  return true;
 } // validateForm
 
 const validateEducationForm = () => {
-  educationsList.value.forEach(education => {
+  for (const education of educationsList.value) {
     if (education.schlName.trim() === '') {
       alert("학교 이름을 입력해 주세요.");
-      return
+      return false;
     }
     if (education.schlCndtnCode.trim() === '') {
       alert("학교 졸업 상태를 선택해 주세요.");
-      return
+      return false;
     }
     if (education.schlDprtmnt.trim() === '') {
       alert("학과를 입력해 주세요.");
-      return
+      return false;
     }
     if (education.schlAdmsnDate.trim() === '') {
       alert("입학 날짜를 입력해 주세요.");
-      return
+      return false;
     }
     if (education.schlGrdtnDate.trim() === '') {
       alert("졸업 날짜를 입력해 주세요.");
-      return
+      return false;
     }
-  })
+  }
+  return true;
 } // validateEducationForm
 
 const validateCareerForm = () => {
-  careerDatas.value.forEach(career => {
+  for (const career of careerDatas.value) {
     if (career.entrprsName.trim() === '') {
       alert("회사 이름을 입력해 주세요.");
-      return
+      return false;
     }
     if (career.entrprsPstn.trim() === '') {
       alert("직책을 입력해 주세요.");
-      return
+      return false;
     }
     if (career.entrprsJacDate.trim() === '') {
       alert("입사일를 입력해 주세요.");
-      return
+      return false;
     }
     if (career.entrprsRsgntnDate.trim() === '') {
       alert("퇴사일를 입력해 주세요.");
-      return
+      return false;
     }
-  })
+  }
+  return true;
 } // validateCareerForm
 
 const validateCertificateForm = () => {
-  certificateDatas.value.forEach(certificate => {
+  for (const certificate of certificateDatas.value) {
     if (certificate.crtfctName.trim() === '') {
       alert("자격증 이름을 입력해 주세요.");
-      return
+      return false;
     }
     if (certificate.crtfctIsr.trim() === '') {
       alert("발행기관을 입력해 주세요.");
-      return
+      return false;
     }
     if (certificate.crtfctAd.trim() === '') {
       alert("취득일을 입력해 주세요.");
-      return
+      return false;
     }
-  })
+  }
+  return true;
 } // validateCertificateForm
 
 const validateSelfIntroductionForm = () => {
-  selfIntroductionDatas.value.forEach(selfIntroduction => {
+  for (const selfIntroduction of selfIntroductionDatas.value) {
     if (selfIntroduction.siTtl.trim() === '') {
       alert("자기소개서 제목을 입력해 주세요.");
-      return
+      return false;
     }
     if (selfIntroduction.siCntnt.trim() === '') {
       alert("자기소개서 내용을 입력해 주세요.");
-      return
+      return false;
     }
-  })
+  }
+  return true;
 } // validateSelfIntroductionForm
 
 </script>

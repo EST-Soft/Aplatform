@@ -25,6 +25,9 @@ function AdminLogin({ setAdminInfo }) {
       admId: admId,
       admPswrd: admPswrd,
     };
+
+    console.log("데이터: ", JSON.stringify(loginData));
+
     
     // axois로 백엔드와 통신 로직
     axios.post('/admin/login', loginData)
@@ -32,7 +35,7 @@ function AdminLogin({ setAdminInfo }) {
         if(resp.status === 200){
           setAdminInfo({ admId : resp.data.admId, admName : resp.data.admName});
           // 경로 이동
-          navigate('/admin/sidebar');
+          navigate('/admin/board/JobPosting');
           alert("관리자 " + admId + "계정으로 로그인 되었습니다.");
         }
       })

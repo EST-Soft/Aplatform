@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 
-const Header = () => {
+const Header = ({admName}) => {
   const [userType, setUserType] = useState("user");
   const userId = 1; // 임시로 userId를 설정
   
@@ -34,7 +32,7 @@ const Header = () => {
 
           <div className="collapse navbar-collapse" id="navbarNav">
             <ul className="navbar-nav ms-auto"> 
-              {userType === "user" && (
+            {admName ? ( // 로그인된 경우 관리자의 이름을 표시
                 <li className="nav-item dropdown">
                   <Link
                     className="nav-link dropdown-toggle"
@@ -43,9 +41,9 @@ const Header = () => {
                     role="button"
                     data-bs-toggle="dropdown"
                     aria-expanded="false"
-                    style={{ fontSize: '25px', textAlign: 'center', marginTop:'20px' }} 
+                    style={{ fontSize: '25px', textAlign: 'center', marginTop: '20px' }}
                   >
-                    홍길동 님
+                    {admName} 님 {/* 관리자 이름 표시 */}
                   </Link>
                   <ul className="dropdown-menu" aria-labelledby="navbarDropdown">
                     <li>
@@ -61,6 +59,12 @@ const Header = () => {
                     </li>
                   </ul>
                 </li>
+              ) : (
+                <li>
+                <Link className="nav-link" to="/admin/login">
+                  로그인
+                </Link>
+              </li>
               )}
             </ul>
           </div>

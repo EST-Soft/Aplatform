@@ -1,8 +1,6 @@
-import { Route, Routes, useLocation, Navigate } from "react-router-dom";
+import { Route, Routes, useLocation, Navigate, useNavigate } from "react-router-dom";
 
-
-
-import React from "react";
+import React, { useState } from "react";
 import SidebarLayout from "./mypage/SidebarLayout";
 import MypageHome from "./mypage/MypageHome";
 import ResumeForm from "./mypage/ResumeInsertView";
@@ -18,7 +16,7 @@ import BoardWrite from "./board/BoardWrite";
 import BoardUpdate from "./board/BoardUpdate";
 
 
-
+import AdminLogin from './admin/AdminLogin_temp';
 import DetailData  from './admin/DetailData';
 
 // 게시글 리스트
@@ -50,8 +48,9 @@ import EnterJobPostingEdit from "./enterprise/EnterJobPostingUpdateForm";
 import UserSignup from "./user/UserSignup";
 import UserFindForm from "./user/UserFindForm";
 
-function Test() {
+function Test({ setAdminInfo, adminInfo }) {
   const location = useLocation();
+  const Navigate = useNavigate();
 
   const showSidebar = [
     "/mypage/home",
@@ -149,30 +148,34 @@ function Test() {
               element={<ResumeDetail />}
             />
 
+            <Route 
+              path="/admin/login" 
+              element={<AdminLogin setAdminInfo={setAdminInfo} />}
+            />
 
+<Route path="/admin/board/JobPosting" element={<ListData type="JobPosting" />} />
             {/* 공고/사용자/커뮤니티 관리 */}
-            <Route path="/admin/board/JobPosting" element={<ListData type="JobPosting" />} />
-            <Route path="/admin/board/MemberAccount" element={<ListData type="MemberAccount" />} />
-            <Route path="/admin/board/EnterPrise" element={<ListData type="EnterPrise" />} />
-            <Route path="/admin/board/Manager" element={<ListData type="Manager" />} />
+            {adminInfo ? (
+              <>
+                
+                <Route path="/admin/board/MemberAccount" element={<ListData type="MemberAccount" />} />
+                <Route path="/admin/board/EnterPrise" element={<ListData type="EnterPrise" />} />
+                <Route path="/admin/board/Manager" element={<ListData type="Manager" />} />
 
-            <Route path="/admin/board/Qna" element={<ListData type="Qna" />} />
-            <Route path="/admin/board/General" element={<ListData type="General" />} />
-            <Route path="/admin/board/FeedBack" element={<ListData type="FeedBack" />} />
-
-
-
-            {/* 상세페이지 */}
-            <Route path="/admin/:type/:id" element={<DetailData />} />
-            <Route path="/admin/board/:type/:id" element={<DetailData />} />
-           
+                <Route path="/admin/board/Qna" element={<ListData type="Qna" />} />
+                <Route path="/admin/board/General" element={<ListData type="General" />} />
+                <Route path="/admin/board/FeedBack" element={<ListData type="FeedBack" />} />
 
 
-            
-          
 
+                {/* 상세페이지 */}
+                <Route path="/admin/:type/:id" element={<DetailData />} />
+                <Route path="/admin/board/:type/:id" element={<DetailData />} />
+            </>
+            ) : (
+              <Route path="*" element={<Navigate to="/admin/login" />} />
+            )}
 
-            
             <Route path="/FileUpload" element={<FileUpload />} />
           </Routes>
         </SidebarLayout>

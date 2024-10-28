@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jobplatform.fo.enterprise.domain.mapper.ApplyMapper">
+
+	<!-- 지원디테일(자격증 + 지원상태) -->
+	<resultMap type="jobplatform.fo.enterprise.domain.vo.ApplyDetailDataVO" id="ApplyDetailDataVO">
+		<id property="rsm_sq" column="rsm_sq"/>
+		<result property="mbr_sq" column="mbr_sq"/>
+		<result property="rsm_img_file_url" column="rsm_img_file_url"/>
+		<result property="rsm_fnl_edctn_code_name" column="rsm_fnl_edctn_code_name"/>
+		<result property="rsm_grd" column="rsm_grd"/>
+		<result property="rsm_es" column="rsm_es"/>
+		<result property="rsm_ttl" column="rsm_ttl"/>
+		<result property="rsm_name" column="rsm_name"/>
+		<result property="rsm_gndr_code_name" column="rsm_gndr_code_name"/>
+		<result property="rsm_bd" column="rsm_bd"/>
+		<result property="age" column="age"/>
+		<result property="rsm_mp" column="rsm_mp"/>
+		<result property="rsm_adrs" column="rsm_adrs"/>
+		<result property="rsm_eml" column="rsm_eml"/>
+		<result property="apy_cndtn" column="apy_cndtn"/>
+		<result property="apy_cndtn_name" column="apy_cndtn_name"/>
+		
+		<collection property="resumeAttachmentList" resultMap="resumeAttachmentList"></collection>
+		<collection property="resumeSelfintroductionList" resultMap="resumeSelfintroductionList"></collection>
+		<collection property="resumeEducationList" resultMap="resumeEducationList"></collection>
+		<collection property="resumeCertificateList" resultMap="resumeCertificateList"></collection>
+		<collection property="ResumeCareerList" resultMap="ResumeCareerList"></collection>
+	</resultMap>
+	<!-- 첨부파일 -->
+	<resultMap type="jobplatform.fo.enterprise.domain.vo.ResumeAttachmentDataVO" id="resumeAttachmentList">
+		<id property="atchmnt_sq" column="atchmnt_sq"/>
+		<result property="atchmnt_orgnl_fn" column="atchmnt_orgnl_fn"/>
+		<result property="atchmnt_url" column="atchmnt_url"/>
+	</resultMap>
+	<!-- 자기소개서 -->
+	<resultMap type="jobplatform.fo.enterprise.domain.vo.ResumeSelfintroductionDataVO" id="resumeSelfintroductionList">
+		<id property="si_sq" column="si_sq"/>
+		<result property="si_ttl" column="si_ttl"/>
+		<result property="si_cntnt" column="si_cntnt"/>
+	</resultMap>
+	<!-- 학력 -->
+	<resultMap type="jobplatform.fo.enterprise.domain.vo.ResumeEducationDataVO" id="resumeEducationList">
+		<id property="edctn_sq" column="edctn_sq"/>
+		<result property="schl_name" column="schl_name"/>
+		<result property="schl_cndtn_code_name" column="schl_cndtn_code_name"/>
+		<result property="schl_dprtmnt" column="schl_dprtmnt"/>
+		<result property="schl_admsn_date" column="schl_admsn_date"/>
+		<result property="schl_grdtn_date" column="schl_grdtn_date"/>
+	</resultMap>
+	<!-- 자격증 -->
+	<resultMap type="jobplatform.fo.enterprise.domain.vo.ResumeCertificateDataVO" id="resumeCertificateList">
+		<id property="crtfct_sq" column="crtfct_sq"/>
+		<result property="crtfct_name" column="crtfct_name"/>
+		<result property="crtfct_isr" column="crtfct_isr"/>
+		<result property="crtfct_ad" column="crtfct_ad"/>
+	</resultMap>
+	<!-- 경력 -->
+	<resultMap type="jobplatform.fo.enterprise.domain.vo.ResumeCareerDataVO" id="ResumeCareerList">
+		<id property="crr_sq" column="crr_sq"/>
+		<result property="entrprs_name" column="entrprs_name"/>
+		<result property="entrprs_pstn" column="entrprs_pstn"/>
+		<result property="entrprs_jac_date" column="entrprs_jac_date"/>
+		<result property="entrprs_rsgntn_date" column="entrprs_rsgntn_date"/>
+	</resultMap>
+	
+	<!-- 지원자리스트 페이지네이션을 위한 카운트 -->
+	<select id="loadApplyListCount" resultType="int">
+		select count(1)
+		from p2_tbl_apply_h as apply
+				left outer join P2_TBL_RESUME_M as resume
+					on apply.rsm_sq = resume.rsm_sq
+				left outer join P2_TBL_POSITION_PROPOSAL_M as posi
+					on posi.rsm_sq = resume.rsm_sq
+		where apply.jbp_sq = #{jbp_sq}
+			and apply.apy_cndtn != 'ac'
+			<if test = "condition != 0">
+				and apply.apy_cndtn = #{condition}
+			</if>
+			<if test = "division == 'apply'">
+				and posi.pstn_prpsl_sq is null
+			</if>
+			<if test = "division == 'proposal'">
+				and posi.pstn_prpsl_sq is not null
+			</if>
+	</select>
+	
+	<!-- 지원자리스트 -->
+	<select id="selectApplyListData" resultType="jobplatform.fo.enterprise.domain.vo.ApplyListVO">
+		select 
+			apply.apy_sq,
+			apply.apy_dtm,
+			apply.apy_cndtn,
+			(select code_name from P2_TBL_COMMON_CODE_DTL_S where code_id = apply.apy_cndtn) as apy_cndtn_name,
+			resume.rsm_sq,
+			resume.rsm_img_file_url,
+			resume.rsm_fnl_edctn_code,
+			(select code_name from P2_TBL_COMMON_CODE_DTL_S where code_id = resume.rsm_fnl_edctn_code) as rsm_fnl_edctn_name,
+			resume.rsm_grd,
+			resume.rsm_es,
+			RESUME.rsm_name,
+			IF(posi.pstn_prpsl_sq is null, "지원", "제안") as rnqns_name
+		from p2_tbl_apply_h as apply
+				left outer join P2_TBL_RESUME_M as resume
+					on apply.rsm_sq = resume.rsm_sq
+				left outer join P2_TBL_POSITION_PROPOSAL_M as posi
+					on posi.rsm_sq = resume.rsm_sq
+				left outer join p3_tbl_member_m as member
+					on member.mbr_sq = resume.mbr_sq
+		where apply.jbp_sq = #{searchData.jbp_sq}
+			and apply.apy_cndtn != 'ac'
+			<if test = "searchData.condition != 0">
+				and apply.apy_cndtn = #{searchData.condition}
+			</if>
+			<if test = "searchData.division.equals('apply')">
+				and posi.pstn_prpsl_sq is null
+			</if>
+			<if test = "searchData.division.equals('proposal')">
+				and posi.pstn_prpsl_sq is not null
+			</if>
+		order by apply.apy_dtm ${searchData.sort}
+		limit #{paginationData.startRowIndex}, #{paginationData.showDataCountPerPage};
+	</select>
+	
+	<!-- 지원자 상세정보 얻기 -->
+	<select id="selectApplyDetailData" resultMap="ApplyDetailDataVO">
+		select 
+			RESUME.rsm_sq,
+			RESUME.mbr_sq,
+			RESUME.rsm_img_file_url,
+			(select code_name from P2_TBL_COMMON_CODE_DTL_S where code_id = resume.rsm_fnl_edctn_code) as rsm_gndr_code_name,
+			RESUME.rsm_grd,
+			RESUME.rsm_es,
+			RESUME.rsm_ttl,
+			RESUME.rsm_name,
+			(select code_name from P2_TBL_COMMON_CODE_DTL_S where code_id = RESUME.rsm_gndr_code) as rsm_gndr_code_name,
+			RESUME.rsm_bd,
+			TIMESTAMPDIFF(year, RESUME.rsm_bd, now()) as age,
+			RESUME.rsm_mp,
+			RESUME.rsm_adrs,
+			RESUME.rsm_eml,
+			APPLY.apy_cndtn,
+			(select code_name from P2_TBL_COMMON_CODE_DTL_S where code_id = APPLY.apy_cndtn) as apy_cndtn_name,
+			ATTACHMENT.atchmnt_sq,
+			ATTACHMENT.atchmnt_orgnl_fn,
+			ATTACHMENT.atchmnt_url,
+			SELFINTRODUCTION.si_sq,
+			SELFINTRODUCTION.si_ttl,
+			SELFINTRODUCTION.si_cntnt,
+			EDUCATION.edctn_sq,
+			EDUCATION.schl_name,
+			(select code_name from P2_TBL_COMMON_CODE_DTL_S where code_id EDUCATION.schl_cndtn_code) as schl_cndtn_code_name,
+			EDUCATION.schl_dprtmnt,
+			EDUCATION.schl_admsn_date,
+			EDUCATION.schl_grdtn_date,
+			CERTIFICATE.crtfct_sq,
+			CERTIFICATE.crtfct_name,
+			CERTIFICATE.crtfct_isr,
+			CERTIFICATE.crtfct_ad,
+			CAREER.crr_sq,
+			CAREER.entrprs_name,
+			CAREER.entrprs_pstn,
+			CAREER.entrprs_jac_date,
+			CAREER.entrprs_rsgntn_date
+		from P2_TBL_APPLY_H as APPLY
+			left outer join P2_TBL_RESUME_M as RESUME
+				on APPLY.rsm_sq = RESUME.rsm_sq
+			left outer join P2_TBL_RESUME_ATTACHMENT_S as ATTACHMENT
+				on RESUME.rsm_sq = ATTACHMENT.rsm_sq
+			left outer join P2_TBL_RESUME_SELFINTRODUCTION_S as SELFINTRODUCTION
+				on RESUME.rsm_sq = SELFINTRODUCTION.rsm_sq
+			left outer join P2_TBL_RESUME_EDUCATION_S as EDUCATION
+				on RESUME.rsm_sq = EDUCATION.rsm_sq
+			left outer join P2_TBL_RESUME_CERTIFICATE_S as CERTIFICATE
+				on RESUME.rsm_sq = CERTIFICATE.rsm_sq
+			left outer join P2_TBL_RESUME_CAREER_S as CAREER
+				on RESUME.rsm_sq = CAREER.rsm_sq
+		where APPLY.apy_sq = #{apy_sq}
+			and RESUME.use_yn = 'Y'
+			and (ATTACHMENT.use_yn = 'Y' or ATTACHMENT.use_yn is null)
+			and (SELFINTRODUCTION.use_yn = 'Y' or SELFINTRODUCTION.use_yn is null)
+			and (EDUCATION.use_yn = 'Y' or EDUCATION.use_yn is null)
+			and (CERTIFICATE.use_yn = 'Y' or CERTIFICATE.use_yn is null)
+			and (CAREER.use_yn = 'Y' or CAREER.use_yn is null);
+	</select>
+	
+	<!-- 지원자 상태 변경 -->
+	<update id="updateApplyCondition">
+		update P2_TBL_APPLY_H
+		set apy_cndtn = #{apy_cndtn}, intv_dtm = #{intv_dtm}
+		where apy_sq = #{apy_sq};
+	</update>
+</mapper>

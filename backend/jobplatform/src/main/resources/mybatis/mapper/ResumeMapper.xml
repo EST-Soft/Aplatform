@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="jobplatform.fo.enterprise.domain.mapper.ResumeMapper">
+
+	<!-- 이력서 리스트 데이터 갯수 구해오기 -->
+	<select id="loadResumeListCount" resultType="int">
+		select count(1)
+		from
+		P2_TBL_RESUME_M
+		where mbr_sq = #{mbr_sq}
+		and use_yn = 'Y'
+		and dlt_yn = 'N'
+	</select>
+
+	<!-- 이력서 리스트 데이터 얻기 -->
+	<select id="selectResumeData"
+		resultType="jobplatform.fo.enterprise.domain.vo.ResumeListVO">
+		select
+		rsm_sq,
+		mbr_sq,
+		rsm_rprsntv_yn,
+		rsm_ttl,
+		updt_dtm,
+		insrt_dtm
+		from P2_TBL_RESUME_M
+		where mbr_sq = #{searchData.mbr_sq}
+		and use_yn = 'Y'
+		and dlt_yn = 'N'
+		order by rsm_rprsntv_yn desc, updt_dtm ${searchData.sort}
+		limit
+		#{paginationData.startRowIndex},#{paginationData.showDataCountPerPage}
+	</select>
+
+	<!-- 이력서 상세 정보 가져오기 -->
+	<select id="selectResumeM">
+		SELECT res.rsm_sq, res.mbr_sq, res.rsm_img_orgnl_fn, res.rsm_img_file_url, res.rsm_fnl_edctn_code, res.rsm_grd, res.rsm_es, res.rsm_ttl, 
+		res.rsm_name, res.rsm_gndr_code, res.rsm_bd, res.rsm_mp, res.rsm_adrs, res.rsm_eml, res.insrt_dtm, res.updt_dtm, cdn.code_name
+		FROM p2_tbl_resume_m as res, p2_tbl_common_code_dtl_s as cdn
+		WHERE res.rsm_sq = #{rsm_sq}
+		and res.rsm_fnl_edctn_code = cdn.code_id
+	</select>
+
+	<!-- 학력 정보 가져오기 -->
+	<select id="selectResumeEducation" resultType="jobplatform.fo.enterprise.domain.vo.ResumeEducationDataVO">
+		SELECT edu.edctn_sq, edu.schl_name, edu.schl_cndtn_code, edu.schl_dprtmnt, edu.schl_admsn_date, edu.schl_grdtn_date, edu.use_yn, cdn.code_name
+		FROM P2_TBL_RESUME_EDUCATION_S as edu, p2_tbl_common_code_dtl_s as cdn
+		WHERE edu.rsm_sq = #{rsm_sq}
+		and edu.use_yn = 'Y'
+		and edu.dlt_yn = 'N'
+		and edu.schl_cndtn_code = cdn.code_id
+	</select>
+
+	<!-- 경력 정보 가져오기 -->
+	<select id="selectResumeCareer" resultType="jobplatform.fo.enterprise.domain.vo.ResumeCareerDataVO">
+		SELECT crr_sq, entrprs_name, entrprs_pstn, entrprs_jac_date, entrprs_rsgntn_date, use_yn
+		FROM P2_TBL_RESUME_CAREER_S
+		WHERE rsm_sq = #{rsm_sq}
+		and use_yn = 'Y'
+		and dlt_yn = 'N'
+	</select>
+
+	<!-- 기술 정보 가져오기 -->
+	<select id="selectResumeSkillCode" resultType="jobplatform.fo.enterprise.domain.vo.ResumeSkillCodeDataVO">
+		SELECT skcd.skl_code_sq, skcd.skl_lc_name, skcd.skl_mc_name, skcd.skl_sc_name, skcd.use_yn
+		FROM P2_TBL_SKILL_CODE_S as skcd, P2_TBL_SKILL_CODE_RESUME_R as skcdre
+		WHERE
+		skcd.use_yn = 'Y'
+		and skcd.dlt_yn = 'N'
+		and skcd.skl_code_sq = skcdre.skl_code_sq
+		and skcdre.rsm_sq = #{rsm_sq}
+	</select>
+
+	<!-- 자격증 정보 가져오기 -->
+	<select id="selectResumeCertificate" resultType="jobplatform.fo.enterprise.domain.vo.ResumeCertificateDataVO">
+		SELECT crtfct_sq, crtfct_name, crtfct_isr, crtfct_ad, use_yn
+		FROM P2_TBL_RESUME_CERTIFICATE_S
+		WHERE rsm_sq = #{rsm_sq}
+		and use_yn = 'Y'
+		and dlt_yn = 'N'
+	</select>
+
+	<!-- 자기소개서 정보 가져오기 -->
+	<select id="selectResumeSelfIntroduction" resultType="jobplatform.fo.enterprise.domain.vo.ResumeSelfintroductionDataVO">
+		SELECT si_sq, si_ttl, si_cntnt, use_yn
+		FROM P2_TBL_RESUME_SELFINTRODUCTION_S
+		WHERE rsm_sq = #{rsm_sq}
+		and use_yn = 'Y'
+		and dlt_yn = 'N'
+	</select>
+
+	<!-- 첨부파일 정보 가져오기 -->
+	<select id="selectResumeAttachment" resultType="jobplatform.fo.enterprise.domain.vo.ResumeAttachmentDataVO">
+		SELECT atchmnt_sq, atchmnt_orgnl_fn, atchmnt_url, use_yn
+		FROM P2_TBL_RESUME_ATTACHMENT_S
+		WHERE rsm_sq = #{rsm_sq}
+		and use_yn = 'Y'
+		and dlt_yn = 'N'
+	</select>
+
+	<!-- 대표 이력서 여부 변경 -->
+	<update id="updateResumeyRepresentative">
+		update P2_TBL_RESUME_M
+		set rsm_rprsntv_yn =
+		CASE
+		WHEN rsm_sq = #{rsm_sq } THEN "Y"
+		ELSE "N"
+		END
+		where (mbr_sq = (select mbr_sq from P2_TBL_RESUME_M where rsm_sq =
+		#{rsm_sq})
+		and rsm_rprsntv_yn = "Y")
+		OR rsm_sq = #{rsm_sq} ;
+	</update>
+
+	<!-- 이력서 모든 데이터 삭제 -> YN 으로 구현 -->
+	<!-- 이력서 삭제 -->
+	<update id="deleteResumeFullData">
+		update P2_TBL_RESUME_M
+		set dlt_yn ="Y", use_yn ="N"
+		where rsm_sq = #{rsm_sq}
+	</update>
+	<!-- 이력서 첨부파일 삭제 -->
+	<update id="delectRsmAtchmnt">
+		update P2_TBL_RESUME_ATTACHMENT_S
+		set dlt_yn ="Y",
+		use_yn ="N"
+		where rsm_sq = #{rsm_sq}
+	</update>
+	<!-- 이력서 자기소개서 삭제 -->
+	<update id="delectRsmSi">
+		update P2_TBL_RESUME_SELFINTRODUCTION_S
+		set dlt_yn
+		="Y", use_yn ="N"
+		where rsm_sq = #{rsm_sq}
+	</update>
+	<!-- 이력서 학력 삭제 -->
+	<update id="delectRsmEdctn">
+		update P2_TBL_RESUME_EDUCATION_S
+		set dlt_yn ="Y",
+		use_yn ="N"
+		where rsm_sq = #{rsm_sq}
+	</update>
+	<!-- 이력서 자격증 삭제 -->
+	<update id="delectRsmCrtfct">
+		update P2_TBL_RESUME_CERTIFICATE_S
+		set dlt_yn ="Y",
+		use_yn ="N"
+		where rsm_sq = #{rsm_sq}
+	</update>
+	<!-- 이력서 경력 삭제 -->
+	<update id="delectRsmCr">
+		update P2_TBL_RESUME_CAREER_S
+		set dlt_yn ="Y", use_yn
+		="N"
+		where rsm_sq = #{rsm_sq}
+	</update>
+
+	<!-- 이력서 복사 처리 -->
+	<!-- 이력서 메인테이블 복사 -->
+	<insert id="insertCopyResume">
+		insert into
+		P2_TBL_RESUME_M (
+		mbr_sq,
+		rsm_img_orgnl_fn,
+		rsm_img_file_url,
+		rsm_fnl_edctn_code,
+		rsm_grd,
+		rsm_es,
+		rsm_ttl,
+		rsm_name,
+		rsm_gndr_code,
+		rsm_bd,
+		rsm_mp,
+		rsm_adrs,
+		rsm_eml,
+		insrt_mbr_sq,
+		insrt_dtm
+		)
+		select mbr_sq,
+		rsm_img_orgnl_fn,
+		rsm_img_file_url,
+		rsm_fnl_edctn_code,
+		rsm_grd,
+		rsm_es,
+		concat(rsm_ttl, "[복사본]") as rsm_ttl,
+		rsm_name,
+		rsm_gndr_code,
+		rsm_bd,
+		rsm_mp,
+		rsm_adrs,
+		rsm_eml,
+		insrt_mbr_sq,
+		NOW() from P2_TBL_RESUME_M where rsm_sq = #{rsm_sq};
+	</insert>
+
+</mapper>

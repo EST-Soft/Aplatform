@@ -1,0 +1,21 @@
+.form-control{
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    max-height: 200px; /* 드롭다운의 최대 높이 설정 */
+    overflow-y: auto; /* 세로 스크롤 처리 */
+  }
+  
+  /* Quill 에디터 스타일 수정 */
+  .quill-editor .ql-container {
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    height: 200px;
+  }
+  
+  .quill-editor .ql-editor {
+    min-height: 200px;
+    max-height: 400px; /* 에디터의 최대 높이 설정 */
+    overflow-y: auto; /* 세로 스크롤 처리 */
+  }

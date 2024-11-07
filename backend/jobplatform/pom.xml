@@ -104,7 +104,7 @@
 		</dependency>
 		
 		
-        <!--ê¸°ìš°?‹˜ ì¶”ê?? ?””?Žœ?˜?‹œ-->
+        <!--ê¸°ìš°?ï¿½ï¿½ ì¶”ï¿½?? ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½-->
 		<dependency>
 			<groupId>org.modelmapper</groupId>
 			<artifactId>modelmapper</artifactId>
@@ -115,7 +115,7 @@
 			<artifactId>spring-security-crypto</artifactId>
 			<version>5.1.5.RELEASE</version><!--$NO-MVN-MAN-VER$-->
 		</dependency>
-		<!-- ? •?˜?š° log ì¶œë ¥ ì¶”ê?? -->
+		<!-- ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ log ì¶œë ¥ ì¶”ï¿½?? -->
 		<dependency>
 			<groupId>org.bgee.log4jdbc-log4j2</groupId>
 			<artifactId>log4jdbc-log4j2-jdbc4.1</artifactId>
@@ -127,6 +127,7 @@
 			<artifactId>spring-cloud-starter-aws</artifactId>
 			<version>2.2.6.RELEASE</version>
 		</dependency>
+
 	</dependencies>
 
 	<build>

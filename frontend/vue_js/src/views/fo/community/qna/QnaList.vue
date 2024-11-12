@@ -37,6 +37,14 @@
           </div>
 
           <div class="sort-options mb-2 d-flex justify-content-end">
+            <select v-model="search.selection" class="search-select me-1">
+              <option value="">채택여부</option>
+              <option value="inprgrs">진행중</option>
+              <option value="rslvd">자체해결</option>
+              <option value="acpt">채택완료</option>
+              <option value="unrslvd">미해결</option>
+            </select>
+
             <select v-model="search.sort" class="search-select">
               <option value="">최신순</option>
               <option value="earliest">오래된순</option>
@@ -70,18 +78,18 @@
               <td class="small-text">{{ board.insrtDtm.slice(0, 10) }}</td>
               <td class="small-text">{{ board.brdHits }}</td>
               <td class="small-text">{{ board.answerCount }}</td>
-              <td v-if="board.answerCheck == 1" class="small-text">
-                <img
-                    alt="Check"
-                    width="20"
-                    height="20"
-                    data-sticky-width="82"
-                    data-sticky-height="40"
-                    src="/img/check.png"
-                  />
-
+              <td v-if="board.brdCndtn === null || board.brdCndtn == 'N'" class="small-text">
+                <span class="badge text-bg-success">진행중</span>
               </td>
-              <td v-else class="small-text"></td>
+              <td v-if="board.brdCndtn == 'Y'" class="small-text">
+                <span class="badge text-bg-danger">채택완료</span>
+              </td>
+              <td v-if="board.brdCndtn == 'S'" class="small-text">
+                <span class="badge text-bg-primary">자체해결</span>
+              </td>
+              <td v-if="board.brdCndtn === 'U'" class="small-text">
+                <span class="badge text-bg-warning">미해결</span>
+              </td>
             </tr>
           </tbody>
         </table>
@@ -158,7 +166,7 @@ const curPage = ref(0);
 const prevBlock = ref(0);
 const nextBlock = ref(0);
 const lastPage = ref(0);
-const search = ref({ page: 1, sk: "", sv: "", brdTypCode: "qna", sort: "" });
+const search = ref({ page: 1, sk: "", sv: "", brdTypCode: "qna", sort: "", selection: "" });
 
 const getBoardList = async () => {
   const queryString = Object.entries(search.value)
@@ -168,15 +176,19 @@ const getBoardList = async () => {
     console.log(queryString);
     const data = await api.$get("/board?" + queryString);
     boardList.value = data.data || [];
-    // console.log("ㅁㄴㅇㅁㅁㄴ", boardList.value);
+
+    console.log(boardList.value.map(board => board));
 
     const answerPromises = boardList.value.map(board =>
       api.$get("/answer/" + board.brdSq)
-        .then(answer => ({
-          brdSq: board.brdSq,
-          answerCheck: answer.checkAnswer || 0,
-          answerCount: answer.countAnswer || 0
-        }))
+        .then(answer => {
+          console.log("answer.checkAnswer:", answer);
+          return {
+            brdSq: board.brdSq,
+            answerCheck: answer.checkAnswer || 0,
+            answerCount: answer.countAnswer || 0
+          };
+        })
         .catch(error => {
           console.error(error);
           return {
@@ -186,12 +198,12 @@ const getBoardList = async () => {
           };
         })
     );
+    
 
     const answers = await Promise.all(answerPromises);
 
     for(const board of boardList.value){
       try{
-        // const answer = await api.$get("/answer/" + board.brdSq);
         const answer = answers.find(a => a.brdSq === board.brdSq);
         board.answerCheck = answer ? answer.answerCheck : 0;
         board.answerCount = answer ? answer.answerCount : 0;
@@ -210,6 +222,10 @@ const getBoardList = async () => {
         startPage,
         totalPageCnt,
       } = data.pagination;
+
+        // 문제 발생 가능성: endPage가 totalPageCnt보다 클 수 있음
+        console.log("startPage:", startPage, "endPage:", endPage, "totalPageCnt:", totalPageCnt);
+
       curPage.value = search.value.page;
       prevBlock.value = previousBlock;
       nextBlock.value = nextPageBlock;
@@ -252,6 +268,13 @@ const goToPage = (page) => {
 
 watch(
   () => search.value.sort,
+  () => {
+    getBoardList();
+  }
+)
+
+watch(
+  () => search.value.selection,
   () => {
     getBoardList();
   }

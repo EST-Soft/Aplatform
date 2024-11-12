@@ -40,6 +40,9 @@ public class BoardAnswerEntity{
 
     @Column(name = "answr_rcmndtns", nullable = false)
     private int answrRcmndtns;
+    
+    @Column(name = "answr_not_rcmndtns", nullable = false)
+    private int answrNotRcmndtns;
 
     @Column(name = "answr_slctn_yn", nullable = false)
     private char answrSlctnYn = 'N';

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import jobplatform.fo.board.entity.BoardAnswerEntity;
 import jobplatform.fo.board.mapper.BoardAnswerMapper;
+import jobplatform.fo.board.mapper.BoardMapper;
 import jobplatform.fo.sample.util.Pagination;
 import jobplatform.fo.sample.util.Header;
 
@@ -14,7 +15,8 @@ import jobplatform.fo.sample.util.Header;
 public class BoardAnswerServiceImp implements BoardAnswerService {
 
     private BoardAnswerMapper boardAnswerMapper;
-
+    private BoardMapper boardMapper;
+    
      public BoardAnswerServiceImp(BoardAnswerMapper boardAnswerMapper) {
         this.boardAnswerMapper = boardAnswerMapper;
     }
@@ -49,10 +51,6 @@ public class BoardAnswerServiceImp implements BoardAnswerService {
     public Header<List<BoardAnswerEntity>> List(int page, int size, int brdSq) {
         HashMap<String, Object> paramMap = new HashMap<>();
 
-        System.out.println("서비스에서 brdSq : " + brdSq);
-            System.out.println("서비스에서 page : " + page);
-            System.out.println("서비스에서 size : " + size);
-
         // 페이지 계산
         if(page <= 1){
             paramMap.put("page", 0);
@@ -68,10 +66,6 @@ public class BoardAnswerServiceImp implements BoardAnswerService {
         int totalCount = boardAnswerMapper.countAnswer(brdSq);
         Pagination pagination = new Pagination(totalCount, page, size, 5);
 
-        System.out.println("서비스에서는?" + answerList);
-        System.out.println("parmaMap : " + paramMap);
-        System.out.println("totalCount" + totalCount);
-
         return Header.OK(answerList, pagination);
 
     }
@@ -81,6 +75,8 @@ public class BoardAnswerServiceImp implements BoardAnswerService {
     public BoardAnswerEntity answer(int answrSq) {
         // boardAnswerMapper.updateHits(answrSq);
         BoardAnswerEntity answer = boardAnswerMapper.answer(answrSq);
+        
+        System.out.println("service에서 answer는 무슨값?" + answer);
         return answer;
     }
 
@@ -90,6 +86,12 @@ public class BoardAnswerServiceImp implements BoardAnswerService {
     @Override
     public int checkRecommendation(int answrSq, int mbrSq) {
        int result = boardAnswerMapper.checkRecommendation(answrSq, mbrSq);
+        return result;
+    }
+    
+    @Override
+    public int checkNotRecommendation(int answrSq, int mbrSq) {
+       int result = boardAnswerMapper.checkNotRecommendation(answrSq, mbrSq);
         return result;
     }
 
@@ -106,15 +108,30 @@ public class BoardAnswerServiceImp implements BoardAnswerService {
         boardAnswerMapper.updateRcmndtns(answrSq, value);
         return result;
     }
+    
+    @Override
+    public int updateNotRecommendation(int answrSq, int mbrSq, int value) {
+        int result;
+        /* 비추천이 안됐을 경우 */ 
+        if(value == 1){
+            result = boardAnswerMapper.insertNotRecommendation(answrSq, mbrSq);
+        }else/* 이미 추천이 됐을 경우 */{
+            result = boardAnswerMapper.deleteNotRecommendation(answrSq, mbrSq);
+        }
+        boardAnswerMapper.updateNotRcmndtns(answrSq, value);
+        return result;
+    }
 
 
     @Override
-    public int selectRecommendation(int answrSq) {
+    public int selectRecommendation(int answrSq, int brdSq) {
         int result = boardAnswerMapper.selectRecommendation(answrSq);
+        // 게시판 테이블 업데이트
+        boardAnswerMapper.updateBoardCondition(brdSq);
         return result;
         
     }
-
+    
 
     @Override
     public int deleteAnswer(int answrSq) {

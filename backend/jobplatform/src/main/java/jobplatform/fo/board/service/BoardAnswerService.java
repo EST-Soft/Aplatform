@@ -24,13 +24,19 @@ public interface BoardAnswerService {
 
     // 답글 추천여부 확인
     int checkRecommendation(int answrSq, int mbrSq);
+    
+    // 답글 비추천여부 확인
+    int checkNotRecommendation(int answrSq, int mbrSq);
 
     // 답글 추천 업데이트(추천수, 추천 테이블)
     int updateRecommendation(int answrSq, int mbrSq, int value);
+    
+    // 답글 비추천 업데이트(추천수, 추천 테이블)
+    int updateNotRecommendation(int answrSq, int mbrSq, int value);
 
     // 답글 채택
-    int selectRecommendation(int answrSq);
-
+    int selectRecommendation(int answrSq, int brdSq);
+    
     // 답글 삭제
     int deleteAnswer(int answrSq);
 

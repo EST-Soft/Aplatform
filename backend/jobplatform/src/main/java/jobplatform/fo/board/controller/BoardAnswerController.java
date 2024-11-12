@@ -98,7 +98,7 @@ public class BoardAnswerController {
       public ResponseEntity<?> getAnswerDetail(@PathVariable int answrSq) {
         try{
             BoardAnswerEntity answer = boardAnswerService.answer(answrSq);
-            System.out.println("여기서 answer는 무슨값?" + answer);
+            System.out.println("controller에서 answer는 무슨값?" + answer);
             return ResponseEntity.ok(answer);
         }catch(Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("답글 상세내용을 불러오는 중 오류가 발생했습니다.");
@@ -130,11 +130,23 @@ public class BoardAnswerController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("추천 조회 오류 발생");
         } 
       }
+      
+      @PostMapping("/notRecommendationCheck")
+      public ResponseEntity<?> notCheck(@RequestParam int answrSq, @RequestParam int mbrSq) {
+          
+        try{
+            int result = boardAnswerService.checkNotRecommendation(answrSq, mbrSq);
+            return ResponseEntity.ok(result);
+        }catch(Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("추천 조회 오류 발생");
+        } 
+      }
+
 
 
       @PostMapping("/recommendation/{answrSq}")
       public ResponseEntity<?> updateRecommendation(@PathVariable int answrSq, @RequestParam int mbrSq, @RequestParam int value) {
-        // System.out.println("answrSq : " + answrSq + "mbrSq : " + mbrSq );
+//         System.out.println("111answrSq : " + answrSq + " / mbrSq : " + mbrSq + " / value : " + value);
         
           try{
             int result = boardAnswerService.updateRecommendation(answrSq, mbrSq, value);
@@ -143,12 +155,22 @@ public class BoardAnswerController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("추천하기 중 오류가 발생했습니다");
           }
       }
+      
+      @PostMapping("/notRecommendation/{answrSq}")
+      public ResponseEntity<?> updateNotRecommendation(@PathVariable int answrSq, @RequestParam int mbrSq, @RequestParam int value) {        
+          try{
+            int result = boardAnswerService.updateNotRecommendation(answrSq, mbrSq, value);
+            return ResponseEntity.ok(result);
+          }catch(Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("비추천하기 중 오류가 발생했습니다");
+          }
+      }
 
 
-      @PatchMapping("/selection/{answrSq}")
-      public ResponseEntity<?> selectRecommendation(@PathVariable int answrSq){
+      @PatchMapping("/selection/{answrSq}/{brdSq}")
+      public ResponseEntity<?> selectRecommendation(@PathVariable int answrSq, @PathVariable int brdSq){
         try{
-            int result = boardAnswerService.selectRecommendation(answrSq);
+            int result = boardAnswerService.selectRecommendation(answrSq, brdSq);
             return ResponseEntity.ok(result);
         }catch(Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("채택하기 중 오류 발생");

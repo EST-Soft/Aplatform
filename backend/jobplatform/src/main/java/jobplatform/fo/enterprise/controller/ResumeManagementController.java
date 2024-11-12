@@ -82,19 +82,6 @@ public class ResumeManagementController {
 
 	}
 
-	
-	@GetMapping("/enter/recommendResumeList")
-	public ResponseEntity<Map<String, Object>> findRecommendResumeListData(){
-		Map<String, Object> map = null ;
-		HttpStatus httpStatus = null ;
-		
-
-
-		httpStatus = HttpStatus.OK;
-
-		return new ResponseEntity<Map<String, Object>>(map, httpStatus);
-	}
-
 	// 이력서 상세 불러오기
 	@GetMapping("/resumes/resume-detail/{rsm_sq}")
 	public ResponseEntity<Map<String, Object>> findResumeDetailData(@PathVariable("rsm_sq") int rsm_sq) {

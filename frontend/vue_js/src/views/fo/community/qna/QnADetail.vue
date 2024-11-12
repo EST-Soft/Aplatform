@@ -63,7 +63,7 @@
         >
         
         <button class="btn btn-danger me-2" @click="boardDelete">삭제</button>
-        <button class="btn btn-success" @click="backToList">목록</button>
+        <button class="btn btn-secondary" @click="backToList">취소</button>
       </div>
       <div v-if="loginCheck && board.mbrSq != member.mbrSq" class="d-flex justify-content-end mt-4">
         <div class="btn btn-primary me-2" @click="openEditorModal()">
@@ -1066,9 +1066,9 @@ section {
   font-size: 1rem;
   line-height: 1.6;
   color: #333;
-  min-height: 200px;
+  min-height: 300px;
   text-align: left;
-  max-height: 200px; /* 최대 높이 설정 */
+  max-height: 300px; /* 최대 높이 설정 */
   overflow-y: auto; /* 수직 스크롤 활성화 */
   overflow-x: hidden; /* 수평 스크롤 숨김 */
 }

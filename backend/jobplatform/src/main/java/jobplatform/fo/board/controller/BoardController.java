@@ -4,8 +4,6 @@ import jobplatform.fo.board.entity.BoardEntity;
 import jobplatform.fo.board.service.BoardService;
 import jobplatform.fo.sample.util.Header;
 import jobplatform.fo.sample.util.Search;
-import jobplatform.fo.sample.util.Sort;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -37,13 +35,12 @@ public class BoardController {
     public ResponseEntity<?> boardList(@RequestParam(defaultValue = "general") String brdTypCode,
                                        @RequestParam(defaultValue = "0") int page,
                                        @RequestParam(defaultValue = "10") int size,
-                                       Search search, Sort sort) {
+                                       Search search) {
         try {
             System.out.println("현재 게시판 : " + brdTypCode);
             System.out.println(search);
-            System.out.println(sort + "이건 Sort");
-            Header<List<BoardEntity>> boardList = boardService.List(page, size, search, brdTypCode, sort);
-            // System.out.println("보드컨트롤러 : " + boardList);
+            Header<List<BoardEntity>> boardList = boardService.List(page, size, search, brdTypCode);
+            System.out.println("보드컨트롤러 : " + boardList);
             return ResponseEntity.ok(boardList);
         } catch (Exception e) {
             System.out.println("Error during fetching board list: " + e.getMessage());

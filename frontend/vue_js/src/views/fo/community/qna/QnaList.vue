@@ -6,46 +6,26 @@
 
     <div class="board-content">
       <div class="search-box">
-
-        <div class="search-box">
-
-        <!-- 로그인된 경우 글쓰기 버튼을 추가 -->
-          <div class="d-flex justify-content-end mb-2" v-if="isLoggedIn">
-            <router-link class="btn btn-primary" to="/board/qna/write">글쓰기</router-link>
-          </div>
-
-          <div class="search-area row">
-            <div class="col-auto">
-              <select v-model="search.sk" class="search-select">
-                <option value="">검색 옵션</option>
-                <option value="title">제목</option>
-                <option value="contents">내용</option>
-              </select>
-            </div>
-            <div class="col-6"> 
-              <input
-                type="text"
-                v-model="search.sv"
-                class="search-input form-control"
-                @keydown.enter="onSearch"
-                placeholder="검색어를 입력하세요"
-              />
-            </div>
-            <div class="col-auto">
-              <button class="btn btn-primary" @click="onSearch">검색</button>
-            </div>
-          </div>
-
-          <div class="sort-options mb-2 d-flex justify-content-end">
-            <select v-model="search.sort" class="search-select">
-              <option value="">최신순</option>
-              <option value="earliest">오래된순</option>
-              <option value="view">조회순</option>
-            </select>
-          </div>
+        <div class="search-area mb-4">
+          <select v-model="search.sk" class="search-select">
+            <option value="">-선택-</option>
+            <option value="title">제목</option>
+            <option value="contents">내용</option>
+          </select>
+          <input
+            type="text"
+            v-model="search.sv"
+            class="search-input"
+            @keydown.enter="onSearch"
+            placeholder="검색어를 입력하세요"
+          />
+          <button class="btn btn-primary" @click="onSearch">검색</button>
         </div>
-
-
+        <div class="d-flex justify-content-end mb-4" v-if="isLoggedIn">
+          <router-link class="btn btn-primary" to="/board/qna/write"
+            >글쓰기</router-link
+          >
+        </div>
       </div>
       <div class="table-responsive">
         <table class="table table-hover table-striped">
@@ -94,7 +74,7 @@
               @click="goToPage(1)"
               :disabled="curPage === 1"
             >
-              &laquo;
+              &lt;&lt;
             </button>
           </li>
           <li class="page-item" :class="{ disabled: curPage === 1 }">
@@ -131,7 +111,7 @@
               @click="goToPage(lastPage)"
               :disabled="curPage === lastPage"
             >
-              &raquo;
+              &gt;&gt;
             </button>
           </li>
         </ul>
@@ -145,7 +125,6 @@ import { ref, onMounted, computed } from "vue";
 import { api } from "../../../../axios";
 import { showAlert } from "../../../../utill/utillModal";
 import { useStore } from "vuex";
-import { watch } from "vue";
 
 // import { useRouter } from "vue-router";
 const store = useStore();
@@ -158,7 +137,7 @@ const curPage = ref(0);
 const prevBlock = ref(0);
 const nextBlock = ref(0);
 const lastPage = ref(0);
-const search = ref({ page: 1, sk: "", sv: "", brdTypCode: "qna", sort: "" });
+const search = ref({ page: 1, sk: "", sv: "", brdTypCode: "qna" });
 
 const getBoardList = async () => {
   const queryString = Object.entries(search.value)
@@ -250,13 +229,6 @@ const goToPage = (page) => {
   }
 };
 
-watch(
-  () => search.value.sort,
-  () => {
-    getBoardList();
-  }
-)
-
 onMounted(() => {
   getBoardList();
 });
@@ -328,16 +300,15 @@ onMounted(() => {
 .search-area {
   display: flex;
   align-items: center;
+  margin-bottom: 20px;
   padding: 20px;
   display: flex;
   justify-content: center;
 }
 
-.search-select{
-  padding: 5px;
-}
-
+.search-select,
 .search-input {
+  margin-right: 10px;
   padding: 5px;
 }
 
@@ -348,7 +319,7 @@ onMounted(() => {
   align-items: center;
 }
 .search-box {
-
+  display: flex;
   justify-content: space-between;
 }
 </style>

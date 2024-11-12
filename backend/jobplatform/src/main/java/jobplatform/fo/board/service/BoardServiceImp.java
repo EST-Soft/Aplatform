@@ -5,7 +5,6 @@ import jobplatform.fo.board.mapper.BoardMapper;
 import jobplatform.fo.sample.util.Header;
 import jobplatform.fo.sample.util.Pagination;
 import jobplatform.fo.sample.util.Search;
-import jobplatform.fo.sample.util.Sort;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +23,7 @@ public class BoardServiceImp implements BoardService{
     }
 
     @Override
-    public Header<List<BoardEntity>> List(int page, int size, Search search,String brdTypCode, Sort sort) {
+    public Header<List<BoardEntity>> List(int page, int size, Search search,String brdTypCode) {
         HashMap<String, Object> paramMap = new HashMap<>();
 
         // 페이지 계산
@@ -41,13 +40,6 @@ public class BoardServiceImp implements BoardService{
             paramMap.put("sv", search.getSv());
         }
         System.out.println(brdTypCode);
-
-        // 정렬이 선택되었을 때만 파라미터 추가
-        if (sort.getSort() !=null && !sort.getSort().isEmpty()){
-            paramMap.put("sort", sort.getSort());
-        }
-
-        
         if (brdTypCode != null && !brdTypCode.isEmpty()) {
             System.out.println("출력되고있어"+brdTypCode);
 

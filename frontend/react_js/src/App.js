@@ -1,7 +1,7 @@
-import {Route, Routes, useLocation } from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom";
 
 import React from "react";
-import SidebarLayout1 from "./mypage/SidebarLayout";
+import SidebarLayout from "./mypage/SidebarLayout";
 import MypageHome from "./mypage/MypageHome";
 import ResumeForm from "./mypage/ResumeInsertView";
 import ResumeList from "./mypage/ResumeListView";
@@ -36,17 +36,10 @@ import EnterJobPostingDetail from "./enterprise/EnterJobPostingDetail";
 import EnterJobPostingEdit from "./enterprise/EnterJobPostingUpdateForm";
 import UserSignup from "./user/UserSignup";
 import UserFindForm from "./user/UserFindForm";
-//관리자 관련 import
-import AdminSidebarLayout from "./userManagement/AdminSidebarLayout";
-import UserManagement from "./userManagement/UserManagement";
-import EnterpriseManagement from "./userManagement/EnterpriseManagement";
-import AdminManagement from "./userManagement/AdminManagement";
-import AdminMypage from "./userManagement/AdminMypage";
-
 
 function Test() {
   const location = useLocation();
-  // 일반회원 사이드바 표시조건
+
   const showSidebar = [
     "/mypage/home",
     "/mypage/resume-form",
@@ -56,13 +49,6 @@ function Test() {
     "/mypage/applycompanylist",
     "/resumeDetailView/:rsm_sq",
   ].includes(location.pathname);
-  //관리자 사이드바 표시조건 
-  const showSidebarAdmin =[
-    "/userManagement/UserManagement",
-    "/userManagement/EnterpriseManagement",
-    "/userManagement/AdminManagement",
-    "/userManagement/AdminMypage"
-  ]
 
   // 기업회원 사이드바 표시 조건
   const showSidebarEnter = [
@@ -73,10 +59,6 @@ function Test() {
   ].includes(location.pathname);
   // 사이드바 레이아웃 결정
   const isEnterprise = location.pathname.startsWith("/enter");
-  const isAdmin = location.pathname.startsWith("/userManagement");;
-  console.log(location.pathname);
-  console.log('isAdmin' , isAdmin);
-  console.log("뭐야 도대체");
 
   return (
     <>
@@ -112,25 +94,9 @@ function Test() {
             />
           </Routes>
         </EnterSidebarLayout>
-      ) 
-      // 관리자 사이드바 레이아웃 
-      :isAdmin? (
-        
-          <AdminSidebarLayout showSidebar ={isAdmin}>
-            <Routes>
-              {/* 관리자용 라우팅  */}
-              <Route path="/userManagement/UserManagement" element={<UserManagement />} />
-              <Route path="/userManagement/EnterpriseManagement" element={<EnterpriseManagement />} />
-              <Route path="/userManagement/AdminManagement" element={<AdminManagement />} />
-              <Route path="/userManagement/AdminMypage" element={<AdminMypage />} />
-        
-            </Routes>
-        </AdminSidebarLayout>
-    
-      )
-      : (
+      ) : (
         // 일반회원 사이드바 레이아웃
-        <SidebarLayout1 showSidebar={showSidebar}>
+        <SidebarLayout showSidebar={showSidebar}>
           <Routes>
             {/* <Route path="/" element={<Home />} /> */}
             <Route path="/board" element={<BoardList />} />
@@ -170,7 +136,7 @@ function Test() {
 
             <Route path="/FileUpload" element={<FileUpload />} />
           </Routes>
-        </SidebarLayout1>
+        </SidebarLayout>
       )}
     </>
   );

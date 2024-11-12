@@ -1,15 +1,15 @@
-const express = require('express');                 //express ëª¨ë“ˆê°€ì ¸ì˜´
-const mysql = require('mysql2');                     //mysql ëª¨ë“ˆ ê°€ì ¸ì˜´
-const cors = require('cors');                       // CORS ì„¤ì •ì„ ìœ„í•œ ëª¨ë“ˆ (API í˜¸ì¶œ í—ˆìš©)
-const Pagination = require('./utils/Pagination');   // íŽ˜ì´ì§€ë„¤ì´ì…˜ ì²˜ë¦¬ìš© js íŒŒì¼
+const express = require('express');                 //express ì¶”ê??
+const mysql = require('mysql2');                     //mysql ëª¨ë“ˆ ì¶”ê??
+const cors = require('cors');                       // CORS ?Œ¨?‚¤ì§? import (?”„ë¡ì‹œ ?„œë²? ?„¤? •)
+const Pagination = require('./utils/Pagination');   // ?Ž˜?´ì§? ì²˜ë¦¬ js ?ž„?¬?Š¸
 const app = express();
-const port = 5000;          //express í¬íŠ¸ë²ˆí˜¸
+const port = 5000;          //express ?„œë²? ?¬?Š¸ ?„¤? •
 
-// ë¯¸ë“¤ì›¨ì–´ ì„¤ì • (JSON ì²˜ë¦¬)
-app.use(cors());  // CORS ë¯¸ë“¤ì›¨ì–´ ì„¤ì • - CORS ìš”ì²­ í—ˆìš© (API í˜¸ì¶œ ì‹œ CORS ì—ëŸ¬ ë°©ì§€, í„°ë¯¸ë„ì—ì„œ npm install corsë¡œ ì„¤ì¹˜)
-app.use(express.json());// JSON ë°ì´í„°ë¥¼ íŒŒì‹±í•  ìˆ˜ ìžˆë„ë¡ express.json() ë¯¸ë“¤ì›¨ì–´ ì‚¬ìš©
+// ë¯¸ë“¤?›¨?–´ ?„¤? • (JSON ?ŒŒ?‹±)
+app.use(cors()); // CORS ë¯¸ë“¤?›¨?–´ ì¶”ê?? --> ?¬ë¡œìŠ¤?˜¤ë²? ?˜¤ë¥? ë°©ì?? (?ž‘?—…?´?”?— cors ?„¤ì¹˜í•´?•¼?•¨ => ?„°ë¯¸ë„?—?„œ npm install cors)
+app.use(express.json()); //json ?ŒŒ?‹± ëª¨ë“ˆ
 
-// MySQL ì—°ê²° ì„¤ì •
+// MariaDB ?—°ê²? ?„¤? •
 const db = mysql.createConnection({
   host: 'estsw-rds-mariadb-edu.che0sy2qqx6s.ap-northeast-2.rds.amazonaws.com',
   user: 'admin',
@@ -17,198 +17,82 @@ const db = mysql.createConnection({
   port: 3306,
   database: 'est_eep_db'
 });
-// ë°ì´í„°ë² ì´ìŠ¤ ì—°ê²°
+
+// MariaDB ?—°ê²?
 db.connect(err => {
   if (err) {
-    console.error('MySQL ì—°ê²° ì‹¤íŒ¨:', err);
+    console.error('Error connecting to MariaDB: ', err);
     return;
   }
-  console.log('MySQL ì—°ê²° ì„±ê³µ');
+  console.log('Connected to MariaDB ==> MariaDB ?—°ê²? ?„±ê³?');
 });
 
-app.get('/', (req, res) => {
-  res.json({ data: "data" })
-});
-
-//GET ê°œì¸íšŒì› ì¡°íšŒ
-app.get('/user', (req, res) => {
-  console.log("ê°œì¸íšŒì›ì¡°íšŒì‹œìž‘");
-  const page = parseInt(req.query.page) || 1;
-  const size = parseInt(req.query.size) || 10;
-  const sk = req.query.sk || '';
-  const sv = req.query.sv || '';
-  const sortKey = req.query.sortKey || '';
-  // ê°œì¸íšŒì› ì „ì²´ëª©ë¡ ì¡°íšŒ
-  let totalUserCount = 'SELECT COUNT(mbr_sq) AS totalUserCount from p3_tbl_member_m WHERE 1=1';
-  // ê²€ìƒ‰ êµ¬ë¶„ ë° ê²€ìƒ‰ì–´ì— ë”°ë¥¸ ì¡°ê±´ ì¶”ê°€
-  console.log(sk ,"ê·¸ë¦¬ê³ " , sv);
-  console.log(sortKey,"sortKey");
-  if (sk && sv) {
-    totalUserCount += ` AND ${sk.toUpperCase()} LIKE '%${sv}%'`;
-  }
-
-  // ì „ì²´ ê°œì¸íšŒì› ìˆ˜ ì¡°íšŒ
-  db.query(totalUserCount, (err, countResults) => {
-    if (err) return res.status(500).json({ error: err.message });
-
-    const totalUserCount = countResults[0].totalUserCount; // ì´ ê²Œì‹œê¸€ ê°œìˆ˜
-    const pagination = new Pagination(totalUserCount, page, size, 5); // íŽ˜ì´ì§• ì„¤ì •
-
-    // ê°œì¸íšŒì› ëª©ë¡ ì¡°íšŒ ì¿¼ë¦¬ ìž‘ì„±
-    let query = `
-      SELECT 
-        user.mbr_sq, 
-        user.gndr_typ_code, 
-        user.mbr_id, 
-        user.mbr_name, 
-        user.mbr_mp, 
-        user.mbr_bd, 
-        user.mbr_eml_adrs,
-        user.mbr_prvcy_trms_yn, 
-        user.pstn_prpsl_accept_yn,
-        user.insrt_dtm, 
-        user.use_yn, 
-        COUNT(report.rprtd_mbr_sq) AS report_count
-      FROM p3_tbl_member_m AS user
-      LEFT JOIN p5_tbl_board_report_ AS report
-          ON user.mbr_sq = report.rprtd_mbr_sq 
-      WHERE 1=1
-     
-    `;
-
-    // ê²€ìƒ‰ ì¡°ê±´ì´ ìžˆì„ ê²½ìš° ì¶”ê°€
-    if (sk && sv) {
-      query += ` AND ${sk} LIKE '%${sv}%'`;
-    }
-    query +=  'GROUP BY user.mbr_sq'
-    if(sortKey===''){
-      query += ` ORDER BY report_count DESC LIMIT ${pagination.startIndex}, ${pagination.pageSize}`;
-    }else if(sortKey  === 'user.report_count'){
-      query += ` ORDER BY ${sortKey} DESC LIMIT ${pagination.startIndex}, ${pagination.pageSize}`;
-    }else if(sortKey  === 'user.insrt_dtm-DESC'){
-      query += ` ORDER BY user.insrt_dtm DESC LIMIT ${pagination.startIndex}, ${pagination.pageSize}`;
-    }else if(sortKey  === 'user.insrt_dtm-ASC'){
-      query += ` ORDER BY user.insrt_dtm ASC LIMIT ${pagination.startIndex}, ${pagination.pageSize}`;
-    }else if(sortKey  === 'user.mbr_id'){
-      query += ` ORDER BY user.mbr_id ASC LIMIT ${pagination.startIndex}, ${pagination.pageSize}`;
-    }else if(sortKey  === 'user.mbr_name'){
-      query += ` ORDER BY user.mbr_name ASC LIMIT ${pagination.startIndex}, ${pagination.pageSize}`;
-    }
-    console.log(query);
-    // ìµœì‹  ê°œì¸íšŒì› ëª©ë¡ ì¡°íšŒ
-    db.query(query, (err, results) => {
-      if (err) return res.status(500).json({ error: err.message });
-
-      // ê²°ê³¼ ë°ì´í„° í˜•ì‹ ë§žì¶”ê¸° (í”„ë¡ íŠ¸ì—”ë“œì™€ì˜ í˜•ì‹ ì¼ê´€ì„± ìœ ì§€)
-     
-      const transformedResults = results.map(user => ({
-        idx: user.mbr_sq,
-        gender: user.gndr_typ_code === 'm' ? 'ë‚¨ìž' : user.gndr_typ_code === 'f' ? 'ì—¬ìž' : 'ì•Œ ìˆ˜ ì—†ìŒ',
-        id: user.mbr_id,
-        name: user.mbr_name,
-        phone: user.mbr_mp.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3'),
-        birth: user.mbr_bd,
-        email: user.mbr_eml_adrs,
-        privacy_yn: user.mbr_prvcy_trms_yn,
-        position_yn: user.pstn_prpsl_accept_yn,
-        joinDate: new Date(user.insrt_dtm).toISOString().split('T')[0],
-        use_yn: user.use_yn,
-         report_count : user.report_count
-
-        
-      }));
-      res.json({ pagination, data :transformedResults});
-     //
-    });
-  });
-});
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  // GET /board - ëª©ë¡ ì¡°íšŒ
-  app.get('/board', (req, res) => {
-    console.log("ë…¸ë“œì„œë²„ì‹œìž‘");
+// GET /board - ëª©ë¡ ì¡°íšŒ
+app.get('/board', (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const size = parseInt(req.query.size) || 10;
     const sk = req.query.sk || '';
     const sv = req.query.sv || '';
-    //ê²Œì‹œíŒ ì „ì²´ ì»¬ëŸ¼ìˆ˜ ì¡°íšŒ
+    //? „ì²´ì¹´?š´?Š¸  ?„  ì¡°íšŒ
     let queryCount = `
       SELECT COUNT(IDX) AS totalListCnt
       FROM TB_BOARD
       WHERE 1=1
     `;
-    //ê²€ìƒ‰êµ¬ë¬¸ ë° ê²€ìƒ‰ì¡°ê±´ì— ë”°ë¥¸ ì¡°ê±´ì¶”ê°€
+    //ê²??ƒ‰êµ¬ë¶„, ê²??ƒ‰?–´ ì¿¼ë¦¬ ì¶”ê??
     if (sk && sv) {
       queryCount += ` AND ${sk.toUpperCase()} LIKE '%${sv}%'`;
     }
-    //ì „ì²´ ê²Œì‹œíŒ  ì¡°íšŒ
+    //? „ì²´ì¹´?š´?Š¸ ì¡°íšŒ
     db.query(queryCount, (err, countResults) => {
       if (err) return res.status(500).json({ error: err.message });
-
+        
       const totalListCnt = countResults[0].totalListCnt;
       const pagination = new Pagination(totalListCnt, page, size, 5);
-
+  
       let query = `
         SELECT IDX, TITLE, CONTENTS, CREATED_BY AS createdBy, CREATED_AT AS createdAt
         FROM TB_BOARD
         WHERE 1=1
       `;
-
+  
       if (sk && sv) {
         query += ` AND ${sk.toUpperCase()} LIKE '%${sv}%'`;
       }
-
+  
       query += ` ORDER BY IDX DESC LIMIT ${pagination.startIndex}, ${pagination.pageSize}`;
-      //?ï¿½ï¿½?ï¿½ï¿½ ê²Œì‹œï¿½? ëª©ë¡ ì¡°íšŒ
+      //?‹¤? œ ê²Œì‹œë¬? ëª©ë¡ ì¡°íšŒ
       db.query(query, (err, results) => {
         if (err) return res.status(500).json({ error: err.message });
-
-        //ê²°ê³¼ ë°ì´í„° í˜•ì‹ ë§žì¶”ê¸° (í”„ë¡ íŠ¸ì—”ë“œì™€ì˜ í˜•ì‹ ì¼ê´€ì„± ìœ ì§€)
+        
+        //ê°? ë³??™˜ (?Š¤?”„ë§ë???Š¸_SampleController ?“±.. ê³? ê°? ë§žì¶”ê¸?)
         const transformedResults = results.map(item => ({
-          idx: item.IDX,
-        title: item.TITLE,
-        contents: item.CONTENTS,
-        createdBy: item.createdBy,
-        createdAt: item.createdAt,
+            idx: item.IDX,
+            title: item.TITLE,
+            contents: item.CONTENTS,
+            createdBy: item.createdBy,
+            createdAt: item.createdAt,
         }));
         res.json({ pagination, data: transformedResults });
       });
     });
   });
-
-  // GET /board/total - ï¿½? ê²Œì‹œï¿½? ?ï¿½ï¿½ ì¡°íšŒ
+  
+  // GET /board/total - ì´? ê²Œì‹œë¬? ?ˆ˜ ì¡°íšŒ
   app.get('/board/total', (req, res) => {
     const sk = req.query.sk || '';
     const sv = req.query.sv || '';
-
+  
     let query = `
       SELECT COUNT(IDX) AS totalCount
       FROM TB_BOARD
       WHERE 1=1
     `;
-
+  
     if (sk && sv) {
       query += ` AND ${sk.toUpperCase()} LIKE '%${sv}%'`;
     }
-
+  
     db.query(query, (err, results) => {
       if (err) {
         return res.status(500).json({ error: err.message });
@@ -216,110 +100,100 @@ app.get('/user', (req, res) => {
       res.json(results[0]);
     });
   });
+  
 
+// GET /board/total - ì´? ê²Œì‹œë¬? ?ˆ˜ ì¡°íšŒ
+app.get('/board/total', (req, res) => {
+  const sk = req.query.sk || '';
+  const sv = req.query.sv || '';
 
-
-
-
-
-
-
-
-
-
-
-  // GET /board/total - ì „ì²´ ê²Œì‹œíŒìˆ˜ ì¡°íšŒ
-  app.get('/board/total', (req, res) => {
-    const sk = req.query.sk || '';
-    const sv = req.query.sv || '';
-
-    let query = `
+  let query = `
     SELECT COUNT(IDX) AS totalCount
     FROM TB_BOARD
     WHERE 1=1
   `;
 
-    if (sk && sv) {
-      if (sk === 'title') {
-        query += ` AND TITLE LIKE '%${sv}%'`;
-      } else if (sk === 'contents') {
-        query += ` AND CONTENTS LIKE '%${sv}%'`;
-      } else if (sk === 'createdBy') {
-        query += ` AND CREATED_BY LIKE '%${sv}%'`;
-      }
+  if (sk && sv) {
+    if (sk === 'title') {
+      query += ` AND TITLE LIKE '%${sv}%'`;
+    } else if (sk === 'contents') {
+      query += ` AND CONTENTS LIKE '%${sv}%'`;
+    } else if (sk === 'createdBy') {
+      query += ` AND CREATED_BY LIKE '%${sv}%'`;
     }
+  }
 
-    db.query(query, (err, results) => {
-      if (err) {
-        return res.status(500).json({ error: err.message });
-      }
-      res.json(results[0]);
-    });
+  db.query(query, (err, results) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+    res.json(results[0]);
   });
+});
 
-  // GET /board/:idx - ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ 1ï¿½? ì¡°íšŒ
-  app.get('/board/:idx', (req, res) => {
-    const idx = req.params.idx;
+// GET /board/:idx - ?°?´?„° 1ê°? ì¡°íšŒ
+app.get('/board/:idx', (req, res) => {
+  const idx = req.params.idx;
 
-    const query = 'SELECT IDX, TITLE, CONTENTS, CREATED_BY AS createdBy, CREATED_AT AS createdAt FROM TB_BOARD WHERE IDX = ?';
-    db.query(query, [idx], (err, results) => {
-      if (err) {
-        return res.status(500).json({ error: err.message });
-      }
-      if (results.length === 0) {
-        return res.status(404).json({ message: 'Data not found' });
-      }
-      const item = {
+  const query = 'SELECT IDX, TITLE, CONTENTS, CREATED_BY AS createdBy, CREATED_AT AS createdAt FROM TB_BOARD WHERE IDX = ?';
+  db.query(query, [idx], (err, results) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+    if (results.length === 0) {
+      return res.status(404).json({ message: 'Data not found' });
+    }
+    const item = {
         idx: results[0].IDX,
         title: results[0].TITLE,
         contents: results[0].CONTENTS,
         createdBy: results[0].createdBy,
         createdAt: results[0].createdAt,
-      };
-      res.json({ data: item });
-    });
+    };
+    res.json({data : item});
   });
+});
 
-  // POST /board - ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½
-  app.post('/board', (req, res) => {
-    const { title, contents, createdBy } = req.body;
-    const query = 'INSERT INTO TB_BOARD (TITLE, CONTENTS, CREATED_BY, CREATED_AT) VALUES (?, ?, ?, NOW())';
+// POST /board - ?°?´?„° ?ƒ?„±
+app.post('/board', (req, res) => {
+  const { title, contents, createdBy } = req.body;
+  const query = 'INSERT INTO TB_BOARD (TITLE, CONTENTS, CREATED_BY, CREATED_AT) VALUES (?, ?, ?, NOW())';
 
-    db.query(query, [title, contents, createdBy], (err, result) => {
-      if (err) {
-        return res.status(500).json({ error: err.message });
-      }
-      res.json({ message: 'Data inserted (?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½)', id: result.insertId });
-    });
+  db.query(query, [title, contents, createdBy], (err, result) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+    res.json({ message: 'Data inserted (?°?´?„° ?ƒ?„±)', id: result.insertId });
   });
+});
 
-  // PATCH /board - ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½
-  app.patch('/board', (req, res) => {
-    const { idx, title, contents } = req.body;
-    const query = 'UPDATE TB_BOARD SET TITLE = ?, CONTENTS = ? WHERE IDX = ?';
+// PATCH /board - ?°?´?„° ?ˆ˜? •
+app.patch('/board', (req, res) => {
+  const { idx, title, contents } = req.body;
+  const query = 'UPDATE TB_BOARD SET TITLE = ?, CONTENTS = ? WHERE IDX = ?';
 
-    db.query(query, [title, contents, idx], (err, result) => {
-      if (err) {
-        return res.status(500).json({ error: err.message });
-      }
-      res.json({ message: 'Data updated (?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½)' });
-    });
+  db.query(query, [title, contents, idx], (err, result) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+    res.json({ message: 'Data updated (?°?´?„° ?ˆ˜? •)' });
   });
+});
 
-  // DELETE /board/:idx - ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½
-  app.delete('/board/:idx', (req, res) => {
-    const idx = req.params.idx;
+// DELETE /board/:idx - ?°?´?„° ?‚­? œ
+app.delete('/board/:idx', (req, res) => {
+  const idx = req.params.idx;
 
-    const query = 'DELETE FROM TB_BOARD WHERE IDX = ?';
-    db.query(query, [idx], (err, result) => {
-      if (err) {
-        return res.status(500).json({ error: err.message });
-      }
-      res.json({ message: 'Data deleted (?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½)' });
-    });
+  const query = 'DELETE FROM TB_BOARD WHERE IDX = ?';
+  db.query(query, [idx], (err, result) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+    res.json({ message: 'Data deleted (?°?´?„° ?‚­? œ)' });
   });
+});
 
-  // ?ï¿½ï¿½ï¿½? ?ï¿½ï¿½?ï¿½ï¿½
-  app.listen(port, () => {
-    console.log(`Server is running on http://localhost:${port}`);
-  });
+// ?„œë²? ?‹¤?–‰
+app.listen(port, () => {
+  console.log(`Server is running on http://localhost:${port}`);
+});

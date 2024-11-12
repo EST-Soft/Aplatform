@@ -3,7 +3,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
 import { BrowserRouter } from "react-router-dom";
-import Header from "./common/AdminHeader";
+import Header from "./common/MainHeader";
 import Footer from "./common/Footer";
 import { ModalProvider } from "./components/ModalProvider";
 

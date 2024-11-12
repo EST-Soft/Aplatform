@@ -81,7 +81,7 @@
 		</dependency>
 		
 		
-		<!--ê¸°ìš°?‹˜ ì¶”ê?? ?””?Žœ?˜?‹œ-->
+		<!--ê¸°ìš°ë‹˜ ì¶”ê°€ ë””íŽœë˜ì‹œ-->
 		<dependency>
 			<groupId>org.modelmapper</groupId>
 			<artifactId>modelmapper</artifactId>

@@ -37,12 +37,15 @@ import EnterJobPostingEdit from "./enterprise/EnterJobPostingUpdateForm";
 import UserSignup from "./user/UserSignup";
 import UserFindForm from "./user/UserFindForm";
 //관리자 관련 import
+
 import AdminSidebarLayout from "./userManagement/AdminSidebarLayout";
 import UserManagement from "./userManagement/UserManagement";
 import EnterpriseManagement from "./userManagement/EnterpriseManagement";
 import AdminManagement from "./userManagement/AdminManagement";
 import AdminMypage from "./userManagement/AdminMypage";
 
+import Login from "./admin/Login";
+import Logout from "./admin/Logout";
 
 function Test() {
   const location = useLocation();
@@ -74,12 +77,15 @@ function Test() {
   // 사이드바 레이아웃 결정
   const isEnterprise = location.pathname.startsWith("/enter");
   const isAdmin = location.pathname.startsWith("/userManagement");;
-  console.log(location.pathname);
-  console.log('isAdmin' , isAdmin);
-  console.log("뭐야 도대체");
-
   return (
     <>
+    <Routes>
+      <Route path="/admin/Login" element={<Login />} />
+      <Route path="/admin/Logout" element={<Logout />} />
+
+    </Routes>
+
+
       {isEnterprise ? (
         // 기업회원 사이드바 레이아웃
         <EnterSidebarLayout showSidebarEnter={showSidebarEnter}>
@@ -123,6 +129,8 @@ function Test() {
               <Route path="/userManagement/EnterpriseManagement" element={<EnterpriseManagement />} />
               <Route path="/userManagement/AdminManagement" element={<AdminManagement />} />
               <Route path="/userManagement/AdminMypage" element={<AdminMypage />} />
+
+              
         
             </Routes>
         </AdminSidebarLayout>

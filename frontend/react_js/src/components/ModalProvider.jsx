@@ -11,21 +11,26 @@ export const useModal = () => useContext(ModalContext);
 
 // 모달 프로바이더 컴포넌트
 export const ModalProvider = ({ children }) => {
+  const [modalTitle, setModalTitle] =useState(null);
   const [modalContent, setModalContent] = useState(null);
 
-  const showModal = (content) => setModalContent(content);
-  const closeModal = () => setModalContent(null);
-
+  const showModal = (title,content) => {
+    setModalTitle(title);
+    setModalContent(content);}
+  const closeModal = () =>{ 
+    setModalTitle(null)
+    setModalContent(null);
+  }
   return (
     <ModalContext.Provider value={{ showModal, closeModal }}>
       {children}
       <StyledModal show={!!modalContent} onHide={closeModal} centered>
         <StyledModal.Header closeButton>
-          <StyledModal.Title>메세지 알림</StyledModal.Title>
+          <StyledModal.Title>{modalTitle}</StyledModal.Title>
         </StyledModal.Header>
         <StyledModal.Body>{modalContent}</StyledModal.Body>
         <StyledModal.Footer>
-          <button onClick={closeModal}>닫기</button>
+          {/* <button onClick={closeModal}>닫기</button> */}
         </StyledModal.Footer>
       </StyledModal>
     </ModalContext.Provider>
@@ -47,15 +52,26 @@ StyledModal.Header = styled(BootstrapModal.Header)`
 `;
 
 StyledModal.Title = styled(BootstrapModal.Title)`
+  
   font-size: 1.5rem;
   font-weight: bold;
 `;
 
 StyledModal.Body = styled(BootstrapModal.Body)`
-  text-align: start;
-  height: 100px;
+  button{
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    cursor: pointer;
+    margin:5px;
+  }
+  text-align: center;
+  height: 350px;
   padding: 20px;
   font-size: 1rem;
+
+}
 `;
 
 StyledModal.Footer = styled(BootstrapModal.Footer)`

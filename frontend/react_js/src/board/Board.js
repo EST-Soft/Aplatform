@@ -31,16 +31,16 @@ const Board = ({ idx, title, contents, createdBy, createdAt, hits }) => {
       <div className="board-content">
         <div className="board-title">
           <span>제목:</span>
-          <h2>{title}</h2>
+          <h2>{Board.title}</h2>
         </div>
         <div className="post-meta">
-          <span>작성자: {createdBy}</span>
-          <span>작성일: {createdAt ? createdAt.slice(0, 10) : ''}</span>
-          <span>조회수: {hits}</span>
+          <span>작성자: {Board.createdBy}</span>
+          <span>작성일: {Board.createdAt ? Board.createdAt.slice(0, 10) : ''}</span>
+          <span>조회수: {Board.hits}</span>
         </div>
         <hr />
         <div className="board-body">
-          <p>{contents}</p>
+          <p>{Board.contents}</p>
         </div>
         <div className="button-container">
           <button className="btn btn-primary" onClick={moveToUpdate}>수정</button>

@@ -15,6 +15,7 @@ import ApplyDetailView from "../views/fo/enterprise/apply/ApplyDetailView";
 import ResumeInsertView from "../views/fo/enterprise/resume/ResumeInsertView";
 import ResumeListView from "../views/fo/enterprise/resume/ResumeListView";
 import ResumeDetailView from "../views/fo/enterprise/resume/ResumeDetailView";
+import MypageJobView from "@/components/fo/user/mypage/MypageJobView.vue";
 import MypageProposedPositionList from "@/components/fo/user/mypage/MypageProposedPositionList.vue";
 // import EnterFind from "@/views/fo/enterprise/EnterFind.vue";
 import EntMypageView from "@/views/fo/enterprise/EntMypageView.vue";
@@ -70,6 +71,11 @@ const routes = [
         path: "proposedPosition",
         component: MypageProposedPositionList,
       },
+      // 수진 - 최근 본 공고
+      {
+        path: "JobViewList",
+        component: MypageJobView,
+      },
       // 지연님 컴포넌트 경로
       {
         path: "applycompanylist",
@@ -83,10 +89,10 @@ const routes = [
       { path: "/resumes/resume-insert", component: ResumeInsertView },
       { path: "/resumes/resume-list", component: ResumeListView },
 
-      { path: "userInfmtn", name: 'userInfmtn', component: UserInfrmtnUpdt},
-      { path: "userPwChange", component: UserPwChange},
-      { path: "userSingout", component: UserSingout},
-      { path: "scrapList", name: 'scrapList', component: ScrapListView},
+      { path: "userInfmtn", name: "userInfmtn", component: UserInfrmtnUpdt },
+      { path: "userPwChange", component: UserPwChange },
+      { path: "userSingout", component: UserSingout },
+      { path: "scrapList", name: "scrapList", component: ScrapListView },
     ],
   },
   // 기우님 컴포넌트 경로
@@ -221,6 +227,7 @@ const routes = [
         path: "detail/jobPosting/:jbpSq",
         name: JobPostingDetail,
         component: JobPostingDetail,
+        props: true,
       },
       {
         path: "jobPostingUpdate/:jbpSq",

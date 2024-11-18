@@ -13,13 +13,17 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import jakarta.servlet.http.HttpSession;
 import jobplatform.fo.enterprise.common.Pagination;
 import jobplatform.fo.enterprise.domain.dto.JobPostingDTO;
+import jobplatform.fo.enterprise.domain.dto.JobViewDTO;
 import jobplatform.fo.enterprise.domain.dto.ResumeSearchDataDTO;
 import jobplatform.fo.enterprise.domain.entity.JobPostingEntity;
+import jobplatform.fo.enterprise.domain.entity.JobViewEntity;
 import jobplatform.fo.enterprise.domain.mapper.CommonCodeMapper;
 import jobplatform.fo.enterprise.domain.repository.JobPostingRepository;
 import jobplatform.fo.enterprise.domain.vo.CommonCodeVO;
+import jobplatform.fo.enterprise.domain.vo.JobViewVO;
 import jobplatform.fo.enterprise.domain.vo.ResumeListVO;
 import jobplatform.fo.enterprise.domain.vo.ScrapVO;
 import jobplatform.fo.user.domain.mapper.M_MypageMapper;
@@ -34,6 +38,7 @@ public class M_MypageServiceImpl implements M_MypageService{
     private M_MypageMapper mypageMapper;
     @Autowired
     private CommonCodeMapper commonCodeMapper;
+    
 	
     //마이페이지 매인화면에 필요한 전체 데이터 가져오기
 	@Override
@@ -239,6 +244,44 @@ public class M_MypageServiceImpl implements M_MypageService{
     public void scrapDelete(Long mbr_sq, Long jbp_sq) {
         mypageMapper.scrapDelete(mbr_sq, jbp_sq);
     }
+//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
+
+
+@Override
+public void saveJobView(Long mbrSq, Long jbpSq, HttpSession session) {
+    // 사용자 순번에 해당하는 최근 본 공고 목록을 세션에서 가져옵니다
+    List<Long> recentJobViews = (List<Long>) session.getAttribute("recentJobViews_" + mbrSq);
+
+    if (recentJobViews == null) {
+        recentJobViews = new ArrayList<>();
+    }
+
+    // 이미 세션에 해당 공고가 없으면 추가
+    if (!recentJobViews.contains(jbpSq)) {
+        recentJobViews.add(0, jbpSq);  // 최신 공고를 맨 앞에 추가
+    }
+
+    // 세션에 최근 본 공고 목록 저장
+    session.setAttribute("recentJobViews_" + mbrSq, recentJobViews);
+}
+
+@Override
+public List<Long> getRecentJobViews(Long mbrSq, HttpSession session) {
+    // 사용자 순번에 해당하는 최근 본 공고 목록을 세션에서 가져옴
+    List<Long> recentViews = (List<Long>) session.getAttribute("recentJobViews_" + mbrSq);
+    if (recentViews == null) {
+        recentViews = new ArrayList<>();
+    }
+    return recentViews;
+}
+
+
+    
+
+
+
+
+    
 
 }

@@ -11,12 +11,14 @@
                     </ul>
                 </li>
                 <li class="nav-item"><router-link class="nav-link" to="/mypage/applycompanylist" id="menu3">입사지원현황</router-link></li>
-                <li class="nav-item"><router-link class="nav-link" to="/mypage/ppAcception" id="menu4">포지션 제안</router-link>
-                    <ul>
-                        <li class="nav-item"><router-link class="nav-link" to="/mypage/ppAcception">포지션 제안 설정</router-link></li>
-                        <li class="nav-item"><router-link class="nav-link" to="/mypage/proposedPosition">제안 받은 포지션</router-link></li>
-                    </ul>
-                </li>
+                <li class="nav-item"><router-link class="nav-link" to="/mypage/JobViewList" id="menu4">최근 본 공고</router-link></li>
+                <!-- 포지션 숨김 처리 -->
+<!--                <li class="nav-item"><router-link class="nav-link" to="/mypage/ppAcception" id="menu4">포지션 제안</router-link>-->
+<!--                    <ul>-->
+<!--                        <li class="nav-item"><router-link class="nav-link" to="/mypage/ppAcception">포지션 제안 설정</router-link></li>-->
+<!--                        <li class="nav-item"><router-link class="nav-link" to="/mypage/proposedPosition">제안 받은 포지션</router-link></li>-->
+<!--                    </ul>-->
+<!--                </li>-->
                 <li class="nav-item"><router-link class="nav-link" to="/mypage/scrapList" id="menu5">스크랩 공고</router-link></li>
                 <li class="nav-item"><router-link class="nav-link"  :to="{ name: 'userInfmtn', query: { modal: 'true' } }" id="menu6">회원정보 관리</router-link>
                     <ul>

@@ -125,10 +125,28 @@ const performSearch = () => {
     console.error('Error searching:', error);
   });
 };
+const highformSearch = () => {
+  const url = `http://www.career.go.kr/cnet/openapi/getOpenApi?apiKey=b5e83526a03f37b8349141b21fa2f6e7&svcType=api&svcCode=${searchType}&contentType=json&perPage=5&gubun=high_list&searchSchulNm=${searchTerm.value}&thisPage=${paginationData.pageGroupsOfCurrentPage}`;
+
+  api.$get(url).then(response => {
+    console.log('Search response:', response);
+    searchResult.value = response.dataSearch.content;
+    if (response.dataSearch.content.length > 0) {
+      const totalCount = response.dataSearch.content[0].totalCount;
+      paginationData.totalPageCount = Math.ceil(totalCount / 5); // 5개씩 페이지 나눔
+      // 페이지 그룹 끝 번호 조정
+      paginationData.endNumOfPageGroups = Math.min(paginationData.startNumOfPageGroups + 4, paginationData.totalPageCount);
+    } else {
+      initPage();
+    }
+  }).catch(error => {
+    console.error('Error searching:', error);
+  });
+};
 //검색 새로 실시 할때
 const doNewSearch = () => {
   paginationData.pageGroupsOfCurrentPage = 1;
-  performSearch();
+  performSearch(),highformSearch();
 }
 
 const selectSchool = (item) => {

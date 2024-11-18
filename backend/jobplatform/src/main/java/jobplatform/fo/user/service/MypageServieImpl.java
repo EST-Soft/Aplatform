@@ -1,11 +1,13 @@
 package jobplatform.fo.user.service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import jakarta.servlet.http.HttpSession;
 import jobplatform.fo.user.domain.mapper.MypageMapper;
 import jobplatform.fo.user.domain.vo.ApplyInfoDTO;
 
@@ -66,4 +68,23 @@ public class MypageServieImpl implements MypageService{
       // TODO Auto-generated method stub
       return mypagemapper.getSearchList(searchParam);
    }
-}
+
+   @Override
+   public void saveJobView(Long jbpSq, HttpSession session) {
+      // 최근 본 공고를 세션에서 가져옵니다
+        List<Long> recentJobViews = (List<Long>) session.getAttribute("recentJobViews");
+
+        if (recentJobViews == null) {
+            recentJobViews = new ArrayList<>();
+        }
+
+        // 이미 세션에 해당 공고가 없으면 추가
+        if (!recentJobViews.contains(jbpSq)) {
+            recentJobViews.add(0, jbpSq);  // 최신 공고를 맨 앞에 추가
+        }
+
+        // 세션에 최근 본 공고 목록 저장
+        session.setAttribute("recentJobViews", recentJobViews);
+    }
+   }
+

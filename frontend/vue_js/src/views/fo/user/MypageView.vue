@@ -7,7 +7,7 @@
             </div>
         </div>
     </div>
-</template>
+</template> 
 
 <script setup>
     import MypageSidebar from "@/components/fo/user/mypage/MypageSidebar";

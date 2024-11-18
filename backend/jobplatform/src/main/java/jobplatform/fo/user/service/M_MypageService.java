@@ -5,7 +5,15 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
+
+import jakarta.servlet.http.HttpSession;
+import jobplatform.fo.enterprise.domain.dto.JobViewDTO;
 import jobplatform.fo.enterprise.domain.dto.ResumeSearchDataDTO;
+import jobplatform.fo.enterprise.domain.entity.JobViewEntity;
+import jobplatform.fo.enterprise.domain.vo.JobViewVO;
 import jobplatform.fo.user.domain.vo.M_JobPosting_pp;
 import jobplatform.fo.user.domain.vo.MemberVO;
 
@@ -53,6 +61,15 @@ public interface M_MypageService {
 
 	//스크랩 삭제
 	public void scrapDelete(Long mbr_sq, Long jbp_sq);
+
+  public void saveJobView(Long mbrSq, Long jbpSq, HttpSession session);
+
+	public List<Long> getRecentJobViews(Long mbrSq,HttpSession session);
+
+
+    // getJobViewByMember(Long mbrSq) 메소드 선언
+
+
 
 
 

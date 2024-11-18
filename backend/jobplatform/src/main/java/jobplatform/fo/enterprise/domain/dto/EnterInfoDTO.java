@@ -1,5 +1,7 @@
 package jobplatform.fo.enterprise.domain.dto;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import lombok.Data;
 
 @Data
@@ -14,4 +16,6 @@ public class EnterInfoDTO {
 	private String entrprsPicMp; // 담당자 전화번호
 	private String entrprsPicEml; // 담당자 이메일 주소
 	private String entrprsZipCode; // 기업 우편번호
+	private MultipartFile entrprsImg; //프로필 이미지 
+	private String logoFileUrl; // 프로필 이미지 URL
 }

@@ -16,6 +16,8 @@
         <result property="dltDtm" column="dlt_dtm"/>  <!-- 삭제 일자 -->
         <result property="dltYn" column="dlt_yn"/>  <!-- 삭제 여부 -->
         <result property="createdBy" column="createdBy"/> <!-- 작성자 (회원 또는 기업) ID -->
+        <result property="brdCndtn" column="brd_cndtn"/> <!-- 게시글 처리상태 -->
+
 
         <!-- 게시글에 연관된 댓글 리스트를 가져오기 위한 매핑 -->
         <collection property="comments" select="jobplatform.fo.board.mapper.BoardCommentMapper.findAll"
@@ -60,6 +62,15 @@
         updt_dtm = NOW()  <!-- 수정 일자 업데이트 -->
         WHERE brd_sq = #{brdSq}  <!-- 특정 게시글 선택 -->
     </update>
+    
+    <!-- 자체해결 업데이트 하는 쿼리 -->
+    <update id="selfSelection">
+        UPDATE P3_TBL_BOARD
+        SET
+        brd_cndtn = #{brdCndtn},  <!-- 게시글 채택 현황 수정 -->
+        WHERE brd_sq = #{brdSq}  <!-- 특정 게시글 선택 -->
+    </update>
+    
     <update id="hitUpdate">
         UPDATE P3_TBL_BOARD
         SET
@@ -78,7 +89,20 @@
         WHERE brd_sq = #{brdSq}  <!-- 특정 게시글 선택 -->
     </delete>
 
-    <!-- 모든 게시글을 검색하고, 조건에 따라 필터링하는 쿼리 -->
+	<!-- 3일지난 게시물 업데이트 쿼리-->
+    <update id="updateBoardCondition">
+	    UPDATE P3_TBL_BOARD
+	    SET brd_cndtn = 'U'
+	    WHERE DATEDIFF(CURDATE(), insrt_dtm) > 3
+	    AND brd_typ_code = 'qna'
+	    AND NOT EXISTS (
+	        SELECT 1 
+	        FROM P3_TBL_BOARD_ANSWER a 
+	        WHERE a.brd_sq = P3_TBL_BOARD.brd_sq
+	    );
+	</update>
+	
+	<!-- 모든 게시글을 검색하고, 조건에 따라 필터링하는 쿼리 -->
     <select id="findAll" parameterType="Map" resultMap="BoardEntityResultMap">
         SELECT
         b.*,
@@ -105,45 +129,65 @@
                     <!-- 필요한 다른 조건 추가 가능 -->
                 </choose>
             </if>
-            <if test="sort != null and sort != ''">
+             <if test="selection != null and selection != ''">
                 <choose>
-                    <when test="sort == 'earliest'">
-                        ORDER BY b.insrt_dtm ASC  <!-- 오래된 글이 먼저 나오도록 오름차순 정렬 -->
-                    </when>
-                    <when test="sort == 'view'">
-                        ORDER BY b.brd_hits DESC  <!-- 조회수가 높은 글이 먼저 나오도록 내림차순 정렬 -->
-                    </when>
-                </choose>
+			        <when test="selection == 'inprgrs'">
+			            AND b.brd_cndtn = 'N'  <!-- 진행 중인 게시글만 조회 -->
+			        </when>
+			        <when test="selection == 'rslvd'">
+			            AND b.brd_cndtn = 'S'  <!-- 자체 해결된 게시글만 조회 -->
+			        </when>
+			        <when test="selection == 'acpt'">
+			            AND b.brd_cndtn = 'Y'  <!-- 채택 완료된 게시글만 조회 -->
+			        </when>
+			        <when test="selection == 'unrslvd'">
+			            AND b.brd_cndtn = 'U'  <!-- 미해결된 게시글만 조회 -->
+			        </when>
+			    </choose>
             </if>
         </where>
         <!-- 기본 정렬 b.brd_sq DESC 추가 (정렬 조건이 없으면 기본값으로 적용) -->
+        <if test="sort != null and sort != ''">
+            <choose>
+                <when test="sort == 'earliest'">
+                    ORDER BY b.insrt_dtm ASC  <!-- 오래된 글이 먼저 나오도록 오름차순 정렬 -->
+                </when>
+                <when test="sort == 'view'">
+                    ORDER BY b.brd_hits DESC  <!-- 조회수가 높은 글이 먼저 나오도록 내림차순 정렬 -->
+                </when>
+            </choose>
+        </if>
         <if test="sort == null or sort == ''">
             ORDER BY b.brd_sq DESC
         </if>
         LIMIT #{page}, #{size}  <!-- 페이지네이션 적용 -->
     </select>
 
-    <!-- 총 게시글 수를 가져오는 쿼리 (검색 조건에 따라) -->
-    <select id="getBoardTotalCount" parameterType="Map" resultType="java.lang.Integer">
-        SELECT COUNT(*)
-        FROM P3_TBL_BOARD
-        <where>
-            <if test="brdTypCode != null and brdTypCode != ''">
-                brd_typ_code = #{brdTypCode}  <!-- 게시글 종류 코드로 필터링 -->
-            </if>
-            <if test="sk != null and sk != ''">
-                <choose>
-                    <when test="sk == 'title'">
-                        AND brd_ttl LIKE CONCAT('%', #{sv}, '%')  <!-- 제목으로 필터링 -->
-                    </when>
-                    <when test="sk == 'contents'">
-                        AND brd_cntnt LIKE CONCAT('%', #{sv}, '%')  <!-- 내용으로 필터링 -->
-                    </when>
-                    <!-- 필요한 다른 조건 추가 가능 -->
-                </choose>
-            </if>
-        </where>
-    </select>
+
+
+
+	<!-- 총 게시글 수를 가져오는 쿼리 (검색 조건에 따라) -->
+	<select id="getBoardTotalCount" parameterType="Map" resultType="java.lang.Integer">
+	    SELECT COUNT(*)
+	    FROM P3_TBL_BOARD
+	    <where>
+	        dlt_dtm IS NULL  <!-- 삭제되지 않은 게시글만 조회 -->
+	        <if test="brdTypCode != null and brdTypCode != ''">
+	            AND brd_typ_code = #{brdTypCode}  <!-- 게시글 종류 코드로 필터링 -->
+	        </if>
+	        <if test="sk != null and sk != ''">
+	            <choose>
+	                <when test="sk == 'title'">
+	                    AND brd_ttl LIKE CONCAT('%', #{sv}, '%')  <!-- 제목으로 필터링 -->
+	                </when>
+	                <when test="sk == 'contents'">
+	                    AND brd_cntnt LIKE CONCAT('%', #{sv}, '%')  <!-- 내용으로 필터링 -->
+	                </when>
+	                <!-- 필요한 다른 조건 추가 가능 -->
+	            </choose>
+	        </if>
+	    </where>
+	</select>
 
     <!-- 특정 게시글을 조회하는 쿼리 (게시글 ID로 조회) -->
     <select id="findOne" resultMap="BoardEntityResultMap">
@@ -159,5 +203,11 @@
         WHERE
         b.brd_sq = #{brdSq}  <!-- 특정 게시글 선택 -->
     </select>
-
+    
+    <!-- 자체채택 -->
+    <update id="selectSelfRecommendation">
+	    UPDATE P3_TBL_BOARD
+	    SET brd_cndtn = 'S'
+	    where brd_sq = #{brdSq}
+	</update>
 </mapper>

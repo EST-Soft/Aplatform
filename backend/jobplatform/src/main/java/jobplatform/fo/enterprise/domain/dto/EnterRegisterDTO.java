@@ -1,6 +1,8 @@
 package jobplatform.fo.enterprise.domain.dto;
 
 
+import org.springframework.web.multipart.MultipartFile;
+
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,5 +32,6 @@ public class EnterRegisterDTO {
 
     private String entrprsPrvcyTrmsYn; // 회원 개인정보 약관 동의 여부
 
-    private String gndrCtryCd;
+    private String gndrCtryCd; 
+
 }

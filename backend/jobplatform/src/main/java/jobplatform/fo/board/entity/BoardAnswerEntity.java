@@ -1,6 +1,7 @@
 package jobplatform.fo.board.entity;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -40,6 +41,9 @@ public class BoardAnswerEntity{
 
     @Column(name = "answr_rcmndtns", nullable = false)
     private int answrRcmndtns;
+    
+    @Column(name = "answr_not_rcmndtns", nullable = false)
+    private int answrNotRcmndtns;
 
     @Column(name = "answr_slctn_yn", nullable = false)
     private char answrSlctnYn = 'N';
@@ -58,6 +62,5 @@ public class BoardAnswerEntity{
 
 
     private String createdBy;
-
 
 }

@@ -3,6 +3,7 @@ package jobplatform.fo.enterprise.service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -44,13 +45,25 @@ public class JobPostingServiceImpl implements JobPostingService {
     
 
     
-    // 공고 리스트 조회
+    //공고 리스트 조회
     @Override
     public List<JobPostingEntity> jobPostingList(String sortBy) {
         return jobPostingRepository.findAllJobPostings(sortBy);
     }
+    
+	//특정 공고 리스트 조회
+	@Override
+	public List<JobPostingEntity> myJobPostingList(String sortBy, Long entrprsSq) {
+		if (entrprsSq != null) {
+			// 특정 회사의 공고만 조회
+			return jobPostingRepository.findByEntrprsSq(entrprsSq, sortBy);
+		} else {
+			// 모든 공고 조회
+			return jobPostingRepository.findAllJobPostings(sortBy);
+		}
+	}
 
-    // 공고 등록
+    //공고 등록
     @Override
     public Long insertJobPosting(JobPostingEntity jpe) {
         EnterMemberEntity enterpriseMember = enterMemberRepository.findById(jpe.getEnterpriseMember().getEntrprsSq())
@@ -74,13 +87,28 @@ public class JobPostingServiceImpl implements JobPostingService {
         
     }
 
+	//마감일 연장 
+	@Transactional
+    @Override
+    public void extendDeadline(Long jbpSq, int daysToAdd) {
+        // 현재 날짜를 기반으로 연장할 날짜를 계산
+        JobPostingEntity jobPostingEntity = jobPostingRepository.findById(jbpSq)
+            .orElseThrow(() -> new RuntimeException("Job posting not found"));
+
+        LocalDate currentDeadline = jobPostingEntity.getRegstrDlnDtm();
+        LocalDate newDeadline = currentDeadline.plusDays(daysToAdd);  // 날짜 계산
+
+        // 날짜 연장 쿼리 호출
+        int updatedCount = jobPostingRepository.extendDeadline(jbpSq, newDeadline);
+        if (updatedCount == 0) {
+            throw new RuntimeException("Failed to extend deadline for job posting");
+        }
+    }
 
 
 
 
-
-
-    // 공고 상세
+    //공고 상세
     @Override
     @Transactional
     public JobPostingDTO jobPostingDetail(Long jbpSq) {
@@ -89,7 +117,7 @@ public class JobPostingServiceImpl implements JobPostingService {
 
         EnterMemberEntity enterMember = jpe.getEnterpriseMember();
 
-        // 기업 이름 설정
+        // 기업 이름 설정 
         jpe.getEnterpriseMember().setEntrprsName(enterMember.getEntrprsName());
 
         return JobPostingDTO.from(jpe);
@@ -110,10 +138,10 @@ public class JobPostingServiceImpl implements JobPostingService {
 	public void updateJobPosting(JobPostingEntity jpe) {
 		// 예외처리 안해주면 Optional 쓰라고 나옴 
 		JobPostingEntity updateJobPosting = jobPostingRepository.findById(jpe.getJbpSq())
-				.orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다 "+jpe.getJbpSq()));
+				.orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다. "+jpe.getJbpSq()));
 		
 		
-        //현재 날짜
+        //현재 날짜 
         LocalDate today = LocalDate.now();
         
 		// System.out.println("서비스에서 받는 jpe ; " + jpe);
@@ -132,8 +160,8 @@ public class JobPostingServiceImpl implements JobPostingService {
 		updateJobPosting.setSklName(jpe.getSklName());
 		updateJobPosting.setUpdtDtm(LocalDateTime.now());
 	    updateJobPosting.setRegstrStrtDtm(jpe.getRegstrStrtDtm()); // 등록 시작일 설정
-	    
-	    // 등록 시작일이 오늘일 경우 702 아니면 701로
+
+	    // 등록 시작일이 오늘일 경우 702 아니면 701로 
 	    if (jpe.getRegstrStrtDtm() != null && jpe.getRegstrStrtDtm().isEqual(today)) {
 	        updateJobPosting.setJbpCndtn("702");
 	    } else {
@@ -149,14 +177,14 @@ public class JobPostingServiceImpl implements JobPostingService {
 		
 	}
 
-	// 공고 삭제 메소드
+	// 공고 삭제 메소드 
 	@Override
 	public void deleteJobPosting(Long jbpSq) {
 		jobPostingRepository.deleteById(jbpSq);
 		
 	}
 	
-	// 공고 검색 메소드
+	// 공고 검색 메소드 
 	@Override
 	public List<JobPostingEntity> searchJobPostings(String searchTerm, String searchField) {
 	    //제목 또는 내용
@@ -178,7 +206,7 @@ public class JobPostingServiceImpl implements JobPostingService {
 	    ResumeEntity resume = resumeRepository.findById(ae.getResume().getRsmSq())
 	            .orElseThrow(() -> new IllegalArgumentException("이력서를 찾을 수 없습니다. rsmSq: " + ae.getResume().getRsmSq()));
 
-	    // 지원테이블에 이력서 번호 설정
+	    // 지원테이블에 이력서 번호 설정 
 	    ae.setResume(resume);
 
 		if (applyRepository.existsByResumeRsmSqAndJobPostingJbpSq(ae.getResume().getRsmSq(), ae.getJobPosting().getJbpSq())) {

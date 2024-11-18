@@ -3,6 +3,7 @@ package jobplatform.fo.enterprise.controller;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.http.HttpStatus;
@@ -28,32 +29,31 @@ public class ApplyManagementController {
 	}
 	
 	// 지원자 리스트 불러오기 (일반화 완료)
-	@GetMapping("/applys/apply-list/{jbp_sq}/{division}/{condition}/{sort}/{pageNo}")
-	public ResponseEntity<Map<String, Object>> findApplyListData(
-			@PathVariable(name = "jbp_sq", required = false) int jbp_sq,
-			@PathVariable(name = "division", required = false) String division,
-			@PathVariable(name = "condition", required = false) int condition,
-			@PathVariable(name = "sort", required = false) String sort,
-			@PathVariable(name = "pageNo", required = false) int pageNo
-			) {
-		//검색 정보 DTO (공고번호, 구분(지원apply / 제안proposal), 상태, 정렬, 페이지번호)
-		ApplySearchDataDTO applySearchDataDTO = new ApplySearchDataDTO(jbp_sq, division, condition, sort, pageNo);
-		
-		Map<String, Object> map = null;
-		HttpStatus httpStatus = null;
-	
-		try {
-			// 지원자 리스트 얻기
-			map = applyManagementService.findApplyData(applySearchDataDTO);
-			httpStatus = HttpStatus.OK;
-		} catch (SQLException | IOException e) {
-			// TODO Auto-generated catch block
-			//e.printStackTrace();
-			httpStatus = HttpStatus.BAD_GATEWAY;
-		}
+	@GetMapping("/applys/apply-list/{jbp_sq}")
+     public ResponseEntity<Map<String, Object>> findApplyListData(
+        @PathVariable(name = "jbp_sq") int jbp_sq,
+        @RequestParam(name = "division", required = false) String division,
+        @RequestParam(name = "condition", required = false) int condition,
+        @RequestParam(name = "sort", required = false) String sort,
+        @RequestParam(name = "pageNo", required = false) int pageNo
+) {
+    // 검색 정보 DTO (공고번호, 구분(지원apply / 제안proposal), 상태, 정렬, 페이지번호)
+    ApplySearchDataDTO applySearchDataDTO = new ApplySearchDataDTO(jbp_sq, division, condition, sort, pageNo);
+    Map<String, Object> map = null;
+    HttpStatus httpStatus = null;
 
-		return new ResponseEntity<Map<String, Object>>(map, httpStatus);
-	}
+    try {
+        // 지원자 리스트 얻기
+        map = applyManagementService.findApplyData(applySearchDataDTO);
+        httpStatus = HttpStatus.OK;
+    } catch (SQLException | IOException e) {
+        httpStatus = HttpStatus.BAD_GATEWAY;
+    }
+
+    return new ResponseEntity<Map<String, Object>>(map, httpStatus);
+}
+
+
 	
 	// 지원자 상세 가져오기
 	@GetMapping("/applys/apply-detail/{apy_sq}")

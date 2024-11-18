@@ -18,7 +18,7 @@ import jobplatform.fo.enterprise.domain.dto.JobPostingDTO;
 import jobplatform.fo.enterprise.domain.dto.ResumeSearchDataDTO;
 import jobplatform.fo.enterprise.domain.entity.JobPostingEntity;
 import jobplatform.fo.enterprise.domain.mapper.CommonCodeMapper;
-import jobplatform.fo.enterprise.domain.repository.JobPostingRepository;
+
 import jobplatform.fo.enterprise.domain.vo.CommonCodeVO;
 import jobplatform.fo.enterprise.domain.vo.ResumeListVO;
 import jobplatform.fo.enterprise.domain.vo.ScrapVO;

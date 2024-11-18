@@ -30,70 +30,6 @@ app.get('/', (req, res) => {
   res.json({ data: "data" })
 });
 
-app.get('/user/report', (req, res) => {
-  const mbr_id = req.query.mbr_id;
-  console.log("개인회원 신고내역 조회");
-
-  let query = `
-  
-  SELECT a.brd_typ_code,
-       b.rprt_sq,
-       b.brd_sq,
-       b.rprtr_mbr_sq,
-       b.rprtr_entrprs_sq,
-       b.rprt_rsn,
-       b.rprt_cntnt,
-       b.rprt_dtm,
-      
-       COALESCE(m.mbr_id, e.entrprs_id) AS mbr_id
-FROM p3_tbl_board AS a
-JOIN (
-    SELECT rprt_sq,
-           brd_sq,
-           rprtr_mbr_sq,
-           rprtr_entrprs_sq,
-           rprt_rsn,
-           rprt_cntnt,
-           rprt_dtm
-    FROM p5_tbl_board_report_
-    WHERE rprtd_mbr_sq = ${mbr_id}
-) b ON a.brd_sq = b.brd_sq
-LEFT JOIN p3_tbl_member_m AS m ON b.rprtr_mbr_sq = m.mbr_sq
-LEFT JOIN p3_tbl_enterprise_member_m AS e ON b.rprtr_entrprs_sq = e.entrprs_id AND b.rprtr_mbr_sq IS NULL;
-  
-
-`;
-  console.log(query);
-
-  db.query(query, (err, results) => {
-    if (err) return res.status(500).json({ error: err.message });
-
-    // 결과 데이터 형식 맞추기 (프론트엔드와의 형식 일관성 유지)
-    
-    const transformedResults = results.map(report => ({
-      idx: report.rprt_sq,  
-      board_type : report.brd_typ_code,
-      brd_sq : report.brd_sq,
-      reporter_mbr: report.mbr_id,
-      reason: report.rprt_rsn,
-      content: report.rprt_cntnt,
-      report_date:  new Date(report.rprt_dtm).toISOString().slice(0, 10)
-    }))
-  res.json({data:transformedResults});
-
-  })
-});
-
-//개인회원 재재하기 추가
-app.post('/user/punish' ,(req,res) =>{
-  console.log("재재추가" ,req.body);
-  const reason =req.body.reason;
-  const content= req.body.content;
-  const day = req.body.days;
-  const mbr_sq = req.body.mbr_sq;
-})
-
-
 //GET 개인회원 조회
 app.get('/user', (req, res) => {
   console.log("개인회원조회시작");
@@ -147,16 +83,16 @@ app.get('/user', (req, res) => {
     query +=  'GROUP BY user.mbr_sq'
     if(sortKey===''){
       query += ` ORDER BY report_count DESC LIMIT ${pagination.startIndex}, ${pagination.pageSize}`;
-    }else if(sortKey  === 'report_count'){
+    }else if(sortKey  === 'user.report_count'){
       query += ` ORDER BY ${sortKey} DESC LIMIT ${pagination.startIndex}, ${pagination.pageSize}`;
     }else if(sortKey  === 'user.insrt_dtm-DESC'){
       query += ` ORDER BY user.insrt_dtm DESC LIMIT ${pagination.startIndex}, ${pagination.pageSize}`;
     }else if(sortKey  === 'user.insrt_dtm-ASC'){
       query += ` ORDER BY user.insrt_dtm ASC LIMIT ${pagination.startIndex}, ${pagination.pageSize}`;
     }else if(sortKey  === 'user.mbr_id'){
-      query += ` ORDER BY ${sortKey} ASC LIMIT ${pagination.startIndex}, ${pagination.pageSize}`;
+      query += ` ORDER BY user.mbr_id ASC LIMIT ${pagination.startIndex}, ${pagination.pageSize}`;
     }else if(sortKey  === 'user.mbr_name'){
-      query += ` ORDER BY ${sortKey} ASC LIMIT ${pagination.startIndex}, ${pagination.pageSize}`;
+      query += ` ORDER BY user.mbr_name ASC LIMIT ${pagination.startIndex}, ${pagination.pageSize}`;
     }
     console.log(query);
     // 최신 개인회원 목록 조회
@@ -187,82 +123,9 @@ app.get('/user', (req, res) => {
   });
 });
 
-  // 관리자 로그인 시도
-  app.post('/admin/login', (req, res) => {
-    const loginDate = req.body;
-    console.log(loginDate);
-
-    // SQL 인젝션 방지
-    const query = `SELECT * FROM p3_tbl_admin_m WHERE adm_id = ?`;
-    db.query(query, [loginDate.adminId], (err, result) => {
-      if (err) {
-        console.log(1);
-        return res.status(500).json({ error: "데이터베이스 오류가 발생했습니다." });
-      }
-  
-      // 결과가 없을 때
-      if (result.length === 0) {
-        console.log(2);
-        return res.status(404).json({ error: "등록되지 않은 계정 정보입니다." });
-      }
-  
-      const admin = result[0];
-  
-      // 비활성화된 계정일 때
-      if (admin.dlt_yn === 'Y' || admin.use_yn === 'N') {
-        console.log(3);
-        return res.status(403).json({ error: "비활성화 된 계정입니다." });
-      }
-  
-      // 비밀번호가 일치하지 않을 때
-      if (admin.adm_pswrd !== loginDate.adminPswrd) {
-        console.log(4);
-        return res.status(404).json({ error: "비밀번호가 일치하지 않습니다." });
-      }
-  
-      // 로그인 성공 시 세션 설정 및 결과 반환
-
-  
-      // 데이터 변환 후 응답
-      const transformedResult = {
-        sq: admin.adm_sq,
-        id: admin.adm_id,
-        name: admin.adm_name,
-        role: admin.role,
-      };
-      console.log(transformedResult)
-      res.json({ data: transformedResult });
-    });
-  });
 
 
 
-  // app.post('/user/punish' , (req,res) =>{
-  //   const mbr_sq = req.body;
-  //   console.log(mbr_sq);
-
-  //   const userQuery = `select * from p3_tbl_member_m where mbr_sq = ?`
-  //   db.query(userQuery,[mbr_sq],(err,userResult)=>{
-  //     if(err){
-  //       console.log(1);
-  //       return res.status(500).json({ error: "데이터베이스 오류가 발생했습니다." });
-  //     }
-
-  //     if(userResult.length==0){
-  //       const enterpriseQuery = `select * from p3_tbl_enterprise_member_m where entrprs_sq = ?`;
-  //       db.query(enterpriseQuery,[mbr_sq],(err,enterResult)=>{
-  //         if(err){
-  //           return res.status(500).json({ error: "데이터베이스 오류가 발생했습니다." });
-  //         }
-  //       })
-  //     }else{
-  //       const userPunishQuery = `insert into  est_eep_db.p5_tbl_member_punish
-        
-  //       `
-
-  //     }
-  //   })
-  // })
 
 
 
@@ -281,15 +144,15 @@ app.get('/user', (req, res) => {
 
   // GET /board - 목록 조회
   app.get('/board', (req, res) => {
-    console.log("board 조회 시작")
+    console.log("노드서버시작");
     const page = parseInt(req.query.page) || 1;
     const size = parseInt(req.query.size) || 10;
     const sk = req.query.sk || '';
     const sv = req.query.sv || '';
     //게시판 전체 컬럼수 조회
     let queryCount = `
-      SELECT count(brd_sq) AS totalListCnt
-      FROM p3_tbl_board
+      SELECT COUNT(IDX) AS totalListCnt
+      FROM TB_BOARD
       WHERE 1=1
     `;
     //검색구문 및 검색조건에 따른 조건추가
@@ -304,29 +167,27 @@ app.get('/user', (req, res) => {
       const pagination = new Pagination(totalListCnt, page, size, 5);
 
       let query = `
-        SELECT brd_sq, brd_ttl, brd_cntnt, mbr_sq, entrprs_sq , brd_typ_code, brd_hits , insrt_dtm , updt_dtm
-        FROM p3_tbl_board
-        WHERE dlt_yn = 'N'
+        SELECT IDX, TITLE, CONTENTS, CREATED_BY AS createdBy, CREATED_AT AS createdAt
+        FROM TB_BOARD
+        WHERE 1=1
       `;
 
       if (sk && sv) {
         query += ` AND ${sk.toUpperCase()} LIKE '%${sv}%'`;
       }
 
-      query += ` ORDER BY brd_sq DESC LIMIT ${pagination.startIndex}, ${pagination.pageSize}`;
-      console.log(query);
+      query += ` ORDER BY IDX DESC LIMIT ${pagination.startIndex}, ${pagination.pageSize}`;
       //?��?�� 게시�? 목록 조회
       db.query(query, (err, results) => {
         if (err) return res.status(500).json({ error: err.message });
 
         //결과 데이터 형식 맞추기 (프론트엔드와의 형식 일관성 유지)
         const transformedResults = results.map(item => ({
-          idx: item.brd_sq,
-        title: item.brd_ttl,
-        contents: item.brd_cntnt,
-        hits : item.brd_hits,
-        createdBy: item.mbr_sq !== null ? item.mbr_sq : (item.entrprs_sq !== null ? item.entrprs_sq : '정보 없음'),
-        createdAt: item.insrt_dtm,
+          idx: item.IDX,
+        title: item.TITLE,
+        contents: item.CONTENTS,
+        createdBy: item.createdBy,
+        createdAt: item.createdAt,
         }));
         res.json({ pagination, data: transformedResults });
       });
@@ -355,6 +216,17 @@ app.get('/user', (req, res) => {
       res.json(results[0]);
     });
   });
+
+
+
+
+
+
+
+
+
+
+
 
   // GET /board/total - 전체 게시판수 조회
   app.get('/board/total', (req, res) => {
@@ -389,8 +261,7 @@ app.get('/user', (req, res) => {
   app.get('/board/:idx', (req, res) => {
     const idx = req.params.idx;
 
-    const query = 'SELECT brd_sq, COALESCE(mbr_sq, entrprs_sq) AS createdBy, brd_cntnt ,brd_ttl ,insrt_dtm AS createdAt FROM p3_tbl_board WHERE brd_sq = ?';
-    console.log("상세보기 쿼리" ,query);
+    const query = 'SELECT IDX, TITLE, CONTENTS, CREATED_BY AS createdBy, CREATED_AT AS createdAt FROM TB_BOARD WHERE IDX = ?';
     db.query(query, [idx], (err, results) => {
       if (err) {
         return res.status(500).json({ error: err.message });
@@ -399,9 +270,9 @@ app.get('/user', (req, res) => {
         return res.status(404).json({ message: 'Data not found' });
       }
       const item = {
-        idx: results[0].brd_sq,
-        title: results[0].brd_ttl,
-        contents: results[0].brd_cntnt,
+        idx: results[0].IDX,
+        title: results[0].TITLE,
+        contents: results[0].CONTENTS,
         createdBy: results[0].createdBy,
         createdAt: results[0].createdAt,
       };

@@ -1,65 +1,66 @@
-import React, { useState, useEffect  } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useNavigate ,Route ,Routes} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
-import { useSelector } from 'react-redux';
-import store  from "../store/store";
-
-
 
 const Header = () => {
-  const userType = useSelector((state) => state.userType);
-  const member = useSelector((state) => state.member);
+//   const [userType, setUserType] = useState("admin"); // 기본값을 'user'로 설정
+//   const [enterpriseData, setEnterpriseData] = useState(null);
+//   const [matchingResumes, setMatchingResumes] = useState([]);
+//   const navigate = useNavigate();
 
- 
-  const [enterpriseData, setEnterpriseData] = useState(null);
-  const [matchingResumes, setMatchingResumes] = useState([]);
-  const navigate = useNavigate();
+//   useEffect(() => {
+//     // API 호출로 사용자 타입을 가져오는 예제
+//     axios
+//       .get("/api/user/status")
+//       .then((response) => {
+//         setUserType(response.data.userType || "admin"); // 'admin'로 기본값 설정
+//       })
+//       .catch((error) => {
+//         console.error("Error fetching user status:", error);
+//       });
+//   }, []);
 
-  useEffect(() => {
-    console.log(userType);
-  }, []);
+//   useEffect(() => {
+//     // API 호출로 기업 메인 페이지 데이터를 가져오는 예제
+//     if (userType === "enter") {
+//       axios
+//         .get("/enterprise", { params: { entprs_sq: 123 } }) // 예시로 entprs_sq = 123 사용
+//         .then((response) => {
+//           setEnterpriseData(response.data);
+//         })
+//         .catch((error) => {
+//           console.error("Error fetching enterprise main page data:", error);
+//         });
+//     }
+//   }, [userType]);
 
-  // useEffect(() => {
-  //   // API 호출로 기업 메인 페이지 데이터를 가져오는 예제
-  //   if (userType === "enter") {
-  //     axios
-  //       .get("/enterprise", { params: { entprs_sq: 123 } }) // 예시로 entprs_sq = 123 사용
-  //       .then((response) => {
-  //         setEnterpriseData(response.data);
-  //       })
-  //       .catch((error) => {
-  //         console.error("Error fetching enterprise main page data:", error);
-  //       });
-  //   }
-  // }, [userType]);
+//   const fetchMatchingResumes = (jbp_sq) => {
+//     axios
+//       .get(`/enterprise/matchingResume/${jbp_sq}`)
+//       .then((response) => {
+//         setMatchingResumes(response.data);
+//       })
+//       .catch((error) => {
+//         console.error("Error fetching matching resumes:", error);
+//       });
+//   };
 
-  // const fetchMatchingResumes = (jbp_sq) => {
-  //   axios
-  //     .get(`/enterprise/matchingResume/${jbp_sq}`)
-  //     .then((response) => {
-  //       setMatchingResumes(response.data);
-  //     })
-  //     .catch((error) => {
-  //       console.error("Error fetching matching resumes:", error);
-  //     });
-  // };
-
-  const changeUserType = (type) => {
-    // 서버에 사용자 타입 변경 요청을 보냅니다
-    // axios.post('/api/user/change', { userType: type })
-    //   .then(() => {
-    // setUserType(type);
-    // if (type === "enter") {
-    //   navigate("/enter");
-    // } else if (type === "user") {
-    //   navigate("/");
-    // } 
-    //   })
-    //   .catch(error => {
-    //     console.error('Error changing user type:', error);
-    //   });
-  };
+//   const changeUserType = (type) => {
+//     // 서버에 사용자 타입 변경 요청을 보냅니다
+//     // axios.post('/api/user/change', { userType: type })
+//     //   .then(() => {
+//     setUserType(type);
+//     if (type === "enter") {
+//       navigate("/enter");
+//     } else if (type === "user") {
+//       navigate("/");
+//     }
+//     //   })
+//     //   .catch(error => {
+//     //     console.error('Error changing user type:', error);
+//     //   });
+//   };
 
   return (
     <header
@@ -88,7 +89,7 @@ const Header = () => {
                     />
                   </Link>
                 </div>
-                <div
+                {/* <div
                   className="ms-3"
                   style={{ cursor: "pointer" }}
                   onClick={() => changeUserType("user")}
@@ -101,9 +102,7 @@ const Header = () => {
                   onClick={() => changeUserType("enter")}
                 >
                   기업회원
-                </div>
-               <div className="ms-3"
-                  style={{ cursor: "pointer" }}>유저 타입: {userType}</div>
+                </div> */}
               </div>
             </div>
             <div
@@ -201,50 +200,31 @@ const Header = () => {
                     <i className="fas fa-bars"></i>
                   </button>
                 </div>
-                  
-                
-              </div>
-            </div>
-                
-                {userType ==='admin'? (
-                    <div className="header-nav-feature header-nav-features-cart d-inline-flex ms-2">
+                <div className="header-nav-features header-nav-features-no-border header-nav-features-lg-show-border order-1 order-lg-2">
+                  <div className="header-nav-feature header-nav-features-search d-inline-flex">
+                    <Link className="nav-link" to="/admin/login">
+                      LOGIN
+                    </Link>
+                  </div>
+                  <div className="header-nav-feature header-nav-features-cart d-inline-flex ms-2">
                     <span
                       className="header-nav-features-toggle text-decoration-none me-3"
                       data-focus="headerSearch"
                       aria-label="Search"
                     >
-                     {member ? member.id : '로그인 정보 없음'}
+                      admin
                     </span>
                     <Link
-                      to="/admin/Logout"
+                      to="/admin/logout"
                       className="header-nav-features-toggle"
                       aria-label=""
                     >
                       로그아웃
                     </Link>
                   </div>
-                ): (
-                <div className="header-nav-features header-nav-features-no-border header-nav-features-lg-show-border order-1 order-lg-2">
-                  <div className="header-nav-feature header-nav-features-search d-inline-flex">
-                  <span
-                      className="header-nav-features-toggle text-decoration-none me-3"
-                      data-focus="headerSearch"
-                      aria-label="Search"
-                    >
-                     로그인을 해주세요 .
-                    </span>
-                  
-                  <Link
-                      to="/admin/Login"
-                      className="header-nav-features-toggle"
-                      aria-label=""
-                    >
-                      LOGIN
-                    </Link>
-                  </div>
                 </div>
-
-                )}
+              </div>
+            </div>
           </div>
         </div>
       </div>

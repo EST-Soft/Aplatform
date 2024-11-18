@@ -3,7 +3,7 @@ import { configureStore, createSlice } from '@reduxjs/toolkit';
 
 // 초기 상태 정의
 const initialState = {
-  userType: 'not_login',  // 일반회원 : user, 기업회원 : enter , 관리자 :admin
+  userType: 'admin',  // 일반회원 : user, 기업회원 : enter , 관리자 :admin
   member: JSON.parse(sessionStorage.getItem("member")) || null, // 사용자 정보 저장할 상태
   enterMember: [] // 배열 형태로 저장
 };
@@ -15,7 +15,6 @@ const userSlice = createSlice({
   reducers: {
     changeUserType(state, action) {
       state.userType = action.payload;
-      console.log("저장된 유저타입" ,state.userType);
     },
     setEnter(state, action) {
       state.enterMember = action.payload;
@@ -23,7 +22,6 @@ const userSlice = createSlice({
     setMember(state, action) {
       state.member = action.payload;
       sessionStorage.setItem("member", JSON.stringify(action.payload));
-      console.log("저장된 멤버" , state.member);
     },
     clearMember(state) {
       state.member = null;

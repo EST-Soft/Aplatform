@@ -15,7 +15,7 @@ const UserSortControls = ({ onChange, goSearch }) => {
     setTimeout(() => {
         console.log("goSearch 호출됨");
         goSearch();
-      }, 100);
+      }, 200);
     }
     
       return (

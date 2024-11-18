@@ -103,7 +103,6 @@ const BoardList = () => {
     setPrevBlock(prevBlock);
     setNextBlock(nextBlock);
     setLastPage(totalPageCnt);
-    console.log(boardList);
     const tmpPages = [];
     for (let i = startPage; i <= endPage; i++) {
       tmpPages.push(i);
@@ -164,12 +163,12 @@ const BoardList = () => {
             </thead>
             <tbody>
               {boardList.map((board) => (
-                <tr key={board.idx}>
+                <tr key={board.brdSq}>
                   <td>
-                    <Link to={`/board/${board.idx}`}>{board.title}</Link>
+                    <Link to={`/board/${board.brdSq}`}>{board.brdTtl}</Link>
                   </td>
                   <td>{board.createdBy}</td>
-                  <td>{board.createdAt.slice(0, 10)}</td>
+                  <td>{board.insrtDtm.slice(0, 10)}</td>
                 </tr>
               ))}
             </tbody>

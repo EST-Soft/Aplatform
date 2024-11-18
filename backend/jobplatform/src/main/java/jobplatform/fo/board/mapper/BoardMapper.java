@@ -22,4 +22,10 @@ public interface BoardMapper {
     int deleteOne(int brdSq);
 
     void hitUpdate(int brdSq);
+    
+    // 3일지난 게시글 수저 쿼리
+    int updateBoardCondition();
+    
+    // 자체 채택
+    int selectSelfRecommendation(int brdSq);
 }

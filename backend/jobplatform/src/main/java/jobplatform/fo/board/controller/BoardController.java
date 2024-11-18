@@ -4,6 +4,9 @@ import jobplatform.fo.board.entity.BoardEntity;
 import jobplatform.fo.board.service.BoardService;
 import jobplatform.fo.sample.util.Header;
 import jobplatform.fo.sample.util.Search;
+import jobplatform.fo.sample.util.Sort;
+import jobplatform.fo.sample.util.Selection;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -35,12 +38,10 @@ public class BoardController {
     public ResponseEntity<?> boardList(@RequestParam(defaultValue = "general") String brdTypCode,
                                        @RequestParam(defaultValue = "0") int page,
                                        @RequestParam(defaultValue = "10") int size,
-                                       Search search) {
+                                       Search search, Sort sort, Selection selection) {
         try {
-            System.out.println("현재 게시판 : " + brdTypCode);
-            System.out.println(search);
-            Header<List<BoardEntity>> boardList = boardService.List(page, size, search, brdTypCode);
-            System.out.println("보드컨트롤러 : " + boardList);
+        	System.out.println("selection : " + selection + " / sort : " + sort);
+            Header<List<BoardEntity>> boardList = boardService.List(page, size, search, brdTypCode, sort, selection);
             return ResponseEntity.ok(boardList);
         } catch (Exception e) {
             System.out.println("Error during fetching board list: " + e.getMessage());
@@ -62,7 +63,7 @@ public class BoardController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("게시글 상세 조회 중 오류가 발생했습니다.");
         }
     }
-
+    
     @PatchMapping("") // 수정
     public ResponseEntity<?> boardUpdate(@RequestBody BoardEntity boardEntity) {
         try {
@@ -84,5 +85,17 @@ public class BoardController {
             System.out.println("Error during board deletion: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("게시글 삭제 중 오류가 발생했습니다.");
         }
+    }
+    
+    
+@PatchMapping("/selection/{brdSq}") // 자체채택
+    public ResponseEntity<?> selectSelfRecommendation(@PathVariable int brdSq){
+		System.out.println("brdSq 넘어오나?? : " + brdSq );
+      try{
+          int result = boardService.selectSelfRecommendation(brdSq);
+          return ResponseEntity.ok(result);
+      }catch(Exception e){
+          return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("자체채택하기 중 오류 발생");
+      }
     }
 }

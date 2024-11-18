@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jobplatform.fo.board.mapper.AnswerCommentMapper">
+
+    <!-- 댓글 조회 -->
+    <select id="selectCommentsByAnswerId" resultType="jobplatform.fo.board.entity.AnswerCommentEntity">
+        SELECT * FROM P5_TBL_ANSWER_COMMENT
+        WHERE answr_sq = #{answrSq} AND dlt_yn = 'N'
+        ORDER BY insrt_dtm ASC
+    </select>
+
+    <!-- 댓글 삽입 -->
+    <insert id="insertComment">
+        INSERT INTO P5_TBL_ANSWER_COMMENT (answr_sq, mbr_sq, entrprs_sq, cmnt_cntnt, insrt_dtm, dlt_yn)
+        VALUES (#{answrSq}, #{mbrSq}, #{entrprsSq}, #{cmntCntnt}, NOW(), 'N')
+    </insert>
+
+    <!-- 댓글 수정 -->
+    <update id="updateComment">
+        UPDATE P5_TBL_ANSWER_COMMENT
+        SET cmnt_cntnt = #{cmntCntnt}, updt_dtm = NOW()
+        WHERE cmnt_sq = #{cmntSq} AND dlt_yn = 'N'
+    </update>
+
+    <!-- 댓글 논리 삭제 -->
+    <update id="deleteComment">
+        UPDATE P5_TBL_ANSWER_COMMENT
+        SET dlt_yn = 'Y', dlt_dtm = NOW()
+        WHERE cmnt_sq = #{cmntSq}
+    </update>
+
+</mapper>

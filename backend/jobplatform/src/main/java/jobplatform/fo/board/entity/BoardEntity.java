@@ -50,6 +50,9 @@ public class BoardEntity {
 
     private String createdBy; // 새로운 필드 추가
 
+    @Column(name = "brd_cndtn", nullable = true)
+    private String brdCndtn;        // 게시글상태(자체해결)
+    
     // 댓글 목록 추가
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<BoardCommentEntity> comments;

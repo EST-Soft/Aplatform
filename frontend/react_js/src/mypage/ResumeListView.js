@@ -67,7 +67,7 @@ const ResumeList = () => {
   // 이력서 복제 (rsm_sq 들고 Axios)
   const copyResumes = async (id) => {
     try {
-      await axios.post(`http://localhost:80/resumes/copy/${id}`);
+      await axios.post(`http://localhost:3000/resumes/copy/${id}`);
       callAxios();
     } catch (error) {
       console.error("API 호출 실패", error);
@@ -80,7 +80,7 @@ const ResumeList = () => {
   // 이력서 삭제 (rsm_sq 들고 Axios)
   const deleteResumes = async (id) => {
     try {
-      await axios.delete(`http://localhost:80/resumes/${id}`);
+      await axios.delete(`http://localhost:3000/resumes/${id}`);
       callAxios();
     } catch (error) {
       console.error("API 호출 실패", error);

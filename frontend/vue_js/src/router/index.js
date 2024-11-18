@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
+import store from "@/store"; // Vuex 스토어를 가져옵니다
 import UserMainView from "@/views/fo/user/UserMainView.vue";
 import MypageView from "@/views/fo/user/MypageView.vue";
 import MypageHome from "@/components/fo/user/mypage/MypageHome.vue";
@@ -45,6 +46,8 @@ import UserInfrmtnUpdt from "../views/fo/auth/UserInfrmtnUpdt.vue";
 import UserPwChange from "../views/fo/auth/UserFind/UserPwChange.vue";
 import UserSingout from "../views/fo/auth/UserSingout.vue";
 import ScrapListView from "../views/fo/user/ScrapListView.vue";
+import EnterJobPostingList from "../views/fo/enterprise/EnterJobPostingList.vue";
+
 // import store from "@/store"; // Vuex 스토어를 직접 가져옵니다.
 
 const routes = [
@@ -231,7 +234,7 @@ const routes = [
   },
   // 송영태
   {
-    path: "/applys/apply-list",
+    path: "/applys/apply-list/:jbpSq",
     name: "applyListView",
     component: ApplyListView,
   },
@@ -287,4 +290,28 @@ const router = createRouter({
 //     next(); // 접근 허용
 //   }
 // });
+
+// 라우터 인스턴스 생성
+router.beforeEach((to, from, next) => {
+  const userType = store.getters.getUserType; // Vuex에서 사용자 유형 확인
+
+  // 특정 경로에 대해 기업용 컴포넌트 설정
+  if (to.path === "/board/list/jobPosting") {
+    if (userType === "enter") {
+      // 기업 로그인인 경우에는 EnterJobPostingList로 컴포넌트 변경
+      const route = to.matched.find(route => route.path === "/board/list/jobPosting");
+      if (route) {
+        route.components.default = EnterJobPostingList; // 기업용 컴포넌트로 교체
+      }
+    } else {
+      // 일반 로그인 및 비로그인 사용자의 경우 기본 컴포넌트로 유지
+      const route = to.matched.find(route => route.path === "/board/list/jobPosting");
+      if (route) {
+        route.components.default = JobPostingListView; // 기본 컴포넌트로 설정
+      }
+    }
+  }
+  next(); // 경로에 따른 컴포넌트 설정 후 진행
+});
+
 export default router;

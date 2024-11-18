@@ -96,4 +96,7 @@ public class EnterMemberEntity {
 
     @Column(name = "use_yn", nullable = true)
     private Character useYn = 'Y'; // 사용 여부
+
+    @Column(name = "entrps_img_orgnl_fn", nullable = true)
+    private String entrprsImgOrgnlFn;
 }

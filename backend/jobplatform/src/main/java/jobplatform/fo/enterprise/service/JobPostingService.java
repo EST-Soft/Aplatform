@@ -30,6 +30,10 @@ public interface JobPostingService {
 
 	public Long insertJobPosting(JobPostingEntity jpe);
 
+    public List<JobPostingEntity> myJobPostingList(String sortBy, Long entrprsSq);
+
+    public void extendDeadline(Long jbpSq, int daysToAdd);
+
 
 
 

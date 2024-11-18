@@ -15,10 +15,10 @@ import jobplatform.fo.enterprise.domain.vo.ApplyListVO;
 @Mapper
 public interface ApplyMapper {
 	
-	// 총 지원자 숫자 받아오기
-	int loadApplyListCount(ApplySearchDataDTO searchListDataDTO) throws SQLException, IOException;
-	// 지원자 리스트 얻기
-	List<ApplyListVO> selectApplyListData(Map<String, Object> map) throws SQLException, IOException;
+	// 지원자 목록 갯수 조회
+    int loadApplyListCount(ApplySearchDataDTO applySearchDataDTO);
+     // 지원자 목록 조회
+    List<ApplyListVO> selectApplyListData(int map);
 	// 지원자 디테일 데이터 얻기
 	ApplyDetailDataVO selectApplyDetailData(int apy_sq) throws SQLException, IOException;
 	// 지원자 상태 변경

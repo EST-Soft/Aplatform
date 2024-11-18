@@ -1,11 +1,14 @@
 package jobplatform.fo.enterprise.service;
 
+import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.List;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import jobplatform.fo.enterprise.domain.dto.EnterLoginDTO;
 import jobplatform.fo.enterprise.domain.dto.EnterRegisterDTO;
@@ -108,6 +111,6 @@ public class EnterMemberServiceImpl implements EnterMemberService{
     	
     	return sq;
     }
-     
+ 
     
 }

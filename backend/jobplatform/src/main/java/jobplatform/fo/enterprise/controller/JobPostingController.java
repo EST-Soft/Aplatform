@@ -30,6 +30,8 @@ import jobplatform.fo.enterprise.domain.repository.JobRepository;
 import jobplatform.fo.enterprise.domain.repository.ResumeRepository;
 import jobplatform.fo.enterprise.service.JobPostingService;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.web.bind.annotation.PutMapping;
+
 
 
 @Log4j2
@@ -56,6 +58,15 @@ public class JobPostingController {
 	    List<JobPostingEntity> jobPostings = jobPostingService.jobPostingList(sortBy);
 	    return ResponseEntity.ok(jobPostings);
 	}
+
+	@GetMapping("/board/list/myJobPosting")
+    public ResponseEntity<List<JobPostingEntity>> jobPostingList(
+    @RequestParam(value = "sortBy", defaultValue = "regstrStrtDtm") String sortBy,
+    @RequestParam(value = "entrprsSq", required = false) Long entrprsSq // 추가된 필터 파라미터
+) {
+    List<JobPostingEntity> jobPostings = jobPostingService.myJobPostingList(sortBy, entrprsSq);
+    return ResponseEntity.ok(jobPostings);
+}
 
 	
 	// 공고 등록 메소드
@@ -110,6 +121,19 @@ public class JobPostingController {
 	public void updateJobPosting(@PathVariable int jbpSq , @RequestBody JobPostingEntity jpe) {
 		System.out.println("여기서 받는 jpe : " + jpe);
 		jobPostingService.updateJobPosting(jpe);
+	}
+    
+	//마감일 추가 메소드 
+	@PutMapping("/board/jobPostingUpdate/deadline/{jbpSq}")
+	public ResponseEntity<String> extendDeadline(@PathVariable Long jbpSq) {
+		int daysToAdd = 30; // 마감일 연장 기간을 30일로 설정
+	
+		try {
+			jobPostingService.extendDeadline(jbpSq, daysToAdd);
+			return ResponseEntity.ok("마감일이 30일 연장되었습니다.");
+		} catch (RuntimeException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당 공고를 찾을 수 없습니다.");
+		}
 	}
 	
 	

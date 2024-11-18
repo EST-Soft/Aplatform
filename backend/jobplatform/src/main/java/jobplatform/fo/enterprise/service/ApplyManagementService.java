@@ -28,42 +28,54 @@ public class ApplyManagementService {
 		this.commonCodeMapper = commonCodeMapper;
 	}
 	
-	// 지원자 리스트 불러오기(정렬, 초기화면 일반화)
-	public Map<String, Object> findApplyData(ApplySearchDataDTO applySearchDataDTO) throws SQLException, IOException {		
-		// 총 데이터 갯수
-		int totalCount= applyMapper.loadApplyListCount(applySearchDataDTO);
-		
-		// 페이지네이션 정보 생성 (기본 1페이지 = 데이터10 / 페이지그룹= 페이지5)
-		Pagination pagination = new Pagination(totalCount, applySearchDataDTO.getPageNo());
-			
-		Map<String, Object> map = new HashMap<String, Object>();
-		//페이지네이션 정보 map 추가
-		map.put("paginationData", pagination);
-		
-		// 검색/정렬 정보 map 추가
-		map.put("searchData", applySearchDataDTO);
-		
-		//-----------------------에러!!!--------------------------------------------------------------
-		// 지원자 리스트 정보 얻기
-		List<ApplyListVO> applyListVO = applyMapper.selectApplyListData(map);
-		
-		// 지원자 리스트 정보 map 추가
-		map.put("applyDatas", applyListVO);
-		
-		// 코드 정보 가져오기 (지원취소 빼고)		
-		List<CommonCodeVO> commonCodeListVO = commonCodeMapper.selectCommonCodeApplyCategoryData();
-		//코드 정보 map 추가
-		map.put("applyConditions", commonCodeListVO);
-		
-		System.out.println(applyListVO);
-		System.out.println(applyListVO.size());
-		System.out.println(pagination);
-		System.out.println(pagination.getTotalDataCount());
-		System.out.println(applySearchDataDTO);
-//		System.out.println(commonCodeListVO);
-		
-		return map;
-	}
+	// 지원자 리스트 불러오기 (공고번호 jbp_sq 기준)
+public Map<String, Object> findApplyData(ApplySearchDataDTO applySearchDataDTO) throws SQLException, IOException {  
+   // System.out.println("서비스에서 받는 DTO" + applySearchDataDTO);    
+
+    // 총 데이터 개수 조회 (공고번호 jbp_sq로 필터링)
+    int totalCount = applyMapper.loadApplyListCount(applySearchDataDTO);
+    
+    
+    // 페이지네이션 정보 생성 (기본 1페이지 = 데이터 10개 / 페이지 그룹 = 5페이지)
+    Pagination pagination = new Pagination(totalCount, applySearchDataDTO.getPageNo());
+   
+    
+    // 조회 결과를 담을 Map 초기화
+    Map<String, Object> resultMap = new HashMap<>();
+  
+    
+    // 페이지네이션 정보 추가
+    resultMap.put("paginationData", pagination);
+    
+    // 검색 및 정렬 정보를 추가
+    resultMap.put("searchData", applySearchDataDTO);
+    //System.out.println("dddddddd" + applySearchDataDTO.getJbp_sq());
+    
+    // 공고번호에 맞는 지원자 리스트 정보 조회 (jbp_sq로 필터링)
+    List<ApplyListVO> applyListVO = applyMapper.selectApplyListData(applySearchDataDTO.getJbp_sq());
+    System.out.println("applyListVO: " + applyListVO);
+    
+
+    // 조회된 지원자 리스트 추가
+    resultMap.put("applyDatas", applyListVO);
+    
+    // 코드 정보 가져오기 (지원 상태 등)
+    List<CommonCodeVO> commonCodeListVO = commonCodeMapper.selectCommonCodeApplyCategoryData();
+    
+    // 상태 코드 정보 추가
+    resultMap.put("applyConditions", commonCodeListVO);
+
+    // 디버깅 출력 (필요한 경우 제거)
+    
+    System.out.println("applyListVO.size(): " + applyListVO.size());
+    System.out.println("pagination: " + pagination);
+    System.out.println("pagination.getTotalDataCount(): " + pagination.getTotalDataCount());
+    System.out.println("applySearchDataDTO: " + applySearchDataDTO);
+    
+
+    return resultMap;
+}
+
 	
 	// 지원 상세보기
 	public ApplyDetailDataVO findApplyDetailData(int apy_sq) throws SQLException, IOException {

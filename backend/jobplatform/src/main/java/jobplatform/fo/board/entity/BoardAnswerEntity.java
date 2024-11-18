@@ -1,6 +1,7 @@
 package jobplatform.fo.board.entity;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -61,6 +62,5 @@ public class BoardAnswerEntity{
 
 
     private String createdBy;
-
 
 }

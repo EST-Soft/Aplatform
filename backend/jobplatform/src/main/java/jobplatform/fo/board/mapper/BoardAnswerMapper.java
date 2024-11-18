@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 
 import jobplatform.fo.board.entity.BoardAnswerEntity;
+import jobplatform.fo.board.entity.AnswerCommentEntity;
 
 @Mapper
 public interface BoardAnswerMapper {
@@ -13,7 +14,7 @@ public interface BoardAnswerMapper {
     // 답글 등록
     int insertOne(BoardAnswerEntity answer);
 
-    // 답글 채택여부
+    // 답글 채택 여부
     int checkAnswer(int brdSq);
 
     // 답글 수
@@ -46,10 +47,10 @@ public interface BoardAnswerMapper {
     // 답변 비추천 테이블에서 삭제
     int deleteNotRecommendation(int answrSq, int mbrSq);
 
-    // 답변 추천여부 확인
+    // 답변 추천 여부 확인
     int checkRecommendation(int answrSq, int mbrSq);
     
-    // 답변 비추천여부 확인
+    // 답변 비추천 여부 확인
     int checkNotRecommendation(int answrSq, int mbrSq);
 
     // 답변 채택
@@ -63,6 +64,4 @@ public interface BoardAnswerMapper {
 
     // 답변 수정
     int editAnswer(BoardAnswerEntity boardAnswerEntity);
-
-
 }

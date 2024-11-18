@@ -173,16 +173,12 @@ const getBoardList = async () => {
     .map((e) => e.join("="))
     .join("&");
   try {
-    console.log(queryString);
     const data = await api.$get("/board?" + queryString);
     boardList.value = data.data || [];
-
-    console.log(boardList.value.map(board => board));
 
     const answerPromises = boardList.value.map(board =>
       api.$get("/answer/" + board.brdSq)
         .then(answer => {
-          console.log("answer.checkAnswer:", answer);
           return {
             brdSq: board.brdSq,
             answerCheck: answer.checkAnswer || 0,
@@ -222,9 +218,6 @@ const getBoardList = async () => {
         startPage,
         totalPageCnt,
       } = data.pagination;
-
-        // 문제 발생 가능성: endPage가 totalPageCnt보다 클 수 있음
-        console.log("startPage:", startPage, "endPage:", endPage, "totalPageCnt:", totalPageCnt);
 
       curPage.value = search.value.page;
       prevBlock.value = previousBlock;

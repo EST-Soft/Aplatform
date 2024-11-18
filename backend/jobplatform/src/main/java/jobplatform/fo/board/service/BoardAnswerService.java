@@ -3,6 +3,7 @@ package jobplatform.fo.board.service;
 import java.util.List;
 
 import jobplatform.fo.board.entity.BoardAnswerEntity;
+import jobplatform.fo.board.entity.AnswerCommentEntity;
 import jobplatform.fo.sample.util.Header;
 
 public interface BoardAnswerService {

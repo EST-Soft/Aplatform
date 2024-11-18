@@ -70,7 +70,7 @@ const UserManagement = () => {
 
   const onSearch = () => {
     if (search.sk === "") {
-      // showModal("검색조건을 선택해주세요!");
+      // showModal("검색조건을 선택해주세요!!");
       return;
     }else {
       setSearch({ ...search, page: 1 });

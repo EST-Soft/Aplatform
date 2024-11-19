@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="jobplatform.fo.report.mapper.IssueTrackMapper">
+
+    <!-- 신고 등록 -->
+    <insert id="insertIssue">
+        INSERT INTO P5_TBL_ISSUE_TRACK (
+            brd_sq, brd_typ_code, issue_typ, mbr_sq, entrprs_sq, issue_rsn, issue_stat, insrt_dtm, dlt_yn
+        ) VALUES (
+            #{brdSq}, #{brdTypCode}, #{issueTyp}, #{mbrSq}, #{entrprsSq}, #{issueRsn}, 'PENDING', NOW(), 'N'
+        )
+    </insert>
+
+</mapper>

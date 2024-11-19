@@ -46,6 +46,13 @@
       class="d-flex justify-content-end mt-4"
     >
       <button class="btn btn-success" @click="backToList">목록</button>
+      <!-- 게시글 신고 버튼 -->
+      <button
+        class="btn btn-danger ms-2"
+        @click="openReportModal('게시글', board.brdSq, 'POST')"
+      >
+        <i class="bi bi-exclamation-circle"></i> 게시글 신고
+      </button>
     </div>
 
     <!-- 게시글작성자와 로그인사용자 다르고, 답변이 채택되었을 때 -->
@@ -54,8 +61,57 @@
       class="d-flex justify-content-end mt-4"
     >
       <button class="btn btn-success" @click="backToList">목록</button>
+      <!-- 게시글 신고 버튼 -->
+      <button
+        class="btn btn-danger ms-2"
+        @click="openReportModal('게시글', board.brdSq, 'POST')"
+      >
+        <i class="bi bi-exclamation-circle"></i> 게시글 신고
+      </button>
     </div>
 
+    <div v-show="isReportModalOpen" class="">
+      <div class="reportModal">
+        <div class="modal-content">
+          <h5>{{ reportTarget.type }} 신고하기</h5>
+          <p>신고 사유를 선택하세요:</p>
+          <label>
+            <input type="checkbox" value="스팸/광고" v-model="reportReasons" />
+            스팸/광고
+          </label>
+          <label>
+            <input
+              type="checkbox"
+              value="부적절한 내용"
+              v-model="reportReasons"
+            />
+            부적절한 내용
+          </label>
+          <label>
+            <input type="checkbox" value="욕설/비방" v-model="reportReasons" />
+            욕설/비방
+          </label>
+          <label>
+            <input type="checkbox" value="기타" v-model="reportReasons" />
+            기타
+          </label>
+          <textarea
+            v-model="additionalReason"
+            placeholder="추가 사유를 입력해주세요"
+            class="form-control mt-2"
+            rows="3"
+          ></textarea>
+          <div class="button-container mt-3">
+            <button class="btn btn-primary me-2" @click="submitReport">
+              신고
+            </button>
+            <button class="btn btn-secondary" @click="closeReportModal">
+              취소
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
     <!-- 게시글 상세 내용 시작 -->
     <div class="board-detail mt-4 p-4 bg-white rounded shadow-sm">
       <div class="board-header d-flex justify-content-between mb-4">
@@ -179,6 +235,17 @@
                         <span class="badge text-bg-success">채택</span>
                       </td>
                       <td v-else></td>
+                      <!-- 답글 신고 버튼 -->
+                      <td>
+                        <button
+                          class="btn btn-outline-danger btn-sm"
+                          @click="
+                            openReportModal('답글', answer.answrSq, 'ANSWER')
+                          "
+                        >
+                          <i class="bi bi-exclamation-circle"></i> 답글 신고
+                        </button>
+                      </td>
                     </tr>
                     <!-- 답변 내용 -->
                     <tr>
@@ -333,6 +400,23 @@
                                       }}
                                     </span>
                                   </div>
+
+                                  <!-- 댓글 신고 버튼 -->
+                                  <div>
+                                    <button
+                                      class="btn btn-outline-danger btn-sm mt-1"
+                                      @click="
+                                        openReportModal(
+                                          '댓글',
+                                          comment.cmntSq,
+                                          'COMMENT'
+                                        )
+                                      "
+                                    >
+                                      <i class="bi bi-exclamation-circle"></i>
+                                      댓글 신고
+                                    </button>
+                                  </div>
                                 </div>
 
                                 <div
@@ -426,6 +510,7 @@
                 </tbody>
               </table>
             </div>
+
             <div v-if="answerList.length > 0" class="pagination-wrapper">
               <ul class="pagination justify-content-center">
                 <li class="page-item" :class="{ disabled: curPage === 1 }">
@@ -487,6 +572,42 @@
       </div>
     </div>
   </div>
+
+  <div class="modal">
+    <div class="modal-content">
+      ㄴㅁㅇㄴㅁㅇㄴㅁㄴㅇㅁㄴㅇㅁㅁㄴㅇ
+      <h5>{{ reportTarget.type }} 신고하기</h5>
+      <p>신고 사유를 선택하세요:</p>
+      <label>
+        <input type="checkbox" value="스팸/광고" v-model="reportReasons" />
+        스팸/광고
+      </label>
+      <label>
+        <input type="checkbox" value="부적절한 내용" v-model="reportReasons" />
+        부적절한 내용
+      </label>
+      <label>
+        <input type="checkbox" value="욕설/비방" v-model="reportReasons" />
+        욕설/비방
+      </label>
+      <label>
+        <input type="checkbox" value="기타" v-model="reportReasons" />
+        기타
+      </label>
+      <textarea
+        v-model="additionalReason"
+        placeholder="추가 사유를 입력해주세요"
+        class="form-control mt-2"
+        rows="3"
+      ></textarea>
+      <div class="button-container mt-3">
+        <button class="btn btn-primary me-2" @click="submitReport">신고</button>
+        <button class="btn btn-secondary" @click="closeReportModal">
+          취소
+        </button>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script setup>
@@ -508,6 +629,52 @@ const editor = ref(null);
 const quillInstance = ref(null);
 const quillInstance3 = ref(null);
 const editingAnswerId = ref(null);
+
+const isReportModalOpen = ref(false); // 모달 상태
+const reportReasons = ref([]); // 신고 사유
+const additionalReason = ref(""); // 추가 사유 입력
+const reportTarget = ref({}); // 신고 대상 정보
+
+// 모달 열기
+const openReportModal = (type, id, category) => {
+  reportTarget.value = { type, id, category };
+  isReportModalOpen.value = true;
+};
+
+// 모달 닫기
+const closeReportModal = () => {
+  isReportModalOpen.value = false;
+  reportReasons.value = [];
+  additionalReason.value = "";
+};
+
+// 신고 처리
+const submitReport = async () => {
+  if (reportReasons.value.length === 0 && !additionalReason.value.trim()) {
+    alert("신고 사유를 입력하거나 선택해주세요.");
+    return;
+  }
+
+  const issueReason = [...reportReasons.value, additionalReason.value]
+    .filter(Boolean)
+    .join(", ");
+
+  try {
+    await api.$post("/api/issues", {
+      brdSq: reportTarget.value.id, // 신고 대상 ID
+      brdTypCode: reportTarget.value.category, // 유형 코드 (POST, ANSWER, COMMENT)
+      issueTyp: reportTarget.value.category, // 신고 카테고리
+      issueRsn: issueReason, // 신고 사유
+      mbrSq: member.value.mbrSq, // 로그인 사용자 ID
+    });
+    showAlert(`${reportTarget.value.type}이(가) 신고되었습니다.`);
+  } catch (error) {
+    console.error("신고 처리 실패:", error);
+    showAlert(`${reportTarget.value.type} 신고에 실패했습니다.`);
+  } finally {
+    closeReportModal();
+  }
+};
 
 const mbrSqCheck = (answerMbrSq) => {
   return member.value != null && answerMbrSq === member.value.mbrSq;
@@ -1164,7 +1331,8 @@ hr {
   padding: 20px;
   border-radius: 5px;
   width: 300px;
-  position: relative;
+  max-width: 90%;
+  text-align: center;
 }
 
 .close-button {
@@ -1363,5 +1531,28 @@ section {
 
 .ql-size-huge {
   font-size: 3rem;
+}
+
+.reportModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000; /* 모달이 다른 콘텐츠 위에 오도록 */
+}
+
+.reportModal .modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  max-width: 400px;
+  width: 100%;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  text-align: center;
 }
 </style>

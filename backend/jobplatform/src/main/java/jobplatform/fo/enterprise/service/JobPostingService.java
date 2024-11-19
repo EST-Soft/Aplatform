@@ -34,7 +34,7 @@ public interface JobPostingService {
 	public List<JobPostingDTO> getJobPostings();
 	public void addJobView(Long mbrSq, Long jbpSq, String mbrId);
 	public void addJobViewEntity(Long mbrSq, Long jbpSq, String mbrId);
-
+	public List<JobPostingDTO> getTopJobPostings();
 
 
 	

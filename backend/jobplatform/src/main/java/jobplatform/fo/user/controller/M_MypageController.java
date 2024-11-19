@@ -23,13 +23,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.servlet.http.HttpSession;
 import jobplatform.fo.enterprise.domain.dto.JobPostingDTO;
-import jobplatform.fo.enterprise.domain.dto.JobRecommendationDTO;
 import jobplatform.fo.enterprise.domain.dto.JobViewDTO;
 import jobplatform.fo.enterprise.domain.dto.ResumeSearchDataDTO;
 import jobplatform.fo.enterprise.domain.entity.ApplyEntity;
+import jobplatform.fo.enterprise.domain.entity.JobPostingEntity;
 import jobplatform.fo.enterprise.domain.entity.JobViewEntity;
 import jobplatform.fo.enterprise.domain.vo.JobViewVO;
-import jobplatform.fo.enterprise.service.JobRecommendationService;
+import jobplatform.fo.enterprise.service.JobPostingService;
 import jobplatform.fo.enterprise.service.JobViewService;
 import jobplatform.fo.user.domain.entity.MemberEntity;
 import jobplatform.fo.user.domain.vo.M_JobPosting_pp;
@@ -41,8 +41,9 @@ import jobplatform.fo.user.service.M_MypageService;
 @RestController
 @RequestMapping("/user/mypage")
 public class M_MypageController {
-	    @Autowired
-    private JobRecommendationService jobRecommendationService;
+	@Autowired
+    private JobPostingService jobPostingService;
+
 	@Autowired
 	private M_MypageService myPageService;
 	 @Autowired
@@ -214,16 +215,11 @@ public ResponseEntity<?> searchJobView(
                              .body("검색 중 오류가 발생했습니다.");
     }
 }
-@GetMapping("/recommendations/{rsmSq}")
-public List<JobRecommendationDTO> getJobRecommendations(
-        @PathVariable long rsmSq,  // URL 경로에서 이력서 순번을 받아옴
-        @RequestParam List<String> selectedSkills) {  // 쿼리 파라미터로 기술 코드 리스트를 받아옴
-
-    // 서비스 메서드를 호출하여 채용 공고 추천 목록을 가져옴
-    return jobRecommendationService.recommendJobs(rsmSq, selectedSkills);
-}
-
-
+    // 조회수 높은 상위 3개의 채용 공고 반환
+    @GetMapping("/top")
+    public List<JobPostingDTO> getTopJobPostings() {
+        return jobPostingService.getTopJobPostings();
+    }
  }
  
  

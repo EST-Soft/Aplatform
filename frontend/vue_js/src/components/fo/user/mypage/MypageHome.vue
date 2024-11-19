@@ -49,7 +49,7 @@
 
     <!-- 두 번째 섹션 (이력서 및 공고 관련 데이터) -->
     <div class="row" style="padding-top: 20px">
-      <div class="col-md-3">
+      <div class="col-md-4">
         <div class="card mb-3">
           <div class="card-body text-center">
             <h5 class="card-title"><strong>등록한 이력서</strong></h5>
@@ -57,7 +57,8 @@
           </div>
         </div>
       </div>
-      <div class="col-md-3">
+
+      <div class="col-md-4">
         <div class="card mb-3">
           <div class="card-body text-center">
             <h5 class="card-title"><strong>스크랩 공고</strong></h5>
@@ -65,7 +66,7 @@
           </div>
         </div>
       </div>
-      <div class="col-md-3">
+      <div class="col-md-4">
         <div class="card mb-3">
           <div class="card-body text-center">
             <h5 class="card-title"><strong>받은 제안</strong></h5>
@@ -74,40 +75,37 @@
         </div>
       </div>
     </div>
-    <div class="col-md-3">
-      <div class="card mb-3">
-        <div class="card-body text-center">
-          <h5 class="card-title"><strong>추천 공고</strong></h5>
-          <!-- 추천된 채용 공고 리스트 -->
-          <div v-if="recommendations.value && recommendations.value.length > 0">
-            <ul class="list-unstyled">
-              <li
-                v-for="recommendation in recommendations.value"
-                :key="recommendation.jbpSq"
-                class="mb-3"
+    <br />
+    <div>
+      <!-- 조회수 높은 채용 공고 -->
+      <h3 style="margin-bottom: 20px">
+        지금 가장 인기있는 <strong>조회수 높은</strong> 공고예요.
+      </h3>
+      <div class="card-body text-center">
+        <div v-if="topJobPostings.length > 0">
+          <div class="top-job-posting-container">
+            <!-- 각 채용 공고마다 router-link를 적용하여 카드 전체를 클릭 가능하게 만듬 -->
+            <div
+              v-for="jobPosting in topJobPostings"
+              :key="jobPosting.jbpSq"
+              class="top-job-posting-card"
+            >
+              <!-- router-link를 카드 전체에 적용 -->
+              <router-link
+                :to="'/board/detail/jobPosting/' + jobPosting.jbpSq"
+                class="text-decoration-none"
               >
-                <div class="card shadow-sm">
-                  <div class="card-body">
-                    <h6 class="card-title">{{ recommendation.jbpTtl }}</h6>
-                    <p class="card-text">
-                      <strong>{{ recommendation.matchSkills }}</strong> 기술
-                      일치
-                    </p>
-                    <!-- 공고 상세보기 링크 추가 가능 -->
-                    <a
-                      :href="'/job-detail/' + recommendation.jbpSq"
-                      class="btn btn-primary btn-sm"
-                    >
-                      공고 상세보기
-                    </a>
-                  </div>
-                </div>
-              </li>
-            </ul>
+                <h3 style="color: black">{{ jobPosting.enterpriseName }}</h3>
+                <p style="color: black">{{ jobPosting.jbpTtl }}</p>
+                <p>{{ jobPosting.jobName.join(", ") }}</p>
+                <!--<p>{{ jobPosting.hits }} 조회수</p>-->
+                <p>{{ jobPosting.jbpDesc }}</p>
+              </router-link>
+            </div>
           </div>
-          <div v-else>
-            <p class="text-muted">추천된 채용 공고가 없습니다.</p>
-          </div>
+        </div>
+        <div v-else>
+          <p>조회수 높은 채용 공고가 없습니다.</p>
         </div>
       </div>
     </div>
@@ -321,12 +319,9 @@ import Calendar from "./MypageCalendar.vue";
 import { api } from "@/axios";
 import { formatDateYMD } from "@/tools";
 import { useStore } from "vuex";
-
 const store = useStore();
-
-// 마이페이지 관련 데이터
+let topJobPostings = ref([]); // 조회수 높은 3개의 채용 공고를 저장
 let result = ref({});
-let recommendations = ref([]); // 추천 공고 리스트를 저장할 ref 변수
 let applyStateSum = computed(() => getApplyStateSum());
 let calendarEvents = computed(() =>
   makeCalendarDatas(result.value.calendarData)
@@ -336,33 +331,33 @@ let month = new Date().getMonth() + 1;
 let checkedMonth = [month];
 
 onMounted(async () => {
+  // Fetching My Page Data
   try {
-    // 마이페이지 데이터 호출
     const response = await api.$get("/user/mypage/", {
       params: {
-        mbr_sq: store.state.member.mbrSq,
-        month: month,
+        mbr_sq: store.state.member.mbrSq, // Passing member ID from Vuex
+        month: month, // Passing the current month
       },
     });
-    result.value = response || {}; // 마이페이지 데이터 설정
-
-    // 선택된 기술 코드와 이력서 순번 가져오기
-    const selectedSkills = store.state.selectedSkills; // 선택된 기술 코드들
-    const rsmSq = store.state.member.rsmSq; // 이력서 순번
-
-    // 추천 공고 API 호출
-    const recommendationsResponse = await api.get(`/recommendations/${rsmSq}`, {
-      params: { selectedSkills },
-    });
-
-    // 추천 공고 리스트 저장
-    recommendations.value = recommendationsResponse.data;
+    result.value = response || {}; // Store the result or an empty object if no response
   } catch (error) {
     console.error("API 호출 오류:", error);
-
-    // 오류 발생 시 추천 공고 데이터 비우기
-    recommendations.value = []; // 추천 공고 데이터 오류 처리
+    result.value = {}; // Set empty object in case of an error
   }
+
+  // Fetching Top 3 Job Postings
+  try {
+    const jobPostingResponse = await api.$get("/user/mypage/top");
+    topJobPostings.value = jobPostingResponse || []; // Set the top job postings
+  } catch (error) {
+    console.error("채용 공고 조회 오류:", error);
+    topJobPostings.value = []; // Set empty array in case of an error
+  }
+  return {
+    result,
+    topJobPostings,
+    month, // if you need to display or use month
+  };
 });
 
 function getApplyStateSum() {
@@ -421,7 +416,7 @@ function makeCalendarDatas(toParsingData) {
   return events;
 }
 
-// FullCalendar 커스텀버튼
+// fullcalendar 커스텀버튼
 let customButtons = {
   myPrev: {
     text: "<",
@@ -440,8 +435,7 @@ let customButtons = {
     },
   },
 };
-
-// 달력 월 이동 시 해당 월 데이터 가져오기
+// 달력 월 이동시 해당 월 데이터 가져오기
 async function fetchCalendarData() {
   if (!checkedMonth.includes(month)) {
     const selectedMonthData = await api.$get("/user/mypage/calendar", {
@@ -495,15 +489,62 @@ h5.card-title {
   margin-left: 5px;
 }
 
-/* 각 항목에 대한 스타일 */
-.mb-0 {
-  margin-bottom: 0;
+/* 조회수 높은 채용 공고 카드들을 가로로 나열하는 컨테이너 */
+.top-job-posting-container {
+  display: flex;
+  justify-content: flex-start; /* 카드들을 왼쪽 정렬 */
+  gap: 20px; /* 카드들 간의 간격 */
+  flex-wrap: wrap; /* 화면 크기에 따라 카드들이 자동으로 줄 바꿈 */
+  padding-bottom: 10px;
 }
 
+/* 조회수 높은 채용 공고 카드 스타일 */
+.top-job-posting-card {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 15px;
+  width: 250px; /* 카드 너비를 고정 설정 */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  text-align: center; /* 카드 내 텍스트 가운데 정렬 */
+  display: flex;
+  flex-direction: column; /* 세로로 배치 */
+  justify-content: space-between;
+}
+/* router-link로 감싼 카드에 대한 기본 스타일 */
+.router-link-active {
+  text-decoration: none;
+}
+/* 카드 호버 시 효과 */
+.top-job-posting-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+/* 카드 내 제목 스타일 */
+.top-job-posting-card h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 10px 0;
+  word-wrap: break-word; /* 긴 제목이 자동으로 줄 바꿈되도록 */
+  text-overflow: ellipsis; /* 제목이 길 경우 '...'으로 표시 */
+  overflow: hidden;
+}
+
+/* 조회수 스타일 */
+.top-job-posting-card p {
+  font-size: 0.9rem;
+  color: #555;
+  margin: 5px 0;
+  display: block; /* p 태그를 block으로 설정 */
+}
+
+/* 작은 화면에서 카드 크기 조정 */
 @media (max-width: 767px) {
-  /* 작은 화면에서 카드의 크기를 조정 */
-  .status-card {
-    padding: 8px;
+  /* 작은 화면에서 .top-job-posting-card의 너비를 줄여서 한 줄에 여러 카드가 들어가도록 설정 */
+  .top-job-posting-card {
+    width: 180px; /* 작은 화면에서 너비를 줄임 */
   }
 }
 </style>

@@ -358,7 +358,7 @@
     <!-- 스킬 추가 -->
     <div class="form-section">
       <h4 class="mb-0">
-        기술 &nbsp;
+        스킬 &nbsp;
         <div class="btn btn-primary btn-circle mb-2" @click="openSkillsModal">
           <i class="fa fa-plus"></i>
         </div>

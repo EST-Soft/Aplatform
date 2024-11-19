@@ -260,8 +260,16 @@ public class JobPostingServiceImpl implements JobPostingService {
         System.out.println("최근 본 공고 저장: " + jobViewEntity);
     }
     
-    
-
+    // 조회수 높은 상위 3개의 채용 공고 반환
+    public List<JobPostingDTO> getTopJobPostings() {
+        // Retrieve top 3 job postings ordered by hits in descending order
+        List<JobPostingEntity> jobPostings = jobPostingRepository.findTop3ByOrderByHitsDesc();
+        
+        // Convert JobPostingEntity to JobPostingDTO using the from() method
+        return jobPostings.stream()
+                          .map(JobPostingDTO::from) // Use the static from() method to map the entity to DTO
+                          .collect(Collectors.toList());
+    }
 
 
 }

@@ -5,7 +5,10 @@ import jobplatform.fo.board.service.AnswerCommentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/comments")
@@ -16,8 +19,12 @@ public class AnswerCommentController {
 
     @GetMapping("/answer/{answrSq}")
     public List<AnswerCommentEntity> getCommentsByAnswerId(@PathVariable long answrSq) {
-        return answerCommentService.getCommentsByAnswerId(answrSq);
+        System.out.println("Controller answrSq: " + answrSq);
+        List<AnswerCommentEntity> comments = answerCommentService.getCommentsByAnswerId(answrSq);
+        System.out.println("Controller 반환 댓글 리스트: " + comments); // 댓글 데이터 출력
+        return comments;
     }
+
 
     @PostMapping("/answer/{answrSq}")
     public void addComment(@PathVariable long answrSq, @RequestBody AnswerCommentEntity comment) {
@@ -27,7 +34,20 @@ public class AnswerCommentController {
 
     @PutMapping("/{cmntSq}")
     public void updateComment(@PathVariable long cmntSq, @RequestBody String newContent) {
-        answerCommentService.updateComment(cmntSq, newContent);
+        try {
+            // JSON 문자열을 Map으로 변환
+            ObjectMapper objectMapper = new ObjectMapper();
+            Map<String, String> map = objectMapper.readValue(newContent, Map.class);
+
+            // "cmntCntnt" 키의 값만 추출
+            String content = map.get("cmntCntnt");
+            System.out.println("Extracted Content: " + content);
+
+            // 서비스에 전달
+            answerCommentService.updateComment(cmntSq, content);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to parse JSON content: " + e.getMessage());
+        }
     }
 
     @DeleteMapping("/{cmntSq}")

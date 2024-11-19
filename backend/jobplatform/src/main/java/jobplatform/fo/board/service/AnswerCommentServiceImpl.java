@@ -16,8 +16,12 @@ public class AnswerCommentServiceImpl implements AnswerCommentService {
 
     @Override
     public List<AnswerCommentEntity> getCommentsByAnswerId(long answrSq) {
-        return answerCommentMapper.selectCommentsByAnswerId(answrSq);
+        System.out.println("ServiceImpl answrSq: " + answrSq);
+        List<AnswerCommentEntity> comments = answerCommentMapper.selectCommentsByAnswerId(answrSq);
+        System.out.println("ServiceImpl 반환 댓글 리스트: " + comments);
+        return comments;
     }
+
 
     @Override
     public void addComment(AnswerCommentEntity comment) {

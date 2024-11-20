@@ -45,7 +45,7 @@
 	<resultMap type="jobplatform.fo.enterprise.domain.vo.ResumeEducationDataVO" id="resumeEducationList">
 		<id property="edctn_sq" column="edctn_sq"/>
 		<result property="schl_name" column="schl_name"/>
-		<result property="schl_cndtn_code_name" column="schl_cndtn_code_name"/>
+		<result property="schl_cndtn_code" column="schl_cndtn_code"/>
 		<result property="schl_dprtmnt" column="schl_dprtmnt"/>
 		<result property="schl_admsn_date" column="schl_admsn_date"/>
 		<result property="schl_grdtn_date" column="schl_grdtn_date"/>
@@ -76,7 +76,7 @@
 					on posi.rsm_sq = resume.rsm_sq
 		where apply.jbp_sq = #{jbp_sq}
 			and apply.apy_cndtn != 'ac'
-			<if test = "condition != 0">
+			<if test = "condition != null">
 				and apply.apy_cndtn = #{condition}
 			</if>
 			<if test = "division == 'apply'">
@@ -89,40 +89,46 @@
 	
 	<!-- 지원자리스트 -->
 	<select id="selectApplyListData" resultType="jobplatform.fo.enterprise.domain.vo.ApplyListVO">
-		select 
-			apply.apy_sq,
-			apply.apy_dtm,
-			apply.apy_cndtn,
-			(select code_name from P2_TBL_COMMON_CODE_DTL_S where code_id = apply.apy_cndtn) as apy_cndtn_name,
-			resume.rsm_sq,
-			resume.rsm_img_file_url,
-			resume.rsm_fnl_edctn_code,
-			(select code_name from P2_TBL_COMMON_CODE_DTL_S where code_id = resume.rsm_fnl_edctn_code) as rsm_fnl_edctn_name,
-			resume.rsm_grd,
-			resume.rsm_es,
-			RESUME.rsm_name,
-			IF(posi.pstn_prpsl_sq is null, "지원", "제안") as rnqns_name
-		from p2_tbl_apply_h as apply
-				left outer join P2_TBL_RESUME_M as resume
-					on apply.rsm_sq = resume.rsm_sq
-				left outer join P2_TBL_POSITION_PROPOSAL_M as posi
-					on posi.rsm_sq = resume.rsm_sq
-				left outer join p3_tbl_member_m as member
-					on member.mbr_sq = resume.mbr_sq
-		where apply.jbp_sq = #{searchData.jbp_sq}
-			and apply.apy_cndtn != 'ac'
-			<if test = "searchData.condition != 0">
-				and apply.apy_cndtn = #{searchData.condition}
-			</if>
-			<if test = "searchData.division.equals('apply')">
-				and posi.pstn_prpsl_sq is null
-			</if>
-			<if test = "searchData.division.equals('proposal')">
-				and posi.pstn_prpsl_sq is not null
-			</if>
-		order by apply.apy_dtm ${searchData.sort}
-		limit #{paginationData.startRowIndex}, #{paginationData.showDataCountPerPage};
-	</select>
+    select 
+        apply.apy_sq,
+        apply.apy_dtm,
+        apply.apy_cndtn,
+        (select code_name from P2_TBL_COMMON_CODE_DTL_S where code_id = apply.apy_cndtn) as apy_cndtn_name,
+        resume.rsm_sq,
+        resume.rsm_img_file_url,
+        resume.rsm_fnl_edctn_code,
+        (select code_name from P2_TBL_COMMON_CODE_DTL_S where code_id = resume.rsm_fnl_edctn_code) as rsm_fnl_edctn_name,
+        resume.rsm_grd,
+        resume.rsm_es,
+        RESUME.rsm_name,
+        IF(posi.pstn_prpsl_sq is null, "지원", "제안") as rnqns_name
+    from p2_tbl_apply_h as apply
+        left outer join P2_TBL_RESUME_M as resume
+            on apply.rsm_sq = resume.rsm_sq
+        left outer join P2_TBL_POSITION_PROPOSAL_M as posi
+            on posi.rsm_sq = resume.rsm_sq
+        left outer join p3_tbl_member_m as member
+            on member.mbr_sq = resume.mbr_sq
+    where apply.jbp_sq = #{jbp_sq} 
+    and apply.apy_cndtn != 'ac'
+    
+    <!-- condition이 null이 아니고 빈 문자열이 아닌 경우에만 필터링 -->
+    <if test="condition != null and condition != ''">
+        and apply.apy_cndtn = #{condition}
+    </if>
+    
+    <!-- division 값에 따른 필터링 -->
+    <if test="division == 'apply'">
+        and posi.pstn_prpsl_sq is null
+    </if>
+    <if test="division == 'proposal'">
+        and posi.pstn_prpsl_sq is not null
+    </if>
+    
+    order by apply.apy_dtm ${sort}
+    <!-- limit #{startRowIndex}, #{showDataCountPerPage} -->
+</select>
+
 	
 	<!-- 지원자 상세정보 얻기 -->
 	<select id="selectApplyDetailData" resultMap="ApplyDetailDataVO">
@@ -151,7 +157,7 @@
 			SELFINTRODUCTION.si_cntnt,
 			EDUCATION.edctn_sq,
 			EDUCATION.schl_name,
-			(select code_name from P2_TBL_COMMON_CODE_DTL_S where code_id EDUCATION.schl_cndtn_code) as schl_cndtn_code_name,
+			(select code_name from P2_TBL_COMMON_CODE_DTL_S where code_id = EDUCATION.schl_cndtn_code) as schl_cndtn_code_name,
 			EDUCATION.schl_dprtmnt,
 			EDUCATION.schl_admsn_date,
 			EDUCATION.schl_grdtn_date,

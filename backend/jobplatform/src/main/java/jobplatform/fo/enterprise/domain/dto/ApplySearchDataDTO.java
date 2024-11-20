@@ -9,11 +9,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ApplySearchDataDTO {
 	// 공고번호
-	private int jbp_sq;
+	private long jbp_sq;
 	// 구분
 	private String division;
 	//상태
-	private int condition;
+	private String condition;
 	//정렬
 	private String sort;
 	// 현재 페이지 번호

@@ -31,16 +31,19 @@ public class ApplyManagementController {
 	// 지원자 리스트 불러오기 (일반화 완료)
 	@GetMapping("/applys/apply-list/{jbp_sq}")
      public ResponseEntity<Map<String, Object>> findApplyListData(
-        @PathVariable(name = "jbp_sq") int jbp_sq,
+        @PathVariable(name = "jbp_sq") long jbp_sq,
         @RequestParam(name = "division", required = false) String division,
-        @RequestParam(name = "condition", required = false) int condition,
+        @RequestParam(name = "condition", required = false) String condition,
         @RequestParam(name = "sort", required = false) String sort,
         @RequestParam(name = "pageNo", required = false) int pageNo
 ) {
     // 검색 정보 DTO (공고번호, 구분(지원apply / 제안proposal), 상태, 정렬, 페이지번호)
     ApplySearchDataDTO applySearchDataDTO = new ApplySearchDataDTO(jbp_sq, division, condition, sort, pageNo);
+	System.out.println("applySearchDataDTO condition: " + applySearchDataDTO.getCondition());
+	System.out.println("asdasdasd : "+  applySearchDataDTO);
     Map<String, Object> map = null;
     HttpStatus httpStatus = null;
+	
 
     try {
         // 지원자 리스트 얻기
@@ -50,6 +53,8 @@ public class ApplyManagementController {
         httpStatus = HttpStatus.BAD_GATEWAY;
     }
 
+
+	
     return new ResponseEntity<Map<String, Object>>(map, httpStatus);
 }
 
@@ -57,7 +62,7 @@ public class ApplyManagementController {
 	
 	// 지원자 상세 가져오기
 	@GetMapping("/applys/apply-detail/{apy_sq}")
-	public ResponseEntity<ApplyDetailDataVO> findApplyDetailData(@PathVariable(name = "apy_sq", required = false) int apy_sq) {
+	public ResponseEntity<ApplyDetailDataVO> findApplyDetailData(@PathVariable(name = "apy_sq", required = false) long apy_sq) {
 		
 		ApplyDetailDataVO applyDetailData = null;
 		HttpStatus httpStatus = null;
@@ -72,6 +77,8 @@ public class ApplyManagementController {
 			httpStatus = HttpStatus.BAD_GATEWAY;
 		}
 		
+		
+
 		return new ResponseEntity<ApplyDetailDataVO>(applyDetailData, httpStatus);
 	}
 	
@@ -103,5 +110,6 @@ public class ApplyManagementController {
 		
 		return new ResponseEntity<HttpStatus>(httpStatus);
 	}
+	
 	
 }

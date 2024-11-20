@@ -490,13 +490,31 @@ const hideDetails = () => {
 
 /* 화면 크기가 작아지면 (모바일) 한 줄에 하나만 표시되도록 설정 */
 @media (max-width: 768px) {
-  .col-md-3 {
-    flex: 1 1 100%; /* 한 줄에 하나 표시 */
-    max-width: 100%;
+  .custom {
+    flex-direction: column; /* 세로로 배치 */
+    align-items: center; /* 아이템을 중앙 정렬 */
+    text-align: center; /* 텍스트를 중앙 정렬 */
   }
 
-  .routerLink:hover {
-    background-color: rgba(0, 0, 0, 0.1); /* 모바일에서 hover 시 배경색 변경 */
+  .custom .profile-image {
+    margin-right: 0; /* 모바일에서는 이미지와 텍스트 사이 간격 제거 */
+    margin-bottom: 10px; /* 이미지와 텍스트 간격 추가 */
+  }
+
+  .col-md-3 {
+    flex: 1 1 100%; /* 한 줄에 하나만 표시 */
+    max-width: 100%; /* 한 줄에 하나만 표시 */
+  }
+
+  .routerLink {
+    width: 100%; /* 모바일 화면에서 버튼이 전체 너비를 차지하게 설정 */
+    box-sizing: border-box; /* padding이 width에 포함되도록 설정 */
+    text-align: center; /* 텍스트 중앙 정렬 */
+  }
+
+  /* 모바일에서 hover 스타일 대체: active 상태로 대체 */
+  .routerLink:active {
+    background-color: rgba(0, 0, 0, 0.1); /* 클릭 시 배경색 변경 */
   }
 }
 
@@ -563,19 +581,20 @@ const hideDetails = () => {
   margin-bottom: 50px;
 }
 
-.routerLink {
-  color: black;
+.router-link {
+  display: inline-block;
+  padding: 10px 20px;
+  font-size: 16px;
   text-decoration: none;
-  display: block;
-  width: 100%;
-  height: 100%;
+  box-sizing: border-box; /* padding, border 포함하여 크기 고정 */
+  transition: all 0.3s ease; /* 부드러운 전환 효과 */
 }
 
-
-.routerLink:hover {
-  color: black; /* 호버 시 색상 변경 */
-  text-decoration: none; /* 호버 시에도 밑줄 제거 */
+.router-link:hover {
+  background-color: #ddd; /* 마우스 오버 시 배경색 변경 */
+  transform: none; /* 크기나 위치 변화 방지 */
 }
+
 .details-overlay {
   position: absolute;
   inset: 0;

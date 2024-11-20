@@ -74,8 +74,7 @@
 					on apply.rsm_sq = resume.rsm_sq
 				left outer join P2_TBL_POSITION_PROPOSAL_M as posi
 					on posi.rsm_sq = resume.rsm_sq
-		where apply.jbp_sq = #{jbp_sq}
-			and apply.apy_cndtn != 'ac'
+		where apply.jbp_sq = #{jbp_sq} and apply.apy_cndtn != 'ac'
 			<if test = "condition != 0">
 				and apply.apy_cndtn = #{condition}
 			</if>
@@ -88,40 +87,33 @@
 	</select>
 	
 	<!-- 지원자리스트 -->
-	<select id="selectApplyListData" resultType="jobplatform.fo.enterprise.domain.vo.ApplyListVO">
-		select 
-			apply.apy_sq,
-			apply.apy_dtm,
-			apply.apy_cndtn,
-			(select code_name from P2_TBL_COMMON_CODE_DTL_S where code_id = apply.apy_cndtn) as apy_cndtn_name,
-			resume.rsm_sq,
-			resume.rsm_img_file_url,
-			resume.rsm_fnl_edctn_code,
-			(select code_name from P2_TBL_COMMON_CODE_DTL_S where code_id = resume.rsm_fnl_edctn_code) as rsm_fnl_edctn_name,
-			resume.rsm_grd,
-			resume.rsm_es,
-			RESUME.rsm_name,
-			IF(posi.pstn_prpsl_sq is null, "지원", "제안") as rnqns_name
-		from p2_tbl_apply_h as apply
-				left outer join P2_TBL_RESUME_M as resume
-					on apply.rsm_sq = resume.rsm_sq
-				left outer join P2_TBL_POSITION_PROPOSAL_M as posi
-					on posi.rsm_sq = resume.rsm_sq
-				left outer join p3_tbl_member_m as member
-					on member.mbr_sq = resume.mbr_sq
-		where apply.jbp_sq = #{searchData.jbp_sq}
-			and apply.apy_cndtn != 'ac'
-			<if test = "searchData.condition != 0">
-				and apply.apy_cndtn = #{searchData.condition}
-			</if>
-			<if test = "searchData.division.equals('apply')">
-				and posi.pstn_prpsl_sq is null
-			</if>
-			<if test = "searchData.division.equals('proposal')">
-				and posi.pstn_prpsl_sq is not null
-			</if>
-		order by apply.apy_dtm ${searchData.sort}
-		limit #{paginationData.startRowIndex}, #{paginationData.showDataCountPerPage};
+	<!-- <select id="selectApplyListData" resultType="jobplatform.fo.enterprise.domain.vo.ApplyListVO">
+	<resultMap id="applyListResultMap" type="jobplatform.fo.enterprise.domain.vo.ApplyListVO">
+    <id property="apy_sq" column="apy_sq" />
+    <result property="apy_dtm" column="apy_dtm" />
+    <result property="apy_cndtn" column="apy_cndtn" />
+    <result property="rsm_sq" column="rsm_sq" />
+    <result property="rsm_name" column="rsm_name" />
+    <result property="rsm_img_file_url" column="rsm_img_file_url" />
+    <result property="rsm_fnl_edctn_code" column="rsm_fnl_edctn_code" />
+    <result property="rsm_grd" column="rsm_grd" />
+</resultMap> -->
+
+<select id="getApplyListByJobPosting" resultMap="applyListResultMap">
+    SELECT 
+        apply.apy_sq, 
+        apply.apy_dtm, 
+        apply.apy_cndtn, 
+        resume.rsm_sq, 
+        resume.rsm_name, 
+        resume.rsm_img_file_url, 
+        resume.rsm_fnl_edctn_code, 
+        resume.rsm_grd
+    FROM p2_tbl_apply_h apply
+    LEFT JOIN P2_TBL_RESUME_M resume ON apply.rsm_sq = resume.rsm_sq
+    WHERE apply.jbp_sq = #{jbp_sq}  -- jbp_sq 기준으로 지원자 리스트 조회
+</select>
+
 	</select>
 	
 	<!-- 지원자 상세정보 얻기 -->

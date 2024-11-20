@@ -27,7 +27,8 @@
               <router-link to="/board/jobPostingInsert" class="btn btn-primary">공고 등록</router-link>
             </div>
             <div>
-              <select v-model="sortOption" @change="fetchSortedItems">
+              <select v-model="sortOption" class="section"  @change="fetchSortedItems" required>
+               <option value="" disabled selected>진행상태</option> 
                <option value="예정">예정</option>
                <option value="진행중">진행중</option>
                <option value="채용종료">채용종료</option>
@@ -114,6 +115,7 @@ const sortOption = ref('regstrStrtDtm');
 const isEnter = computed(() => {
   return store.getters.getMember?.entrprsId != null;
 });
+
 
 // 초기 데이터 로드
 const fetchItems = async () => {
@@ -391,6 +393,11 @@ const getJobStatusClass = (item) => {
   width: 100%;
 }
 
+.sortOption {
+  width: 100%;
+}
+
+
 .list-body {
   margin-top: 30px;
 }
@@ -474,28 +481,57 @@ td:last-child{
 }
 
 /* Responsive Design */
-@media (max-width: 768px) {
+@media (max-width: 570px) {
+
+  .list-header {
+    flex-direction: column; 
+    align-items: flex-start; 
+    gap: 10px; 
+  }
+
+  .list-header > div {
+    width: 100%; /* 모바일에서 각 div 요소가 100% 너비를 차지하도록 설정 */
+    margin-bottom: 10px; /* 버튼 간격 */
+  }
+
+  .btn-primary{
+    width: 100%;
+  }
+
+  .section{
+    width: 100%;
+  }
+
+  .section :optional{
+    width: 100%;
+  }
+
   td {
     padding: 10px;
     font-size: 14px;
+    white-space: normal;  /* 기본적으로 텍스트가 가로로 표시되도록 */
+    word-wrap: break-word; /* 텍스트가 넘칠 경우 줄바꿈 처리 */
+    word-break: break-word; /* 넘치는 텍스트를 줄바꿈으로 처리 */
+    overflow-wrap: break-word; /* 넘칠 경우 자동으로 줄바꿈 */
   }
 
   td:first-child,
-  td:nth-child(2),
   td:nth-child(3),
   td:nth-child(4),
   td:last-child {
     width: auto;
   }
-  
+  td:nth-child(2){
+    width: 20%;
+  }
+  td:last-child{
+    width: 20%;
+  }
 
   .button-group {
     margin-top: 10px;
     justify-content: center;
-  }
-  
-  
-  
+  } 
 }
 </style>
 

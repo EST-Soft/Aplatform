@@ -40,4 +40,5 @@ public class AnswerCommentEntity {
     @Column(name = "dlt_yn", nullable = false)
     private char dltYn = 'N'; // 삭제 여부 ('Y' 또는 'N')
 
+    private String createdBy;
 }

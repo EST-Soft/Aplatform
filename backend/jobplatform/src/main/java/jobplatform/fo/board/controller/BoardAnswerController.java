@@ -65,7 +65,7 @@ public class BoardAnswerController {
     @GetMapping("/qna/{brdSq}")
     public ResponseEntity<?> answerList(@PathVariable int brdSq,
                                         @RequestParam(defaultValue = "0") int page,
-                                        @RequestParam(defaultValue = "5") int size) {
+                                        @RequestParam(defaultValue = "3") int size) {
         try {
             System.out.println("Fetching answer list for brdSq: " + brdSq);
             Header<List<BoardAnswerEntity>> answerList = boardAnswerService.List(page, size, brdSq);
@@ -189,9 +189,9 @@ public class BoardAnswerController {
     @PatchMapping("")
     public ResponseEntity<?> editAnswer(@RequestBody BoardAnswerEntity boardAnswerEntity) {
         try {
-            System.out.println(boardAnswerEntity);
-            boardAnswerService.editAnswer(boardAnswerEntity);
-            return ResponseEntity.ok(1);
+            System.out.println(boardAnswerEntity); // 수정된 답변 정보 확인
+            boardAnswerService.editAnswer(boardAnswerEntity); // 서비스에서 답변 수정
+            return ResponseEntity.ok(1); // 성공 응답
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("답변 수정 중 오류 발생");

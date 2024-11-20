@@ -27,7 +27,7 @@ public class BoardServiceImp implements BoardService{
     @Override
     public Header<List<BoardEntity>> List(int page, int size, Search search,String brdTypCode, Sort sort, Selection selection) {
     	
-    	boardMapper.updateBoardCondition(); // 답글없이 3일지난 게시글을 미해결로 바꿔준다.
+    	boardMapper.updateBoardCondition(); // 답글없이 3일지난 게시글을 미해결로 바꿔줌.
     	
         HashMap<String, Object> paramMap = new HashMap<>();
 

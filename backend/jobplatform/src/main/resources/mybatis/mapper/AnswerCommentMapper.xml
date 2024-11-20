@@ -2,12 +2,30 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="jobplatform.fo.board.mapper.AnswerCommentMapper">
 
+    <!-- ResultMap 정의 -->
+    <resultMap id="AnswerCommentResultMap" type="jobplatform.fo.board.entity.AnswerCommentEntity">
+        <id property="cmntSq" column="cmnt_sq" />
+        <result property="answrSq" column="answr_sq" />
+        <result property="mbrSq" column="mbr_sq" />
+        <result property="entrprsSq" column="entrprs_sq" />
+        <result property="cmntCntnt" column="cmnt_cntnt" />
+        <result property="insrtDtm" column="insrt_dtm" />
+        <result property="updtDtm" column="updt_dtm" />
+        <result property="dltDtm" column="dlt_dtm" />
+        <result property="dltYn" column="dlt_yn" />
+    </resultMap>
+
     <!-- 댓글 조회 -->
-    <select id="selectCommentsByAnswerId" resultType="jobplatform.fo.board.entity.AnswerCommentEntity">
-        SELECT * FROM P5_TBL_ANSWER_COMMENT
-        WHERE answr_sq = #{answrSq} AND dlt_yn = 'N'
-        ORDER BY insrt_dtm ASC
-    </select>
+	<select id="selectCommentsByAnswerId" resultMap="AnswerCommentResultMap">
+	    SELECT 
+	        c.*,
+	        COALESCE(m.mbr_id, e.entrprs_id) AS createdBy
+	    FROM P5_TBL_ANSWER_COMMENT c
+	    LEFT JOIN p3_tbl_member_m m ON c.mbr_sq = m.mbr_sq
+	    LEFT JOIN p3_tbl_enterprise_member_m e ON c.entrprs_sq = e.entrprs_sq
+	    WHERE c.answr_sq = #{answrSq} AND c.dlt_yn = 'N'
+	    ORDER BY c.insrt_dtm ASC
+	</select>
 
     <!-- 댓글 삽입 -->
     <insert id="insertComment">

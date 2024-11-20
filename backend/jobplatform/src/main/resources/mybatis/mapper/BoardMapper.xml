@@ -169,25 +169,41 @@
 	<!-- 총 게시글 수를 가져오는 쿼리 (검색 조건에 따라) -->
 	<select id="getBoardTotalCount" parameterType="Map" resultType="java.lang.Integer">
 	    SELECT COUNT(*)
-	    FROM P3_TBL_BOARD
+	    FROM P3_TBL_BOARD b
 	    <where>
-	        dlt_dtm IS NULL  <!-- 삭제되지 않은 게시글만 조회 -->
+	        b.dlt_yn = 'N' <!-- 삭제되지 않은 게시글만 조회 -->
 	        <if test="brdTypCode != null and brdTypCode != ''">
-	            AND brd_typ_code = #{brdTypCode}  <!-- 게시글 종류 코드로 필터링 -->
+	            AND brd_typ_code = #{brdTypCode}
 	        </if>
 	        <if test="sk != null and sk != ''">
 	            <choose>
 	                <when test="sk == 'title'">
-	                    AND brd_ttl LIKE CONCAT('%', #{sv}, '%')  <!-- 제목으로 필터링 -->
+	                    AND b.brd_ttl LIKE CONCAT('%', #{sv}, '%')
 	                </when>
 	                <when test="sk == 'contents'">
-	                    AND brd_cntnt LIKE CONCAT('%', #{sv}, '%')  <!-- 내용으로 필터링 -->
+	                    AND b.brd_cntnt LIKE CONCAT('%', #{sv}, '%')
 	                </when>
-	                <!-- 필요한 다른 조건 추가 가능 -->
+	            </choose>
+	        </if>
+	        <if test="selection != null and selection != ''">
+	            <choose>
+	                <when test="selection == 'inprgrs'">
+	                    AND b.brd_cndtn = 'N'
+	                </when>
+	                <when test="selection == 'rslvd'">
+	                    AND b.brd_cndtn = 'S'
+	                </when>
+	                <when test="selection == 'acpt'">
+	                    AND b.brd_cndtn = 'Y'
+	                </when>
+	                <when test="selection == 'unrslvd'">
+	                    AND b.brd_cndtn = 'U'
+	                </when>
 	            </choose>
 	        </if>
 	    </where>
 	</select>
+
 
     <!-- 특정 게시글을 조회하는 쿼리 (게시글 ID로 조회) -->
     <select id="findOne" resultMap="BoardEntityResultMap">

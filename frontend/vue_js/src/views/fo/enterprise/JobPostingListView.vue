@@ -424,36 +424,20 @@ const hideDetails = () => {
 
 <style scoped>
 .list-container {
-  margin-bottom: 60px; /* 페이지네이션 영역과의 여백을 추가합니다 */
-  position: relative; /* 페이지네이션을 포함하는 부모 요소에 상대적인 위치를 설정합니다 */
+  margin-bottom: 60px; /* 페이지네이션 영역과의 여백을 추가 */
+  position: relative; /* 부모 요소에 상대적인 위치 설정 */
 }
+
 .list-header {
   display: flex;
 }
+
 .list-header > div {
   margin-left: 50px;
 }
+
 .list-body {
   margin-top: 50px;
-}
-.custom {
-  background-color: #ffffff;
-  border-radius: 0.5rem;
-  padding: 1rem;
-  margin: 15px 0; /* 상하 여백만 설정 */
-  width: 100%; /* 한 줄에 하나의 아이템이 나오도록 설정 */
-  border: 1px solid #002C7B;
-  text-align: left;
-  height: 150px;
-  overflow: hidden;
-}
-
-
-/* 아이템들이 4개씩 한 줄에 표시되도록 수정 */
-.row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 15px; /* 아이템 사이의 간격 설정 */
 }
 
 .custom {
@@ -463,8 +447,8 @@ const hideDetails = () => {
   width: 100%;
   border: 1px solid #002C7B;
   text-align: left;
-  position: relative; /* 자식 요소의 absolute 위치 조정을 위해 relative 설정 */
-  height: auto;
+  position: relative;
+  height: 350px;
 }
 
 .custom .profile-image {
@@ -483,38 +467,60 @@ const hideDetails = () => {
 }
 
 /* flexbox로 아이템들을 4개씩 나누기 */
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px; /* 아이템 사이의 간격 */
+}
+
 .col-md-3 {
-  flex: 1 1 22%; /* 한 줄에 4개의 아이템이 배치되도록 설정 (1/4로 설정) */
+  flex: 1 1 22%; /* 한 줄에 4개의 아이템 배치 */
   max-width: 22%;
 }
 
-/* 화면 크기가 작아지면 (모바일) 한 줄에 하나만 표시되도록 설정 */
+/* 화면 크기가 작아지면 한 줄에 하나만 표시되도록 설정 */
+/* 모바일 환경에서 mouse event를 클릭으로 바꾸고, overlay 숨기기 */
 @media (max-width: 768px) {
   .custom {
     flex-direction: column; /* 세로로 배치 */
-    align-items: center; /* 아이템을 중앙 정렬 */
-    text-align: center; /* 텍스트를 중앙 정렬 */
+    align-items: center; /* 중앙 정렬 */
+    text-align: center; /* 텍스트 중앙 정렬 */
+    height: 300px;
   }
 
   .custom .profile-image {
-    margin-right: 0; /* 모바일에서는 이미지와 텍스트 사이 간격 제거 */
-    margin-bottom: 10px; /* 이미지와 텍스트 간격 추가 */
+    margin-right: 0;
+    margin-bottom: 10px;
   }
 
   .col-md-3 {
     flex: 1 1 100%; /* 한 줄에 하나만 표시 */
-    max-width: 100%; /* 한 줄에 하나만 표시 */
+    max-width: 100%;
   }
 
-  .routerLink {
-    width: 100%; /* 모바일 화면에서 버튼이 전체 너비를 차지하게 설정 */
-    box-sizing: border-box; /* padding이 width에 포함되도록 설정 */
-    text-align: center; /* 텍스트 중앙 정렬 */
+
+  /* 클릭 시 overlay 나타나게 하기 */
+  .custom.clicked .detail-overlay {
+    display: block; /* overlay를 보이도록 설정 */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%; /* custom 영역의 크기에 맞게 overlay를 덮도록 */
+    background-color: rgba(0, 0, 0, 0.5); /* 반투명 배경 */
+    z-index: 10; /* overlay가 custom 영역 위로 올라오도록 */
   }
 
-  /* 모바일에서 hover 스타일 대체: active 상태로 대체 */
-  .routerLink:active {
-    background-color: rgba(0, 0, 0, 0.1); /* 클릭 시 배경색 변경 */
+  /* 모바일에서는 hover를 막고, 클릭으로 처리 */
+  .custom {
+    pointer-events: auto; /* 마우스 오버를 클릭으로 변환 */
+  }
+}
+
+/* desktop에서는 hover 상태로 overlay 활성화 */
+@media (min-width: 769px) {
+  .custom:hover .detail-overlay {
+    display: block;
   }
 }
 
@@ -523,10 +529,6 @@ const hideDetails = () => {
   margin-top: 20px;
   display: flex;
   align-items: center;
-}
-
-.dropdown-wrapper {
-  position: relative; /* 부모 요소에 대해 위치를 상대적으로 설정 */
 }
 
 .search-options button {
@@ -538,46 +540,47 @@ const hideDetails = () => {
   border-radius: 5px;
   cursor: pointer;
   margin-right: 10px;
-  
 }
 
 .search-options button:hover {
   background-color: #2980b9;
 }
 
+.dropdown-wrapper {
+  position: relative; /* 부모 요소에 대해 상대 위치 */
+}
+
 .dropdown {
   position: absolute;
-  top: 100%; /* 버튼 바로 아래에 위치하도록 설정 */
+  top: 100%; /* 버튼 바로 아래에 위치 */
   left: 0;
   background-color: #f9f9f9;
   min-width: 160px;
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
   z-index: 1;
   margin-top: 5px;
-  max-height: 200px; /* 드롭다운의 최대 높이 설정 */
-  overflow-y: auto; /* 세로 스크롤 처리 */
-  
+  max-height: 200px; /* 최대 높이 설정 */
+  overflow-y: auto;
 }
 
 .dropdown label {
   display: block;
   padding: 10px;
-  
 }
 
 .dropdown label:hover {
   background-color: #f1f1f1;
 }
 
-.pagenation-wrapper{
-  position: absolute; /* 절대적인 위치에서 설정합니다 */
+.pagenation-wrapper {
+  position: absolute;
   width: 100%;
   z-index: 1000;
-  bottom: -50px; /* 페이지네이션을 게시물 아래로 이동시킵니다 */
-
+  bottom: -50px; /* 페이지네이션 위치 조정 */
 }
-.container{
-  position : relative;
+
+.container {
+  position: relative;
   margin-bottom: 50px;
 }
 
@@ -586,13 +589,12 @@ const hideDetails = () => {
   padding: 10px 20px;
   font-size: 16px;
   text-decoration: none;
-  box-sizing: border-box; /* padding, border 포함하여 크기 고정 */
-  transition: all 0.3s ease; /* 부드러운 전환 효과 */
+  box-sizing: border-box;
+  transition: all 0.3s ease;
 }
 
 .router-link:hover {
-  background-color: #ddd; /* 마우스 오버 시 배경색 변경 */
-  transform: none; /* 크기나 위치 변화 방지 */
+  background-color: #ddd;
 }
 
 .details-overlay {
@@ -611,9 +613,9 @@ const hideDetails = () => {
 }
 
 .profile-image-container {
-  position: relative; /* D-Day를 절대 위치로 설정할 수 있도록 */
-  display: inline-block; /* 프로필 이미지와 D-Day 라벨이 같은 블록 내에 있도록 */
-  transition: 0.3s ease; /* 마우스 오버 시 부드러운 애니메이션 */
+  position: relative;
+  display: inline-block;
+  transition: 0.3s ease;
 }
 
 .profile-image {
@@ -622,23 +624,19 @@ const hideDetails = () => {
   border-radius: 50%;
   overflow: hidden;
   margin-bottom: 10px;
-  position: relative;
 }
 
 .profile-image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: opacity 0.3s ease; /* 이미지 어두워지기 효과 */
+  transition: opacity 0.3s ease;
 }
 
-/* 마우스 오버 시 이미지 어두워지기 */
 .profile-image-container:hover .profile-image img {
-  opacity: 0.6; /* 이미지를 어둡게 만듬 */
+  opacity: 0.6; /* 마우스 오버 시 어두워짐 */
 }
 
-
-/* D-Day 라벨은 숨기기 */
 .d-day {
   position: absolute;
   top: 5px;
@@ -650,14 +648,8 @@ const hideDetails = () => {
   border-radius: 5px;
 }
 
-.small-image {
-  width: 48px; /* 원하는 너비로 조정 */
-  height: 48px; /* 원하는 높이로 조정 */
+.small-image, .small-heart-image {
+  width: 48px;
+  height: 48px;
 }
-
-.small-heart-image {
-  width: 48px; /* 원하는 너비로 조정 */
-  height: 48px; /* 원하는 높이로 조정 */
-}
-
 </style>

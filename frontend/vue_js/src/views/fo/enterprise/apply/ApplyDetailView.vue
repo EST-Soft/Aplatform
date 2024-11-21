@@ -10,18 +10,20 @@
       </div>
       <div class="row">
         <h3 class="form-group col-md-6">
-          <div class="col-sm-2 col-lg-4"> 제목 </div>
+          <div class="col-sm-2 col-lg-5">{{ applyData.rsm_ttl }}</div>
         </h3>
       </div>
       <div class="row">
         <section class="call-to-action with-full-borders mb-2 mainContainer">
           <div class="col-sm-2 col-lg-2">
             <div class="col-sm-12 col-lg-12 imgContainer">
-             <span class="img-thumbnail d-block">
-              <img class="img-fluid"
-              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSdraZyZ8CC81iPsZST1_TLB0SBOXC6wfvQ_Exx1uKkGsFpi4t_Mj4o8HhM_vPwI60yBF8&usqp=CAU"
-               alt style="width: 200px" />
-             </span>
+              <span class="img-thumbnail d-block">
+          <img class="img-fluid" v-if="applyData && applyData.rsm_img_file_url && applyData.rsm_img_file_url !== ''" 
+          :src="applyData.rsm_img_file_url" alt="대체이미지" style="width: 200px; height: 170px;">
+          <img v-else class="img-fluid"
+            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSdraZyZ8CC81iPsZST1_TLB0SBOXC6wfvQ_Exx1uKkGsFpi4t_Mj4o8HhM_vPwI60yBF8&usqp=CAU"
+            alt style="width: 200px" />
+        </span>
             </div>
           </div>
           <div class="row col-sm-10 col-lg-10">
@@ -114,6 +116,7 @@ import { api } from '@/axios';
 
 // 루트에서 들고온 PK 값
 const { apy_sq } = history.state;
+console.log(apy_sq);
 
 // 빈 객체로 초기화
 const applyData = ref({});
@@ -124,8 +127,6 @@ const callAxios = async () => {
     // API 호출하여 데이터 받아오기
     const response = await api.$get(`/applys/apply-detail/${apy_sq}`);
     console.log('axios 성공', response); // 응답 구조 확인
-
-    console.log(response.data);
 
     // 응답 데이터가 있을 경우 applyData에 할당
     if (response) {

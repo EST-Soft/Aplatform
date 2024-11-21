@@ -150,4 +150,27 @@ const changeSort = (event) => {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+/* 기본적으로 가로로 펼쳐짐 */
+select.form-select {
+  width: 100%; /* 전체 너비 사용 */
+  height: 40px; /* 높이 조정 */
+  font-size: 14px; /* 글자 크기 */
+}
+
+/* 모바일 화면에서 가로로 유지 */
+@media (max-width: 768px) {
+  .form-group select.form-select {
+    width: 100%; /* 모바일에서 전체 너비 사용 */
+    height: 40px; /* 높이 유지 */
+  }
+}
+
+/* 데스크탑 화면에서 크기 조정 */
+@media (min-width: 769px) {
+  .form-group select.form-select {
+    width: 100%; /* 데스크탑에서도 전체 너비 사용 */
+    height: 40px; /* 높이 유지 */
+  }
+}
+</style>

@@ -350,18 +350,42 @@
 	</select>
 
 	<!-- 공고 정보 가져오기 -->
-	<select id="selectJobPosting" resultType="jobplatform.fo.user.domain.vo.M_JobPosting_pp">
-		select p.jbp_sq, p.entrprs_sq, p.jbp_ttl, em.entrprs_name, p.jbp_cntnt, p.hits, p.crr_drtn, p.skl_name, p.job_name, p.edctn, p.work_area, p.work_form, p.slry, p.work_hour, p.regstr_strt_dtm, p.regstr_dln_dtm, p.pic_name, p.pic_mp, p.pic_eml, p.jbp_end_yn, p.jbp_cndtn
-		from p2_tbl_job_posting_m p, p3_tbl_enterprise_member_m em
-		where p.jbp_sq IN 
+<select id="selectJobPosting" resultType="jobplatform.fo.user.domain.vo.M_JobPosting_pp">
+    select p.jbp_sq, p.entrprs_sq, p.jbp_ttl, em.entrprs_name, p.jbp_cntnt, p.hits, 
+           p.crr_drtn, p.skl_name, p.job_name, p.edctn, p.work_area, p.work_form, 
+           p.slry, p.work_hour, p.regstr_strt_dtm, p.regstr_dln_dtm, p.pic_name, 
+           p.pic_mp, p.pic_eml, p.jbp_end_yn, p.jbp_cndtn
+    from p2_tbl_job_posting_m p
+    join p3_tbl_enterprise_member_m em on em.entrprs_sq = p.entrprs_sq
+    where 
+    <if test="jbpSqList != null and jbpSqList.size() > 0">
+        p.jbp_sq IN 
         <foreach item="id" collection="jbpSqList" open="(" separator="," close=")">
             #{id}
         </foreach>
-		and p.dlt_yn = 'N'
-		and p.use_yn = 'Y'
-		and em.entrprs_sq = p.entrprs_sq
-	</select>
+        and
+    </if>
+    p.dlt_yn = 'N'
+    and p.use_yn = 'Y'
+</select>
+<!-- 최근 본 공고 조회 후 p5_tbl_job_view_r에 삽입 -->
+<!-- JobPostingMapper.xml -->
+<insert id="insertJobView" parameterType="jobplatform.fo.enterprise.domain.dto.JobViewDTO">
+    INSERT INTO p5_tbl_job_view_r (mbr_sq, jbp_sq, view_date, mbr_id)
+    VALUES (#{mbrSq}, #{jbpSq}, #{viewDate}, #{mbrId})
+</insert>
 
+    <!-- 회원이 본 모든 채용공고 리스트 조회 -->
+    <select id="findByMbrSq" resultType="jobplatform.fo.enterprise.domain.entity.JobViewEntity">
+        SELECT
+            rjv_sq AS rjvSq,
+            mbr_sq AS mbrSq,
+            jbp_sq AS jbpSq,
+            view_date AS viewDate
+        FROM p5_tbl_job_view_r
+        WHERE mbr_sq = #{mbrSq}
+        ORDER BY view_date DESC
+    </select>
 
 	<!-- 스크랩 INSERT -->
 	<insert id="scrapInsert">

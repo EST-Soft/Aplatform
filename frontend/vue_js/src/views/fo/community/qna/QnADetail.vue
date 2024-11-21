@@ -684,7 +684,7 @@ const submitReport = async () => {
     .join(", ");
 
   try {
-    await api.$post("/api/issues", {
+    await api.$post("/issues", {
       brdSq: reportTarget.value.id, // 신고 대상 ID
       brdTypCode: reportTarget.value.category, // 유형 코드 (POST, ANSWER, COMMENT)
       issueTyp: reportTarget.value.category, // 신고 카테고리

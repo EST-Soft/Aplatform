@@ -1,176 +1,376 @@
 <template>
+  <!-- 모달 -->
+  <div v-if="isModalVisible" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="formModalLabel">
+          회원정보수정을 위해서 비밀번호를 입력해주세요.
+        </h5>
+      </div>
+      <div class="modal-body">
+        <form
+          id="demo-form"
+          class="mb-4"
+          novalidate="novalidate"
+          @keydown.enter.prevent="pwSubmit"
+        >
+          <div class="form-group row align-items-center">
+            <label class="col-sm-3 text-start text-sm-end mb-0">비밀번호</label>
+            <div class="col-sm-9">
+              <input
+                type="password"
+                name="mbr_pswrd"
+                id="mbr_pswrd"
+                class="form-control"
+                v-model="inputValue"
+                required=""
+              />
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" @click="closeModal" class="btn btn-light">
+          취소
+        </button>
+        <button type="button" @click="pwSubmit" class="btn btn-dark">
+          확인
+        </button>
+      </div>
+    </div>
+  </div>
 
-    <!-- 모달 -->
-    <div v-if="isModalVisible" class="modal">
-      <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title" id="formModalLabel">회원정보수정을 위해서 비밀번호를 입력해주세요.</h5>
+  <div v-if="showPage">
+    <div
+      class="heading heading-border heading-middle-border"
+      style="margin-bottom: 50px"
+    >
+      <h1 class="font-weight-normal">
+        회원정보 수정<strong class="font-weight-extra-bold"></strong>
+      </h1>
+    </div>
+    <div class="d-flex justify-content-center mb-4">
+      <div class="profile-image-outer-container">
+        <div class="profile-image-inner-container bg-color-dark">
+          <div v-if="result.mbr_img_file_url != null">
+            <img
+              :src="result.mbr_img_file_url"
+              alt="Profile Image"
+              v-if="img == 0"
+            />
+            <!-- <img
+              src="@/assets/avatar.jpg"
+              alt="Profile Image"
+              v-if="img == 0"
+            />-->
+            <!-- 이미지 저장소 정해지면 이거 지우고 위에꺼 주석 풀기 -->
+          </div>
+          <div v-else>
+            <img
+              src="@/assets/avatar.jpg"
+              alt="Profile Image"
+              v-if="img == 0"
+            />
+          </div>
+          <img
+            :src="imgUrl"
+            alt="Profile Image"
+            id="mbrImgFileUrl"
+            v-if="img == 1"
+          />
+          <input
+            type="hidden"
+            name="mbrImgOrgnlFn"
+            id="mbrImgOrgnlFn"
+            v-model="mbrImgOrgnlFn"
+          />
+          <input
+            type="hidden"
+            name="mbrImgFileUrl"
+            id="mbrImgFileUrl"
+            v-model="mbrImgFileUrl"
+          />
+          <span class="profile-image-button bg-color-dark">
+            <i class="fas fa-camera text-light"></i>
+          </span>
         </div>
-        <div class="modal-body">
-            <form id="demo-form" class="mb-4" novalidate="novalidate" @keydown.enter.prevent="pwSubmit">
-                <div class="form-group row align-items-center">
-                    <label class="col-sm-3 text-start text-sm-end mb-0">비밀번호</label>
-                    <div class="col-sm-9">
-                        <input type="password" name="mbr_pswrd" id="mbr_pswrd" class="form-control" v-model="inputValue" required="">
-                    </div>
-                </div>
-            </form>
-        </div>
-        <div class="modal-footer">
-            <button type="button" @click="closeModal" class="btn btn-light">취소</button>
-            <button type="button" @click="pwSubmit" class="btn btn-dark">확인</button>
-        </div>
-        </div>
+        <input
+          type="file"
+          id="fileInput"
+          class="form-control profile-image-input"
+          @change="handleFileChange"
+          accept="image/gif, image/jpeg, image/png"
+        />
+      </div>
     </div>
 
-
-    <div v-if="showPage">
-        <div class="heading heading-border heading-middle-border" style="margin-bottom: 50px;">
-            <h1 class="font-weight-normal">회원정보 수정<strong class="font-weight-extra-bold"></strong></h1>
-        </div>
-        <div class="d-flex justify-content-center mb-4">
-            <div class="profile-image-outer-container">
-                <div class="profile-image-inner-container bg-color-dark">
-                    <div v-if="result.mbr_img_file_url != null">
-                        <!-- <img :src="result.mbr_img_file_url" alt="Profile Image" v-if="img==0"> --> 
-                        <img src="@/assets/avatar.jpg" alt="Profile Image" v-if="img==0">
-                        <!-- 이미지 저장소 정해지면 이거 지우고 위에꺼 주석 풀기 -->
-                    </div>
-                    <div v-else>
-                        <img src="@/assets/avatar.jpg" alt="Profile Image" v-if="img==0">
-                    </div>
-                    <img :src="imgUrl" alt="Profile Image" id="mbrImgFileUrl" v-if="img==1">
-                    <input type="hidden" name="mbrImgOrgnlFn" id="mbrImgOrgnlFn" v-model="mbrImgOrgnlFn">
-                    <input type="hidden" name="mbrImgFileUrl" id="mbrImgFileUrl" v-model="mbrImgFileUrl">
-                    <span class="profile-image-button bg-color-dark">
-                        <i class="fas fa-camera text-light"></i>
-                    </span>
-                </div>
-                <input type="file" id="fileInput" class="form-control profile-image-input" @change="handleFileChange" accept="image/gif, image/jpeg, image/png">
+    <div class="form-container">
+      <div class="col-lg-11">
+        <form
+          role="form"
+          class="needs-validation"
+          @submit.prevent="handleSubmit"
+        >
+          <div class="form-group row mb-4">
+            <label
+              class="col-lg-3 col-form-label form-control-label line-height-9 pt-2 text-2 required"
+              >아이디</label
+            >
+            <div class="col-lg-7">
+              <input
+                class="form-control text-3 h-auto py-2"
+                type="text"
+                name="mbr_id"
+                id="mbr_id"
+                v-model="mbrId"
+                :readonly="repetitionCheck == 1"
+              />
+              <input type="hidden" name="mbr_sq" id="mbr_sq" v-model="mbrSq" />
             </div>
-        </div>
-
-        <div class="form-container">
-            <div class="col-lg-11">
-                <form role="form" class="needs-validation" @submit.prevent="handleSubmit">
-                    <div class="form-group row mb-4">
-                        <label class="col-lg-3 col-form-label form-control-label line-height-9 pt-2 text-2 required">아이디</label>
-                        <div class="col-lg-7">
-                            <input class="form-control text-3 h-auto py-2" type="text" name="mbr_id" id="mbr_id" v-model="mbrId" :readonly="repetitionCheck == 1">
-                            <input type="hidden" name="mbr_sq" id="mbr_sq" v-model="mbrSq">
-                        </div>
-                        <!--아이디 중복체크-->
-                        <div class="col-lg-2" v-if="repetitionCheck == 0">
-                            <input class="btn btn-modern btn-dark mb-2" type="button" name="mbr_id" value="중복확인"  @click="idRepetitionCheck">
-                        </div>
-                        <div class="col-lg-2" v-if="repetitionCheck == 1">
-                            <input class="btn btn-modern btn-light mb-2" type="button" name="mbr_id" value="사용가능" readonly>
-                        </div>
-                    </div>
-
-                    <div class="form-group row">
-                        <label class="col-lg-3 col-form-label form-control-label line-height-9 pt-2 text-2 required">이름</label>
-                        <div class="col-lg-9">
-                            <input class="form-control text-3 h-auto py-2" type="text" name="mbr_name" id="mbr_name" v-model="mbrName">
-                        </div>
-                    </div>
-                    
-                    <div class="form-group row mb-4">
-                        <label class="col-lg-3 col-form-label form-control-label line-height-9 pt-2 text-2 required">이메일주소</label>
-                        <div class="col-lg-7">
-                            <input class="form-control text-3 h-auto py-2" type="email" id="mbr_eml_adrs" v-model="mbrEml"  :disabled="emailSent" name="mbrEmlAdrs">
-                        </div>
-                        <div class="col-lg-2">
-                            <input class="btn btn-modern btn-dark mb-2" type="button" name="mbr_eml_button" value="인증 요청" @click="requestAuthCode" :disabled="emailSent || loading">
-                        </div>
-                        <div v-if="loading" class="spinner-border text-primary" role="status">
-                            <span class="sr-only">Loading...</span>
-                        </div>
-                    </div>
-
-                    <div v-if="emailSent" class="form-group row mb-4">
-                        <label class="col-lg-3 col-form-label form-control-label line-height-9 pt-2 text-2 required">인증번호</label>
-                        <div class="col-lg-7">
-                            <input type="text" class="form-control auth-code-input" v-model="formData.authCode" :disabled="emailChack"/>
-                        </div>
-                        <div class="col-lg-2">
-                            <input class="btn btn-modern btn-dark mb-2" type="button" name="mbr_eml_button" value="인 증" @click="verifyAuthCode" :disabled="emailChack">
-                        </div>
-                    </div>
-
-                    <div v-if="result.mbr_mp != null">
-                        <div class="form-group row">
-                            <label class="col-lg-3 col-form-label form-control-label line-height-9 pt-2 text-2 required">휴대폰번호</label>
-                            <div class="col-lg-9">
-                                <input class="form-control text-3 h-auto py-2" type="text" name="mbr_mp" id="mbr_mp" v-model="mbrMp">
-                            </div>
-                        </div>
-                    </div>
-                    <div v-else>
-                        <div class="form-group row">
-                            <label class="col-lg-3 col-form-label form-control-label line-height-9 pt-2 text-2 required">휴대폰번호</label>
-                            <div class="col-lg-9">
-                                <input class="form-control text-3 h-auto py-2" type="text" name="mbr_mp" id="mbr_mp" value="">
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div v-if="result.mbr_adrs != null">
-                        <div class="form-group row mb-4">
-                            <label class="col-lg-3 col-form-label form-control-label line-height-9 pt-2 text-2">주소</label>
-                            <div class="col-lg-7">
-                                <input class="form-control text-3 h-auto py-2" type="text" name="mbr_adrs_post" id="postcode" placeholder="우편번호" v-model="mbrPost">
-                            </div>
-                            <div class="col-lg-2">
-                                <input class="btn btn-modern btn-light mb-2" type="button" name="mbr_adrs_button" value="검 색" @click="openPostcode">
-                            </div>
-                        </div>
-                    </div>
-                    <div v-else>
-                        <div class="form-group row mb-4">
-                            <label class="col-lg-3 col-form-label form-control-label line-height-9 pt-2 text-2">주소</label>
-                            <div class="col-lg-7">
-                                <input class="form-control text-3 h-auto py-2" type="text" name="mbr_adrs_post" id="postcode" value="">
-                            </div>
-                            <div class="col-lg-2">
-                                <input class="btn btn-modern btn-light mb-2" type="button" name="mbr_adrs_button" value="검 색" @click="openPostcode">
-                            </div>
-                        </div>
-                    </div>
-
-                    <div v-if="result.mbr_adrs != null">
-                        <div class="form-group row">
-                            <label class="col-lg-3 col-form-label form-control-label line-height-9 pt-2 text-2"></label>
-                            <div class="col-lg-9">
-                                <input class="form-control text-3 h-auto py-2" type="text" name="mbr_adrs" id="roadAddress" placeholder="상세주소" v-model="mbrAdrs">
-                            </div>
-                        </div>
-                    </div>
-                    <div v-else>
-                        <div class="form-group row">
-                            <label class="col-lg-3 col-form-label form-control-label line-height-9 pt-2 text-2"></label>
-                            <div class="col-lg-9">
-                                <input class="form-control text-3 h-auto py-2" type="text" name="mbr_adrs" value="">
-                            </div>
-                        </div>
-                    </div>
-
-                    <br>
-                    
-                    <div class="form-group row">
-                        <div class="button-container">
-                            <input type="submit" value="수정하기" id="abtn1" class="btn btn-modern btn-dark mb-2" data-loading-text="Loading...">
-                            <router-link class="btn btn-modern btn-light mb-2" to="/mypage/home">취소</router-link>
-                        </div>
-                    </div>
-                </form>
+            <!--아이디 중복체크-->
+            <div class="col-lg-2" v-if="repetitionCheck == 0">
+              <input
+                class="btn btn-modern btn-dark mb-2"
+                type="button"
+                name="mbr_id"
+                value="중복확인"
+                @click="idRepetitionCheck"
+              />
             </div>
-        </div>
+            <div class="col-lg-2" v-if="repetitionCheck == 1">
+              <input
+                class="btn btn-modern btn-light mb-2"
+                type="button"
+                name="mbr_id"
+                value="사용가능"
+                readonly
+              />
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <label
+              class="col-lg-3 col-form-label form-control-label line-height-9 pt-2 text-2 required"
+              >이름</label
+            >
+            <div class="col-lg-9">
+              <input
+                class="form-control text-3 h-auto py-2"
+                type="text"
+                name="mbr_name"
+                id="mbr_name"
+                v-model="mbrName"
+              />
+            </div>
+          </div>
+
+          <div class="form-group row mb-4">
+            <label
+              class="col-lg-3 col-form-label form-control-label line-height-9 pt-2 text-2 required"
+              >이메일주소</label
+            >
+            <div class="col-lg-7">
+              <input
+                class="form-control text-3 h-auto py-2"
+                type="email"
+                id="mbr_eml_adrs"
+                v-model="mbrEml"
+                :disabled="emailSent"
+                name="mbrEmlAdrs"
+              />
+            </div>
+            <div class="col-lg-2">
+              <input
+                class="btn btn-modern btn-dark mb-2"
+                type="button"
+                name="mbr_eml_button"
+                value="인증 요청"
+                @click="requestAuthCode"
+                :disabled="emailSent || loading"
+              />
+            </div>
+            <div
+              v-if="loading"
+              class="spinner-border text-primary"
+              role="status"
+            >
+              <span class="sr-only">Loading...</span>
+            </div>
+          </div>
+
+          <div v-if="emailSent" class="form-group row mb-4">
+            <label
+              class="col-lg-3 col-form-label form-control-label line-height-9 pt-2 text-2 required"
+              >인증번호</label
+            >
+            <div class="col-lg-7">
+              <input
+                type="text"
+                class="form-control auth-code-input"
+                v-model="formData.authCode"
+                :disabled="emailChack"
+              />
+            </div>
+            <div class="col-lg-2">
+              <input
+                class="btn btn-modern btn-dark mb-2"
+                type="button"
+                name="mbr_eml_button"
+                value="인 증"
+                @click="verifyAuthCode"
+                :disabled="emailChack"
+              />
+            </div>
+          </div>
+
+          <div v-if="result.mbr_mp != null">
+            <div class="form-group row">
+              <label
+                class="col-lg-3 col-form-label form-control-label line-height-9 pt-2 text-2 required"
+                >휴대폰번호</label
+              >
+              <div class="col-lg-9">
+                <input
+                  class="form-control text-3 h-auto py-2"
+                  type="text"
+                  name="mbr_mp"
+                  id="mbr_mp"
+                  v-model="mbrMp"
+                />
+              </div>
+            </div>
+          </div>
+          <div v-else>
+            <div class="form-group row">
+              <label
+                class="col-lg-3 col-form-label form-control-label line-height-9 pt-2 text-2 required"
+                >휴대폰번호</label
+              >
+              <div class="col-lg-9">
+                <input
+                  class="form-control text-3 h-auto py-2"
+                  type="text"
+                  name="mbr_mp"
+                  id="mbr_mp"
+                  value=""
+                />
+              </div>
+            </div>
+          </div>
+
+          <div v-if="result.mbr_adrs != null">
+            <div class="form-group row mb-4">
+              <label
+                class="col-lg-3 col-form-label form-control-label line-height-9 pt-2 text-2"
+                >주소</label
+              >
+              <div class="col-lg-7">
+                <input
+                  class="form-control text-3 h-auto py-2"
+                  type="text"
+                  name="mbr_adrs_post"
+                  id="postcode"
+                  placeholder="우편번호"
+                  v-model="mbrPost"
+                />
+              </div>
+              <div class="col-lg-2">
+                <input
+                  class="btn btn-modern btn-light mb-2"
+                  type="button"
+                  name="mbr_adrs_button"
+                  value="검 색"
+                  @click="openPostcode"
+                />
+              </div>
+            </div>
+          </div>
+          <div v-else>
+            <div class="form-group row mb-4">
+              <label
+                class="col-lg-3 col-form-label form-control-label line-height-9 pt-2 text-2"
+                >주소</label
+              >
+              <div class="col-lg-7">
+                <input
+                  class="form-control text-3 h-auto py-2"
+                  type="text"
+                  name="mbr_adrs_post"
+                  id="postcode"
+                  value=""
+                />
+              </div>
+              <div class="col-lg-2">
+                <input
+                  class="btn btn-modern btn-light mb-2"
+                  type="button"
+                  name="mbr_adrs_button"
+                  value="검 색"
+                  @click="openPostcode"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div v-if="result.mbr_adrs != null">
+            <div class="form-group row">
+              <label
+                class="col-lg-3 col-form-label form-control-label line-height-9 pt-2 text-2"
+              ></label>
+              <div class="col-lg-9">
+                <input
+                  class="form-control text-3 h-auto py-2"
+                  type="text"
+                  name="mbr_adrs"
+                  id="roadAddress"
+                  placeholder="상세주소"
+                  v-model="mbrAdrs"
+                />
+              </div>
+            </div>
+          </div>
+          <div v-else>
+            <div class="form-group row">
+              <label
+                class="col-lg-3 col-form-label form-control-label line-height-9 pt-2 text-2"
+              ></label>
+              <div class="col-lg-9">
+                <input
+                  class="form-control text-3 h-auto py-2"
+                  type="text"
+                  name="mbr_adrs"
+                  value=""
+                />
+              </div>
+            </div>
+          </div>
+
+          <br />
+
+          <div class="form-group row">
+            <div class="button-container">
+              <input
+                type="submit"
+                value="수정하기"
+                id="abtn1"
+                class="btn btn-modern btn-dark mb-2"
+                data-loading-text="Loading..."
+              />
+              <router-link
+                class="btn btn-modern btn-light mb-2"
+                to="/mypage/home"
+                >취소</router-link
+              >
+            </div>
+          </div>
+        </form>
+      </div>
     </div>
+  </div>
 </template>
 
 <script setup>
-import { onMounted , ref, computed} from 'vue';
+import { onMounted, ref, computed } from "vue";
 // import store from '@/store'
 import { api } from "@/axios";
 import { useStore } from "vuex";
@@ -179,25 +379,25 @@ import { useRouter, useRoute } from "vue-router";
 const store = useStore();
 const router = useRouter();
 
-const repetitionCheck = ref(0) //아이디 중복체크 여부 0-사용가능 / 1-사용불가능
+const repetitionCheck = ref(0); //아이디 중복체크 여부 0-사용가능 / 1-사용불가능
 const idck = ref(0); //아이디 체크 버튼 클릭 여부
 const emlck = ref(0); //이메일 인증 번호 클릭 여부
 
-const imgUrl = ref(''); // 이미지 임시url 저장
+const imgUrl = ref(""); // 이미지 임시url 저장
 
 const img = ref(0);
 
-const file = ref(''); // 파일저장
+const file = ref(""); // 파일저장
 
-const mbrSq = ref('');
-const mbrId = ref(''); //회원 아이디
-const mbrName = ref(''); //회원 이름
-const mbrEml = ref(''); // 회원 이메일
-const mbrMp = ref(''); //회원 전화번호
-const mbrPost = ref(''); //회원 우편번호
-const mbrAdrs = ref(''); //회원 주소
-const mbrImgOrgnlFn = ref(''); //이미지명
-const mbrImgFileUrl = ref(''); //이미지 url
+const mbrSq = ref("");
+const mbrId = ref(""); //회원 아이디
+const mbrName = ref(""); //회원 이름
+const mbrEml = ref(""); // 회원 이메일
+const mbrMp = ref(""); //회원 전화번호
+const mbrPost = ref(""); //회원 우편번호
+const mbrAdrs = ref(""); //회원 주소
+const mbrImgOrgnlFn = ref(""); //이미지명
+const mbrImgFileUrl = ref(""); //이미지 url
 
 const loading = ref(false);
 const emailChack = ref(false);
@@ -214,24 +414,24 @@ const member = computed(() => store.getters.getMember);
 
 // 모달 상태와 입력값
 const isModalVisible = ref(false);
-const inputValue = ref('');
+const inputValue = ref("");
 const showPage = ref(false);
 
 // Vue Router의 현재 쿼리 파라미터를 사용
 const route = useRoute();
 
 onMounted(async () => {
-    // 쿼리 파라미터에 'modal=true'가 있으면 모달을 열기
-  if (route.query.modal === 'true') {
+  // 쿼리 파라미터에 'modal=true'가 있으면 모달을 열기
+  if (route.query.modal === "true") {
     isModalVisible.value = true;
   }
   try {
-    const response = await api.$get('/user/mypage/infrmtn', {
+    const response = await api.$get("/user/mypage/infrmtn", {
       params: {
         mbr_sq: store.state.member.mbrSq,
       },
     });
-    result.value = response || {};  // 데이터를 받지 못했을 때 기본 빈 객체로 설정
+    result.value = response || {}; // 데이터를 받지 못했을 때 기본 빈 객체로 설정
     console.log(result.value);
     mbrSq.value = member.value.mbrSq;
     mbrId.value = member.value.mbrId;
@@ -239,76 +439,77 @@ onMounted(async () => {
     mbrEml.value = result.value.mbr_eml_adrs;
     mbrMp.value = result.value.mbr_mp;
     mbrAdrs.value = result.value.mbr_adrs.substr(6);
-    mbrPost.value = result.value.mbr_adrs.substring(0,5);
+    mbrPost.value = result.value.mbr_adrs.substring(0, 5);
     mbrImgOrgnlFn.value = result.value.mbrImgOrgnlFn;
     mbrImgFileUrl.value = result.value.mbrImgFileUrl;
   } catch (error) {
     console.error("API 호출 오류:", error);
-    result.value = {};  // 오류가 발생했을 때 기본 빈 객체로 설정
+    result.value = {}; // 오류가 발생했을 때 기본 빈 객체로 설정
   }
 });
 
 // 모달 닫기
 const closeModal = () => {
-    router.push('/mypage/home');
+  router.push("/mypage/home");
 };
 
 // 제출 처리
 const pwSubmit = async () => {
-    if (inputValue.value == ""){
-       alert('비밀번호를 입력해주세요.');
-       return;
-    }
+  if (inputValue.value == "") {
+    alert("비밀번호를 입력해주세요.");
+    return;
+  }
 
-    try{
-        const response = await api.$get('/member/pwCk', {
-            params:{
-                mbr_id: store.state.member.mbrId,
-                mbr_pw: inputValue.value,
-            },
-        })
-        console.log(response);
-        if (response === "성공") {
-            showPage.value = true;
-            isModalVisible.value = false;
-        } else {
-            alert('비밀번호가 틀렸습니다.');
-            showPage.value = false;
-        }
-    } catch (error) {
-        console.error("API 호출 오류:", error);
+  try {
+    const response = await api.$get("/member/pwCk", {
+      params: {
+        mbr_id: store.state.member.mbrId,
+        mbr_pw: inputValue.value,
+      },
+    });
+    console.log(response);
+    if (response === "성공") {
+      showPage.value = true;
+      isModalVisible.value = false;
+    } else {
+      alert("비밀번호가 틀렸습니다.");
+      showPage.value = false;
     }
+  } catch (error) {
+    console.error("API 호출 오류:", error);
+  }
 };
 
 // daum 주소검색 api
-const openPostcode = (()=> {
-    new window.daum.Postcode({
-        oncomplete: (data) => {
-            // 도로명 주소의 노출 규칙에 따라 주소를 표시한다.
-            // 내려오는 변수가 값이 없는 경우엔 공백('')값을 가지므로, 이를 참고하여 분기 한다.
-            var roadAddr = data.roadAddress; // 도로명 주소 변수
-            var extraRoadAddr = ''; // 참고 항목 변수
+const openPostcode = () => {
+  new window.daum.Postcode({
+    oncomplete: (data) => {
+      // 도로명 주소의 노출 규칙에 따라 주소를 표시한다.
+      // 내려오는 변수가 값이 없는 경우엔 공백('')값을 가지므로, 이를 참고하여 분기 한다.
+      var roadAddr = data.roadAddress; // 도로명 주소 변수
+      var extraRoadAddr = ""; // 참고 항목 변수
 
-            // 법정동명이 있을 경우 추가한다. (법정리는 제외)
-            // 법정동의 경우 마지막 문자가 "동/로/가"로 끝난다.
-            if(data.bname !== '' && /[동|로|가]$/g.test(data.bname)){
-                extraRoadAddr += data.bname;
-            }
-            // 건물명이 있고, 공동주택일 경우 추가한다.
-            if(data.buildingName !== '' && data.apartment === 'Y'){
-                extraRoadAddr += (extraRoadAddr !== '' ? ', ' + data.buildingName : data.buildingName);
-            }
-            // 표시할 참고항목이 있을 경우, 괄호까지 추가한 최종 문자열을 만든다.
-            if(extraRoadAddr !== ''){
-                extraRoadAddr = ' (' + extraRoadAddr + ')';
-            }
+      // 법정동명이 있을 경우 추가한다. (법정리는 제외)
+      // 법정동의 경우 마지막 문자가 "동/로/가"로 끝난다.
+      if (data.bname !== "" && /[동|로|가]$/g.test(data.bname)) {
+        extraRoadAddr += data.bname;
+      }
+      // 건물명이 있고, 공동주택일 경우 추가한다.
+      if (data.buildingName !== "" && data.apartment === "Y") {
+        extraRoadAddr +=
+          extraRoadAddr !== "" ? ", " + data.buildingName : data.buildingName;
+      }
+      // 표시할 참고항목이 있을 경우, 괄호까지 추가한 최종 문자열을 만든다.
+      if (extraRoadAddr !== "") {
+        extraRoadAddr = " (" + extraRoadAddr + ")";
+      }
 
-            // 우편번호와 주소 정보를 해당 필드에 넣는다.
-            document.getElementById('postcode').value = data.zonecode;
-            document.getElementById('roadAddress').value = roadAddr;
-        }
-    }).open();
-})
+      // 우편번호와 주소 정보를 해당 필드에 넣는다.
+      document.getElementById("postcode").value = data.zonecode;
+      document.getElementById("roadAddress").value = roadAddr;
+    },
+  }).open();
+};
 
 const validateEmail = (email) => {
   const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -316,7 +517,7 @@ const validateEmail = (email) => {
 };
 
 const requestAuthCode = () => {
-    const emailValue = mbrEml.value.trim();
+  const emailValue = mbrEml.value.trim();
   if (emailValue === "") {
     emailError.value = "이메일을 입력해주세요.";
     emlck.value = 2;
@@ -375,75 +576,107 @@ const verifyAuthCode = () => {
 };
 
 // 파일 선택 핸들러
-const handleFileChange = (e) => {
+// 파일 선택 핸들러
+const handleFileChange = async (e) => {
+  const file = e.target.files[0]; // 선택된 파일 저장
+  if (file) {
+    // 미리보기 이미지 표시
+    const reader = new FileReader();
+    reader.onload = function (event) {
+      // 선택한 파일을 미리보기로 표시
+      imgUrl.value = event.target.result; // FileReader로 얻은 Data URL을 imgUrl에 설정
+      img.value = 1; // 이미지 표시 상태 (업로드 전 미리보기)
+    };
+    reader.readAsDataURL(file); // 선택된 파일을 Data URL로 읽기
 
-    file.value = e.target.files[0]; // 선택된 파일 저장
-    if (file.value) {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-        imgUrl.value = reader.result; // 미리보기 URL 설정
-        img.value = 1; // 이미지 표시 상태
-        };
-        reader.readAsDataURL(file.value); // 파일을 Data URL로 읽기
-    } else {
-        img.value = 0; // 이미지 표시 상태 초기화
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      // 이미지 파일을 서버에 업로드
+      const response = await api.$post("/file/upload-image", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      // 서버에서 반환된 이미지 URL을 실제 이미지 URL로 설정
+      // 이미지 URL을 서버에서 반환된 URL로 설정
+      const imageUrl = response.imgFileUrl; // 서버에서 반환된 이미지 URL
+      document.getElementById("imagePreview").src = imageUrl;
+
+      imgUrl.value = imageUrl; // 실제 이미지 URL로 설정
+      img.value = 1; // 이미지 표시 상태
+    } catch (error) {
+      console.error("이미지 업로드 중 오류 발생:", error);
+      img.value = 0; // 이미지 표시 상태 초기화
+      alert("이미지 업로드 중 오류가 발생했습니다. 다시 시도해주세요."); // 사용자에게 오류 알림
     }
+  } else {
+    img.value = 0; // 이미지 표시 상태 초기화 (파일이 선택되지 않은 경우)
+  }
 };
 
-
 // Save 버튼
-const handleSubmit = async(e) => {
-    e.preventDefault(); // 폼 제출 기본 동작 방지
+const handleSubmit = async (e) => {
+  e.preventDefault(); // 폼 제출 기본 동작 방지
 
-    const mbr_id = document.getElementById('mbr_id');
-    const mbr_name = document.getElementById('mbr_name');
-    const mbr_mp = document.getElementById('mbr_mp');
-    const mbr_eml_adrs = document.getElementById('mbr_eml_adrs');
-    const mbrImgOrgnlFn = document.getElementById('mbrImgOrgnlFn');
-    const mbrImgFileUrl = document.getElementById('mbrImgFileUrl');
-    if (!mbr_id.value || !mbr_name.value || !mbr_mp.value || !mbr_eml_adrs.value) {
-        alert('필수 항목을 모두 입력해 주세요.');
-        return;
-    }else if(idck.value == 2){
-        alert('아이디 인증을 해주세요.');
-        return;
-    }else if(emlck.value == 2){
-        alert('이메일 인증을 해주세요.');
-        return;
-    }
+  const mbr_id = document.getElementById("mbr_id");
+  const mbr_name = document.getElementById("mbr_name");
+  const mbr_mp = document.getElementById("mbr_mp");
+  const mbr_eml_adrs = document.getElementById("mbr_eml_adrs");
+  const mbrImgOrgnlFn = document.getElementById("mbrImgOrgnlFn");
+  const mbrImgFileUrl = document.getElementById("mbrImgFileUrl");
+  if (
+    !mbr_id.value ||
+    !mbr_name.value ||
+    !mbr_mp.value ||
+    !mbr_eml_adrs.value
+  ) {
+    alert("필수 항목을 모두 입력해 주세요.");
+    return;
+  } else if (idck.value == 2) {
+    alert("아이디 인증을 해주세요.");
+    return;
+  } else if (emlck.value == 2) {
+    alert("이메일 인증을 해주세요.");
+    return;
+  }
 
   if (!/^01([0|1|6|7|8|9]?)?([0-9]{3,4})?([0-9]{4})$/.test(mbr_mp.value)) {
-        return alert('휴대폰 번호 형식이 올바르지 않습니다. \n (-를 제외한 10자리 또는 11자리 숫자)');
+    return alert(
+      "휴대폰 번호 형식이 올바르지 않습니다. \n (-를 제외한 10자리 또는 11자리 숫자)"
+    );
+  }
+
+  if (file.value && file.value.size > 0) {
+    // 파일 업로드
+    try {
+      const formData = new FormData();
+      if (file.value) {
+        formData.append("file", file.value);
+      }
+
+      const response = await api.$post("/file/upload-image", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      // 서버 응답 처리
+      const newImageUrl = response.imgFileUrl;
+      imgUrl.value = newImageUrl;
+      mbrImgOrgnlFn.value = file.value ? file.value.name : "";
+      mbrImgFileUrl.value = newImageUrl;
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      img.value = 0; // 이미지 표시 상태 초기화
     }
-
-    if(file.value && file.value.size > 0){
-  // 파일 업로드
-        try {
-            const formData = new FormData();
-            if (file.value) {
-                    formData.append('file', file.value);
-            }
-
-        const response = await api.$post('/file/upload-image', formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data'
-            }
-        });
-
-            // 서버 응답 처리
-        const newImageUrl = response.imgFileUrl;
-            imgUrl.value = newImageUrl;
-            mbrImgOrgnlFn.value = file.value ? file.value.name : '';
-            mbrImgFileUrl.value = newImageUrl;
-        } catch (error) {
-            console.error('Error uploading file:', error);
-            img.value = 0; // 이미지 표시 상태 초기화
-        }
-    }
+  }
 
   try {
     const data = {
-      mbrSq : mbrSq.value,
+      mbrSq: mbrSq.value,
       mbrId: mbrId.value,
       mbrName: mbrName.value,
       mbrEmlAdrs: mbrEml.value,
@@ -451,98 +684,94 @@ const handleSubmit = async(e) => {
       mbrPswrd: mbrPost.value,
       mbrAdrs: mbrAdrs.value,
       mbrImgOrgnlFn: mbrImgOrgnlFn.value,
-      mbrImgFileUrl: mbrImgFileUrl.value
+      mbrImgFileUrl: mbrImgFileUrl.value,
     };
 
     // console test
     console.log(data);
 
-    try{
-    const res = await api.$post('/member/update',  data);
-            console.log(res);
-            if(res == '수정완료'){
-                alert('수정 완료 되었습니다.');
-                if(repetitionCheck.value == 1){
-                    router.push('/').then(() => {
-                        store.commit("clearMember");
-                        store.commit("changeUserType", "user");
-                    })
-                }else{
-                    router.push('/mypage/home');
-                }
-            }else{
-                alert('수정 실패');
-            }
-
-    }catch(error){
-        console.error(error);
-    } 
-
-  }catch(error){
+    try {
+      const res = await api.$post("/member/update", data);
+      console.log(res);
+      if (res == "수정완료") {
+        alert("수정 완료 되었습니다.");
+        if (repetitionCheck.value == 1) {
+          router.push("/").then(() => {
+            store.commit("clearMember");
+            store.commit("changeUserType", "user");
+          });
+        } else {
+          router.push("/mypage/home");
+        }
+      } else {
+        alert("수정 실패");
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  } catch (error) {
     console.log(error);
   }
 };
 
 //아이디 중복확인
-const idRepetitionCheck = async() => {
-    const mbr_id = document.getElementById('mbr_id');
-    console.log("중복확인")
-    if(!mbr_id.value){
-        alert("아이디를 입력해 주세요");
-        return;
+const idRepetitionCheck = async () => {
+  const mbr_id = document.getElementById("mbr_id");
+  console.log("중복확인");
+  if (!mbr_id.value) {
+    alert("아이디를 입력해 주세요");
+    return;
+  }
+
+  try {
+    const res = await api.$post("/member/idCheck", { mbrId: mbr_id.value });
+    console.log(res);
+    if (res == 0) {
+      idck.value = 0;
+      repetitionCheck.value = 1;
+    } else {
+      alert("중복된 아이디 입니다.");
+      idck.value = 2;
+      repetitionCheck.value = 0;
     }
-      
-    try{
-    const res = await api.$post('/member/idCheck', {mbrId : mbr_id.value});
-            console.log(res);
-            if(res == 0){
-                idck.value = 0;
-                repetitionCheck.value = 1;
-            }else{
-                alert('중복된 아이디 입니다.')
-                idck.value = 2;
-                repetitionCheck.value = 0;
-            }
-
-    }catch(error){
-        console.error(error);
-    }       
+  } catch (error) {
+    console.error(error);
+  }
 };
-
 </script>
 
 <style>
 .form-container {
-    display: flex;
-    justify-content: center;
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 20px;
+  display: flex;
+  justify-content: center;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
 }
 
 .form-group {
-    width: 100%;
-    margin-bottom: 15px;
+  width: 100%;
+  margin-bottom: 15px;
 }
 
 .form-control {
-    box-shadow: none;
-    width: 280px;
+  box-shadow: none;
+  width: 280px;
 }
 
 .form-control:focus {
-    background-color: #f4f4f4;
+  background-color: #f4f4f4;
 }
-  
+
 .button-container {
-    display: flex;
-    justify-content: center;
+  display: flex;
+  justify-content: center;
 }
 
-#abtn1, #abtn2 {
-    width: 110px;
+#abtn1,
+#abtn2 {
+  width: 110px;
 }
-
 </style>
 
 <style scoped>

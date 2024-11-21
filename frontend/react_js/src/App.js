@@ -9,6 +9,7 @@ import PositionProposal from "./mypage/MypagePPAcception";
 import PositionProposalList from "./mypage/MypageProposedPositionList";
 import ApplyCompanyList from "./mypage/ApplyCompanyList";
 import ResumeDetail from "./mypage/ResumeDetails";
+import JobViewList from "./mypage/MypageJobView";
 // 게시판 관련 import
 import BoardList from "./board/BoardList";
 import BoardDetail from "./board/BoardDetail";
@@ -53,6 +54,7 @@ function Test() {
     "/mypage/resume-list",
     "/mypage/ppAcception",
     "/mypage/proposedPosition",
+    "/mypage/jobView",
     "/mypage/applycompanylist",
     "/resumeDetailView/:rsm_sq",
   ].includes(location.pathname);
@@ -155,6 +157,7 @@ function Test() {
             <Route path="/mypage/resume-form" element={<ResumeForm />} />
             <Route path="/mypage/resume-list" element={<ResumeList />} />
             <Route path="/mypage/ppAcception" element={<PositionProposal />} />
+            <Route path="/mypage/JobViewList" element={<JobViewList />} />
             <Route
               path="/mypage/proposedPosition"
               element={<PositionProposalList />}

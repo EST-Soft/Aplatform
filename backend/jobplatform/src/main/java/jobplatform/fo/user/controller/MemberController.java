@@ -80,6 +80,17 @@ public class MemberController {
 
         throw new ResponseStatusException(HttpStatus.NOT_FOUND, "잘못된 시도입니다.");
     }
+        // 공고 조회 시, 세션에 최근 본 공고 추가
+        @PostMapping("/viewJobPosting/{mbrSq}/{jbpSq}")
+        public ResponseEntity<Void> viewJobPosting(
+                @PathVariable Long mbrSq,   // 회원 순번 (mbrSq)
+                @PathVariable Long jbpSq,  // 공고 순번 (jbpSq)
+                HttpSession session) {
+            
+            // 해당 공고 ID를 세션에 저장
+            mypageService.saveJobView(mbrSq, jbpSq, session);
+            return ResponseEntity.status(HttpStatus.CREATED).build();
+        }
 
     // 로그아웃 처리
     @PostMapping("/logout")

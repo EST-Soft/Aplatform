@@ -77,7 +77,8 @@
       }
 
       //인증키 : b5e83526a03f37b8349141b21fa2f6e7 (임시) JOB_VIEW
-      const url = `http://www.career.go.kr/cnet/openapi/getOpenApi?apiKey=b5e83526a03f37b8349141b21fa2f6e7&svcType=api&svcCode=` + searchType + `&contentType=json&perPage=10&gubun=univ_list&searchSchulNm=` + searchTerm.value +'&thisPage=' + paginationData.pageGroupsOfCurrentPage;
+      const url = `http://www.career.go.kr/cnet/openapi/getOpenApi?apiKey=b5e83526a03f37b8349141b21fa2f6e7&svcType=api&svcCode=` + searchType + `&contentType=json&perPage=10&gubun=high_list
+&searchSchulNm=` + searchTerm.value +'&thisPage=' + paginationData.pageGroupsOfCurrentPage;
    
       api.$get(url).then(response => {
         console.log('Search response:', response);

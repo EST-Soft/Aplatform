@@ -28,8 +28,8 @@ public class EnterEmaliController {
     @Autowired
     EnterMemberRepository enterMemberRepository;
 
-    //서비스 레이어 없이 구현
-    //회원가입용
+    //�꽌?��꾩뒪 �젅�씠�뼱 �뾾�씠 ?��?�쁽
+    //�쉶�썝媛��엯�슜
     @PostMapping("/emlSend")
     public ResponseEntity<?> emlSend(@RequestBody Map<String,String> map) {
 
@@ -39,33 +39,33 @@ public class EnterEmaliController {
         String purpose = map.get("purpose");
 
         log.info("entrprsPicEml : " + entrprsPicEml);
-        // 이메일 주소가 null인지 확인
+        // �씠硫붿?�� 二쇱?��媛� null�씤吏� �솗�씤
         if (entrprsPicEml == null ) {
 
             return ResponseEntity.badRequest().body(map);
         }
-        //어떻게 메일 보낼지에 대한 설정
+        //�뼱�뼸寃� 硫붿?�� 蹂�??궪吏���? �����? �꽕�젙
 
         JavaMailSenderImpl mailSenderImpl = new JavaMailSenderImpl();
         Properties prop = new Properties();
 
         mailSenderImpl.setHost("smtp.gmail.com");
         mailSenderImpl.setPort(587);
-        mailSenderImpl.setUsername("zmclsnsn@gmail.com");        // 본인 또는 회사 아이디로 교체
-        mailSenderImpl.setPassword("lvyi aayx ivbe lefz");                // 참고 링크에 따라 제공받은 비밀번호 사용
-        prop.put("mail.smtp.auth", true);                                // 이메일 서버에 인증 요구
-        prop.put("mail.smtp.starttls.enable", true);                    // 암호화된 연결을 활성화. starttls는 이메일 전송중에 보안 계층을 추가하여 데이터의 기밀성을 보호
+        mailSenderImpl.setUsername("zmclsnsn@gmail.com");        // 蹂몄?�� �삉�뒗 �쉶�궗 �븘�씠�뵒濡� ?���?�?
+        mailSenderImpl.setPassword("lvyi aayx ivbe lefz");                // 李멸??? 留곹겕��? �뵲�씪 �젣??�듬컺��� ?��꾨��踰?��?�� �궗�슜
+        prop.put("mail.smtp.auth", true);                                // �씠硫붿?�� �꽌踰꾩�? �씤利� �슂?���?
+        prop.put("mail.smtp.starttls.enable", true);                    // �븫�샇�솕�맂 �뿰寃곗?�� �솢�꽦�솕. starttls�뒗 �씠硫붿?�� �쟾�넚以묒�? 蹂댁�? ??�꾩링�?�� ?��붽����?�뿬 �뜲�씠�꽣�쓽 湲곕���꽦�쓣 蹂댄?��
 
         mailSenderImpl.setJavaMailProperties(prop);
 
 
         // MemberEntity member = memberRepository.findByMbrEmlAdrs(mbrEmlAdrs);
         boolean member=enterMemberRepository.existsByEntrprsPicEml(entrprsPicEml);
-        // 가입 때는 true값이 나오면 BadRequest ,  비밀번호 변경 , 아이디 조회를 위해서 false일 때 BadRequest
-        System.out.println("멤버"+member);
-        if (purpose == null) { // 회원가입 로직
+        // 媛��엯 �븣�뒗 true媛�?�씠 �굹�삤硫� BadRequest ,  ?��꾨��踰?��?�� 蹂�寃� , �븘�씠�뵒 議고?��?���? �쐞�빐�꽌 false�씪 �븣 BadRequest
+        System.out.println("硫ㅻ�?"+member);
+        if (purpose == null) { // �쉶�썝媛��엯 濡쒖�?
             if (member) {
-                map.put("error", "이미 존재하는 이메일입니다.");
+                map.put("error", "�씠誘� 議댁?���븯�뒗 �씠硫붿?���엯�땲�떎.");
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(map);
             }
         }
@@ -84,13 +84,13 @@ public class EnterEmaliController {
             key += numIndex;
         }
 
-        message.setSubject("인증코드 메일입니다.");
-        message.setText("인증번호는 " + key + " 입니다.");
+        message.setSubject("�씤利앹?���뱶 硫붿?���엯�땲�떎.");
+        message.setText("�씤利앸쾲�?���뒗 " + key + " �엯�땲�떎.");
 
         try {
             mailSenderImpl.send(message);
         } catch (Exception e) {
-            map.put("error", "메일 전송에 실패했습니다.");
+            map.put("error", "硫붿?�� �쟾�넚�뿉 �떎�뙣�뻽�뒿�땲�떎.");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(map);
         }
 

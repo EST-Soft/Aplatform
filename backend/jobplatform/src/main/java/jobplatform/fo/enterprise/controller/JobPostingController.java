@@ -1,6 +1,7 @@
 package jobplatform.fo.enterprise.controller;
 
 import java.awt.geom.Area;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,7 +19,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.servlet.http.HttpSession;
 import jobplatform.fo.enterprise.domain.dto.JobPostingDTO;
+import jobplatform.fo.enterprise.domain.dto.JobViewDTO;
 import jobplatform.fo.enterprise.domain.entity.ApplyEntity;
 import jobplatform.fo.enterprise.domain.entity.AreaEntity;
 import jobplatform.fo.enterprise.domain.entity.JobEntity;
@@ -29,6 +32,8 @@ import jobplatform.fo.enterprise.domain.repository.EnterMemberRepository;
 import jobplatform.fo.enterprise.domain.repository.JobRepository;
 import jobplatform.fo.enterprise.domain.repository.ResumeRepository;
 import jobplatform.fo.enterprise.service.JobPostingService;
+import jobplatform.fo.enterprise.service.JobViewService;
+import jobplatform.fo.user.service.MypageService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.web.bind.annotation.PutMapping;
 
@@ -52,6 +57,10 @@ public class JobPostingController {
 	
 	@Autowired
 	private JobRepository jobRepository;
+	    @Autowired
+    private MypageService mypageService;
+		    @Autowired
+    private JobViewService jobViewService;
 	
 	@GetMapping("/board/list/jobPosting")
 	public ResponseEntity<List<JobPostingEntity>> jobPostingList(@RequestParam(value = "sortBy", defaultValue = "regstrStrtDtm") String sortBy) {
@@ -96,25 +105,44 @@ public class JobPostingController {
 	    return ResponseEntity.ok(areas);
 	  }
 
-	  //직업 목록
+	  //직업 목록	  //직업 목록
 	  @GetMapping("/jobs")
-	  public ResponseEntity<List<JobEntity>> getAllJobs() {
-	    List<JobEntity> jobs = jobRepository.findAll();
+	  public ResponseEntity<List<JobPostingEntity>> getAllJobs() {
+	    List<JobPostingEntity> jobs = jobRepository.findAll();
 	    System.out.println("직업" );
 	    return ResponseEntity.ok(jobs);
 	  }
-
 	
 	// 공고 상세 조회 메소드
-	@GetMapping("/board/detail/jobPosting/{jbpSq}")
-	public JobPostingDTO JobPostingDetail(@PathVariable Long jbpSq) {
-		JobPostingDTO jpe = jobPostingService.jobPostingDetail(jbpSq);
-		
-		// 조회수 증가
-		jobPostingService.increaseHits(jbpSq);
-		
-		return jpe;
-	}
+@SuppressWarnings("unchecked")
+@GetMapping("/board/detail/jobPosting/{jbpSq}")
+public JobPostingDTO JobPostingDetail(@PathVariable Long jbpSq, HttpSession session) {
+    // 공고 상세 조회
+    JobPostingDTO jpe = jobPostingService.jobPostingDetail(jbpSq, session);
+
+    // 조회수 증가
+    jobPostingService.increaseHits(jbpSq);
+
+    // 세션에서 사용자 순번(mbrSq)을 가져옴
+    Long mbrSq = (Long) session.getAttribute("mbrSq");
+
+    // 사용자 순번이 존재하면 최근 본 공고 목록을 DB에 저장
+    if (mbrSq != null) {
+        // 사용자 ID를 세션에서 가져옴 (예: test)
+        String mbrId = (String) session.getAttribute("mbrId"); // 세션에서 사용자 ID를 가져옴
+
+        // 최근 본 공고 목록을 DB에 저장
+        jobViewService.addJobViewEntity(mbrSq, jbpSq, mbrId);  // DB에 기록
+        System.out.println("최근 본 공고 저장 - 사용자 순번: " + mbrSq + ", 공고 순번: " + jbpSq + ", 사용자 ID: " + mbrId);
+    }
+
+    return jpe;
+}
+
+
+
+
+
 	
 	// 공고 수정 메소드
 	@PostMapping("/board/jobPostingUpdate/{jbpSq}")
@@ -171,5 +199,6 @@ public class JobPostingController {
 		}
 	}
 
+		
 	
 }

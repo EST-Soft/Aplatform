@@ -144,6 +144,7 @@ public class ResumeManagementController {
 			careerService.insertCareerData(mbrSq, rsmSq, careerDtos);
 		}
 
+		
 		// 스킬 정보 처리
 		List<SkillCodeSDto> skilsDataDtos = requestDto.getSkilsDataDtoList();
 		if (skilsDataDtos != null && !skilsDataDtos.isEmpty()) {

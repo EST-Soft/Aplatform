@@ -2,10 +2,13 @@ package jobplatform.fo.user.controller;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,8 +21,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.servlet.http.HttpSession;
+import jobplatform.fo.enterprise.domain.dto.JobPostingDTO;
+import jobplatform.fo.enterprise.domain.dto.JobViewDTO;
 import jobplatform.fo.enterprise.domain.dto.ResumeSearchDataDTO;
 import jobplatform.fo.enterprise.domain.entity.ApplyEntity;
+import jobplatform.fo.enterprise.domain.entity.JobPostingEntity;
+import jobplatform.fo.enterprise.domain.entity.JobViewEntity;
+import jobplatform.fo.enterprise.domain.vo.JobViewVO;
+import jobplatform.fo.enterprise.service.JobPostingService;
+import jobplatform.fo.enterprise.service.JobViewService;
 import jobplatform.fo.user.domain.entity.MemberEntity;
 import jobplatform.fo.user.domain.vo.M_JobPosting_pp;
 import jobplatform.fo.user.service.M_MypageService;
@@ -30,10 +41,13 @@ import jobplatform.fo.user.service.M_MypageService;
 @RestController
 @RequestMapping("/user/mypage")
 public class M_MypageController {
-	
+	@Autowired
+    private JobPostingService jobPostingService;
+
 	@Autowired
 	private M_MypageService myPageService;
-	
+	 @Autowired
+    private JobViewService jobViewService;  // JobViewService를 주입
 	//마이페이지 메인 화면 데이터
 	//jwt 구현 전 까지 클라에서 mbr_sq 같이 넘겨주는 걸로!
 	@GetMapping("/")
@@ -157,4 +171,61 @@ public class M_MypageController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("스크랩 취소 실패: " + e.getMessage());
 		}
 	}
+
+	@GetMapping("/jobView/{mbrSq}")
+	public ResponseEntity<List<JobViewDTO>> getJobViewsByMember(@PathVariable Long mbrSq) {
+    List<JobViewDTO> jobViews = jobViewService.getJobViewByMember(mbrSq); // 여기에서 DTO를 반환
+    return ResponseEntity.ok(jobViews); // 반환 타입이 JobViewEntity가 되어야 함
+	}
+ // 최근 본 공고 저장
+ @PostMapping("/jobView")
+public ResponseEntity<?> saveJobView(@RequestBody JobViewDTO jobViewRequest) {
+    try {
+        Long mbrSq = jobViewRequest.getMbrSq();
+        Long jbpSq = jobViewRequest.getJbpSq();
+        String mbrId = jobViewRequest.getMbrId();
+
+        // 최근 본 공고 저장 로직 (중복 방지)
+        jobViewService.addJobView(mbrSq, jbpSq, mbrId);
+
+        // 최근 본 공고 목록을 페이지네이션으로 조회
+        Page<JobViewEntity> jobViews = jobViewService.getRecentJobViews(mbrSq, jobViewRequest.getPage(), jobViewRequest.getSize());
+
+        return ResponseEntity.ok(jobViews);
+    } catch (Exception e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                             .body("최근 본 공고 저장 중 오류가 발생했습니다.");
+    }
 }
+
+
+
+
+ @PostMapping("/jobView/search")
+public ResponseEntity<?> searchJobView(
+        @RequestParam Long mbrSq, 
+        @RequestParam(required = false) String enterpriseName, 
+        @RequestParam(required = false) String jobTitle) {
+    try {
+        // 검색 결과를 서비스에서 조회
+        List<JobViewDTO> jobViews = jobViewService.searchJobViews(mbrSq, enterpriseName, jobTitle);
+        return ResponseEntity.ok(jobViews); // 검색된 데이터 반환
+    } catch (Exception e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                             .body("검색 중 오류가 발생했습니다.");
+    }
+}
+    // 조회수 높은 상위 3개의 채용 공고 반환
+    @GetMapping("/top")
+    public List<JobPostingDTO> getTopJobPostings() {
+        return jobPostingService.getTopJobPostings();
+    }
+ }
+ 
+ 
+	
+		
+		
+	
+	
+

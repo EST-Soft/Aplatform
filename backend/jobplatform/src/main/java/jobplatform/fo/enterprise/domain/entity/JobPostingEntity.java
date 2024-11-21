@@ -37,16 +37,10 @@ public class JobPostingEntity {
     @Column(name = "jbp_sq", nullable = false)
     private Long jbpSq;
 
-//    @ManyToOne
-//    @JoinColumn(name = "entrprs_sq", referencedColumnName = "entrprs_sq", nullable = false)
-//    private EnterMemberEntity enterpriseMember;
-
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "entrprs_sq", referencedColumnName = "entrprs_sq", nullable = false)
     private EnterMemberEntity enterpriseMember;
 
-    
-    
     @Column(name = "jbp_ttl", nullable = false, length = 30)
     private String jbpTtl = "";
 
@@ -54,7 +48,7 @@ public class JobPostingEntity {
     private String jbpCntnt = "";
 
     @Column(name = "hits", nullable = false)
-    private Long hits = (long) 0;
+    private Long hits = 0L;
 
     @Column(name = "crr_drtn", nullable = false, length = 10)
     private String crrDrtn = "";

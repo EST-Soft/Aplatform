@@ -31,4 +31,5 @@ public interface MypageMapper {
    MemberEntity findByMbrSq(int mbrSq);
 
    
+   
 }

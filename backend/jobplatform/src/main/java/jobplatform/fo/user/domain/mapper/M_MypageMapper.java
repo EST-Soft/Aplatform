@@ -10,7 +10,10 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import jobplatform.fo.enterprise.domain.dto.JobPostingDTO;
+import jobplatform.fo.enterprise.domain.dto.JobViewDTO;
 import jobplatform.fo.enterprise.domain.dto.ResumeSearchDataDTO;
+import jobplatform.fo.enterprise.domain.entity.JobViewEntity;
+import jobplatform.fo.enterprise.domain.vo.JobViewVO;
 import jobplatform.fo.enterprise.domain.vo.ResumeListVO;
 import jobplatform.fo.enterprise.domain.vo.ScrapVO;
 import jobplatform.fo.user.domain.vo.M_JobPosting_pp;
@@ -115,4 +118,16 @@ public interface M_MypageMapper {
 	//스크랩 취소
     public void scrapDelete(Long mbr_sq, Long jbp_sq);
 
+    public void saveJobView(JobViewDTO jobView);
+
+    public List<Long> getRecentJobViews(Long mbrSq);
+    // 최근 본 공고 기록 삽입
+    void insertJobView(JobViewDTO jobViewDTO);
+
+    // 특정 회원의 최근 본 공고 목록 조회
+    List<JobViewDTO> selectJobViewsByMember(Long mbrSq);
+		
+
+
+	
 }

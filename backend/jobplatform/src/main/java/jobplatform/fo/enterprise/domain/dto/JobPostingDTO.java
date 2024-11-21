@@ -21,6 +21,7 @@ import lombok.NoArgsConstructor;
 public class JobPostingDTO {
 
     private Long jbpSq;
+    private Long mbrSq;
     private String jbpTtl;
     private String jbpCntnt;
     private Long hits;

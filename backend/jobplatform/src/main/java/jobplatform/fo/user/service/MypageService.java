@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import jakarta.servlet.http.HttpSession;
 import jobplatform.fo.user.domain.vo.ApplyInfoDTO;
 
 public interface MypageService {
@@ -24,4 +25,7 @@ public interface MypageService {
    Integer resumeReadCnt(Integer mbrSq); // 이력서 열람Cnt
    
    Integer resumeNotReadCnt(Integer mbrSq); // 이력서 미열람Cnt
+
+  void saveJobView(Long jbpSq, HttpSession session);
+
 }

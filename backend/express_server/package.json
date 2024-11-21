@@ -12,8 +12,13 @@
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.21.1",
+<<<<<<< HEAD
+    "express_server": "file:",
+    "mysql2": "^3.10.3"
+=======
     "mysql2": "^3.10.3",
      "ors": "^1.0.0"
+>>>>>>> 58ab0f1bab39a51ff54013fbc41654e6b3f41c97
   },
   "proxy": "http://localhost:3000"
 }

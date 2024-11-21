@@ -2458,3 +2458,4 @@ org.eclipse.core.runtime.CoreException: Could not resolve artifact org.mybatis.s
 2024-11-20 15:59:42,993 [Worker-248: Launching Executing clean in C__dev_workspace_Aplatform_backend_jobplatform] INFO  o.eclipse.m2e.core.internal.Bundles - 	Entry: C:\dev\sts-4.21.1.RELEASE\plugins\com.google.guava.failureaccess_1.0.2.jar
 2024-11-20 15:59:42,997 [Worker-248: Launching Executing clean in C__dev_workspace_Aplatform_backend_jobplatform] INFO  o.e.m.i.launch.MavenLaunchDelegate - Run build in "C:\dev\workspace\Aplatform\backend\jobplatform":
 2024-11-20 15:59:42,998 [Worker-248: Launching Executing clean in C__dev_workspace_Aplatform_backend_jobplatform] INFO  o.e.m.i.launch.MavenLaunchDelegate -  mvn  -B -Dstyle.color=always clean
+2024-11-20 16:25:36,033 [Worker-2: Loading available Gradle versions] INFO  o.e.b.c.i.u.g.PublishedGradleVersions - Gradle version information cache is out-of-date. Trying to update.

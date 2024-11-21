@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,41 +28,52 @@ public class FileController {
 
     private final FileService fileService;
 
+    // 이미지 업로드 처리
     @PostMapping("/upload-image")
-    public ResumeProfileImageDto uploadImage(@RequestParam("file") MultipartFile files) {
-        ResumeProfileImageDto resumeProfileImageDto = fileService.uploadImage(files);
-
-        return resumeProfileImageDto;
-    } // uploadImage
-
-    // @GetMapping(value = "{fileName}", produces = { MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE,
-    //         MediaType.IMAGE_GIF_VALUE })
-    // public Resource getImage(@PathVariable("fileName") String fileName) {
-    //     Resource resource = fileService.getImage(fileName);
-    //     return resource;
-    // } // getImage
-
-    @GetMapping("/{filename}")
-    public ResponseEntity<?> downloadImage(@PathVariable String filename) {
-        System.out.println("asdasadsds" + filename);
-        File file = new File("/home/ubuntu/alpatform/file/" + filename);
-        System.out.println(file);
-        
-
-        if(!file.exists()){
-            return ResponseEntity.notFound().build();
-        }
-
-        MediaType mediaType = getMediaType(filename); // MIME 타입 설정
-        HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filebane=\"" + file.getName() + "\"");
-
-
-        return ResponseEntity.ok()
-            .headers(headers)
-            .contentType(mediaType)
-            .body(new FileSystemResource(file));
+    public ResumeProfileImageDto uploadImage(@RequestParam("file") MultipartFile file) {
+        return fileService.uploadImage(file);
     }
+
+    @GetMapping(value = "{fileName}", produces = { MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE, MediaType.IMAGE_GIF_VALUE })
+    public ResponseEntity<Resource> getImage(@PathVariable("fileName") String fileName) {
+        try {
+            // fileService에서 이미지를 불러옴
+            Resource resource = fileService.getImage(fileName);
+            
+            if (resource.exists()) {
+                return ResponseEntity.ok()
+                        .contentType(MediaType.IMAGE_JPEG) // 해당 형식에 맞는 미디어 타입을 설정
+                        .body(resource);
+            } else {
+                // 파일이 존재하지 않으면 404 반환
+                return ResponseEntity.notFound().build();
+            }
+        } catch (Exception e) {
+            // 예외 발생 시 500 오류 반환
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+    
+    
+
+     @GetMapping("/file/{filename}")
+     public ResponseEntity<?> downloadImage(@PathVariable String filename) {
+         File file = new File("/home/ubuntu/alpatform/file/" + filename);
+         
+         if (!file.exists()) {
+             return ResponseEntity.notFound().build();
+         }
+         
+         MediaType mediaType = getMediaType(filename); // MIME 타입 설정
+         HttpHeaders headers = new HttpHeaders();
+         headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getName() + "\"");
+         
+         return ResponseEntity.ok()
+                              .headers(headers)
+                              .contentType(mediaType)
+                              .body(new FileSystemResource(file));
+     }
+     
 
     private MediaType getMediaType(String filename){
         String extension = filename.substring(filename.lastIndexOf('.') + 1).toLowerCase();

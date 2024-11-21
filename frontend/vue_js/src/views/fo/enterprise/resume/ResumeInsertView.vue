@@ -5,9 +5,9 @@
     @submit.prevent="submit"
   >
     <div class="row">
-      <h1 class="form-group col-12">
+      <h2 class="form-group col-12">
         <strong> 이력서 등록 </strong>
-      </h1>
+      </h2>
       <hr class="gradient" />
     </div>
     <div class="form-section">
@@ -162,15 +162,30 @@
     <div class="form-section">
       <div class="row mt-3">
         <div class="col-md-4">
+          <select
+            class="form-select"
+            v-model="salaryOption"
+            required
+            @change="handleSalaryOptionChange"
+          >
+            <option value="" selected>희망연봉</option>
+            <option value="면접 후 결정">면접 후 결정</option>
+            <option value="회사 내규에 따름">회사 내규에 따름</option>
+            <option value="manual">직접입력</option>
+          </select>
+        </div>
+
+        <!-- 희망연봉 입력란, "직접입력"을 선택한 경우에만 보이도록 -->
+        <div class="col-md-4" v-if="salaryOption === 'manual'">
           <input
-            type="text"
+            type="number"
             v-model="rsmEs"
-            maxlength="100"
             class="form-control"
-            placeholder="희망연봉"
+            placeholder="희망연봉을 입력하세요"
             required
           />
         </div>
+
         <div class="col-md-4">
           <select class="form-select" v-model="rsmFnlEdctnCode" required>
             <option value="" disabled>최종학력</option>
@@ -183,7 +198,12 @@
             </option>
           </select>
         </div>
-        <div class="col-md-4">
+
+        <!-- 학점 입력란, 대학교 졸업부터 보이도록 설정 -->
+        <div
+          class="col-md-4"
+          v-if="rsmFnlEdctnCode === 'jc' || rsmFnlEdctnCode === 'unvrsty'"
+        >
           <input
             type="text"
             v-model="rsmGrd"
@@ -282,15 +302,18 @@
     <!-- 경력 추가 -->
     <div class="form-section">
       <h4 class="mb-3">
-        경력
-        <div class="btn btn-primary btn-circle" @click="addCareer">
+        경력 &nbsp;
+        <!-- Add Career Button -->
+        <div class="btn btn-primary btn-circle mb-2" @click="addCareer">
           <i class="fa fa-plus"></i>
         </div>
-        <hr class="mt-1 mb-2" />
       </h4>
+      <hr class="mt-1 mb-2" />
+
+      <!-- Render career fields dynamically -->
       <div
-        v-for="(careerData, index) in careerDatas"
-        :key="index"
+        v-for="careerDatas in careerDatas"
+        :key="careerDatas.id"
         class="career-item mb-3"
       >
         <div class="row">
@@ -298,54 +321,61 @@
           <div class="col-md-4">
             <input
               type="text"
-              v-model="careerData.entrprsName"
+              v-model="careerDatas.entrprsName"
               placeholder="회사 이름"
               class="form-control"
             />
           </div>
+
           <!-- 직책 -->
           <div class="col-md-4">
             <input
               type="text"
-              v-model="careerData.entrprsPstn"
+              v-model="careerDatas.entrprsPstn"
               placeholder="직책"
               class="form-control"
             />
           </div>
+
           <!-- 시작일과 종료일 -->
           <div class="col-md-3 d-flex align-items-center">
             <div class="d-flex flex-column w-100">
+              <!-- 입사일 입력 -->
               <input
                 type="date"
-                v-model="careerData.entrprsJacDate"
+                v-model="careerDatas.entrprsJacDate"
                 class="form-control mb-2"
                 placeholder="입사일"
               />
+              <!-- 퇴사일 입력 -->
               <input
                 type="date"
-                v-model="careerData.entrprsRsgntnDate"
+                v-model="careerDatas.entrprsRsgntnDate"
                 class="form-control"
                 placeholder="퇴사일"
               />
+
+              <!-- 실시간 경력 계산 결과 표시 -->
+              <div
+                v-if="
+                  careerDatas.entrprsJacDate && careerDatas.entrprsRsgntnDate
+                "
+              >
+                <p>
+                  경력: {{ calculatedDuration(careerDatas).years }}년
+                  {{ calculatedDuration(careerDatas).months }}개월
+                </p>
+              </div>
             </div>
           </div>
-          <!-- 검색 버튼을 눌러서 검색 모달을 띄우기 -->
-          <div class="row">
-            <!-- 검색 버튼 -->
-            <div class="col-md-6 d-flex justify-content-between">
-              <!--<button
-                class="btn btn-primary"
-                @click="openSearchCareerModal"
-                style="flex: 1; margin-right: 5px"
-              >
-                검색
-              </button> -->
 
-              <!-- 삭제 버튼 -->
+          <!-- 삭제 버튼 -->
+          <div class="row">
+            <div class="col-md-6 d-flex justify-content-between">
               <button
-                type="button"
-                class="btn btn-danger btn-sm"
-                @click="removeCareerComponents(careerData.id)"
+                class="btn btn-danger flex-shrink-0"
+                @click.stop="removeCareerComponents(careerDatas.id)"
+                style="border-radius: 0.25rem"
               >
                 삭제
               </button>
@@ -541,12 +571,14 @@ import SearchPopup from "@/components/fo/user/common/SearchPopup.vue";
 import SearchCertificates from "../../../../components/fo/user/common/SearchCertificates.vue";
 import ResumeImageModalView from "./ResumeImageModalView.vue";
 import { onMounted, ref } from "vue";
+
 import store from "../../../../store";
 
 // 기본 정보
 const rsmImgOrgnlFn = ref(null);
 const rsmImgFileUrl = ref(null);
 const rsmFnlEdctnCode = ref("");
+const salaryOption = ref("");
 const rsmGrd = ref("");
 const rsmEs = ref("");
 const rsmTtl = ref("");
@@ -566,6 +598,8 @@ const selectedEducationIndex = ref(null);
 const educationsList = ref([]);
 // 경력
 const careerDatas = ref([]);
+// 단일 경력 항목 객체
+
 // 스킬
 const showSkillsModal = ref(false);
 const skillsData = ref([]);
@@ -586,6 +620,15 @@ const educationOptions = [
   { code: "did", name: "박사" },
   // Add more options as needed
 ];
+const addCareer = () => {
+  careerDatas.value.push({
+    id: careerDatas.value.length + 1, // Ensure unique ID for each career entry
+    entrprsName: "",
+    entrprsPstn: "",
+    entrprsJacDate: "",
+    entrprsRsgntnDate: "",
+  });
+};
 
 // 첫페이지 입장시 정보 받아오기(최종학력 코드 리스트 , 성별 코드 리스트 , 스킬 코드리스트 )
 onMounted(() => {
@@ -870,22 +913,46 @@ const removeEducation = (index) => {
 }; // removeEducation
 
 // 경력
-const addCareer = () => {
-  careerDatas.value.push({
-    entrprsName: "",
-    entrprsPstn: "",
-    entrprsJacDate: "",
-    entrprsRsgntnDate: "",
-  });
-}; // addCareer
 
-//const openSearchCareerModal = () => {
-// alert("현재 경력 부분 api가 없습니다. 직접 입력해주세요.");
-//}; // openSearchCareerModal
+// Method to calculate the experience in years and months
 
-const removeCareerComponents = (index) => {
-  careerDatas.value.splice(index, 1);
-}; // removeCareerComponents
+// 경험 업데이트 함수
+// 경험 업데이트 함수
+const calculateDuration = (entrprsJacDate, entrprsRsgntnDate) => {
+  // 날짜 값이 비어 있으면 0년 0개월 반환
+  if (!entrprsJacDate) return { years: 0, months: 0 };
+
+  // 퇴사일이 없으면 현재 날짜를 사용
+  const start = new Date(entrprsJacDate);
+  const end = entrprsRsgntnDate ? new Date(entrprsRsgntnDate) : new Date(); // 퇴사일이 없으면 현재 날짜로 처리
+
+  let years = end.getFullYear() - start.getFullYear();
+  let months = end.getMonth() - start.getMonth();
+
+  // 월 계산이 음수일 경우 연도를 하나 빼고, 월을 12로 보정
+  if (months < 0) {
+    years--;
+    months += 12;
+  }
+
+  return { years, months };
+};
+
+// 실시간 경력 계산 (각 경력 항목에 대해 계산)
+const calculatedDuration = (careerDatas) => {
+  return calculateDuration(
+    careerDatas.entrprsJacDate,
+    careerDatas.entrprsRsgntnDate
+  );
+};
+
+const removeCareerComponents = (id) => {
+  const index = careerDatas.value.findIndex((career) => career.id === id);
+  if (index !== -1) {
+    careerDatas.value.splice(index, 1);
+  }
+};
+// removeCareerComponents
 
 // 스킬
 const openSkillsModal = () => {
@@ -960,31 +1027,39 @@ const removeAttachment = (index) => {
   attachmentDatas.value.splice(index, 1);
 }; // removeAttachment
 
+// Form Validation
 const validateForm = () => {
+  // Validate Title
   if (rsmTtl.value.trim() === "") {
     alert("제목을 입력하세요.");
     return false;
   }
+  // Validate Name
   if (rsmName.value.trim() === "") {
     alert("이름을 입력하세요.");
     return false;
   }
+  // Validate Gender
   if (rsmGndrCode.value.trim() === "") {
     alert("성별을 선택하세요.");
     return false;
   }
+  // Validate Birth Date
   if (rsmBd.value.trim() === "" || !/^\d{8}$/.test(rsmBd.value.trim())) {
     alert("생년월일을 입력하세요. 8자리의 숫자만 입력 가능합니다.");
     return false;
   }
+  // Validate Mobile Number
   if (rsmMp.value.trim() === "" || !/^\d{11}$/.test(rsmMp.value.trim())) {
     alert("전화번호를 입력하세요. 11자리의 숫자만 입력 가능합니다.");
     return false;
   }
+  // Validate Address
   if (rsmAdrs.value.trim() === "") {
-    alert("주소을 입력하세요.");
+    alert("주소를 입력하세요.");
     return false;
   }
+  // Validate Email
   if (
     rsmEml.value.trim() === "" ||
     !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(rsmEml.value.trim())
@@ -996,21 +1071,39 @@ const validateForm = () => {
     );
     return false;
   }
-  if (rsmEs.value.trim() === "" || !/^\d+$/.test(rsmEs.value.trim())) {
+  // Validate Salary if "manual" is selected
+  if (salaryOption.value === "manual" && !rsmEs.value) {
     alert("희망연봉을 입력하세요. 숫자만 입력 가능합니다.");
     return false;
   }
+  // Validate Education Selection
   if (rsmFnlEdctnCode.value.trim() === "") {
     alert("최종학력을 선택해주세요.");
     return false;
   }
-  if (rsmGrd.value.trim() === "" || !/^\d+$/.test(rsmGrd.value.trim())) {
+  // Validate Grade Input if Required
+  if (
+    (rsmFnlEdctnCode.value === "jc" || rsmFnlEdctnCode.value === "unvrsty") &&
+    (rsmGrd.value.trim() === "" || !/^\d+$/.test(rsmGrd.value.trim()))
+  ) {
     alert("학점을 입력하세요. 숫자만 입력 가능합니다.");
     return false;
   }
   return true;
-}; // validateForm
+};
 
+// Handle Salary Option Change
+const handleSalaryOptionChange = () => {
+  // Check if High School is selected
+  const isHighschool = salaryOption.value === "hs";
+
+  // If High School is selected, hide or disable Grade input
+  if (isHighschool) {
+    rsmGrd.value = ""; // Clear the grade value if high school is selected
+  }
+};
+
+// Education Validation
 const validateEducationForm = () => {
   for (const education of educationsList.value) {
     if (education.schlName.trim() === "") {
@@ -1035,7 +1128,7 @@ const validateEducationForm = () => {
     }
   }
   return true;
-}; // validateEducationForm
+};
 
 const validateCareerForm = () => {
   for (const career of careerDatas.value) {
@@ -1093,47 +1186,29 @@ const validateSelfIntroductionForm = () => {
 </script>
 
 <style scoped>
-/* 각 항목 사이의 여백을 좀 더 넓게 */
-.career-item {
-  margin-bottom: 20px;
-}
-
-/* 버튼 스타일 */
-.career-item .btn {
-  padding: 6px 12px; /* 버튼 크기 조정 */
-  font-size: 0.9rem; /* 글자 크기 */
-  width: 100%;
-}
-
-/* 날짜 입력 칸이 일관되도록 세로로 쌓기 */
-.career-item .col-md-3 .d-flex {
-  width: 100%;
-}
-
-.career-item .form-control {
-  font-size: 0.9rem; /* 글자 크기 조정 */
-  padding: 8px 12px; /* 패딩 조정 */
-}
-
-/* 경력 항목 전체 여백 및 정렬 */
-.career-item .row {
-  margin: 0 -5px; /* 각 항목에 작은 여백 추가 */
-}
-
-.career-item .col-md-4 {
-  padding: 0 5px; /* 열 사이의 간격을 좁히기 */
-}
-
-/* 전체 폼 레이아웃 */
+/* General Form Layout */
 .contact-form {
   max-width: 100%;
   margin: 0 auto;
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  background-color: #f9f9f9;
 }
 
-/* 제목 인풋 스타일 */
+/* Section spacing */
+.form-section {
+  margin-bottom: 30px;
+}
+
+/* Header style for sections */
+h4 {
+  font-size: 1.25rem;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+/* Input Field styling */
 .custom-input {
   border: none !important;
   border-bottom: 1px solid #ced4da !important;
@@ -1144,7 +1219,7 @@ const validateSelfIntroductionForm = () => {
   margin-top: 20px;
 }
 
-/* 기존 form-group 스타일 */
+/* Form control input styles */
 .form-group input,
 .form-group select,
 .form-group textarea {
@@ -1156,23 +1231,28 @@ const validateSelfIntroductionForm = () => {
   font-size: 1rem;
 }
 
-/* 다른 기존 스타일은 그대로 유지 */
-.form-section {
-  margin-bottom: 30px;
+/* Adjust button style */
+.btn {
+  padding: 8px 12px;
+  font-size: 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
-h4 {
-  font-size: 1.25rem;
-  font-weight: bold;
-}
-
-hr.gradient {
-  border: 1px solid #007bff;
-  margin: 0;
-  width: 100%;
+.btn-primary,
+.btn-outline-danger {
   border-radius: 5px;
 }
 
+/* Button hover effects */
+.btn:hover,
+.btn-outline-danger:hover {
+  background-color: #e53935;
+  color: white;
+}
+
+/* Image container */
 .img-container {
   position: relative;
   width: 100%;
@@ -1187,78 +1267,52 @@ hr.gradient {
   cursor: pointer;
 }
 
-.imgIcon {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background-color: rgba(0, 0, 0, 0.5);
-  padding: 5px;
-  border-radius: 50%;
-  cursor: pointer;
-}
-
-.imgIcon i {
-  color: white;
-}
-
-/* 기타 스타일 계속 유지 */
-.form-check-label {
-  display: flex;
-  align-items: center;
-  margin-right: 20px;
-}
-
-.form-check-input {
-  margin-right: 5px;
-}
-
-.form-group input[type="text"],
-.form-group input[type="email"] {
-  border-radius: 5px;
-  border: 1px solid #ced4da;
-  padding: 10px;
+/* Date input fields */
+input[type="date"] {
+  padding: 12px;
   font-size: 1rem;
+  border-radius: 5px;
+  width: 100%;
+  margin: 10px 0;
 }
 
-.skill-container,
+/* Container for dynamic elements (career, education) */
 .career-item,
 .education-item,
 .certificate-item {
   margin-bottom: 20px;
+  padding: 15px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
 }
 
-.skill-item {
+.career-item .row,
+.education-item .row,
+.certificate-item .row {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
-.skill-item span {
-  font-size: 1rem;
+/* Each column inside dynamic form elements */
+.career-item .col-md-4,
+.education-item .col-md-4,
+.certificate-item .col-md-4 {
+  padding: 10px;
+  flex: 1 1 30%;
 }
 
-.skill-item .btn-outline-danger {
-  background-color: #e53935;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  padding: 5px 10px;
-  cursor: pointer;
-}
-
-.skill-item .btn-outline-danger:hover {
-  background-color: #c62828;
-}
-
+/* Buttons inside dynamic form elements */
 .career-item .btn-danger,
 .education-item .btn-danger,
 .certificate-item .btn-outline-danger {
   background-color: #e53935;
   color: white;
   border-radius: 5px;
-  border: none;
-  padding: 6px 12px;
+  padding: 8px 16px;
   cursor: pointer;
+  margin-top: 10px;
 }
 
 .career-item .btn-danger:hover,
@@ -1267,136 +1321,96 @@ hr.gradient {
   background-color: #c62828;
 }
 
-/* 기본 정보 입력란 스타일 */
-input[type="text"],
-input[type="email"],
-input[type="date"],
-select {
-  border: 1px solid #ced4da;
-  padding: 12px;
-  font-size: 1rem;
-  border-radius: 5px;
+/* Alignment of sections with add button */
+.career-item,
+.education-item,
+.certificate-item {
+  display: flex;
+  flex-direction: column;
 }
 
-/* 버튼 */
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 8px 12px;
-  font-size: 1rem;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.btn-primary {
-  background-color: #007bff;
-  color: white;
-  border: none;
-}
-
-.btn-primary:hover {
-  background-color: #0056b3;
-}
-
-.btn-outline {
-  background-color: transparent;
-  border: 2px solid #007bff;
-  color: #007bff;
-}
-
-.btn-outline:hover {
-  background-color: #007bff;
-  color: white;
-}
-
-/* 삭제 버튼 */
-.btn-outline-danger {
-  background-color: #f8d7da;
-  color: #721c24;
-  border: none;
-  padding: 5px 10px;
-  cursor: pointer;
-}
-
-.btn-outline-danger:hover {
-  background-color: #f5c6cb;
-}
-
-/* 각 섹션의 입력 필드 마진 */
-.form-group {
+.skill-container,
+.career-item,
+.education-item,
+.certificate-item {
+  display: flex;
+  flex-direction: column;
   margin-bottom: 15px;
 }
 
-.row.mt-3 {
-  margin-top: 1rem;
-}
-.btn-danger {
-  max-width: 50px;
-}
-.col-md-6,
-.col-md-4 {
-  padding: 5px;
-}
-
-.col-12 {
-  padding: 5px;
+/* Adjust row layout for inputs inside career/education/certificate */
+.career-item .row,
+.education-item .row,
+.certificate-item .row {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
-button {
-  margin: 0 0 5px 5px;
-}
-/* 학력 추가 버튼 스타일 */
-.education-item .btn-primary,
-.career-item .btn-primary,
-.certificate-item .btn-primary {
-  background-color: #007bff;
-  color: white;
+/* Form fields */
+input[type="text"],
+input[type="email"],
+input[type="number"],
+input[type="date"],
+select {
+  padding: 12px;
+  font-size: 1rem;
+  width: 100%;
+  border: 1px solid #ced4da;
   border-radius: 5px;
-  padding: 6px 12px;
+  margin: 10px 0;
 }
 
-.education-item .btn-primary:hover,
-.career-item .btn-primary:hover,
-.certificate-item .btn-primary:hover {
-  background-color: #0056b3;
+/* Styling for dynamic skill sections */
+.skill-container {
+  display: flex;
+  flex-direction: column;
 }
 
-.education-item .btn-danger {
-  margin-top: 10px;
-}
-
-/* 테이블 및 리스트 항목 마진 */
-.table td,
-.table th {
-  padding: 10px;
-  text-align: left;
-}
-
-/* 첨부파일 항목 */
-.attachment-item {
+.skill-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 10px;
-  background: #f9f9f9;
-  padding: 10px;
-  border-radius: 5px;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  margin: 5px 0;
 }
 
-.attachment-item button {
+/* Skill item remove button */
+.skill-item .btn-outline-danger {
   background-color: #e53935;
   color: white;
   border: none;
   padding: 5px 10px;
-  border-radius: 5px;
   cursor: pointer;
 }
 
-.attachment-item button:hover {
+.skill-item .btn-outline-danger:hover {
   background-color: #c62828;
 }
+
+/* Modal button style */
+.btn-circle {
+  width: 35px;
+  height: 35px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  padding: 0;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+}
+
+.btn-circle i {
+  font-size: 1rem;
+}
+
+/* Alignment for the file input */
+input[type="file"] {
+  display: none;
+}
+
 /* 모바일 뷰 */
 @media (max-width: 767px) {
   .contact-form {

@@ -1,165 +1,187 @@
 <template>
   <div v-if="isVisible" class="modal-overlay">
     <div class="modal-content">
-      <button class="btn-close" @click="$emit('update:isVisible', false)">×</button>
+      <button class="btn-close" @click="$emit('update:isVisible', false)">
+        ×
+      </button>
       <div class="modal-body">
         <div class="row">
           <div class="input-group mb-3">
-            <input type="text" v-model="searchTerm" class="form-control" placeholder="검색어를 입력해주세요.">
-            <div class="btn btn-primary" @click="$emit('setResult', searchTerm)">직접입력</div>
+            <input
+              type="text"
+              v-model="searchTerm"
+              class="form-control"
+              placeholder="검색어를 입력해주세요."
+            />
+            <div
+              class="btn btn-primary"
+              @click="$emit('setResult', searchTerm)"
+            >
+              직접입력
+            </div>
             <div class="btn btn-primary" @click="doNewSearch">검색</div>
-            <div class="btn btn-primary" @click="$emit('update:isVisible', false)">취소</div>
+            <div
+              class="btn btn-primary"
+              @click="$emit('update:isVisible', false)"
+            >
+              취소
+            </div>
           </div>
         </div>
+
         <section class="call-to-action with-full-borders mb-2">
           <div class="row col-sm-12 col-lg-12">
-            <!-- 자료없을때 예외 -->
-            <div v-if="searchResult.length == 0">
-              <strong class="font-weight-extra-bold"> 검색결과가 없습니다.</strong>
+            <!-- 검색결과 없을 때 예외 -->
+            <div v-if="searchResult.length === 0">
+              <strong class="font-weight-extra-bold"
+                >검색결과가 없습니다.</strong
+              >
             </div>
-            <!-- 자료있을때 for -->
+
+            <!-- 검색 결과 있을 때 -->
             <div v-else class="list-wrap">
-              <ul class="list-group" v-for="(item, index) in searchResult" :key="index">
-                <li class="list-group-item d-flex justify-content-between align-items-center">
+              <ul class="list-group">
+                <li
+                  v-for="(item, index) in searchResult"
+                  :key="index"
+                  class="list-group-item d-flex justify-content-between align-items-center"
+                >
                   {{ item.schoolName + " (" + item.campusName + ")" }}
-                  <button type="button" class="btn btn-primary" @click="selectSchool(item)">선택</button>
+                  <button
+                    type="button"
+                    class="btn btn-primary"
+                    @click="selectSchool(item)"
+                  >
+                    선택
+                  </button>
                 </li>
               </ul>
             </div>
           </div>
+
+          <!-- 페이징 처리 -->
           <div class="row" id="pagination-container">
-            <div class="pagination-wrapper" v-if="paginationData.totalPageCount > 1">
-              <!-- <BasePagination :currentPage="currentPage" :goToPage="goToPage" :totalPages="totalPages"/> -->
-              <PaginationData :paginationData="paginationData" @change-page-no="changePageNo" style="margin: 0 auto;" />
+            <div
+              class="pagination-wrapper"
+              v-if="paginationData.totalPageCount > 1"
+            >
+              <PaginationData
+                :paginationData="paginationData"
+                @change-page-no="changePageNo"
+                style="margin: 0 auto"
+              />
             </div>
           </div>
         </section>
       </div>
     </div>
   </div>
-
-
-
-
-
 </template>
 
 <script setup>
-import { defineProps, reactive, ref, onMounted, watch } from 'vue';
-import { api } from '@/axios.js';
+import { defineProps, reactive, ref, onMounted, watch } from "vue";
+import { api } from "@/axios.js";
 import PaginationData from "@/components/fo/enterprise/common/PaginationData.vue";
 /* eslint-disable */
 
 // emits 선언
-const emit = defineEmits(['update:isVisible', 'setResult']);
+const emit = defineEmits(["update:isVisible", "setResult"]);
 
-//속성선언  
+// 속성선언
 const props = defineProps({
-  isVisible: Boolean
+  isVisible: Boolean,
 });
-//검색 타입 선언 (ex> 학력 : SCHOOL , 직업 : JOB_VIEW)
-const searchType = 'SCHOOL';
-//검색어 변수 선언
-const searchTerm = ref('');
-//검색결과 변수 선언
+// 검색 타입 선언 (ex> 학력 : SCHOOL , 직업 : JOB_VIEW)
+const searchType = "SCHOOL";
+// 검색어 변수 선언
+const searchTerm = ref("");
+// 검색결과 변수 선언
 const searchResult = ref([]);
 
-//페이징 관련 변수 선언
-// const currentPage = ref('1');
-// const totalPages = ref('');
-
+// 페이징 관련 변수 선언
 const paginationData = reactive({
   pageNo: 1, // 현재 페이지 번호
   totalPageCount: 0, // 총 페이지 수
   startNumOfPageGroups: 1, // 현재 페이지 그룹의 시작 번호
   endNumOfPageGroups: 5, // 현재 페이지 그룹의 끝 번호 (예: 1~5)
-  showPageGroupsCount: 5 // 한 페이지 그룹에서 보여줄 페이지 수
+  showPageGroupsCount: 5, // 한 페이지 그룹에서 보여줄 페이지 수
 });
 
-watch(() => props.isVisible, (newVal) => {
-  if (newVal) {
-    initPage(); // 모달이 열릴 때 초기화
-    performSearch(); // 첫 검색 수행
-  }
-});
-
-onMounted(
-  async () => {
-    try {
-      const url = `http://www.career.go.kr/cnet/openapi/getOpenApi?apiKey=b5e83526a03f37b8349141b21fa2f6e7&svcType=api&svcCode=` + "SCHOOL" + `&contentType=json&perPage=5&gubun=univ_list&searchSchulNm=` + searchTerm.value + '&thisPage=1';
-      api.$get(url).then(response => {
-        console.log('Search response:', response);
-        searchResult.value = response.dataSearch.content;
-        if (response.dataSearch.content.length > 0) {
-          const totalCount = response.dataSearch.content[0].totalCount; // 전체 데이터 수
-          paginationData.totalPageCount = Math.ceil(totalCount / 5); // 총 페이지 수 계산
-          paginationData.endNumOfPageGroups = Math.min(paginationData.showPageGroupsCount, paginationData.totalPageCount); // 페이지 그룹 끝 번호 설정
-        } else {
-          initPage(); // 검색 결과가 없으면 초기화
-        }
-      }).catch(error => {
-        console.error('Error searching:', error);
-      });
-    } catch (error) {
-      console.error('Error searching:', error);
+watch(
+  () => props.isVisible,
+  (newVal) => {
+    if (newVal) {
+      initPage(); // 모달이 열릴 때 초기화
+      performSearch(); // 첫 검색 수행
     }
   }
 );
 
-//검색 함수
+onMounted(() => {
+  // 처음 로드 시 대학교와 고등학교 검색을 동시에 시작
+  performSearch();
+});
+
+// 검색 함수 (대학교, 고등학교 동시에)
 const performSearch = () => {
-  const url = `http://www.career.go.kr/cnet/openapi/getOpenApi?apiKey=b5e83526a03f37b8349141b21fa2f6e7&svcType=api&svcCode=${searchType}&contentType=json&perPage=5&gubun=univ_list&searchSchulNm=${searchTerm.value}&thisPage=${paginationData.pageGroupsOfCurrentPage}`;
+  const urlForUniversity = `http://www.career.go.kr/cnet/openapi/getOpenApi?apiKey=b5e83526a03f37b8349141b21fa2f6e7&svcType=api&svcCode=SCHOOL&contentType=json&perPage=5&gubun=univ_list&searchSchulNm=${searchTerm.value}&thisPage=${paginationData.pageNo}`;
+  const urlForHighSchool = `http://www.career.go.kr/cnet/openapi/getOpenApi?apiKey=b5e83526a03f37b8349141b21fa2f6e7&svcType=api&svcCode=SCHOOL&contentType=json&perPage=5&gubun=high_list&searchSchulNm=${searchTerm.value}&thisPage=${paginationData.pageNo}`;
 
-  api.$get(url).then(response => {
-    console.log('Search response:', response);
-    searchResult.value = response.dataSearch.content;
-    if (response.dataSearch.content.length > 0) {
-      const totalCount = response.dataSearch.content[0].totalCount;
-      paginationData.totalPageCount = Math.ceil(totalCount / 5); // 5개씩 페이지 나눔
-      // 페이지 그룹 끝 번호 조정
-      paginationData.endNumOfPageGroups = Math.min(paginationData.startNumOfPageGroups + 4, paginationData.totalPageCount);
-    } else {
-      initPage();
-    }
-  }).catch(error => {
-    console.error('Error searching:', error);
-  });
-};
-const highformSearch = () => {
-  const url = `http://www.career.go.kr/cnet/openapi/getOpenApi?apiKey=b5e83526a03f37b8349141b21fa2f6e7&svcType=api&svcCode=${searchType}&contentType=json&perPage=5&gubun=high_list&searchSchulNm=${searchTerm.value}&thisPage=${paginationData.pageGroupsOfCurrentPage}`;
+  // 대학교 데이터 가져오기
+  api
+    .$get(urlForUniversity)
+    .then((response) => {
+      console.log("University Search response:", response);
+      // 대학교 결과 처리
+      searchResult.value = response.dataSearch.content;
 
-  api.$get(url).then(response => {
-    console.log('Search response:', response);
-    searchResult.value = response.dataSearch.content;
-    if (response.dataSearch.content.length > 0) {
-      const totalCount = response.dataSearch.content[0].totalCount;
-      paginationData.totalPageCount = Math.ceil(totalCount / 5); // 5개씩 페이지 나눔
-      // 페이지 그룹 끝 번호 조정
-      paginationData.endNumOfPageGroups = Math.min(paginationData.startNumOfPageGroups + 4, paginationData.totalPageCount);
-    } else {
-      initPage();
-    }
-  }).catch(error => {
-    console.error('Error searching:', error);
-  });
+      // 고등학교 데이터 가져오기
+      api
+        .$get(urlForHighSchool)
+        .then((response) => {
+          console.log("High School Search response:", response);
+          // 고등학교 결과를 기존 대학교 결과에 추가
+          searchResult.value = searchResult.value.concat(
+            response.dataSearch.content
+          );
+
+          if (response.dataSearch.content.length > 0) {
+            const totalCount = response.dataSearch.content[0].totalCount; // 전체 데이터 수
+            paginationData.totalPageCount = Math.ceil(totalCount / 5); // 총 페이지 수 계산
+            paginationData.endNumOfPageGroups = Math.min(
+              paginationData.showPageGroupsCount,
+              paginationData.totalPageCount
+            ); // 페이지 그룹 끝 번호 설정
+          } else {
+            initPage(); // 검색 결과가 없으면 초기화
+          }
+        })
+        .catch((error) => {
+          console.error("Error searching for high school:", error);
+        });
+    })
+    .catch((error) => {
+      console.error("Error searching for university:", error);
+    });
 };
-//검색 새로 실시 할때
+
+// 검색 버튼 클릭 시
 const doNewSearch = () => {
-  paginationData.pageGroupsOfCurrentPage = 1;
-  performSearch(),highformSearch();
-}
+  paginationData.pageNo = 1; // 페이지 초기화
+  searchResult.value = []; // 기존 검색 결과 초기화
+  performSearch(); // 대학교와 고등학교 검색 동시에 실행
+};
 
+// 학교 선택 함수
 const selectSchool = (item) => {
   console.log(item);
-  emit('setResult', item);
+  emit("setResult", item);
   searchResult.value = [];
-} // selectSchool
+};
 
-
-//페이징 함수 (자식 컴포넌트가 호출)
+// 페이징 함수 (자식 컴포넌트가 호출)
 const changePageNo = (changePageNo) => {
-  paginationData.pageGroupsOfCurrentPage = changePageNo; // 현재 페이지를 변경
-  paginationData.pageNo = changePageNo;
+  paginationData.pageNo = changePageNo; // 현재 페이지를 변경
 
   // 페이지 그룹 업데이트
   if (paginationData.endNumOfPageGroups < changePageNo) {
@@ -174,12 +196,15 @@ const changePageNo = (changePageNo) => {
   performSearch();
 };
 
-//페이지 초기화 함수
+// 페이지 초기화 함수
 const initPage = () => {
   paginationData.startNumOfPageGroups = 1;
-  paginationData.endNumOfPageGroups = Math.min(5, paginationData.totalPageCount);
-  paginationData.pageGroupsOfCurrentPage = 1;
-  paginationData.totalPageCount = 0; 
+  paginationData.endNumOfPageGroups = Math.min(
+    5,
+    paginationData.totalPageCount
+  );
+  paginationData.pageNo = 1;
+  paginationData.totalPageCount = 0;
   searchResult.value = []; // 검색 결과 초기화
 };
 </script>
@@ -241,7 +266,6 @@ const initPage = () => {
 }
 
 @keyframes shake {
-
   0%,
   100% {
     transform: translateX(0);

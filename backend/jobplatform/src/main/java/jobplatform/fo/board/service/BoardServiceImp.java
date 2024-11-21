@@ -5,6 +5,8 @@ import jobplatform.fo.board.mapper.BoardMapper;
 import jobplatform.fo.sample.util.Header;
 import jobplatform.fo.sample.util.Pagination;
 import jobplatform.fo.sample.util.Search;
+import jobplatform.fo.sample.util.Sort;
+import jobplatform.fo.sample.util.Selection;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +25,10 @@ public class BoardServiceImp implements BoardService{
     }
 
     @Override
-    public Header<List<BoardEntity>> List(int page, int size, Search search,String brdTypCode) {
+    public Header<List<BoardEntity>> List(int page, int size, Search search,String brdTypCode, Sort sort, Selection selection) {
+    	
+    	boardMapper.updateBoardCondition(); // 답글없이 3일지난 게시글을 미해결로 바꿔줌.
+    	
         HashMap<String, Object> paramMap = new HashMap<>();
 
         // 페이지 계산
@@ -39,22 +44,33 @@ public class BoardServiceImp implements BoardService{
             paramMap.put("sk", search.getSk());
             paramMap.put("sv", search.getSv());
         }
-        System.out.println(brdTypCode);
+
+        // 정렬이 선택되었을 때만 파라미터 추가
+        if (sort.getSort() !=null && !sort.getSort().isEmpty()){
+            paramMap.put("sort", sort.getSort());
+        }
+        
+        // 채택여부 정렬이 선택되었을 때만 파라미터 추가
+        if (selection.getSelection() !=null && !selection.getSelection().isEmpty()){
+            paramMap.put("selection", selection.getSelection());
+        }
+
+        
         if (brdTypCode != null && !brdTypCode.isEmpty()) {
-            System.out.println("출력되고있어"+brdTypCode);
+
 
             paramMap.put("brdTypCode", brdTypCode);
         }
-        System.out.println("보드서비스 : " + paramMap);
+
         // 데이터 가져오기
         List<BoardEntity> boardList = boardMapper.findAll(paramMap);
-        System.out.println("abc" + boardList);
 
         int totalCount = boardMapper.getBoardTotalCount(paramMap);
-        System.out.println("ㅁㄴㅇㄴㅁㅇ" + totalCount);
+
         Pagination pagination = new Pagination(totalCount, page, size, 10);
 
         return Header.OK(boardList, pagination);
+        
     }
 
     @Override
@@ -74,6 +90,13 @@ public class BoardServiceImp implements BoardService{
     public int destroy(int brdSq) {
         boardMapper.deleteOne(brdSq);
         return 0;
+    }
+    
+    @Override
+    public int selectSelfRecommendation(int brdSq) {
+        int result = boardMapper.selectSelfRecommendation(brdSq);
+        return result;
+        
     }
 
 }

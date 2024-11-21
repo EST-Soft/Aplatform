@@ -16,15 +16,26 @@ import jobplatform.fo.enterprise.domain.entity.ApplyEntity;
 import jobplatform.fo.enterprise.domain.entity.EnterMemberEntity;
 import jobplatform.fo.enterprise.domain.entity.JobPostingEntity;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 @Repository
 public interface JobPostingRepository extends JpaRepository<JobPostingEntity, Long>{
 	
 
-	// 공고 리스트 조회 및 정렬
+	// 전체 공고 리스트 조회 및 정렬
     @Query("SELECT j FROM JobPostingEntity j ORDER BY "
-            + "CASE WHEN :sortBy = 'hits' THEN j.hits END DESC, "
-            + "CASE WHEN :sortBy = 'regstrStrtDtm' THEN j.regstrStrtDtm END DESC")
+    + "CASE WHEN :sortBy = 'hits' THEN j.hits END DESC, "
+    + "CASE WHEN :sortBy = 'regstrStrtDtm' THEN j.regstrStrtDtm END DESC")
     List<JobPostingEntity> findAllJobPostings(@Param("sortBy") String sortBy);
+
+    // 특정 회사의 공고 리스트 조회 및 정렬 
+    @Query("SELECT j FROM JobPostingEntity j WHERE j.enterpriseMember.entrprsSq = :entrprsSq ORDER BY "
+    + "CASE WHEN :sortBy = 'hits' THEN j.hits END DESC, "
+    + "CASE WHEN :sortBy = 'regstrStrtDtm' THEN j.regstrStrtDtm END DESC")
+    List<JobPostingEntity> findByEntrprsSq(@Param("entrprsSq") Long entrprsSq, @Param("sortBy") String sortBy);
+
+
+
 	
     // 조회수 증가
 	@Modifying
@@ -44,9 +55,13 @@ public interface JobPostingRepository extends JpaRepository<JobPostingEntity, Lo
         List<JobPostingEntity> findTop3ByOrderByHitsDesc();
 
 
-
-
-	
+    //마감일 연장 
+    @Modifying
+    @Query("UPDATE JobPostingEntity j SET j.regstrDlnDtm = :newDeadline WHERE j.jbpSq = :jbpSq")
+    int extendDeadline(@Param("jbpSq") Long jbpSq, @Param("newDeadline") LocalDate newDeadline);
+    
+    
+    
 
 
 }

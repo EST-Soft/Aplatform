@@ -39,7 +39,8 @@
 		   entrprs_pic_name,
 		   entrprs_pic_mp,
 		   entrprs_pic_eml,
-		   entrprs_zip_code
+		   entrprs_zip_code,
+		   logo_file_url
 		from p3_tbl_enterprise_member_m 
 		where entrprs_sq =#{entrprsSq};
 		   
@@ -63,7 +64,8 @@
 		entrprs_pic_name = #{entrprsPicName},
 		entrprs_pic_mp = #{entrprsPicMp},
 		entrprs_pic_eml = #{entrprsPicEml},
-		entrprs_zip_code = #{entrprsZipCode}
+		entrprs_zip_code = #{entrprsZipCode},
+		logo_file_url = #{logoFileUrl}
 		where
 		entrprs_sq = #{entrprsSq}
 	</update>

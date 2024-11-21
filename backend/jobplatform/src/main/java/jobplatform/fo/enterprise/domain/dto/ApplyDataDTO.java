@@ -16,7 +16,7 @@ public class ApplyDataDTO {
 			// 공고 순번
 			private Long jbp_sq;
 			// 지원 일시
-			private LocalDateTime apy_dtm;
+			private Timestamp apy_dtm;
 			//지원 상태
 			private String apy_cndtn;
 			//기업 열람 일시

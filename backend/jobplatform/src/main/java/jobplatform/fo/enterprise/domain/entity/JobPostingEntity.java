@@ -128,8 +128,12 @@ public class JobPostingEntity {
     @Column(name = "use_yn", nullable = false)
     @Enumerated(EnumType.STRING)
     private YesNo useYn = YesNo.Y;
+<<<<<<< HEAD
 
  
 
 
 }
+=======
+}
+>>>>>>> 58ab0f1bab39a51ff54013fbc41654e6b3f41c97

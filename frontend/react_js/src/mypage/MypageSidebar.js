@@ -76,4 +76,11 @@ const MypageSidebar = () => {
   );
 };
 
+<<<<<<< HEAD
 export default MypageSidebar;
+=======
+
+    
+
+    export default MypageSidebar;
+>>>>>>> 58ab0f1bab39a51ff54013fbc41654e6b3f41c97

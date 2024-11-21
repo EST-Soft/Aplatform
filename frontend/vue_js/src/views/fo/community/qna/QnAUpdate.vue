@@ -77,6 +77,7 @@ import { showAlert, showConfirm } from "../../../../utill/utillModal";
 import { useStore } from "vuex";
 import Quill from "quill";
 import "quill/dist/quill.snow.css";
+import Filter from 'badwords-ko'
 
 const router = useRouter();
 const route = useRoute();
@@ -127,12 +128,26 @@ const loadBoard = async () => {
 };
 
 const updateBoard = async () => {
+  const filter = new Filter();
   const contentHtml = quillInstance.value.root.innerHTML.trim();
 
   // 빈 태그를 제거하는 정규식: 빈 h2, p 등의 태그를 처리
   const sanitizedContent = contentHtml
     .replace(/<h2><br><\/h2>|<p><br><\/p>/g, "")
     .trim();
+
+  const isProfaneTitle = filter.isProfane(board.value.brdTtl);
+  const isProfaneContent = filter.isProfane(sanitizedContent);
+
+  if (isProfaneTitle) {
+    showAlert("사용할 수 없는 단어가 제목에 포함되어 있습니다. 제목을 수정해주세요.");
+    return;
+  }
+
+  if (isProfaneContent) {
+    showAlert("사용할 수 없는 단어가 내용에 포함되어 있습니다. 내용을 수정해주세요.");
+    return;
+  }
 
   if (!board.value.brdTtl || !sanitizedContent) {
     showAlert(!board.value.brdTtl ? "제목을 입력하세요" : "내용을 입력하세요");

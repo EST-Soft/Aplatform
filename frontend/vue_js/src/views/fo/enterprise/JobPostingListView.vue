@@ -85,23 +85,52 @@
             </div>
           </div>
           <div class="list-body">
-            <div v-if="paginatedItems.length > 0">
-              <div v-for="(item, idx) in paginatedItems" :key="idx" class="custom" >
-                <router-link :to="`/board/detail/jobPosting/${item.jbpSq}`" class="routerLink">
-                  <div style="font-size: 38px;">{{ item.jbpTtl }}</div>
-                  <div style="font-size: 23px">{{ item.enterpriseMember.entrprsName }}</div>
-                  <div style="font-size: 18px">{{ formatWorkArea(item.workArea) }}&nbsp;/&nbsp;{{ getCareerText(item.crrDrtn) }}&nbsp;/&nbsp;{{ getEducationText(item.edctn) }}&nbsp;/&nbsp;{{ formatJobName(item.jobName) }}</div>
-                
-                </router-link>
-              </div>
+          <div v-if="paginatedItems.length > 0">
+            <div class="row">
+              <div v-for="(item, idx) in paginatedItems" :key="idx" class="custom col-md-3">
+              <router-link :to="`/board/detail/jobPosting/${item.jbpSq}`" class="routerLink" 
+                 @mouseover="showDetails(idx)" @mouseleave="hideDetails(idx)">
+              <!-- 프로필 이미지와 D-Day -->
+             <div class="profile-image-container" v-if="hoveredItem !== idx">
+              <div class="profile-image">
+              <!-- logoFileUrl이 없으면 대체 이미지 표시 -->
+              <img v-if="item.enterpriseMember.logoFileUrl" :src="item.enterpriseMember.logoFileUrl" alt="Company Logo" />
+              <img v-else src="@/assets/alterimage.png" alt="Default Logo" /> <!-- 대체 이미지 -->
             </div>
+              <!-- D-Day 라벨 -->
+            <div v-if="item.regstrDlnDtm" class="d-day">
+              D-{{ calculateDDay(item.regstrDlnDtm) }}
+            </div>
+            </div>
+      
+              <!-- 조회수 및 스크랩 아이콘 - hover 시에만 보임 -->
+            <div v-if="hoveredItem === idx" class="details-overlay">
+             <div>
+              <label class="form-label" :style="{ fontSize: hoveredItem === idx ? '18px' : '12px' }">
+            <img src="@/assets/eye-removebg-preview.png" alt="eye image" class="small-image"> {{ item.hits }}
+          </label>
+             </div>
+             <img v-bind:src="item.isScraped ? require('@/assets/sht.png') : require('@/assets/bht.png')" 
+             alt="Heart Image" class="small-heart-image">
+            </div>
+      
+              <!-- 타이틀과 기타 정보 - hover 시 숨김 -->
+            <div v-if="hoveredItem !== idx" style="font-size: 20px;">{{ item.jbpTtl }}</div>
+            <div v-if="hoveredItem !== idx" style="font-size: 16px">{{ item.enterpriseMember.entrprsName }}</div>
+            <div v-if="hoveredItem !== idx" style="font-size: 14px">
+            {{ formatWorkArea(item.workArea) }}&nbsp;/&nbsp;{{ getCareerText(item.crrDrtn) }}&nbsp;/&nbsp;{{ getEducationText(item.edctn) }}&nbsp;/&nbsp;{{ formatJobName(item.jobName) }}
+             </div>
+            </router-link>
+          </div>
+        </div>
+      </div>
             <!-- 검색 결과가 없을 때 표시될 메시지 -->
             <div v-else class="text-center py-5">
               <p class="text-muted">결과가 없습니다.</p>
             </div>
           </div>
-        </div>
-        <div class="pagenation-wrapper">
+         </div>
+         <div class="pagenation-wrapper">
           <BasePagination :currentPage="state.currentPage" :totalPages="totalPages" @goToPage="goToPage" />
         </div>
       </div>
@@ -117,16 +146,13 @@ import SearchComponent from '@/components/fo/enterprise/SearchComponent.vue';
 import moment from 'moment';
 import{ useStore } from "vuex";
 
-
-
-
 const store = useStore();
-// const enterprise = computed(() => store.getters.enterMember);
+
 
 const state = reactive({
   items: [],
   currentPage: 1,
-  itemsPerPage: 10
+  itemsPerPage: 12
 });
 
 const sortOption = ref('regstrStrtDtm');
@@ -370,6 +396,30 @@ const getEducationText = (value) => {
 const getCareerText = (value) => {
   return careerMapping[value] || value;
 };
+
+//d-day계산 함수 
+const calculateDDay = (regstrDlnDtm) => {
+  const today = moment().startOf('day'); // 오늘 날짜 (시간 제외)
+  const due = moment(regstrDlnDtm).startOf('day'); // 마감일 (시간 제외)
+  const daysLeft = due.diff(today, 'days'); // 날짜 차이 계산
+  
+  return daysLeft >= 0 ? daysLeft : 0; // 남은 일수를 반환, 만약 마감일이 지나면 0을 반환
+};
+
+
+// 마우스 오버 시 표시될 항목 인덱스 추적
+const hoveredItem = ref(null);
+
+// 마우스를 올렸을 때 조회수와 스크랩을 표시
+const showDetails = (idx) => {
+  hoveredItem.value = idx;
+};
+
+// 마우스를 내렸을 때 표시된 정보 숨기기
+const hideDetails = () => {
+  hoveredItem.value = null;
+};
+
 </script>
 
 <style scoped>
@@ -399,11 +449,75 @@ const getCareerText = (value) => {
 }
 
 
+/* 아이템들이 4개씩 한 줄에 표시되도록 수정 */
 .row {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
+  gap: 15px; /* 아이템 사이의 간격 설정 */
 }
+
+.custom {
+  background-color: #ffffff;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  width: 100%;
+  border: 1px solid #002C7B;
+  text-align: left;
+  position: relative; /* 자식 요소의 absolute 위치 조정을 위해 relative 설정 */
+  height: auto;
+}
+
+.custom .profile-image {
+  width: 230px;
+  height: 180px;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.custom .profile-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* 이미지가 영역을 꽉 채우도록 설정 */
+}
+
+/* flexbox로 아이템들을 4개씩 나누기 */
+.col-md-3 {
+  flex: 1 1 22%; /* 한 줄에 4개의 아이템이 배치되도록 설정 (1/4로 설정) */
+  max-width: 22%;
+}
+
+/* 화면 크기가 작아지면 (모바일) 한 줄에 하나만 표시되도록 설정 */
+@media (max-width: 768px) {
+  .custom {
+    flex-direction: column; /* 세로로 배치 */
+    align-items: center; /* 아이템을 중앙 정렬 */
+    text-align: center; /* 텍스트를 중앙 정렬 */
+  }
+
+  .custom .profile-image {
+    margin-right: 0; /* 모바일에서는 이미지와 텍스트 사이 간격 제거 */
+    margin-bottom: 10px; /* 이미지와 텍스트 간격 추가 */
+  }
+
+  .col-md-3 {
+    flex: 1 1 100%; /* 한 줄에 하나만 표시 */
+    max-width: 100%; /* 한 줄에 하나만 표시 */
+  }
+
+  .routerLink {
+    width: 100%; /* 모바일 화면에서 버튼이 전체 너비를 차지하게 설정 */
+    box-sizing: border-box; /* padding이 width에 포함되도록 설정 */
+    text-align: center; /* 텍스트 중앙 정렬 */
+  }
+
+  /* 모바일에서 hover 스타일 대체: active 상태로 대체 */
+  .routerLink:active {
+    background-color: rgba(0, 0, 0, 0.1); /* 클릭 시 배경색 변경 */
+  }
+}
+
 
 .search-options {
   margin-top: 20px;
@@ -467,14 +581,83 @@ const getCareerText = (value) => {
   margin-bottom: 50px;
 }
 
-.routerLink{
-  color: black; /* 기본 텍스트 색상 */
-  text-decoration: none; /* 밑줄 제거 */
+.router-link {
+  display: inline-block;
+  padding: 10px 20px;
+  font-size: 16px;
+  text-decoration: none;
+  box-sizing: border-box; /* padding, border 포함하여 크기 고정 */
+  transition: all 0.3s ease; /* 부드러운 전환 효과 */
 }
 
-.routerLink:hover {
-  color: black; /* 호버 시 색상 변경 */
-  text-decoration: none; /* 호버 시에도 밑줄 제거 */
+.router-link:hover {
+  background-color: #ddd; /* 마우스 오버 시 배경색 변경 */
+  transform: none; /* 크기나 위치 변화 방지 */
+}
+
+.details-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  font-size: 12px;
+  padding: 10px;
+  border-radius: 5px;
+  text-align: center;
+}
+
+.profile-image-container {
+  position: relative; /* D-Day를 절대 위치로 설정할 수 있도록 */
+  display: inline-block; /* 프로필 이미지와 D-Day 라벨이 같은 블록 내에 있도록 */
+  transition: 0.3s ease; /* 마우스 오버 시 부드러운 애니메이션 */
+}
+
+.profile-image {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin-bottom: 10px;
+  position: relative;
+}
+
+.profile-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: opacity 0.3s ease; /* 이미지 어두워지기 효과 */
+}
+
+/* 마우스 오버 시 이미지 어두워지기 */
+.profile-image-container:hover .profile-image img {
+  opacity: 0.6; /* 이미지를 어둡게 만듬 */
+}
+
+
+/* D-Day 라벨은 숨기기 */
+.d-day {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  font-size: 12px;
+  padding: 5px;
+  border-radius: 5px;
+}
+
+.small-image {
+  width: 48px; /* 원하는 너비로 조정 */
+  height: 48px; /* 원하는 높이로 조정 */
+}
+
+.small-heart-image {
+  width: 48px; /* 원하는 너비로 조정 */
+  height: 48px; /* 원하는 높이로 조정 */
 }
 
 </style>

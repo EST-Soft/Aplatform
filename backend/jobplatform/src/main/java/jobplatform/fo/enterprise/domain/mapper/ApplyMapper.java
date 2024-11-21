@@ -14,15 +14,16 @@ import jobplatform.fo.enterprise.domain.vo.ApplyListVO;
 
 @Mapper
 public interface ApplyMapper {
-	
-	// 총 지원자 숫자 받아오기
-	int loadApplyListCount(ApplySearchDataDTO searchListDataDTO) throws SQLException, IOException;
-	// 지원자 리스트 얻기
-	List<ApplyListVO> selectApplyListData(Map<String, Object> map) throws SQLException, IOException;
-	// 지원자 디테일 데이터 얻기
-	ApplyDetailDataVO selectApplyDetailData(int apy_sq) throws SQLException, IOException;
-	// 지원자 상태 변경
-	int updateApplyCondition(ApplyConditionDataDTO applyConditionDataDTO) throws SQLException, IOException;
+    
+    // 지원자 목록 갯수 조회
+    int loadApplyListCount(ApplySearchDataDTO applySearchDataDTO);
 
-
+    // 지원자 목록 조회 (map -> jbp_sq가 long으로 변경)
+    List<ApplyListVO> selectApplyListData(ApplySearchDataDTO applySearchDataDTO); // jbp_sq의 타입을 long으로 수정
+    
+    // 지원자 디테일 데이터 얻기
+    ApplyDetailDataVO selectApplyDetailData(long apy_sq) throws SQLException, IOException;
+    
+    // 지원자 상태 변경
+    int updateApplyCondition(ApplyConditionDataDTO applyConditionDataDTO) throws SQLException, IOException;
 }

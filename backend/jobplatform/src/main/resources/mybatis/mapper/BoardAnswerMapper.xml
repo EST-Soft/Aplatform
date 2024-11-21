@@ -13,6 +13,7 @@
     <result property="answrCntnt" column="answr_cntnt" />   <!-- 답변 내용 -->
     <result property="answrHits" column="answr_hits" /> <!-- 답변 조회수 -->
     <result property="answrRcmndtns" column="answr_rcmndtns" /> <!-- 답변 추천수 -->
+    <result property="answrNotRcmndtns" column="answr_not_rcmndtns" /> <!-- 답변 비추천수 -->
     <result property="answrSlctnYn" column="answr_slctn_yn" />  <!-- 답변 채택 여부  -->
     <result property="insrtDtm" column="insrt_dtm" />   <!-- 등록 일시 -->
     <result property="updtDtm" column="updt_dtm" /> <!-- 수정 일시 -->
@@ -66,7 +67,7 @@ INSERT INTO P3_TBL_BOARD_ANSWER (
     LEFT JOIN
     p3_tbl_enterprise_member_m e ON a.entrprs_sq = e.entrprs_sq
     WHERE brd_sq = #{brdSq} and a.dlt_yn = 'N'
-    ORDER BY answr_slctn_yn DESC, answr_sq DESC
+    ORDER BY answr_slctn_yn DESC, a.answr_rcmndtns DESC, a.answr_sq DESC
     LIMIT #{page}, #{size}
 </select>
 
@@ -97,6 +98,14 @@ INSERT INTO P3_TBL_BOARD_ANSWER (
     answr_sq = #{answrSq}
 </update>
 
+<update id="updateNotRcmndtns">
+    UPDATE P3_TBL_BOARD_ANSWER
+    SET
+    answr_not_rcmndtns = answr_not_rcmndtns + #{value}
+    WHERE
+    answr_sq = #{answrSq}
+</update>
+
 <insert id="insertRecommendation" useGeneratedKeys="true" >
     INSERT INTO P3_TBL_BOARD_ANSWER_RECOMMENDATION(
         answr_sq,
@@ -109,8 +118,25 @@ INSERT INTO P3_TBL_BOARD_ANSWER (
     )
 </insert>
 
+<insert id="insertNotRecommendation" useGeneratedKeys="true" >
+    INSERT INTO P5_TBL_BOARD_ANSWER_NOTRECOMMENDATION(
+        answr_sq,
+        mbr_sq,
+        notrcmndtns_dtm
+    ) VALUES (
+        #{answrSq},
+        #{mbrSq},
+        NOW()
+    )
+</insert>
+
 <select id="checkRecommendation">
     SELECT COUNT(*) FROM P3_TBL_BOARD_ANSWER_RECOMMENDATION
+    WHERE answr_sq = #{answrSq} and mbr_sq = #{mbrSq}
+</select>
+
+<select id="checkNotRecommendation">
+    SELECT COUNT(*) FROM P5_TBL_BOARD_ANSWER_NOTRECOMMENDATION
     WHERE answr_sq = #{answrSq} and mbr_sq = #{mbrSq}
 </select>
 
@@ -119,10 +145,21 @@ INSERT INTO P3_TBL_BOARD_ANSWER (
     where answr_sq = #{answrSq} and mbr_sq = #{mbrSq}
 </delete>
 
+<delete id="deleteNotRecommendation">
+    DELETE FROM P5_TBL_BOARD_ANSWER_NOTRECOMMENDATION
+    where answr_sq = #{answrSq} and mbr_sq = #{mbrSq}
+</delete>
+
 <update id="selectRecommendation">
     UPDATE P3_TBL_BOARD_ANSWER
     SET answr_slctn_yn = 'Y'
-    where answr_sq = #{answrSq}
+    WHERE answr_sq = #{answrSq}
+</update>
+
+<update id="updateBoardCondition">
+    UPDATE P3_TBL_BOARD
+    SET brd_cndtn = 'Y'
+    WHERE brd_sq = #{brdSq}
 </update>
 
 

@@ -5,14 +5,12 @@
         <h1 class="form-group col-md-12">
           <strong class="font-weight-extra-bold"> 지원자 목록 </strong>
         </h1>
-
         <hr class="gradient" />
       </div>
 
       <div class="row">
-        <!-- 코드화 안되어있어서 하드코딩 -->
+        <!-- 구분 선택 -->
         <div class="form-group col-md-2">
-          <!-- 여기 해야함 -->
           <select class="form-select form-control h-auto py-2" @change="changeDivision($event)">
             <option value="all">구분</option>
             <option value="apply">지원</option>
@@ -20,8 +18,8 @@
           </select>
         </div>
 
-        <!-- 코드화 -->
-        <div class="form-group col-md-2">
+        <!-- 상태 선택 -->
+        <div class="form-group col-md-2" v-if="applyListData.applyConditions && applyListData.applyConditions.length > 0">
           <select class="form-select form-control h-auto py-2" @change="changeCondition($event)">
             <option value="0">상태</option>
             <option v-for="applyCondition in applyListData.applyConditions" :key="applyCondition.code_id"
@@ -33,7 +31,7 @@
 
         <div class="form-group col-md-6"></div>
 
-        <!-- 코드화 안되어있어서 하드코딩 -->
+        <!-- 정렬 선택 -->
         <div class="form-group col-md-2">
           <select class="form-select form-control h-auto py-2" @change="changeSort($event)">
             <option value="asc">올림차순</option>
@@ -43,11 +41,11 @@
       </div>
 
       <div class="row">
-        <!-- 자료없을때 예외 -->
+        <!-- 자료 없을 때 예외 처리 -->
         <div v-if="applyListData.applyDatas.length === 0">
           <strong class="font-weight-extra-bold"> 자료가 없습니다. </strong>
         </div>
-        <!-- 자료있을때 for -->
+        <!-- 자료 있으면 반복 출력 -->
         <div v-else>
           <div v-for="applyData in applyListData.applyDatas" :key="applyData.apy_sq">
             <ApplyDatas :applyData="applyData" />
@@ -56,8 +54,8 @@
       </div>
       <hr class="gradient" />
       <div class="row">
-        <div
-          v-if="applyListData.paginationData.totalDataCount != undefined && applyListData.paginationData.totalDataCount != 0">
+        <!-- 페이지네이션 -->
+        <div v-if="applyListData.paginationData.totalDataCount != undefined && applyListData.paginationData.totalDataCount != 0">
           <PaginationData :paginationData="applyListData.paginationData" @change-page-no="changePageNo" />
         </div>
       </div>
@@ -67,7 +65,6 @@
 
 <script setup>
 import { onMounted, ref } from "vue";
-
 import PaginationData from "@/components/fo/enterprise/common/PaginationData.vue";
 import ApplyDatas from "@/components/fo/enterprise/apply/ApplyDatas.vue";
 import { api } from '@/axios';
@@ -75,78 +72,80 @@ import { api } from '@/axios';
 const applyListData = ref({
   applyDatas: [],
   paginationData: {},
-  searchData: {},
-  applyConditions: [],
+  searchData: { jbp_sq: 86, division: 'all', condition: '', sort: 'asc', pageNo: 1 },
+  applyConditions: [],  // 빈 배열로 초기화
 });
-
-//공고리스트에서 지원자 보기 클릭시 보내기
-// @click="goToApplyList(jbp_sq데이터)""
-// const goToApplyList = (jbp_sq) => {
-//   router.push({
-//     name: "applyListView",
-//     state: {
-//       jbp_sq: jbp_sq,
-//     },
-//   });
-// };
-// 받기
-// const { jbp_sq } = history.state;
-// 온마운트에이 값을 넣어주고 시작
 
 onMounted(() => {
-  // 첫페이지 입장시 정보 받아오기
   console.log("온마운트");
-  //console.log(applyListData.value.paginationData.totalDataCount);
-  applyListData.value.searchData = { jbp_sq: 1, division: "all", condition: 0, sort: "asc", pageNo: 1 };
-  callAxios();
+  callAxios();  // 첫 로딩 시 데이터 요청
 });
 
-// axios 함수
-const callAxios = async () => {
-  await api.$get("/applys/apply-list/" +
-    applyListData.value.searchData.jbp_sq +
-    "/" +
-    applyListData.value.searchData.division +
-    "/" +
-    applyListData.value.searchData.condition +
-    "/" +
-    applyListData.value.searchData.sort +
-    "/" +
-    applyListData.value.searchData.pageNo)
-    .then((success) => {
-      console.log('axios 성공' + success);
-      applyListData.value = success;
-    })
-    .catch((error) => {
-      console.log('axios 실패' + error);
+const callAxios = async () => { 
+  const { jbp_sq, division, condition, sort, pageNo } = applyListData.value.searchData;
+  
+  const url = `/applys/apply-list/${jbp_sq}?division=${division}&condition=${condition}&sort=${sort}&pageNo=${pageNo}`;
+  console.log("Request URL:", url);
 
-    });
+  
+  try {
+    const response = await api.$get(url);
+    console.log('axios 성공', response);
+    
+    // 중복된 apy_sq 값 제거
+    const uniqueApplyDatas = response?.applyDatas.filter((value, index, self) =>
+      index === self.findIndex((t) => (
+        t.apy_sq === value.apy_sq
+      ))
+    );
 
+    // 안전하게 응답 데이터 할당
+    applyListData.value.applyConditions = response?.applyConditions || [];
+    applyListData.value.applyDatas = uniqueApplyDatas; // 중복 제거된 데이터 할당
+    applyListData.value.paginationData = response?.paginationData || {};
+
+    console.log('applyConditions:', applyListData.value.applyConditions);
+    console.log('applyDatas:', applyListData.value.applyDatas);
+    console.log('paginationData:', applyListData.value.paginationData);
+
+  } catch (error) {
+    console.error('axios 실패', error);
+    // 기본값으로 초기화
+    applyListData.value.applyConditions = [];
+    applyListData.value.applyDatas = [];
+    applyListData.value.paginationData = {};
+  }
 };
 
-// 이벤트 함수
-// 페이지네이션 페이지 변경 클릭
-const changePageNo = (emit) => {
-  console.log(emit);
-  applyListData.value.searchData.pageNo = emit;
+// 페이지네이션 페이지 변경
+const changePageNo = (pageNo) => {
+  applyListData.value.searchData.pageNo = pageNo;
   callAxios();
 };
-// 구분 select 변경
+
+// 구분 선택
 const changeDivision = (event) => {
   applyListData.value.searchData.division = event.target.value;
-  applyListData.value.searchData.pageNo = 1;
+  applyListData.value.searchData.pageNo = 1;  // 페이지를 처음으로 리셋
   callAxios();
 };
-// 상태 select 변경
+
+// 상태 선택
 const changeCondition = (event) => {
+  // 문자열을 숫자로 변환
   applyListData.value.searchData.condition = event.target.value;
-  applyListData.value.searchData.pageNo = 1;
+
+  console.log(applyListData.value.searchData.condition);
+  console.log("ASD" + event.target.value);
+
+  applyListData.value.searchData.pageNo = 1;  // 페이지를 처음으로 리셋
   callAxios();
 };
-// 정렬 select 변경
+
+// 정렬 선택
 const changeSort = (event) => {
   applyListData.value.searchData.sort = event.target.value;
-  applyListData.value.searchData.pageNo = 1;
+  applyListData.value.searchData.pageNo = 1;  // 페이지를 처음으로 리셋
   callAxios();
 };
 </script>

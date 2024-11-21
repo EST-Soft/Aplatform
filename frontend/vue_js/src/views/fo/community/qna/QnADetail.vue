@@ -1,16 +1,141 @@
 <template>
   <div class="container mt-5">
-    <section
-      class="page-header page-header-modern bg-color-grey page-header-lg text-center"
+    <!-- 게시글작성자와 로그인사용자 같고 채택된 답변이나 자체해결이 되지않았을 때 -->
+    <div
+      class="d-flex flex-wrap justify-content-end gap-2 mt-4"
+      v-if="isLoggedIn && board.brdCndtn == 'N'"
     >
-      <div class="container">
-        <div class="row">
-          <div class="col-md-12 align-self-center p-static order-2 text-center">
-            <h1 class="font-weight-bold text-dark">Q&A 게시판 - 글 보기</h1>
-          </div>
+      <button
+        class="btn btn-outline-primary"
+        v-if="mbrSqCheck(board.mbrSq)"
+        @click="answerSelfSelection(board.brdSq)"
+      >
+        자체해결
+      </button>
+      <router-link
+        class="btn btn-outline-secondary"
+        :to="`/board/qna/update/${boardId}`"
+        >수정</router-link
+      >
+      <button class="btn btn-outline-danger" @click="boardDelete">삭제</button>
+      <button class="btn btn-outline-success" @click="backToList">목록</button>
+    </div>
+
+    <!-- 게시글작성자와 로그인사용자 같고 채택된 답변이있거나 자체해결을 했을 때 -->
+    <div
+      class="d-flex flex-wrap justify-content-end gap-2 mt-4"
+      v-if="isLoggedIn && board.brdCndtn !== 'N'"
+    >
+      <router-link
+        class="btn btn-outline-secondary"
+        :to="`/board/qna/update/${boardId}`"
+        >수정</router-link
+      >
+      <button class="btn btn-outline-danger" @click="boardDelete">삭제</button>
+      <button class="btn btn-outline-success" @click="backToList">목록</button>
+    </div>
+
+    <!-- 게시글작성자와 로그인사용자 다르고, 답변이 채택되지 않았을 때 -->
+    <div
+      class="d-flex flex-wrap justify-content-end gap-2 mt-4"
+      v-if="
+        loginCheck && board.mbrSq !== member.mbrSq && board.brdCndtn !== 'Y'
+      "
+    >
+      <button class="btn btn-outline-success" @click="backToList">목록</button>
+      <button
+        class="btn btn-outline-danger"
+        @click="openReportModal('게시글', board.brdSq, 'POST')"
+      >
+        <i class="bi bi-exclamation-circle"></i> 신고
+      </button>
+      <button
+        class="btn btn-outline-warning"
+        @click="toggleScrap('POST', board.brdSq)"
+      >
+        <i class="bi" :class="board.isScraped ? 'bi-star-fill' : 'bi-star'"></i>
+        {{ board.isScraped ? "스크랩 취소" : "스크랩" }}
+      </button>
+    </div>
+
+    <!-- 게시글작성자와 로그인사용자 다르고, 답변이 채택되었을 때 -->
+    <div
+      class="d-flex flex-wrap justify-content-end gap-2 mt-4"
+      v-if="loginCheck && board.mbrSq !== member.mbrSq && board.brdCndtn == 'Y'"
+    >
+      <button class="btn btn-outline-success" @click="backToList">목록</button>
+      <button
+        class="btn btn-outline-danger"
+        @click="openReportModal('게시글', board.brdSq, 'POST')"
+      >
+        <i class="bi bi-exclamation-circle"></i> 신고
+      </button>
+      <button
+        class="btn btn-outline-warning"
+        @click="toggleScrap('POST', board.brdSq)"
+      >
+        <i class="bi" :class="board.isScraped ? 'bi-star-fill' : 'bi-star'"></i>
+        {{ board.isScraped ? "스크랩 취소" : "스크랩" }}
+      </button>
+    </div>
+
+    <div v-show="isReportModalOpen" class="reportModal">
+      <div class="modal-content">
+        <h5 class="fw-bold mb-3">{{ reportTarget.type }} 신고하기</h5>
+        <p>신고 사유를 선택하세요:</p>
+        <div class="d-flex flex-column gap-2 mb-3">
+          <label class="form-check">
+            <input
+              type="checkbox"
+              value="스팸/광고"
+              v-model="reportReasons"
+              class="form-check-input"
+            />
+            스팸/광고
+          </label>
+          <label class="form-check">
+            <input
+              type="checkbox"
+              value="부적절한 내용"
+              v-model="reportReasons"
+              class="form-check-input"
+            />
+            부적절한 내용
+          </label>
+          <label class="form-check">
+            <input
+              type="checkbox"
+              value="욕설/비방"
+              v-model="reportReasons"
+              class="form-check-input"
+            />
+            욕설/비방
+          </label>
+          <label class="form-check">
+            <input
+              type="checkbox"
+              value="기타"
+              v-model="reportReasons"
+              class="form-check-input"
+            />
+            기타
+          </label>
+        </div>
+        <textarea
+          v-model="additionalReason"
+          placeholder="추가 사유를 입력하세요"
+          class="form-control"
+          rows="3"
+        ></textarea>
+        <div class="d-flex justify-content-between mt-3">
+          <button class="btn btn-primary" @click="submitReport">신고</button>
+          <button class="btn btn-secondary" @click="closeReportModal">
+            취소
+          </button>
         </div>
       </div>
-    </section>
+    </div>
+
     <!-- 게시글 상세 내용 시작 -->
     <div class="board-detail mt-4 p-4 bg-white rounded shadow-sm">
       <div class="board-header d-flex justify-content-between mb-4">
@@ -24,689 +149,746 @@
           <div><strong>조회수:</strong> {{ board.brdHits }}</div>
         </div>
       </div>
-      
+
       <hr />
       <div v-show="showBoardContent" class="board-content p-4">
         <div v-html="board.brdCntnt"></div>
       </div>
-      <div class="slide-btn">
-        <button class="btn" v-if="showBoardContent == true" @click="boardSlide">
-          <img
-              alt="Up"
-              width="30"
-              height="30"
-              data-sticky-width="82"
-              data-sticky-height="40"
-              src="/img/arrow.png"
-            />
 
-        </button>
-        <button class="btn" v-else @click="boardSlide">
-          <img
-              alt="Down"
-              width="40"
-              height="40"
-              data-sticky-width="82"
-              data-sticky-height="40"
-              src="/img/down-arrow.png"
-            />
-        </button>
-      </div>
       <hr />
-      
 
-      <div class="d-flex justify-content-end mt-4" v-if="isLoggedIn">
-        <router-link
-          class="btn btn-primary me-2"
-          :to="`/board/qna/update/${boardId}`"
-          >수정</router-link
-        >
-        
-        <button class="btn btn-danger me-2" @click="boardDelete">삭제</button>
-        <button class="btn btn-secondary" @click="backToList">취소</button>
-      </div>
-      <div v-if="loginCheck && board.mbrSq != member.mbrSq" class="d-flex justify-content-end mt-4">
-        <div class="btn btn-primary me-2" @click="openEditorModal()">
-          답변하기
-        </div>  
+      <div
+        class="container"
+        v-show="
+          loginCheck &&
+          (board.brdCndtn === 'N' || board.brdCndtn === 'U') &&
+          board.mbrSq !== member.mbrSq
+        "
+      >
+        <!-- 답글 작성 폼 시작 -->
+        <div class="form-container shadow-sm p-2 bg-white rounded mt-4">
+          <div class="form-group mb-3">
+            <label for="title" class="form-label">제목</label>
+            <input
+              type="text"
+              id="answrTtl"
+              v-model="answer.answrTtl"
+              placeholder="제목을 입력하세요"
+              class="form-control"
+            />
+          </div>
+          <div class="form-group mb-4">
+            <label for="contents" class="form-label">내용</label>
+            <div class="editor">
+              <!-- 툴바 -->
+              <div id="toolbar">
+                <select class="ql-font"></select>
+                <select class="ql-size"></select>
+                <button class="ql-bold"></button>
+                <button class="ql-italic"></button>
+                <button class="ql-underline"></button>
+                <button class="ql-strike"></button>
+                <select class="ql-color"></select>
+                <select class="ql-background"></select>
+                <button class="ql-script" value="sub"></button>
+                <button class="ql-script" value="super"></button>
+                <button class="ql-header" value="1"></button>
+                <button class="ql-header" value="2"></button>
+                <button class="ql-blockquote"></button>
+                <button class="ql-code-block"></button>
+                <button class="ql-list" value="ordered"></button>
+                <button class="ql-list" value="bullet"></button>
+                <button class="ql-indent" value="-1"></button>
+                <button class="ql-indent" value="+1"></button>
+                <button class="ql-direction" value="rtl"></button>
+                <select class="ql-align"></select>
+                <button class="ql-link"></button>
+                <!-- <button class="ql-image"></button> -->
+                <!-- <button class="ql-video"></button> -->
+                <button class="ql-clean"></button>
+              </div>
+
+              <!-- 에디터 -->
+              <div ref="editor" style="height: 300px"></div>
+            </div>
+          </div>
+          <div class="button-container d-flex justify-content-between">
+            <button class="btn btn-success" @click="saveAnswer">저장</button>
+          </div>
+        </div>
+        <!-- 답글 작성 폼 끝 -->
+        <hr />
       </div>
 
       <div class="answer-list-container">
-    <header class="header">
-      <h1>답변</h1>
-    </header>
+        <h3 class="fw-bold my-4">답변</h3>
 
-    <div class="answer-content">
-      <button class="btn" v-if="showAnswerList == true" @click="listSlide">
-          <img
-              alt="Up"
-              width="30"
-              height="30"
-              data-sticky-width="82"
-              data-sticky-height="40"
-              src="/img/arrow.png"
-            />
-
-        </button>
-        <button class="btn" v-else @click="listSlide">
-          <img
-              alt="Down"
-              width="40"
-              height="40"
-              data-sticky-width="82"
-              data-sticky-height="40"
-              src="/img/down-arrow.png"
-            />
-        </button>
-        <div v-show="showAnswerList">
-      <div class="table-responsive">
-        <table class="table table-hover table-striped">
-          <thead>
-            <tr v-if="answerList.length > 0">
-              <th>번호</th>
-              <th>제목</th>
-              <th>작성자</th>
-              <th>등록일</th>
-              <th>조회수</th>
-              <th>추천수</th>
-              <th>채택여부</th>
-            </tr>
-            <tr v-else>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody v-if="answerList.length > 0">
-            <tr v-for="answer in answerList" :key="answer.answrSq">
-              <td class="small-text">{{ answer.answrSq }}</td>
-              <td class="title-cell" @click="showAnswerDetail(answer.answrSq)">
-                
-                  {{ answer.answrTtl }}
-                
-              </td>
-              <td class="small-text">{{ answer.createdBy }}</td>
-              <td class="small-text">{{ answer.insrtDtm.slice(0, 10) }}</td>
-              <td class="small-text">{{ answer.answrHits }}</td>
-              <td class="small-text">{{ answer.answrRcmndtns }}</td>
-
-              <td v-if="answer.answrSlctnYn == 'Y'" class="small-text">
-                <img
-                    alt="Check"
-                    width="20"
-                    height="20"
-                    data-sticky-width="82"
-                    data-sticky-height="40"
-                    src="/img/check.png"
-                  />
-                
-              </td>
-              <td v-else></td>
-              
-            </tr>
-          </tbody>
-          <tbody v-else>
-            <tr>
-              <td colspan="5"><h3>현재 등록된 답변이 없습니다</h3></td>               
-            </tr>
-          </tbody>
-
-        </table>
-      </div>
-      <div v-if="answerList.length > 0" class="pagination-wrapper">
-        <ul class="pagination justify-content-center">
-          <li class="page-item" :class="{ disabled: curPage === 1 }">
-            <button
-              class="page-link"
-              @click="goToPage(1)"
-              :disabled="curPage === 1"
-            >
-              &lt;&lt;
-            </button>
-          </li>
-          <li class="page-item" :class="{ disabled: curPage === 1 }">
-            <button
-              class="page-link"
-              @click="goToPage(curPage - 1)"
-              :disabled="curPage === 1"
-            >
-              &lt;
-            </button>
-          </li>
-          <li
-            v-for="(page, index) in pageList"
-            :key="index"
-            class="page-item"
-            :class="{ active: curPage === page }"
-          >
-            <button class="page-link" @click="goToPage(page)">
-              {{ page }}
-            </button>
-          </li>
-          <li class="page-item" :class="{ disabled: curPage === lastPage }">
-            <button
-              class="page-link"
-              @click="goToPage(curPage + 1)"
-              :disabled="curPage === lastPage"
-            >
-              &gt;
-            </button>
-          </li>
-          <li class="page-item" :class="{ disabled: curPage === lastPage }">
-            <button
-              class="page-link"
-              @click="goToPage(lastPage)"
-              :disabled="curPage === lastPage"
-            >
-              &gt;&gt;
-            </button>
-          </li>
-        </ul>
-      </div>
-      </div>
-    </div>
-  </div>
-      
-      <div class="comments-section">
-        <div v-if="loginCheck" class="comment-input">
-          <textarea
-            v-model="newComment"
-            placeholder="댓글을 입력하세요"
-            class="comment-textarea"
-          ></textarea>
-          <button @click="submitComment" class="comment-submit-button">
-            댓글 달기
-          </button>
-          
-        </div>
-
-        <div
-          v-for="comment in board.comments"
-          :key="comment.cmntSq"
-          class="comment-card"
-        >
-          <div class="comment-header">
-            <p class="comment-author">
-              작성자:
-              <span v-if="comment.mbrSq">
-                {{ comment.member.mbrId }}
-              </span>
-              <span v-else>
-                {{ comment.entMember.entrprsId }}
-              </span>
-            </p>
-            <p class="comment-date">{{ formatDate(comment.insrtDtm) }}</p>
-          </div>
-          <div class="comment-content">
-            <textarea
-              v-if="editingCommentId === comment.cmntSq"
-              v-model="editedContent"
-              class="comment-textarea"
-            ></textarea>
-            <p v-else>
-              {{
-                comment.dltYn === "Y"
-                  ? "삭제된 댓글 입니다."
-                  : comment.cmntCntnt
-              }}
-            </p>
-          </div>
-          <!-- 수정/삭제 버튼 표시 -->
+        <!-- 답변 목록 -->
+        <div v-if="answerList.length > 0">
           <div
-            v-if="isCommentOwner(comment) && comment.dltYn === 'N'"
-            class="comment-actions"
+            v-for="answer in answerList"
+            :key="answer.answrSq"
+            class="answer-card p-4 mb-4 bg-white rounded shadow"
           >
-            <button
-              v-if="editingCommentId !== comment.cmntSq"
-              @click="editComment(comment)"
-              class="btn btn-sm btn-secondary"
+            <!-- 답변 헤더 -->
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <!-- 답변 제목과 채택 버튼 -->
+              <div class="d-flex align-items-center">
+                <h4 class="fw-bold text-dark me-3 mb-0">
+                  {{ answer.answrTtl }}
+                </h4>
+                <button
+                  v-if="
+                    mbrSqCheck(board.mbrSq) &&
+                    !mbrSqCheck(answer.mbrSq) &&
+                    filterSelect &&
+                    board.brdCndtn !== 'S'
+                  "
+                  class="btn btn-success btn-sm"
+                  @click="answerSelection(answer.answrSq, board.brdSq)"
+                >
+                  채택
+                </button>
+                <span
+                  v-if="answer.answrSlctnYn === 'Y'"
+                  class="badge bg-success ms-3"
+                  style="font-size: 0.9rem"
+                >
+                  채택됨
+                </span>
+              </div>
+
+              <!-- 작성자와 날짜 -->
+              <div class="text-muted small">
+                작성자: {{ answer.createdBy }} / 날짜:
+                {{ answer.insrtDtm.slice(0, 10) }}
+              </div>
+            </div>
+
+            <!-- 답변 내용 -->
+            <div v-html="answer.answrCntnt" class="mb-3"></div>
+
+            <!-- 답변 상태 및 버튼 그룹 -->
+            <div class="d-flex justify-content-between align-items-center">
+              <!-- 추천/비추천 -->
+              <div>
+                <button
+                  class="btn btn-outline-success btn-sm me-2"
+                  @click="answerRcmndtn(answer.answrSq)"
+                >
+                  <i class="bi bi-hand-thumbs-up"></i> 추천 ({{
+                    answer.answrRcmndtns
+                  }})
+                </button>
+                <button
+                  class="btn btn-outline-danger btn-sm"
+                  @click="answerNotRcmndtn(answer.answrSq)"
+                >
+                  <i class="bi bi-hand-thumbs-down"></i> 비추천 ({{
+                    answer.answrNotRcmndtns
+                  }})
+                </button>
+              </div>
+
+              <!-- 액션 버튼 -->
+              <div class="d-flex gap-2">
+                <button
+                  class="btn btn-outline-warning btn-sm"
+                  @click="toggleScrap('ANSWER', answer.answrSq)"
+                >
+                  <i
+                    class="bi"
+                    :class="answer.isScraped ? 'bi-star-fill' : 'bi-star'"
+                  ></i>
+                  {{ answer.isScraped ? "스크랩 취소" : "스크랩" }}
+                </button>
+                <button
+                  class="btn btn-danger btn-sm"
+                  @click="openReportModal('답글', answer.answrSq, 'ANSWER')"
+                >
+                  <i class="bi bi-exclamation-circle"></i> 신고
+                </button>
+                <button
+                  v-if="mbrSqCheck(answer.mbrSq)"
+                  class="btn btn-primary btn-sm"
+                  @click="startEdit(answer)"
+                >
+                  수정
+                </button>
+                <button
+                  v-if="mbrSqCheck(answer.mbrSq) && answer.answrSlctnYn !== 'Y'"
+                  class="btn btn-danger btn-sm"
+                  @click="deleteAnswer(answer.answrSq)"
+                >
+                  삭제
+                </button>
+              </div>
+            </div>
+
+            <!-- 수정 폼 -->
+            <div v-if="answer.isEditing" class="mt-3">
+              <div class="form-group mb-3">
+                <label for="title" class="form-label">제목</label>
+                <input
+                  type="text"
+                  id="answrTtl"
+                  v-model="answer.answrTtl"
+                  class="form-control"
+                  placeholder="제목을 입력하세요"
+                />
+              </div>
+              <div class="form-group mb-4">
+                <label for="contents" class="form-label">내용</label>
+                <div id="editor3" style="height: 200px"></div>
+              </div>
+              <div class="d-flex justify-content-end gap-2">
+                <button
+                  class="btn btn-success"
+                  @click="saveEditedAnswer(answer)"
+                >
+                  저장
+                </button>
+                <button class="btn btn-secondary" @click="cancelEdit">
+                  취소
+                </button>
+              </div>
+            </div>
+
+            <hr />
+
+            <!-- 댓글 섹션 -->
+            <div class="comments-section">
+              <h6 class="fw-bold">댓글</h6>
+
+              <!-- 댓글 목록 -->
+              <div
+                v-if="answer.comments && answer.comments.length > 0"
+                class="mt-3"
+              >
+                <div
+                  v-for="comment in answer.comments"
+                  :key="comment.cmntSq"
+                  class="p-3 border rounded shadow-sm mb-3"
+                >
+                  <div
+                    class="d-flex justify-content-between align-items-center"
+                  >
+                    <!-- 작성자와 날짜 -->
+                    <div>
+                      <strong>{{ comment.createdBy }}</strong>
+                      <span class="text-muted ms-2 small">
+                        {{ comment.insrtDtm.slice(0, 10) }}
+                      </span>
+                    </div>
+
+                    <!-- 신고 및 수정/삭제 버튼 -->
+                    <div class="d-flex gap-2">
+                      <button
+                        class="btn btn-outline-danger btn-sm"
+                        @click="
+                          openReportModal('댓글', comment.cmntSq, 'COMMENT')
+                        "
+                      >
+                        신고
+                      </button>
+                      <button
+                        v-if="mbrSqCheck(comment.mbrSq)"
+                        class="btn btn-outline-primary btn-sm"
+                        @click="startEditComment(comment)"
+                      >
+                        수정
+                      </button>
+                      <button
+                        v-if="mbrSqCheck(comment.mbrSq)"
+                        class="btn btn-outline-danger btn-sm"
+                        @click="deleteComment(answer.answrSq, comment.cmntSq)"
+                      >
+                        삭제
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- 댓글 내용 -->
+                  <div v-if="!comment.isEditing" class="mt-2">
+                    {{ comment.cmntCntnt }}
+                  </div>
+
+                  <!-- 댓글 수정 -->
+                  <div v-else class="mt-2">
+                    <textarea
+                      v-model="comment.editContent"
+                      class="form-control"
+                      rows="2"
+                      placeholder="댓글을 수정하세요"
+                    ></textarea>
+                    <div class="d-flex justify-content-end gap-2 mt-2">
+                      <button
+                        class="btn btn-success btn-sm"
+                        @click="saveCommentEdit(answer.answrSq, comment)"
+                      >
+                        저장
+                      </button>
+                      <button
+                        class="btn btn-secondary btn-sm"
+                        @click="cancelCommentEdit(comment)"
+                      >
+                        취소
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 댓글 없음 -->
+              <div v-else class="text-muted mt-2">등록된 댓글이 없습니다.</div>
+
+              <!-- 댓글 작성 -->
+              <div class="mt-3">
+                <textarea
+                  v-model="newComment[answer.answrSq]"
+                  class="form-control"
+                  placeholder="댓글을 입력하세요"
+                  rows="3"
+                ></textarea>
+                <div class="d-flex justify-content-end mt-2">
+                  <button
+                    class="btn btn-primary"
+                    @click="addComment(answer.answrSq)"
+                  >
+                    댓글 추가
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 답변 없음 -->
+        <div v-else class="text-muted">등록된 답변이 없습니다.</div>
+
+        <!-- 페이지네이션 -->
+        <div v-if="answerList.length > 0" class="pagination-wrapper mt-4">
+          <ul class="pagination justify-content-center">
+            <li class="page-item" :class="{ disabled: curPage === 1 }">
+              <button
+                class="page-link"
+                @click="goToPage(1)"
+                :disabled="curPage === 1"
+              >
+                &laquo;
+              </button>
+            </li>
+            <li class="page-item" :class="{ disabled: curPage === 1 }">
+              <button
+                class="page-link"
+                @click="goToPage(curPage - 1)"
+                :disabled="curPage === 1"
+              >
+                &lt;
+              </button>
+            </li>
+            <li
+              v-for="(page, index) in pageList"
+              :key="index"
+              class="page-item"
+              :class="{ active: curPage === page }"
             >
-              수정
-            </button>
-            <button
-              v-else
-              @click="updateComment(comment)"
-              class="btn btn-sm btn-primary"
-            >
-              확인
-            </button>
-            <button
-              v-if="editingCommentId === comment.cmntSq"
-              @click="cancelEdit"
-              class="btn btn-sm btn-warning"
-            >
-              취소
-            </button>
-            <button
-              @click="deleteComment(comment.cmntSq)"
-              class="btn btn-sm btn-danger"
-            >
-              삭제
-            </button>
-          </div>
+              <button class="page-link" @click="goToPage(page)">
+                {{ page }}
+              </button>
+            </li>
+            <li class="page-item" :class="{ disabled: curPage === lastPage }">
+              <button
+                class="page-link"
+                @click="goToPage(curPage + 1)"
+                :disabled="curPage === lastPage"
+              >
+                &gt;
+              </button>
+            </li>
+            <li class="page-item" :class="{ disabled: curPage === lastPage }">
+              <button
+                class="page-link"
+                @click="goToPage(lastPage)"
+                :disabled="curPage === lastPage"
+              >
+                &raquo;
+              </button>
+            </li>
+          </ul>
         </div>
       </div>
-    </div>
-    <!-- 게시글 상세 내용 끝 -->
-  </div>
-
-  <div v-show="answerModal" @click="openEditorModal()" class="answer">
-    <div class="answerModal">
-      <div class="container mt-5">
-    <section
-      class="page-header page-header-modern bg-color-grey page-header-lg text-center"
-    >
-      <div class="container">
-        <div class="row">
-          <div class="col-md-12 align-self-center p-static order-2 text-center">
-            <h1 class="font-weight-bold text-dark">QnA 게시판 - 답변 작성</h1>
-          </div>
-        </div>
-      </div>
-    </section>
-    <!-- 답글 작성 폼 시작 -->
-    <div class="form-container shadow-sm p-4 bg-white rounded">
-      <div class="form-group mb-3">
-        <label for="title" class="form-label">제목</label>
-        <input
-          type="text"
-          id="answrTtl"
-          v-model="answer.answrTtl"
-          placeholder="제목을 입력하세요"
-          class="form-control"
-        />
-      </div>
-      <div class="form-group mb-4">
-        <label for="contents" class="form-label">내용</label>
-        <!-- <textarea
-          id="brdCntnt"
-          v-model="board.brdCntnt"
-          placeholder="내용을 입력하세요"
-          class="form-control"
-          rows="10"
-        ></textarea> -->
-        <div class="editer">
-          <!-- 툴바 -->
-          <div id="toolbar">
-            <select class="ql-font"></select>
-            <select class="ql-size"></select>
-            <button class="ql-bold"></button>
-            <button class="ql-italic"></button>
-            <button class="ql-underline"></button>
-            <button class="ql-strike"></button>
-            <select class="ql-color"></select>
-            <select class="ql-background"></select>
-            <button class="ql-script" value="sub"></button>
-            <button class="ql-script" value="super"></button>
-            <button class="ql-header" value="1"></button>
-            <button class="ql-header" value="2"></button>
-            <button class="ql-blockquote"></button>
-            <button class="ql-code-block"></button>
-            <button class="ql-list" value="ordered"></button>
-            <button class="ql-list" value="bullet"></button>
-            <button class="ql-indent" value="-1"></button>
-            <button class="ql-indent" value="+1"></button>
-            <button class="ql-direction" value="rtl"></button>
-            <select class="ql-align"></select>
-            <button class="ql-link"></button>
-            <!-- <button class="ql-image"></button> -->
-            <!-- <button class="ql-video"></button> -->
-            <button class="ql-clean"></button>
-          </div>
-
-          <!-- 에디터 -->
-          <div ref="editor" style="height: 300px"></div>
-        </div>
-      </div>
-      <div class="button-container d-flex justify-content-between">
-        <button class="btn btn-success" @click="saveAnswer">저장</button>
-        <button class="btn btn-secondary" @click="backToDetail">취소</button>
-      </div>
-    </div>
-    <!-- 답글 작성 폼 끝 -->
-  </div>
-
     </div>
   </div>
 
-  <!-- 답변보기 시작 -->
-  <div v-show="showAnswer" class="answer">
-    <div class="answerModal">
-    <div class="container mt-5">
-    <section
-      class="page-header page-header-modern bg-color-white page-header-lg text-center"
-    >
-      <div class="container">
-        <div class="row">
-          <div class="col-md-12 align-self-center p-static order-2 text-center">
-            <h1 class="font-weight-bold text-dark">Q&A 게시판 - 답변 보기</h1>
-          </div>
-        </div>
+  <div class="modal">
+    <div class="modal-content">
+      <h5>{{ reportTarget.type }} 신고하기</h5>
+      <p>신고 사유를 선택하세요:</p>
+      <label>
+        <input type="checkbox" value="스팸/광고" v-model="reportReasons" />
+        스팸/광고
+      </label>
+      <label>
+        <input type="checkbox" value="부적절한 내용" v-model="reportReasons" />
+        부적절한 내용
+      </label>
+      <label>
+        <input type="checkbox" value="욕설/비방" v-model="reportReasons" />
+        욕설/비방
+      </label>
+      <label>
+        <input type="checkbox" value="기타" v-model="reportReasons" />
+        기타
+      </label>
+      <textarea
+        v-model="additionalReason"
+        placeholder="추가 사유를 입력해주세요"
+        class="form-control mt-2"
+        rows="3"
+      ></textarea>
+      <div class="button-container mt-3">
+        <button class="btn btn-primary me-2" @click="submitReport">신고</button>
+        <button class="btn btn-secondary" @click="closeReportModal">
+          취소
+        </button>
       </div>
-    </section>
-        <!-- 답글 상세 내용 시작 -->
-        <div class="board-detail mt-4 p-4 bg-white rounded shadow-sm">
-      <div class="board-header d-flex justify-content-between mb-4">
-        <h2 class="board-title">{{ answer1.answrTtl }}</h2>
-        <div class="board-meta text-muted text-right">
-          <div><strong>작성자:</strong> {{ answer1.createdBy }}</div>
-          <div>
-            <strong>등록일:</strong>
-            {{ answer1.insrtDtm ? answer1.insrtDtm.slice(0, 10) : "등록일 없음" }}
-          </div>
-          <div><strong>조회수:</strong> {{ answer1.answrHits }}</div>
-          <div><strong>추천수:</strong> {{ answer1.answrRcmndtns }}</div>
-        </div>
-      </div>
-      
-      <hr />
-      <div class="board-content1 p-4">
-        <div v-html="answer1.answrCntnt"></div>
-      </div>
-   
-      <hr />
-
-  <!-- 답변 수정 -->
-  <div v-show="answerEditModal" class="answer">
-    <div class="answerModal">
-      <div class="container mt-5">
-    <section
-      class="page-header page-header-modern bg-color-grey page-header-lg text-center"
-    >
-      <div class="container">
-        <div class="row">
-          <div class="col-md-12 align-self-center p-static order-2 text-center">
-            <h1 class="font-weight-bold text-dark">QnA 게시판 - 답변 수정</h1>
-          </div>
-        </div>
-      </div>
-    </section>
-    <!-- 답글 수정 폼 시작 -->
-    <div class="form-container shadow-sm p-4 bg-white rounded">
-      <div class="form-group mb-3">
-        <label for="title" class="form-label">제목</label>
-        <input
-          type="text"
-          id="answrTtl"
-          v-model="answer1.answrTtl"
-          placeholder="제목을 입력하세요"
-          class="form-control"
-        />
-      </div>
-      <div class="form-group mb-4">
-        <label for="contents" class="form-label">내용</label>
-       
-        <div class="editor">
-          <!-- 툴바 -->
-          <div id="toolbar2">
-            <select class="ql-font"></select>
-            <select class="ql-size"></select>
-            <button class="ql-bold"></button>
-            <button class="ql-italic"></button>
-            <button class="ql-underline"></button>
-            <button class="ql-strike"></button>
-            <select class="ql-color"></select>
-            <select class="ql-background"></select>
-            <button class="ql-script" value="sub"></button>
-            <button class="ql-script" value="super"></button>
-            <button class="ql-header" value="1"></button>
-            <button class="ql-header" value="2"></button>
-            <button class="ql-blockquote"></button>
-            <button class="ql-code-block"></button>
-            <button class="ql-list" value="ordered"></button>
-            <button class="ql-list" value="bullet"></button>
-            <button class="ql-indent" value="-1"></button>
-            <button class="ql-indent" value="+1"></button>
-            <button class="ql-direction" value="rtl"></button>
-            <select class="ql-align"></select>
-            <button class="ql-link"></button>
-            <!-- <button class="ql-image"></button> -->
-            <!-- <button class="ql-video"></button> -->
-            <button class="ql-clean"></button>
-          </div>
-
-          <!-- 에디터 -->
-          <div ref="editor2" style="height: 300px"></div>
-        </div>
-      </div>
-      <div class="button-container d-flex justify-content-between">
-        <button class="btn btn-success" @click="editAnswer()">수정</button>
-        <button class="btn btn-secondary" @click="backToAnswerDetail(answer1.answrSq)">취소</button>
-      </div>
-    </div>
-    <!-- 답글 작성 폼 끝 -->
-  </div>
-
     </div>
   </div>
-      
-
-
-      <div class="d-flex justify-content-end mt-4">
-      <button class="btn btn-primary m-2" v-if="mbrSqCheck(answer1.mbrSq)" @click="OpenEditAnswer(answer1.answrSq)">
-        수정
-      </button>
-
-      <!-- 추가적으로 채택된 답글인지 확인, 됐다면 삭제 불가능 alert -->
-      <button class="btn btn-danger m-2" v-if="mbrSqCheck(answer1.mbrSq) && answer1.answrSlctnYn != 'Y'" @click="deleteAnswer(answer1.answrSq)">
-        삭제
-      </button>
-      <button v-show="filterSelect" class="btn btn-primary m-2" v-if="mbrSqCheck(board.mbrSq) && !mbrSqCheck(answer1.mbrSq)" @click="answerSelection(answer1.answrSq)">
-        채택하기
-      </button>
-      <button v-show=" !mbrSqCheck(answer1.mbrSq)" v-if="member != null" class="btn btn-primary m-2" @click="answerRcmndtn(answer1.answrSq)" >
-        추천
-      </button> 
-      <button class="btn btn-secondary m-2" @click="closeAnswer()">
-        닫기
-      </button>
-      </div>
-    
-      
-    </div>
-    </div>
-    </div>
-  </div>
-
 </template>
 
 <script setup>
-import { ref, onMounted, computed, nextTick } from "vue";
+import { ref, computed, onMounted, nextTick } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { api } from "@/axios";
 import { showAlert, showConfirm } from "../../../../utill/utillModal";
 import { useStore } from "vuex";
-// import Modal from "@/components/modal/textModal.vue";
 import Quill from "quill";
+
+import Filter from "badwords-ko";
 
 const store = useStore();
 const member = computed(() => store.getters.getMember);
-const quillInstance = ref(null);
+
+const answer = ref({});
+const newComment = ref({});
+
 const editor = ref(null);
-const answer = ref({
-  
-})
+const quillInstance = ref(null);
+const quillInstance3 = ref(null);
+const editingAnswerId = ref(null);
 
+const isReportModalOpen = ref(false); // 모달 상태
+const reportReasons = ref([]); // 신고 사유
+const additionalReason = ref(""); // 추가 사유 입력
+const reportTarget = ref({}); // 신고 대상 정보
 
-const mbrSqCheck = (answerMbrSq) =>{
-  if(member.value != null && answerMbrSq == member.value.mbrSq){
-    return true;
-  }else{
-    return false;
+// 스크랩 상태 가져오기
+const fetchScrapStatus = async (scrapTargetSq, scrapTargetType) => {
+  if (!scrapTargetSq || !scrapTargetType) {
+    console.warn("스크랩 상태 확인에 필요한 값이 없습니다.");
+    return;
   }
-}
 
+  console.log("스크랩 대상 ID:", scrapTargetSq);
+  console.log("스크랩 대상 유형:", scrapTargetType);
 
+  try {
+    const response = await api.$get(`/api/scrap/exists`, {
+      params: {
+        mbrSq: member.value.mbrSq, // 로그인 사용자 ID
+        scrapTargetSq: scrapTargetSq, // 대상 ID
+        scrapTargetType: scrapTargetType, // 대상 유형 ('POST', 'ANSWER')
+      },
+    });
 
+    if (scrapTargetType === "POST") {
+      board.value.isScraped = response; // 게시글 스크랩 상태 저장
+      console.log("POST 스크랩 상태:", board.value.isScraped);
+    } else if (scrapTargetType === "ANSWER") {
+      const targetAnswer = answerList.value.find(
+        (answer) => answer.answrSq === scrapTargetSq
+      );
+      if (targetAnswer) {
+        targetAnswer.isScraped = response; // 답변 스크랩 상태
+      }
+    }
+  } catch (error) {
+    console.error("스크랩 상태 조회 실패:", error);
+  }
+};
 
+// 스크랩 추가/취소
+const toggleScrap = async (type, id) => {
+  try {
+    const isScraped =
+      type === "POST"
+        ? board.value.isScraped
+        : answerList.value.find((a) => a.answrSq === id)?.isScraped;
+
+    if (isScraped) {
+      // 스크랩 취소
+      await api.$patch(`/api/scrap/${id}`);
+      console.log(`스크랩 취소 요청: ${id}`);
+      showAlert("스크랩이 취소되었습니다.");
+    } else {
+      // 스크랩 추가
+      const params = new URLSearchParams();
+      params.append("mbrSq", member.value.mbrSq);
+      params.append("scrapTargetSq", id);
+      params.append("scrapTargetType", type);
+
+      await api.$post("/api/scrap", params, {
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      });
+      showAlert("스크랩이 추가되었습니다.");
+    }
+
+    // 상태 업데이트
+    if (type === "POST") {
+      board.value.isScraped = !board.value.isScraped;
+    } else if (type === "ANSWER") {
+      const targetAnswer = answerList.value.find(
+        (answer) => answer.answrSq === id
+      );
+      if (targetAnswer) targetAnswer.isScraped = !targetAnswer.isScraped;
+    }
+  } catch (error) {
+    console.error("스크랩 처리 실패:", error);
+    showAlert("스크랩 처리 중 문제가 발생했습니다.");
+  }
+};
+
+// 모달 열기
+const openReportModal = (type, id, category) => {
+  reportTarget.value = { type, id, category };
+  isReportModalOpen.value = true;
+};
+
+// 모달 닫기
+const closeReportModal = () => {
+  isReportModalOpen.value = false;
+  reportReasons.value = [];
+  additionalReason.value = "";
+};
+
+// 신고 처리
+const submitReport = async () => {
+  if (reportReasons.value.length === 0 && !additionalReason.value.trim()) {
+    alert("신고 사유를 입력하거나 선택해주세요.");
+    return;
+  }
+
+  const issueReason = [...reportReasons.value, additionalReason.value]
+    .filter(Boolean)
+    .join(", ");
+
+  try {
+    await api.$post("/issues", {
+      brdSq: reportTarget.value.id, // 신고 대상 ID
+      brdTypCode: reportTarget.value.category, // 유형 코드 (POST, ANSWER, COMMENT)
+      issueTyp: reportTarget.value.category, // 신고 카테고리
+      issueRsn: issueReason, // 신고 사유
+      mbrSq: member.value.mbrSq, // 로그인 사용자 ID
+    });
+    showAlert(`${reportTarget.value.type}이(가) 신고되었습니다.`);
+  } catch (error) {
+    console.error("신고 처리 실패:", error);
+    showAlert(`${reportTarget.value.type} 신고에 실패했습니다.`);
+  } finally {
+    closeReportModal();
+  }
+};
+
+const mbrSqCheck = (answerMbrSq) => {
+  return member.value != null && answerMbrSq === member.value.mbrSq;
+};
 
 // 답글 작성 폼 입력값 처리
 const saveAnswer = async () => {
+  const filter = new Filter();
   const contentHtml = quillInstance.value.root.innerHTML.trim();
   const sanitizedContent = contentHtml.replace(/<p><br><\/p>/g, "").trim();
-  // 불필요한 비어있는 태그들 제거
 
-  if(!answer.value.answrTtl || !sanitizedContent){
-    showAlert(!answer.value.answrTtl ? "제목을 입력하세요" : "내용을 입력하세요");
+  const isProfaneTitle = filter.isProfane(answer.value.answrTtl);
+  const isProfaneContent = filter.isProfane(sanitizedContent);
+
+  if (isProfaneTitle) {
+    showAlert(
+      "사용할 수 없는 단어가 제목에 포함되어 있습니다. 제목을 수정해주세요."
+    );
+    return;
+  }
+
+  if (isProfaneContent) {
+    showAlert(
+      "사용할 수 없는 단어가 내용에 포함되어 있습니다. 내용을 수정해주세요."
+    );
+    return;
+  }
+
+  if (!answer.value.answrTtl || !sanitizedContent) {
+    showAlert(
+      !answer.value.answrTtl ? "제목을 입력하세요" : "내용을 입력하세요"
+    );
     return;
   }
 
   showConfirm("답변을 등록 하시겠습니까?", async () => {
-    if(member.value.mbrSq){
+    if (member.value.mbrSq) {
       answer.value.mbrSq = member.value.mbrSq;
-    }else if(member.value.pk){
+    } else if (member.value.pk) {
       answer.value.entrprsSq = member.value.pk;
     }
-    try{
+    try {
       answer.value.answrCntnt = contentHtml;
       answer.value.brdSq = board.value.brdSq;
       await api.$post("/answer", answer.value);
       showAlert("답변이 등록되었습니다.");
       setTimeout(() => {
         window.location.href = `/board/qna/` + board.value.brdSq;
-      }, 2000);
-    }catch(error){
-      console.error("Error saving Answer : " , error);
+      }, 500);
+    } catch (error) {
+      console.error("Error saving Answer: ", error);
     }
   });
-
-}
-
-const answerModal = ref(false);
-
-const openEditorModal = () => {
-      answerModal.value = true;
-      nextTick(() => {
-        // 에디터가 보이게 된 후 초기화
-        if (!quillInstance.value) {
-          quillInstance.value = new Quill(editor.value, {
-            theme: 'snow',
-            modules: {
-              toolbar: '#toolbar',
-            },
-          });
-        }
-      });
-    };
-
-
-
+};
 
 const showAnswer = ref(false);
 const answer1 = ref({});
 
-
-const updateHits = async(answrSq) => {
-  try{
+const updateHits = async (answrSq) => {
+  try {
     await api.$post(`/answer/updateHits/${answrSq}`);
-  }catch(error){
+  } catch (error) {
     showAlert("조회수 업데이트 오류");
   }
+};
 
-}
-
-
-// 추천 할때는 조회수 업데이트 안되게
-const showAnswerDetail = async(answrSq) =>{
-  // console.log("댓글번호 가져오기", answerSq);
-  try{
-    // console.log("showAnswer", showAnswer.value);
-    if(!showAnswer.value){
+// 추천할 때는 조회수 업데이트 안 되게
+const showAnswerDetail = async (answrSq) => {
+  try {
+    if (!showAnswer.value) {
       await updateHits(answrSq);
     }
-    
-    // 데이터를 가져옴
     const data = await api.$get(`/answer/detail/${answrSq}`);
     answer1.value = data;
-    
-    showAnswer.value = true;
+    showAnswer.value = false;
     await getAnswerList();
-    // console.log("bb", showAnswer.value);
-  }catch(error){
+  } catch (error) {
     console.error("답글 가져오기 실패", error);
   }
-}
+};
 
-const editor2 = ref(null);
-const quillInstance2 = ref(null);
+// 댓글 수정 시작
+const startEditComment = (comment) => {
+  comment.isEditing = true;
+  comment.editContent = comment.cmntCntnt; // 기존 내용을 복사
+};
 
+// 댓글 수정 저장
+const saveCommentEdit = async (answrSq, comment) => {
+  if (!comment.editContent.trim()) {
+    showAlert("수정할 내용을 입력하세요.");
+    return;
+  }
 
-const answerEditModal = ref(false);
+  try {
+    // 댓글 수정 요청
+    const response = await api.$put(`/comments/${comment.cmntSq}`, {
+      cmntCntnt: comment.editContent.trim(),
+    });
 
-const OpenEditAnswer = (answrSq) => {
-  answerEditModal.value = true;
-  // console.log("에디터 초기화 실행");
-  showAnswerDetail(answrSq);
+    // 수정된 댓글 반영 (response가 댓글 객체 전체를 반환한다고 가정)
+    if (response && response.data) {
+      Object.assign(comment, response.data); // 기존 객체 유지하며 새로운 데이터만 업데이트
+    } else {
+      comment.cmntCntnt = comment.editContent.trim(); // 기본적으로 입력값 사용
+    }
 
-  if(!quillInstance2.value){
-    try{
-      quillInstance2.value = new Quill(editor2.value, {
-      theme: "snow",
-      modules: {
-        toolbar: "#toolbar2",
-      }
+    comment.isEditing = false; // 수정 상태 종료
+    showAlert("댓글이 수정되었습니다.");
+  } catch (error) {
+    console.error("댓글 수정 실패:", error);
+    showAlert("댓글 수정에 실패했습니다.");
+  }
+};
+
+// 댓글 수정 취소
+const cancelCommentEdit = (comment) => {
+  comment.isEditing = false;
+  comment.editContent = ""; // 임시 내용 초기화
+};
+
+const saveEditedAnswer = async (answer) => {
+  if (quillInstance3.value) {
+    answer.answrCntnt = quillInstance3.value.root.innerHTML.trim();
+  }
+
+  try {
+    await api.$patch(`/answer`, answer);
+    showAlert("답변이 수정되었습니다.");
+    cancelEdit(); // 수정 완료 후 창 닫기
+  } catch (error) {
+    console.error("답변 수정 실패:", error);
+    showAlert("답변 수정에 실패했습니다.");
+  }
+};
+
+const cancelEdit = () => {
+  if (editingAnswerId.value !== null) {
+    // 수정 상태 해제
+    const answer = answerList.value.find(
+      (a) => a.answrSq === editingAnswerId.value
+    );
+    if (answer) {
+      answer.isEditing = false;
+    }
+
+    // Quill 인스턴스 제거
+    if (quillInstance3.value) {
+      quillInstance3.value = null;
+    }
+
+    // 현재 수정 중인 답변 ID 초기화
+    editingAnswerId.value = null;
+  }
+};
+
+// 수정 모드 시작 함수
+const startEdit = async (answer) => {
+  // 기존 수정 창 닫기
+  if (editingAnswerId.value !== null) {
+    cancelEdit(); // 현재 수정 중인 답글 초기화
+  }
+
+  // 현재 수정 중인 답변 ID 설정
+  editingAnswerId.value = answer.answrSq;
+
+  // 수정 상태 활성화
+  answer.isEditing = true;
+
+  // DOM이 렌더링될 때까지 대기
+  await nextTick();
+
+  // Quill 인스턴스 생성
+  if (!quillInstance3.value) {
+    const editorElement = document.querySelector("#editor3");
+    if (editorElement) {
+      quillInstance3.value = new Quill(editorElement, {
+        theme: "snow",
+        modules: {
+          toolbar: "#toolbar3",
+        },
       });
-      quillInstance2.value.root.innerHTML = answer1.value.answrCntnt;
-      
-    }catch(error){  
-      console.error("댓글 수정 오류 발생 : ", error);
     }
   }
-}
-const editAnswer = async() => {
-  const contentHtml = quillInstance2.value.root.innerHTML.trim();
 
-  const sanitizedContent = contentHtml
-  .replace(/<h2><br><\/h2>|<p><br><\/p>/g, "")
-  .trim();
-
-  if(!answer1.value.answrTtl || !sanitizedContent){
-    showAlert(!answer1.value.answrTtl ? "제목을 입력하세요" : "내용을 입력하세요");
-    return;
+  // 수정 중인 답변 내용 로드
+  if (quillInstance3.value) {
+    quillInstance3.value.root.innerHTML = answer.answrCntnt || "";
   }
-
-  showConfirm("답변을 수정 하시겠습니까?", async () => {
-    try{
-      answer1.value.answrCntnt = contentHtml;
-      await api.$patch(`/answer`, answer1.value);
-      showAlert("수정되었습니다.");
-      setTimeout(() => {
-        answerEditModal.value = false;
-        showAnswerDetail(answer1.value.answrSq);
-      })
-    }catch(error){
-      console.error("에러발생~");
-      console.log("asdasasdsad", answer1.value);
-    }
-  })
-
-
-}
-
-const backToAnswerDetail = (answrSq) => {
-  showConfirm("변경된 내용은 저장되지 않습니다. 취소하시겠습니까?", ()=> {
-    answerEditModal.value = false;
-    showAnswerDetail(answrSq);
-    return;
-  })
-
-
-}
-
-
-const backToDetail = () => {
-  showConfirm("작성을 취소 하시겠습니까?", () => {
-    answer.value.answrTtl = '';
-    quillInstance.value.root.innerHTML = '';
-    // const brdSq = board.value.brdSq;
-    // console.log("boardSq : " + brdSq);
-    // window.location.href = `/board/qna/` + brdSq;
-    answerModal.value = false;
-  })
-}
-
-
-const newComment = ref("");
-const editingCommentId = ref(null);
-const editedContent = ref("");
+};
 
 const goToPage = (page) => {
   if (page >= 1 && page <= lastPage.value) {
@@ -715,139 +897,27 @@ const goToPage = (page) => {
   }
 };
 
-
 const isLoggedIn = computed(() => {
   if (!member.value) {
     return false;
   }
-
   const memberId = member.value.mbrId || member.value.entrprsId;
-
   return board.value.createdBy === memberId;
 });
+
 const loginCheck = computed(() => !!member.value);
 
 const route = useRoute();
 const router = useRouter();
-const board = ref({});
+const board = ref({
+  isScraped: false, // 스크랩 여부 초기화
+  brdTtl: "",
+  brdCntnt: "",
+  createdBy: "",
+  brdCndtn: "",
+  // 추가 속성들
+});
 const boardId = ref(route.params.id);
-
-const isCommentOwner = (comment) => {
-  if (!member.value) return false; // 비로그인 상태 처리
-  return (
-    comment.mbrSq === member.value.mbrSq ||
-    comment.entrprsSq === member.value.pk
-  );
-};
-
-const editComment = (comment) => {
-  editingCommentId.value = comment.cmntSq;
-  editedContent.value = comment.cmntCntnt;
-};
-
-const cancelEdit = () => {
-  editingCommentId.value = null;
-  editedContent.value = "";
-};
-
-const updateComment = async (comment) => {
-  console.log("진입", comment);
-  showConfirm("수정 하시겠습니까?", async () => {
-    try {
-      const data = {
-        cmntSq: comment.cmntSq,
-        cmntCntnt: editedContent.value,
-      };
-      const res = await api.$patch(`/comment`, data);
-      if (res) {
-        showAlert("댓글이 수정되었습니다.");
-        comment.cmntCntnt = editedContent.value;
-        cancelEdit();
-      }
-    } catch (error) {
-      showAlert("댓글 수정에 실패하였습니다.");
-    }
-  });
-};
-
-const deleteComment = async (cmntSq) => {
-  showConfirm("정말 삭제하시겠습니까?", async () => {
-    try {
-      const res = await api.$delete(`/comment/${cmntSq}`);
-      if (res) {
-        showAlert("댓글이 삭제되었습니다.");
-        // UI에서 해당 댓글의 내용을 "삭제된 댓글 입니다"로 변경
-        const comment = board.value.comments.find(
-          (comment) => comment.cmntSq === cmntSq
-        );
-        if (comment) {
-          board.value.comments = board.value.comments.filter(
-            (cmnt) => cmnt !== comment
-          );
-        }
-      }
-    } catch (error) {
-      showAlert("댓글 삭제에 실패하였습니다.");
-    }
-  });
-};
-
-const submitComment = async () => {
-  if (newComment.value.trim() === "") {
-    showAlert("댓글을 입력하세요.");
-    return;
-  }
-
-  const mbrSq = member.value.mbrSq || null;
-  const entrprsSq = member.value.pk || null;
-
-  const data = {
-    cmntCntnt: newComment.value,
-    brdSq: board.value.brdSq,
-    mbrSq: mbrSq,
-    entrprsSq: entrprsSq,
-  };
-
-  try {
-    const res = await api.$post("/comment", data);
-    if (res) {
-      showAlert("댓글이 등록되었습니다.");
-
-      const newCommentData = {
-        cmntSq: res, // 서버에서 반환된 새로운 댓글의 ID
-        mbrSq: mbrSq,
-        entrprsSq: entrprsSq,
-        cmntCntnt: newComment.value,
-        insrtDtm: new Date().toISOString(),
-        member: mbrSq ? member.value : null,
-        entMember: entrprsSq ? member.value : null,
-        dltYn: "N",
-      };
-
-      // 추가된 댓글을 현재 화면에 바로 반영
-      board.value.comments.push(newCommentData);
-
-      // 입력 필드 초기화
-      newComment.value = "";
-    }
-  } catch (error) {
-    showAlert("댓글 등록에 실패하였습니다.");
-    console.error("댓글 등록 실패:", error);
-  }
-
-  newComment.value = "";
-};
-
-const formatDate = (date) => {
-  const options = {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  };
-  return new Date(date).toLocaleString(undefined, options);
-};
 
 const boardDelete = () => {
   showConfirm(
@@ -857,7 +927,7 @@ const boardDelete = () => {
         await api.$delete(`board/${boardId.value}`);
         showAlert("삭제 완료되었습니다.");
         setTimeout(() => {
-          router.push("/board");
+          router.push("/board/qna");
         }, 2000);
       } catch (error) {
         console.error("삭제 실패:", error);
@@ -867,7 +937,16 @@ const boardDelete = () => {
   );
 };
 
-const answerList = ref([]);
+const answerList = ref([
+  {
+    answrSq: 1,
+    answrTtl: "제목",
+    answrCntnt: "내용",
+    createdBy: "작성자",
+    insrtDtm: "2024-11-13",
+    isEditing: false,
+  },
+]);
 const pageList = ref([]);
 const curPage = ref(1);
 const prevBlock = ref(0);
@@ -876,22 +955,76 @@ const lastPage = ref(0);
 const search = ref({ page: 1 });
 const filterSelect = ref(true);
 
+// 댓글 추가
+const addComment = async (answrSq) => {
+  const content = newComment.value[answrSq];
+  if (!content) return;
+
+  // 로그인 사용자 정보에서 mbrSq 가져오기
+  const mbrSq = member.value?.mbrSq;
+  if (!mbrSq) {
+    showAlert("로그인 사용자 정보를 확인할 수 없습니다.");
+    return;
+  }
+
+  try {
+    await api.$post(`/comments/answer/${answrSq}`, {
+      cmntCntnt: content,
+      mbrSq: mbrSq,
+    });
+    fetchComments(answrSq);
+    newComment.value[answrSq] = "";
+  } catch (error) {
+    showAlert("댓글 추가 실패");
+    console.error("Error adding comment:", error);
+  }
+};
+
+// 댓글 조회
+const fetchComments = async (answrSq) => {
+  try {
+    const response = await api.$get(`/comments/answer/${answrSq}`);
+    const comments = response.data || response; // 응답 데이터 확인
+    const answer = answerList.value.find((a) => a.answrSq === answrSq);
+    if (answer) {
+      answer.comments = comments; // 댓글 데이터 전체를 매핑
+    }
+  } catch (error) {
+    console.error("댓글 로딩 실패:", error);
+  }
+};
+
+// 댓글 삭제
+const deleteComment = async (answrSq, cmntSq) => {
+  showConfirm("댓글을 삭제하시겠습니까?", async () => {
+    try {
+      await api.$delete(`/comments/${cmntSq}`);
+      fetchComments(answrSq);
+    } catch (error) {
+      showAlert("댓글 삭제 실패");
+      console.error("Error deleting comment:", error);
+    }
+  });
+};
 
 const getAnswerList = async () => {
   const queryString = Object.entries(search.value)
     .map((e) => e.join("="))
     .join("&");
-  try{
-    // console.log("답변하는곳 : ", queryString);
-    // console.log("brdSq" + route.params.id );
-    const data = await api.$get("/answer/qna/" + route.params.id + "?" + queryString);
+  try {
+    const data = await api.$get(
+      "/answer/qna/" + route.params.id + "?" + queryString
+    );
     answerList.value = data.data || [];
-    // console.log(answerList.value);
-    if (answerList.value.some(answer => answer.answrSlctnYn === 'Y')) {
+
+    // 답변 리스트 내 각 답변의 댓글 불러오기
+    answerList.value.forEach((answer) => fetchComments(answer.answrSq));
+
+    if (answerList.value.some((answer) => answer.answrSlctnYn === "Y")) {
       filterSelect.value = false;
-    } 
-    // console.log("filterSelect", filterSelect.value)
-    if(data.pagination){
+    }
+
+    if (data.pagination) {
       const {
         endPage,
         nextBlock: nextPageBlock,
@@ -904,103 +1037,189 @@ const getAnswerList = async () => {
       nextBlock.value = nextPageBlock;
       lastPage.value = totalPageCnt;
       const tmpPages = [];
-      for(let i = startPage; i <= endPage; i++){
+      for (let i = startPage; i <= endPage; i++) {
         tmpPages.push(i);
       }
       pageList.value = tmpPages;
-      
-      // console.log("tmpPages", tmpPages);
-    }else{
+    } else {
       console.error("Pagination data is missing.");
     }
-  }catch(error){
+  } catch (error) {
     console.error("Failed to fetch answer list:", error);
   }
-}
+};
 
-const answerSelection = (answrSq) => {
-  showConfirm("답변을 채택하시겠습니까?", async() =>{
-    try{
-      await api.$patch(`/answer/selection/${answrSq}`);
+const answerSelection = (answrSq, brdSq) => {
+  showConfirm("답변을 채택하시겠습니까?", async () => {
+    try {
+      await api.$patch(`/answer/selection/${answrSq}/${brdSq}`);
       showAlert("답변이 채택됐습니다");
       getAnswerList();
-    }catch(error){
+    } catch (error) {
       showAlert("채택 실패", error);
     }
-  })
-}
+  });
+};
 
-const answerRcmndtn = async (answrSq) =>{
-  console.log("로그인 된 사람 Sq", member.value.mbrSq);
-  console.log("로그인 된 사람 pk : " , member.value.pk);
-  
-  // console.log("답변 sq", answrSq);
-  
-  const sq = ref(0);
-  sq.value = member.value.mbrSq || member.value.pk;
-  console.log(sq.value);
-
-  showConfirm("답변을 추천하시겠습니까?", async() => {
-    try{
-      const res1 = await api.$post("/answer/recommendationCheck?answrSq=" + `${answrSq}&mbrSq=` + sq.value);
-
-      if(res1 >= 1){
-        showConfirm("이미 추천된 답변입니다. 추천을 취소하시겠습니까?", async() => {
-          try{
-            await api.$post("/answer/recommendation/" + `${answrSq}?mbrSq=` + sq.value + "&value=-1");
-            showAlert("답글 추천이 취소됐습니다");
-            showAnswerDetail(answrSq);
-          }catch(error){
-            showAlert("추천 취소 중 오류 발생", error);
-          }
-        })
-      }else{
-        try{
-          await api.$post("/answer/recommendation/" + `${answrSq}?mbrSq=` + sq.value + "&value=1");
-          showAlert("답글이 추천됐습니다");
-          showAnswerDetail(answrSq);    
-        }catch(error){
-          showAlert("추천 중 오류 발생", error);
-      }
-      }
-
-    }catch(error){
-      showAlert("추천 실패");
-    }
-  })
-}
-
-const deleteAnswer = (answrSq) => {
-  showConfirm("삭제된 답글은 복구할 수 없습니다! 답변을 삭제하시겠습니까?", async() => {
-    try{
-      await api.$delete(`/answer/delete/${answrSq}`);
-      showAlert("답글이 삭제됐습니다");
+const answerSelfSelection = (brdSq) => {
+  showConfirm("자체해결 하시겠습니까?", async () => {
+    try {
+      await api.$patch(`/board/selection/${brdSq}`);
+      showAlert("자체해결 됐습니다");
+      window.location.href = `/board/qna/${brdSq}`;
       getAnswerList();
-      closeAnswer();
-    }catch(error){
-      showAlert("답글 삭제 실패", error);
-    }
-  })
-}
-
-
-
-
-onMounted(async () => {
-  await nextTick(); // DOM 업데이트가 완료될 때까지 대기
-  getAnswerList();
-  // console.log(member.value.mbrSq);
-  try {
-    quillInstance.value = new Quill(editor.value, {
-    theme: "snow",
-    modules: {
-      toolbar: "#toolbar",
+    } catch (error) {
+      showAlert("자체해결 실패", error);
     }
   });
-    const response = await api.$get(`/board/${boardId.value}`);
-    board.value = response;
+};
+
+const answerRcmndtn = async (answrSq) => {
+  const sq = ref(0);
+  sq.value = member.value.mbrSq || member.value.pk;
+
+  showConfirm("답변을 추천하시겠습니까?", async () => {
+    try {
+      const res1 = await api.$post(
+        "/answer/recommendationCheck?answrSq=" + `${answrSq}&mbrSq=` + sq.value
+      );
+
+      if (res1 >= 1) {
+        showConfirm(
+          "이미 추천된 답변입니다. 추천을 취소하시겠습니까?",
+          async () => {
+            try {
+              await api.$post(
+                "/answer/recommendation/" +
+                  `${answrSq}?mbrSq=` +
+                  sq.value +
+                  "&value=-1"
+              );
+              showAlert("답글 추천이 취소됐습니다");
+              showAnswerDetail(answrSq);
+            } catch (error) {
+              showAlert("추천 취소 중 오류 발생", error);
+            }
+          }
+        );
+      } else {
+        try {
+          await api.$post(
+            "/answer/recommendation/" +
+              `${answrSq}?mbrSq=` +
+              sq.value +
+              "&value=1"
+          );
+          showAlert("답글이 추천됐습니다");
+          showAnswerDetail(answrSq);
+        } catch (error) {
+          showAlert("추천 중 오류 발생", error);
+        }
+      }
+    } catch (error) {
+      showAlert("추천 실패");
+    }
+  });
+};
+
+const answerNotRcmndtn = async (answrSq) => {
+  const sq = ref(0);
+  sq.value = member.value.mbrSq || member.value.pk;
+
+  showConfirm("답변을 비추천하시겠습니까?", async () => {
+    try {
+      const res1 = await api.$post(
+        "/answer/notRecommendationCheck?answrSq=" +
+          `${answrSq}&mbrSq=` +
+          sq.value
+      );
+
+      if (res1 >= 1) {
+        showConfirm(
+          "이미 비추천된 답변입니다. 비추천을 취소하시겠습니까?",
+          async () => {
+            try {
+              await api.$post(
+                "/answer/notRecommendation/" +
+                  `${answrSq}?mbrSq=` +
+                  sq.value +
+                  "&value=-1"
+              );
+              showAlert("답글 비추천이 취소됐습니다");
+              showAnswerDetail(answrSq);
+            } catch (error) {
+              showAlert("비추천 취소 중 오류 발생", error);
+            }
+          }
+        );
+      } else {
+        try {
+          await api.$post(
+            "/answer/notRecommendation/" +
+              `${answrSq}?mbrSq=` +
+              sq.value +
+              "&value=1"
+          );
+          showAlert("답글이 비추천됐습니다");
+          showAnswerDetail(answrSq);
+        } catch (error) {
+          showAlert("비추천 중 오류 발생", error);
+        }
+      }
+    } catch (error) {
+      showAlert("비추천 실패");
+    }
+  });
+};
+
+const deleteAnswer = (answrSq) => {
+  showConfirm(
+    "삭제된 답글은 복구할 수 없습니다! 답변을 삭제하시겠습니까?",
+    async () => {
+      try {
+        await api.$delete(`/answer/delete/${answrSq}`);
+        showAlert("답글이 삭제됐습니다");
+        getAnswerList();
+        closeAnswer();
+      } catch (error) {
+        showAlert("답글 삭제 실패", error);
+      }
+    }
+  );
+};
+
+onMounted(async () => {
+  try {
+    await nextTick();
+
+    // 게시글 정보 가져오기
+    const boardResponse = await api.$get(`/board/${boardId.value}`);
+    board.value = boardResponse;
+
+    // Quill 에디터 초기화
+    quillInstance.value = new Quill(editor.value, {
+      theme: "snow",
+      modules: {
+        toolbar: "#toolbar",
+      },
+    });
+
+    // 게시글 스크랩 상태 확인
+    if (boardId.value) {
+      await fetchScrapStatus(boardId.value, "POST");
+    }
+
+    // 답변 목록 가져오기
+    await getAnswerList();
+
+    // 답변 스크랩 상태 확인
+    if (answerList.value && answerList.value.length > 0) {
+      for (const answer of answerList.value) {
+        await fetchScrapStatus(answer.answrSq, "ANSWER");
+      }
+    }
   } catch (error) {
-    console.error("Failed to fetch board details:", error);
+    console.error("Failed to initialize page:", error);
   }
 });
 
@@ -1009,20 +1228,10 @@ const backToList = () => {
 };
 
 const showBoardContent = ref(true);
-const showAnswerList = ref(true);
-
-const boardSlide = () =>{
-  showBoardContent.value = !showBoardContent.value;
-}
-
-const listSlide = () => {
-  showAnswerList.value = !showAnswerList.value;
-}
 
 const closeAnswer = () => {
   showAnswer.value = false;
-}
-
+};
 </script>
 
 <style>
@@ -1066,9 +1275,9 @@ section {
   font-size: 1rem;
   line-height: 1.6;
   color: #333;
-  min-height: 300px;
+  min-height: 200px;
   text-align: left;
-  max-height: 300px; /* 최대 높이 설정 */
+  max-height: 200px; /* 최대 높이 설정 */
   overflow-y: auto; /* 수직 스크롤 활성화 */
   overflow-x: hidden; /* 수평 스크롤 숨김 */
 }
@@ -1170,7 +1379,8 @@ hr {
   padding: 20px;
   border-radius: 5px;
   width: 300px;
-  position: relative;
+  max-width: 90%;
+  text-align: center;
 }
 
 .close-button {
@@ -1210,7 +1420,8 @@ textarea {
   margin: auto; /* 자동 마진으로 중앙에 배치 */
 }
 
-@media (max-width: 768px) { /* 모바일 화면에 대한 스타일 */
+@media (max-width: 768px) {
+  /* 모바일 화면에 대한 스타일 */
   .answerModal {
     margin-top: 50px;
     width: 100%;
@@ -1218,19 +1429,20 @@ textarea {
     overflow-y: auto;
   }
 
-  .answerModal{
+  .answerModal {
     width: 100%;
   }
 
-  .page-header{
+  .page-header {
     width: 100%;
   }
 }
 
 @media (min-width: 576px) {
-    .container-sm, .container {
-        max-width: 100%;
-    }
+  .container-sm,
+  .container {
+    max-width: 100%;
+  }
 }
 
 section {
@@ -1285,8 +1497,6 @@ section {
   padding: 8px;
   margin-bottom: 10px;
 }
-
-
 
 .answer-list-container {
   max-width: 1100px;
@@ -1357,20 +1567,40 @@ section {
   align-items: center;
 }
 
-
-.slide-btn{
+.slide-btn {
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-.ql-size-large{
+.ql-size-large {
   font-size: 2rem;
 }
 
-.ql-size-huge{
+.ql-size-huge {
   font-size: 3rem;
 }
 
+.reportModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000; /* 모달이 다른 콘텐츠 위에 오도록 */
+}
 
+.reportModal .modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  max-width: 400px;
+  width: 100%;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  text-align: center;
+}
 </style>

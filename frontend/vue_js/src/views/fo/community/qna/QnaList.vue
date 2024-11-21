@@ -1,120 +1,169 @@
 <template>
   <div class="board-list-container">
-    <header class="header">
-      <h1>Q&A 게시판</h1>
+    <header class="header bg-light border-bottom shadow-sm py-3">
+      <div class="container text-center">
+        <h1 class="h3 text-primary mb-0">Q&A 게시판</h1>
+      </div>
     </header>
 
     <div class="board-content">
-      <div class="search-box">
-        <div class="search-area mb-4">
-          <select v-model="search.sk" class="search-select">
-            <option value="">-선택-</option>
-            <option value="title">제목</option>
-            <option value="contents">내용</option>
-          </select>
-          <input
-            type="text"
-            v-model="search.sv"
-            class="search-input"
-            @keydown.enter="onSearch"
-            placeholder="검색어를 입력하세요"
-          />
-          <button class="btn btn-primary" @click="onSearch">검색</button>
-        </div>
-        <div class="d-flex justify-content-end mb-4" v-if="isLoggedIn">
-          <router-link class="btn btn-primary" to="/board/qna/write"
-            >글쓰기</router-link
-          >
+      <div class="search-area mb-1">
+        <div class="row align-items-center">
+          <!-- 검색 옵션 -->
+          <div class="col-auto">
+            <select v-model="search.sk" class="form-select form-select">
+              <option value="">검색 옵션</option>
+              <option value="title">제목</option>
+              <option value="contents">내용</option>
+            </select>
+          </div>
+
+          <!-- 검색어 입력 -->
+          <div class="col">
+            <input
+              type="text"
+              v-model="search.sv"
+              class="form-control form-control"
+              @keydown.enter="onSearch"
+              placeholder="검색어를 입력하세요"
+            />
+          </div>
+
+          <!-- 검색 버튼 -->
+          <div class="col-auto">
+            <button class="btn btn-primary btn" @click="onSearch">검색</button>
+          </div>
         </div>
       </div>
+
+      <!-- 글쓰기 버튼 -->
+      <div class="d-flex justify-content-end mb-3" v-if="isLoggedIn">
+        <router-link to="/board/qna/write" class="btn btn-primary btn-sm"
+          >글쓰기</router-link
+        >
+      </div>
+
+      <!-- 채택여부와 최신순 드롭다운 -->
+      <div class="sort-options d-flex justify-content-end mb-3">
+        <select
+          v-model="search.selection"
+          class="form-select form-select-sm w-auto me-2"
+        >
+          <option value="">채택여부</option>
+          <option value="inprgrs">진행중</option>
+          <option value="rslvd">자체해결</option>
+          <option value="acpt">채택완료</option>
+          <option value="unrslvd">미해결</option>
+        </select>
+        <select v-model="search.sort" class="form-select form-select-sm w-auto">
+          <option value="">최신순</option>
+          <option value="earliest">오래된순</option>
+          <option value="view">조회순</option>
+        </select>
+      </div>
+
       <div class="table-responsive">
-        <table class="table table-hover table-striped">
-          <thead>
+        <table class="table table-striped table-hover align-middle text-center">
+          <thead class="table-light">
             <tr>
-              <th>제목</th>
-              <th>작성자</th>
-              <th>등록일</th>
-              <th>조회수</th>
-              <th>답글수</th>
-              <th>채택여부</th>
+              <th style="width: 46%">제목</th>
+              <th style="width: 10%">작성자</th>
+              <th style="width: 15%">등록일</th>
+              <th style="width: 7%">조회수</th>
+              <th style="width: 7%">답글수</th>
+              <th style="width: 15%">채택여부</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="board in boardList" :key="board.brdSq">
-              <td class="title-cell">
-                <router-link :to="`/board/qna/${board.brdSq}`">
+              <!-- 제목 -->
+              <td class="fw-bold">
+                <router-link
+                  :to="`/board/qna/${board.brdSq}`"
+                  class="text-decoration-none text-dark"
+                >
                   {{ board.brdTtl }}
                 </router-link>
               </td>
-              <td class="small-text">{{ board.createdBy }}</td>
-              <td class="small-text">{{ board.insrtDtm.slice(0, 10) }}</td>
-              <td class="small-text">{{ board.brdHits }}</td>
-              <td class="small-text">{{ board.answerCount }}</td>
-              <td v-if="board.answerCheck == 1" class="small-text">
-                <img
-                    alt="Check"
-                    width="20"
-                    height="20"
-                    data-sticky-width="82"
-                    data-sticky-height="40"
-                    src="/img/check.png"
-                  />
-
+              <!-- 작성자 -->
+              <td class="small">{{ board.createdBy }}</td>
+              <!-- 등록일 -->
+              <td class="small">{{ board.insrtDtm.slice(0, 10) }}</td>
+              <!-- 조회수 -->
+              <td class="small">{{ board.brdHits }}</td>
+              <!-- 답글수 -->
+              <td class="small">{{ board.answerCount }}</td>
+              <!-- 채택 여부 -->
+              <td>
+                <span v-if="board.brdCndtn === 'N'" class="badge bg-success"
+                  >진행중</span
+                >
+                <span v-else-if="board.brdCndtn === 'Y'" class="badge bg-danger"
+                  >채택완료</span
+                >
+                <span
+                  v-else-if="board.brdCndtn === 'S'"
+                  class="badge bg-primary"
+                  >자체해결</span
+                >
+                <span v-else class="badge bg-warning">미해결</span>
               </td>
-              <td v-else class="small-text"></td>
             </tr>
           </tbody>
         </table>
       </div>
+
       <div class="pagination-wrapper">
-        <ul class="pagination justify-content-center">
-          <li class="page-item" :class="{ disabled: curPage === 1 }">
-            <button
-              class="page-link"
-              @click="goToPage(1)"
-              :disabled="curPage === 1"
+        <nav>
+          <ul class="pagination justify-content-center">
+            <li class="page-item" :class="{ disabled: curPage === 1 }">
+              <button
+                class="page-link"
+                @click="goToPage(1)"
+                :disabled="curPage === 1"
+              >
+                &laquo;
+              </button>
+            </li>
+            <li class="page-item" :class="{ disabled: curPage === 1 }">
+              <button
+                class="page-link"
+                @click="goToPage(curPage - 1)"
+                :disabled="curPage === 1"
+              >
+                &lt;
+              </button>
+            </li>
+            <li
+              v-for="page in pageList"
+              :key="page"
+              class="page-item"
+              :class="{ active: curPage === page }"
             >
-              &lt;&lt;
-            </button>
-          </li>
-          <li class="page-item" :class="{ disabled: curPage === 1 }">
-            <button
-              class="page-link"
-              @click="goToPage(curPage - 1)"
-              :disabled="curPage === 1"
-            >
-              &lt;
-            </button>
-          </li>
-          <li
-            v-for="(page, index) in pageList"
-            :key="index"
-            class="page-item"
-            :class="{ active: curPage === page }"
-          >
-            <button class="page-link" @click="goToPage(page)">
-              {{ page }}
-            </button>
-          </li>
-          <li class="page-item" :class="{ disabled: curPage === lastPage }">
-            <button
-              class="page-link"
-              @click="goToPage(curPage + 1)"
-              :disabled="curPage === lastPage"
-            >
-              &gt;
-            </button>
-          </li>
-          <li class="page-item" :class="{ disabled: curPage === lastPage }">
-            <button
-              class="page-link"
-              @click="goToPage(lastPage)"
-              :disabled="curPage === lastPage"
-            >
-              &gt;&gt;
-            </button>
-          </li>
-        </ul>
+              <button class="page-link" @click="goToPage(page)">
+                {{ page }}
+              </button>
+            </li>
+            <li class="page-item" :class="{ disabled: curPage === lastPage }">
+              <button
+                class="page-link"
+                @click="goToPage(curPage + 1)"
+                :disabled="curPage === lastPage"
+              >
+                &gt;
+              </button>
+            </li>
+            <li class="page-item" :class="{ disabled: curPage === lastPage }">
+              <button
+                class="page-link"
+                @click="goToPage(lastPage)"
+                :disabled="curPage === lastPage"
+              >
+                &raquo;
+              </button>
+            </li>
+          </ul>
+        </nav>
       </div>
     </div>
   </div>
@@ -125,6 +174,7 @@ import { ref, onMounted, computed } from "vue";
 import { api } from "../../../../axios";
 import { showAlert } from "../../../../utill/utillModal";
 import { useStore } from "vuex";
+import { watch } from "vue";
 
 // import { useRouter } from "vue-router";
 const store = useStore();
@@ -137,45 +187,51 @@ const curPage = ref(0);
 const prevBlock = ref(0);
 const nextBlock = ref(0);
 const lastPage = ref(0);
-const search = ref({ page: 1, sk: "", sv: "", brdTypCode: "qna" });
+const search = ref({
+  page: 1,
+  sk: "",
+  sv: "",
+  brdTypCode: "qna",
+  sort: "",
+  selection: "",
+});
 
 const getBoardList = async () => {
   const queryString = Object.entries(search.value)
     .map((e) => e.join("="))
     .join("&");
   try {
-    console.log(queryString);
     const data = await api.$get("/board?" + queryString);
     boardList.value = data.data || [];
-    // console.log("ㅁㄴㅇㅁㅁㄴ", boardList.value);
 
-    const answerPromises = boardList.value.map(board =>
-      api.$get("/answer/" + board.brdSq)
-        .then(answer => ({
-          brdSq: board.brdSq,
-          answerCheck: answer.checkAnswer || 0,
-          answerCount: answer.countAnswer || 0
-        }))
-        .catch(error => {
+    const answerPromises = boardList.value.map((board) =>
+      api
+        .$get("/answer/" + board.brdSq)
+        .then((answer) => {
+          return {
+            brdSq: board.brdSq,
+            answerCheck: answer.checkAnswer || 0,
+            answerCount: answer.countAnswer || 0,
+          };
+        })
+        .catch((error) => {
           console.error(error);
           return {
             brdSq: board.brdSq,
             answerCheck: 0,
-            answerCount: 0
+            answerCount: 0,
           };
         })
     );
 
     const answers = await Promise.all(answerPromises);
 
-    for(const board of boardList.value){
-      try{
-        // const answer = await api.$get("/answer/" + board.brdSq);
-        const answer = answers.find(a => a.brdSq === board.brdSq);
+    for (const board of boardList.value) {
+      try {
+        const answer = answers.find((a) => a.brdSq === board.brdSq);
         board.answerCheck = answer ? answer.answerCheck : 0;
         board.answerCount = answer ? answer.answerCount : 0;
-
-      }catch(error){
+      } catch (error) {
         console.error("값 추가중 오류 발생", error);
         board.answerCheck = 0;
         board.countAnswer = 0;
@@ -189,6 +245,7 @@ const getBoardList = async () => {
         startPage,
         totalPageCnt,
       } = data.pagination;
+
       curPage.value = search.value.page;
       prevBlock.value = previousBlock;
       nextBlock.value = nextPageBlock;
@@ -205,9 +262,6 @@ const getBoardList = async () => {
     console.error("Failed to fetch board list:", error);
   }
 };
-
-
-
 
 const onSearch = () => {
   if (search.value.sk === "" || search.value.sv === "") {
@@ -229,6 +283,22 @@ const goToPage = (page) => {
   }
 };
 
+watch(
+  () => search.value.selection,
+  () => {
+    search.value.page = 1; // 페이지 초기화
+    getBoardList();
+  }
+);
+
+watch(
+  () => search.value.sort,
+  () => {
+    search.value.page = 1; // 페이지 초기화
+    getBoardList();
+  }
+);
+
 onMounted(() => {
   getBoardList();
 });
@@ -242,8 +312,14 @@ onMounted(() => {
 }
 
 .header {
-  text-align: center;
-  margin-bottom: 20px;
+  background-color: #f8f9fa; /* 부트스트랩 기본 밝은 배경 */
+  border-bottom: 1px solid #dee2e6; /* 구분선 */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 부드러운 그림자 */
+}
+
+.header h1 {
+  font-weight: bold;
+  font-family: "Arial", sans-serif; /* 세련된 폰트 */
 }
 
 .board-content {
@@ -300,15 +376,16 @@ onMounted(() => {
 .search-area {
   display: flex;
   align-items: center;
-  margin-bottom: 20px;
   padding: 20px;
   display: flex;
   justify-content: center;
 }
 
-.search-select,
+.search-select {
+  padding: 5px;
+}
+
 .search-input {
-  margin-right: 10px;
   padding: 5px;
 }
 
@@ -319,7 +396,6 @@ onMounted(() => {
   align-items: center;
 }
 .search-box {
-  display: flex;
   justify-content: space-between;
 }
 </style>

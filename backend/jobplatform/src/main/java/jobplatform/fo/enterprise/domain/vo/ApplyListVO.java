@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ApplyListVO {
 		// 지원자 순번
-		private int apy_sq;
+		private long apy_sq;
 		// 지원 일시
 		private Timestamp apy_dtm;
 		//지원 상태 코드 번호
@@ -19,11 +19,11 @@ public class ApplyListVO {
 		//지원 상태 코드 한글화
 		private String apy_cndtn_name;
 		// 이력서 순번 (상세열람 용)
-		private int rsm_sq;
+		private long rsm_sq;
 		// 이력서 이미지 주소
 		private String rsm_img_file_url;
 		// 최종학력 코드 번호
-		private int rsm_fnl_edctn_code;
+		private String rsm_fnl_edctn_code;
 		// 이력서 최종학력 코드 한글화
 		private String rsm_fnl_edctn_name;
 		// 이력서 학점

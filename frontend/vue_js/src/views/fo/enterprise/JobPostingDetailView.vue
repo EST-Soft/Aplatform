@@ -56,9 +56,15 @@
           </div>
           <div class="col-md-4">
             <div class="mb-3">
+<<<<<<< HEAD
               <label class="form-label"
                 >접수시작일: {{ formatDate(jbp.regstrStrtDtm) }}</label
               >
+=======
+              <label class="form-label">접수시작일: {{ formatDate(jbp.regstrStrtDtm) }}</label>
+              <br>
+              <label class="form-label">접수마감일: {{ formatDate(jbp.regstrDlnDtm) }}</label>
+>>>>>>> 58ab0f1bab39a51ff54013fbc41654e6b3f41c97
             </div>
           </div>
         </div>
@@ -165,6 +171,39 @@
           </div>
         </div>
 
+        <!--모달창-->
+         <div v-if="showModal" class="modal fade show" tabindex="-1" style="display: block;" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <!-- 모달 헤더 -->
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">
+            지원하실 분야를 선택해주세요
+          </h5>
+          <button type="button" class="btn-close" @click="showModal = false" aria-label="Close"></button>
+        </div>
+        
+        <!-- 모달 본문 -->
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="resumeSelect">대표 이력서 등록</label>
+            <select id="resumeSelect" class="form-control">
+              <option value="">이력서를 선택하세요</option>
+              <option value="resume1">이력서 1</option>
+              <option value="resume2">이력서 2</option>
+              <option value="resume3">이력서 3</option>
+            </select>
+          </div>
+        </div>
+        
+        <!-- 모달 푸터 - 입사지원 버튼 -->
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" @click="applyJob">입사지원</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
         <!-- 수정, 삭제 버튼 -->
         <div v-show="checkEnter" class="row mt-3">
           <div class="col d-flex justify-content-end">
@@ -224,6 +263,10 @@ const jbp = ref({
   workForm: "",
   slry: "",
   regstrStrtDtm: "",
+<<<<<<< HEAD
+=======
+  regstrDlnDtm: ""
+>>>>>>> 58ab0f1bab39a51ff54013fbc41654e6b3f41c97
 });
 
 const formatDate = (dateString) => {
@@ -311,8 +354,12 @@ const deleteBoard = async () => {
 
 // alert창에서 이력서 순번을 넣어야 해서 닫아녾음
 const applyJob = () => {
+<<<<<<< HEAD
   alert("해당 기능은 수정중 입니다.");
   return;
+=======
+  return
+>>>>>>> 58ab0f1bab39a51ff54013fbc41654e6b3f41c97
   /* const resumeId = prompt('이력서 번호를 입력하세요:');
   if (resumeId) {
     insertApply(resumeId);

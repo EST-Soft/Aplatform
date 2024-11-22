@@ -453,6 +453,7 @@
                       class="form-control"
                       rows="2"
                       placeholder="댓글을 수정하세요"
+                      style="width: 100%"
                     ></textarea>
                     <div class="d-flex justify-content-end gap-2 mt-2">
                       <button
@@ -690,7 +691,7 @@ const submitReport = async () => {
       issueRsn: issueReason, // 신고 사유
       mbrSq: member.value.mbrSq, // 로그인 사용자 ID
     });
-    showAlert(`${reportTarget.value.type}이(가) 신고되었습니다.`);
+    showAlert(`${reportTarget.value.type}이 신고되었습니다.`);
   } catch (error) {
     console.error("신고 처리 실패:", error);
     showAlert(`${reportTarget.value.type} 신고에 실패했습니다.`);
@@ -1060,7 +1061,10 @@ const answerSelection = (answrSq, brdSq) => {
     try {
       await api.$patch(`/answer/selection/${answrSq}/${brdSq}`);
       showAlert("답변이 채택됐습니다");
-      getAnswerList();
+
+      // 상태를 즉시 업데이트
+      board.value.brdCndtn = "Y"; // 'Y'로 상태 변경
+      getAnswerList(); // 필요 시, 최신 데이터를 다시 불러오기
     } catch (error) {
       showAlert("채택 실패", error);
     }
@@ -1072,8 +1076,10 @@ const answerSelfSelection = (brdSq) => {
     try {
       await api.$patch(`/board/selection/${brdSq}`);
       showAlert("자체해결 됐습니다");
+
+      // 상태를 즉시 업데이트
+      board.value.brdCndtn = "S"; // 'S'로 상태 변경
       window.location.href = `/board/qna/${brdSq}`;
-      getAnswerList();
     } catch (error) {
       showAlert("자체해결 실패", error);
     }

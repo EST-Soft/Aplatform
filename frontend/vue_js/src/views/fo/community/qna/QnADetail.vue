@@ -126,6 +126,7 @@
           placeholder="추가 사유를 입력하세요"
           class="form-control"
           rows="3"
+          style="width: 100%"
         ></textarea>
         <div class="d-flex justify-content-between mt-3">
           <button class="btn btn-primary" @click="submitReport">신고</button>

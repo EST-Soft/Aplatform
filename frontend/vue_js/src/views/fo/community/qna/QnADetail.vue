@@ -126,6 +126,7 @@
           placeholder="추가 사유를 입력하세요"
           class="form-control"
           rows="3"
+          style="width: 100%"
         ></textarea>
         <div class="d-flex justify-content-between mt-3">
           <button class="btn btn-primary" @click="submitReport">신고</button>
@@ -175,6 +176,7 @@
               v-model="answer.answrTtl"
               placeholder="제목을 입력하세요"
               class="form-control"
+              style="width: 100%"
             />
           </div>
           <div class="form-group mb-4">
@@ -335,11 +337,35 @@
                   v-model="answer.answrTtl"
                   class="form-control"
                   placeholder="제목을 입력하세요"
+                  style="width: 100%"
                 />
               </div>
               <div class="form-group mb-4">
                 <label for="contents" class="form-label">내용</label>
-                <div id="editor3" style="height: 200px"></div>
+                <div class="editor">
+                  <div id="toolbar3">
+                    <!-- Quill toolbar buttons -->
+                    <select class="ql-font"></select>
+                    <select class="ql-size"></select>
+                    <button class="ql-bold"></button>
+                    <button class="ql-italic"></button>
+                    <button class="ql-underline"></button>
+                    <button class="ql-strike"></button>
+                    <select class="ql-color"></select>
+                    <select class="ql-background"></select>
+                    <button class="ql-header" value="1"></button>
+                    <button class="ql-header" value="2"></button>
+                    <button class="ql-blockquote"></button>
+                    <button class="ql-list" value="ordered"></button>
+                    <button class="ql-list" value="bullet"></button>
+                    <button class="ql-indent" value="-1"></button>
+                    <button class="ql-indent" value="+1"></button>
+                    <button class="ql-align"></button>
+                    <button class="ql-link"></button>
+                    <button class="ql-clean"></button>
+                  </div>
+                  <div id="editor3" style="height: 300px"></div>
+                </div>
               </div>
               <div class="d-flex justify-content-end gap-2">
                 <button
@@ -449,6 +475,7 @@
                   class="form-control"
                   placeholder="댓글을 입력하세요"
                   rows="3"
+                  style="width: 100%"
                 ></textarea>
                 <div class="d-flex justify-content-end mt-2">
                   <button
@@ -517,41 +544,6 @@
             </li>
           </ul>
         </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="modal">
-    <div class="modal-content">
-      <h5>{{ reportTarget.type }} 신고하기</h5>
-      <p>신고 사유를 선택하세요:</p>
-      <label>
-        <input type="checkbox" value="스팸/광고" v-model="reportReasons" />
-        스팸/광고
-      </label>
-      <label>
-        <input type="checkbox" value="부적절한 내용" v-model="reportReasons" />
-        부적절한 내용
-      </label>
-      <label>
-        <input type="checkbox" value="욕설/비방" v-model="reportReasons" />
-        욕설/비방
-      </label>
-      <label>
-        <input type="checkbox" value="기타" v-model="reportReasons" />
-        기타
-      </label>
-      <textarea
-        v-model="additionalReason"
-        placeholder="추가 사유를 입력해주세요"
-        class="form-control mt-2"
-        rows="3"
-      ></textarea>
-      <div class="button-container mt-3">
-        <button class="btn btn-primary me-2" @click="submitReport">신고</button>
-        <button class="btn btn-secondary" @click="closeReportModal">
-          취소
-        </button>
       </div>
     </div>
   </div>

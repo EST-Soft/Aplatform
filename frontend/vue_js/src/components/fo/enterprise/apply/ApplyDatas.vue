@@ -3,7 +3,9 @@
     <div class="col-sm-2 col-lg-2">
       <div class="col-sm-12 col-lg-12 imgContainer">
         <span class="img-thumbnail d-block">
-          <img class="img-fluid"
+          <img class="img-fluid" v-if="applyData && applyData.rsm_img_file_url && applyData.rsm_img_file_url !== ''" 
+          :src="applyData.rsm_img_file_url" alt="대체이미지" style="width: 170px; height: 170px;">
+          <img v-else class="img-fluid"
             src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSdraZyZ8CC81iPsZST1_TLB0SBOXC6wfvQ_Exx1uKkGsFpi4t_Mj4o8HhM_vPwI60yBF8&usqp=CAU"
             alt style="width: 200px" />
         </span>

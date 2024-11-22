@@ -63,6 +63,7 @@
               <label class="form-label"
                 >접수시작일: {{ formatDate(jbp.regstrStrtDtm) }}</label
               >
+
               <br />
               <label class="form-label"
                 >접수마감일: {{ formatDate(jbp.regstrDlnDtm) }}</label
@@ -369,6 +370,7 @@ const deleteBoard = async () => {
 // alert창에서 이력서 순번을 넣어야 해서 닫아녾음
 const applyJob = () => {
   alert("해당 기능은 수정중 입니다.");
+
   return;
 
   /* const resumeId = prompt('이력서 번호를 입력하세요:');

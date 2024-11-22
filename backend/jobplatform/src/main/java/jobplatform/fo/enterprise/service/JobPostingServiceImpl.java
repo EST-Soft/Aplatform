@@ -5,10 +5,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-<<<<<<< HEAD
+
 import java.util.stream.Collectors;
-=======
->>>>>>> 58ab0f1bab39a51ff54013fbc41654e6b3f41c97
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -130,17 +128,17 @@ public class JobPostingServiceImpl implements JobPostingService {
      // 현재 시간을 viewDate로 설정
      JobViewEntity jobViewEntity = new JobViewEntity(mbrSq, jbpSq, LocalDateTime.now(), mbrId);
 
-<<<<<<< HEAD
+
      // JobViewEntity를 DB에 저장
      jobViewRepository.save(jobViewEntity);  // 이 메소드가 INSERT 쿼리를 자동으로 처리
      System.out.println("DB에 최근 본 공고 저장됨: 사용자 순번 = " + mbrSq + ", 공고 순번 = " + jbpSq + ", 사용자 ID = " + mbrId);
  }
 
     // 공고 상세
-=======
+
 
     //공고 상세
->>>>>>> 58ab0f1bab39a51ff54013fbc41654e6b3f41c97
+
     @Override
     @Transactional
     public JobPostingDTO jobPostingDetail(Long jbpSq, HttpSession session) {
@@ -158,15 +156,15 @@ public class JobPostingServiceImpl implements JobPostingService {
         JobPostingEntity jpe = jobPostingRepository.findById(jbpSq)
                 .orElseThrow(() -> new RuntimeException("Job posting not found with id " + jbpSq));
 
-<<<<<<< HEAD
+
         // JobPostingDTO 반환
-=======
+
         EnterMemberEntity enterMember = jpe.getEnterpriseMember();
 
         // 기업 이름 설정 
         jpe.getEnterpriseMember().setEntrprsName(enterMember.getEntrprsName());
 
->>>>>>> 58ab0f1bab39a51ff54013fbc41654e6b3f41c97
+
         return JobPostingDTO.from(jpe);
     }
 

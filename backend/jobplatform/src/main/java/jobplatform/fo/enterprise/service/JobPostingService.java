@@ -31,19 +31,19 @@ public interface JobPostingService {
 
 	public Long insertJobPosting(JobPostingEntity jpe);
 
-<<<<<<< HEAD
+
 	public List<JobPostingDTO> getJobPostings();
 	public void addJobView(Long mbrSq, Long jbpSq, String mbrId);
 	public void addJobViewEntity(Long mbrSq, Long jbpSq, String mbrId);
 	public List<JobPostingDTO> getTopJobPostings();
-=======
+
     public List<JobPostingEntity> myJobPostingList(String sortBy, Long entrprsSq);
 
     public void extendDeadline(Long jbpSq, int daysToAdd);
 
 
 
->>>>>>> 58ab0f1bab39a51ff54013fbc41654e6b3f41c97
+
 
 
 	

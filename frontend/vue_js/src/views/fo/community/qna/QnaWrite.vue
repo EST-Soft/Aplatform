@@ -80,7 +80,7 @@ import { api } from "../../../../axios";
 import { showAlert, showConfirm } from "../../../../utill/utillModal";
 import { useStore } from "vuex";
 import Quill from "quill";
-import Filter from 'badwords-ko';
+import Filter from "badwords-ko";
 
 const store = useStore();
 // Vue Router를 사용하여 페이지 이동을 처리
@@ -120,12 +120,16 @@ const saveBoard = async () => {
   const isProfaneContent = filter.isProfane(sanitizedContent);
 
   if (isProfaneTitle) {
-    showAlert("사용할 수 없는 단어가 제목에 포함되어 있습니다. 제목을 수정해주세요.");
+    showAlert(
+      "사용할 수 없는 단어가 제목에 포함되어 있습니다. 제목을 수정해주세요."
+    );
     return;
   }
 
   if (isProfaneContent) {
-    showAlert("사용할 수 없는 단어가 내용에 포함되어 있습니다. 내용을 수정해주세요.");
+    showAlert(
+      "사용할 수 없는 단어가 내용에 포함되어 있습니다. 내용을 수정해주세요."
+    );
     return;
   }
 

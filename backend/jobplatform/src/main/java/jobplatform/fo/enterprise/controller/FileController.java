@@ -31,32 +31,28 @@ public class FileController {
     // 이미지 업로드 처리
     @PostMapping("/upload-image")
     public ResumeProfileImageDto uploadImage(@RequestParam("file") MultipartFile file) {
+        System.out.println("확인----------"+file);
         return fileService.uploadImage(file);
     }
 
-    @GetMapping(value = "{fileName}", produces = { MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE, MediaType.IMAGE_GIF_VALUE })
-    public ResponseEntity<Resource> getImage(@PathVariable("fileName") String fileName) {
+    @GetMapping("/{filename}")
+    public ResponseEntity<Resource> getFile(@PathVariable String filename) {
+        System.out.println("확인-----------" + filename);
         try {
-            // fileService에서 이미지를 불러옴
-            Resource resource = fileService.getImage(fileName);
+            Resource resource = fileService.getImage(filename);
             
-            if (resource.exists()) {
-                return ResponseEntity.ok()
-                        .contentType(MediaType.IMAGE_JPEG) // 해당 형식에 맞는 미디어 타입을 설정
-                        .body(resource);
-            } else {
-                // 파일이 존재하지 않으면 404 반환
-                return ResponseEntity.notFound().build();
-            }
+            return ResponseEntity.ok()
+               
+                .body(resource);
         } catch (Exception e) {
-            // 예외 발생 시 500 오류 반환
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
     
     
+    
 
-     @GetMapping("/file/{filename}")
+    @GetMapping("/file/download/{filename}")
      public ResponseEntity<?> downloadImage(@PathVariable String filename) {
          File file = new File("/home/ubuntu/alpatform/file/" + filename);
          

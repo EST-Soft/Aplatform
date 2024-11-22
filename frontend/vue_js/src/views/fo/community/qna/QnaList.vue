@@ -22,7 +22,7 @@
           <div class="col">
             <input
               type="text"
-              v-model="search.sv"
+              v-model="tempSearch.sv"
               class="form-control form-control"
               @keydown.enter="onSearch"
               placeholder="검색어를 입력하세요"
@@ -45,16 +45,18 @@
 
       <!-- 채택여부와 최신순 드롭다운 -->
       <div class="sort-options d-flex justify-content-end mb-3">
+        <label for="selection" class="me-2 fw-bold">채택여부:</label>
         <select
           v-model="search.selection"
           class="form-select form-select-sm w-auto me-2"
         >
-          <option value="">채택여부</option>
+          <option value="">전체</option>
           <option value="inprgrs">진행중</option>
           <option value="rslvd">자체해결</option>
           <option value="acpt">채택완료</option>
           <option value="unrslvd">미해결</option>
         </select>
+        <label for="sort" class="me-2 fw-bold ms-2">정렬:</label>
         <select v-model="search.sort" class="form-select form-select-sm w-auto">
           <option value="">최신순</option>
           <option value="earliest">오래된순</option>
@@ -74,7 +76,9 @@
               <th style="width: 15%">채택여부</th>
             </tr>
           </thead>
-          <tbody>
+
+          <!-- 게시글이 존재할 때 -->
+          <tbody v-if="boardList && boardList.length > 0">
             <tr v-for="board in boardList" :key="board.brdSq">
               <!-- 제목 -->
               <td class="fw-bold">
@@ -110,10 +114,19 @@
               </td>
             </tr>
           </tbody>
+
+          <!-- 게시글이 존재하지 않을 때 -->
+          <tbody v-else>
+            <tr>
+              <td colspan="6" class="text-center text-muted py-3">
+                검색 결과가 없습니다.
+              </td>
+            </tr>
+          </tbody>
         </table>
       </div>
 
-      <div class="pagination-wrapper">
+      <div class="pagination-wrapper" v-if="boardList && boardList.length > 0">
         <nav>
           <ul class="pagination justify-content-center">
             <li class="page-item" :class="{ disabled: curPage === 1 }">
@@ -195,6 +208,9 @@ const search = ref({
   sort: "",
   selection: "",
 });
+const tempSearch = ref({
+  sv: "",
+});
 
 const getBoardList = async () => {
   const queryString = Object.entries(search.value)
@@ -264,11 +280,15 @@ const getBoardList = async () => {
 };
 
 const onSearch = () => {
-  if (search.value.sk === "" || search.value.sv === "") {
+  // 검색 옵션과 검색어가 모두 입력되어야 검색 실행
+  if (!search.value.sk.trim() || !tempSearch.value.sv.trim()) {
     showAlert("검색 조건과 검색어를 모두 입력하세요.");
     return;
   }
-  search.value.page = 1;
+
+  // 검색어를 실제 검색 상태에 반영
+  search.value.sv = tempSearch.value.sv.trim();
+  search.value.page = 1; // 페이지를 첫 번째로 초기화
   getBoardList();
 };
 

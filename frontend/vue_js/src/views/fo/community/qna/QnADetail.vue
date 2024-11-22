@@ -271,9 +271,13 @@
             <div v-html="answer.answrCntnt" class="mb-3"></div>
 
             <!-- 답변 상태 및 버튼 그룹 -->
-            <div class="d-flex justify-content-between align-items-center">
+            <!-- 답변 상태 및 버튼 그룹 -->
+            <div
+              class="d-flex justify-content-between align-items-center"
+              v-if="!answer.isEditing"
+            >
               <!-- 추천/비추천 -->
-              <div>
+              <div v-if="!mbrSqCheck(answer.mbrSq)" class="recommend-buttons">
                 <button
                   class="btn btn-outline-success btn-sm me-2"
                   @click="answerRcmndtn(answer.answrSq)"
@@ -293,7 +297,7 @@
               </div>
 
               <!-- 액션 버튼 -->
-              <div class="d-flex gap-2">
+              <div class="action-buttons ms-auto d-flex gap-2">
                 <button
                   class="btn btn-outline-warning btn-sm"
                   @click="toggleScrap('ANSWER', answer.answrSq)"
@@ -305,6 +309,7 @@
                   {{ answer.isScraped ? "스크랩 취소" : "스크랩" }}
                 </button>
                 <button
+                  v-if="!mbrSqCheck(answer.mbrSq)"
                   class="btn btn-danger btn-sm"
                   @click="openReportModal('답글', answer.answrSq, 'ANSWER')"
                 >
@@ -334,7 +339,7 @@
                 <input
                   type="text"
                   id="answrTtl"
-                  v-model="answer.answrTtl"
+                  v-model="answer.tempAnswerTitle"
                   class="form-control"
                   placeholder="제목을 입력하세요"
                   style="width: 100%"
@@ -374,7 +379,7 @@
                 >
                   저장
                 </button>
-                <button class="btn btn-secondary" @click="cancelEdit">
+                <button class="btn btn-secondary" @click="cancelEdit(answer)">
                   취소
                 </button>
               </div>
@@ -398,6 +403,7 @@
                 >
                   <div
                     class="d-flex justify-content-between align-items-center"
+                    v-if="!comment.isEditing"
                   >
                     <!-- 작성자와 날짜 -->
                     <div>
@@ -410,6 +416,7 @@
                     <!-- 신고 및 수정/삭제 버튼 -->
                     <div class="d-flex gap-2">
                       <button
+                        v-if="!mbrSqCheck(answer.mbrSq)"
                         class="btn btn-outline-danger btn-sm"
                         @click="
                           openReportModal('댓글', comment.cmntSq, 'COMMENT')
@@ -818,9 +825,12 @@ const saveEditedAnswer = async (answer) => {
   }
 
   try {
+    // 저장 전에 제목 업데이트
+    answer.answrTtl = answer.tempAnswerTitle;
+
     await api.$patch(`/answer`, answer);
     showAlert("답변이 수정되었습니다.");
-    cancelEdit(); // 수정 완료 후 창 닫기
+    cancelEdit(answer); // 수정 완료 후 창 닫기
   } catch (error) {
     console.error("답변 수정 실패:", error);
     showAlert("답변 수정에 실패했습니다.");
@@ -835,6 +845,7 @@ const cancelEdit = () => {
     );
     if (answer) {
       answer.isEditing = false;
+      answer.tempAnswerTitle = "";
     }
 
     // Quill 인스턴스 제거
@@ -859,6 +870,9 @@ const startEdit = async (answer) => {
 
   // 수정 상태 활성화
   answer.isEditing = true;
+
+  // 원래 제목 복사
+  answer.tempAnswerTitle = answer.answrTtl; // 복사된 제목
 
   // DOM이 렌더링될 때까지 대기
   await nextTick();

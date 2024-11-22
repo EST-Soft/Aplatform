@@ -79,10 +79,10 @@ public class FileServiceImpl implements FileService {
      * } // getImage
      */
 
-     @Value("C:/home/ubuntu/alpatform/file/")
+     @Value("${file.path}")
      private String filePath; // 절대 경로
      
-    @Value("http://localhost:8080/file/")
+    @Value("${file.url}")
     private String fileUrl;
 
     @Override

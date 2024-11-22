@@ -520,41 +520,6 @@
       </div>
     </div>
   </div>
-
-  <div class="modal">
-    <div class="modal-content">
-      <h5>{{ reportTarget.type }} 신고하기</h5>
-      <p>신고 사유를 선택하세요:</p>
-      <label>
-        <input type="checkbox" value="스팸/광고" v-model="reportReasons" />
-        스팸/광고
-      </label>
-      <label>
-        <input type="checkbox" value="부적절한 내용" v-model="reportReasons" />
-        부적절한 내용
-      </label>
-      <label>
-        <input type="checkbox" value="욕설/비방" v-model="reportReasons" />
-        욕설/비방
-      </label>
-      <label>
-        <input type="checkbox" value="기타" v-model="reportReasons" />
-        기타
-      </label>
-      <textarea
-        v-model="additionalReason"
-        placeholder="추가 사유를 입력해주세요"
-        class="form-control mt-2"
-        rows="3"
-      ></textarea>
-      <div class="button-container mt-3">
-        <button class="btn btn-primary me-2" @click="submitReport">신고</button>
-        <button class="btn btn-secondary" @click="closeReportModal">
-          취소
-        </button>
-      </div>
-    </div>
-  </div>
 </template>
 
 <script setup>

@@ -655,8 +655,11 @@ java.lang.IllegalArgumentException: Argument not valid
 	at org.eclipse.equinox.launcher.Main.basicRun(Main.java:588)
 	at org.eclipse.equinox.launcher.Main.run(Main.java:1459)
 <<<<<<< HEAD
+<<<<<<< HEAD
 !SESSION 2024-11-20 16:24:47.838 -----------------------------------------------
 =======
+=======
+>>>>>>> 0fb7eca69f6166a6ac143ca3b03542486e3aa5da
 
 !ENTRY org.springframework.ide.eclipse.boot.dash 4 0 2024-11-20 16:04:53.184
 !MESSAGE Failed to connect to Boot app
@@ -712,7 +715,10 @@ java.lang.NullPointerException
 	at org.springframework.ide.eclipse.boot.dash.util.AbstractPollingAppReadyStateMonitor$1.run(AbstractPollingAppReadyStateMonitor.java:51)
 	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:63)
 !SESSION 2024-11-21 13:29:34.719 -----------------------------------------------
+<<<<<<< HEAD
 >>>>>>> 579dc6d90287948950819b562de7b6836d55a614
+=======
+>>>>>>> 0fb7eca69f6166a6ac143ca3b03542486e3aa5da
 eclipse.buildId=4.21.1.202402070844
 java.version=17.0.10
 java.vendor=Eclipse Adoptium
@@ -720,6 +726,7 @@ BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=ko_KR
 Framework arguments:  -product org.springframework.boot.ide.branding.sts4
 Command-line arguments:  -os win32 -ws win32 -arch x86_64 -product org.springframework.boot.ide.branding.sts4
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 !ENTRY org.eclipse.emf.ecore 2 0 2024-11-20 16:25:20.732
 !MESSAGE Both 'org.eclipse.jst.j2ee.core' and 'org.eclipse.jst.j2ee.core' register a package for 'application.xmi'
@@ -734,6 +741,8 @@ Command-line arguments:  -os win32 -ws win32 -arch x86_64 -product org.springfra
 !MESSAGE Keybinding conflicts occurred.  They may interfere with normal accelerator operation.
 !SUBENTRY 1 org.eclipse.jface 2 0 2024-11-20 16:25:32.074
 =======
+=======
+>>>>>>> 0fb7eca69f6166a6ac143ca3b03542486e3aa5da
 !ENTRY org.eclipse.emf.ecore 2 0 2024-11-21 13:30:05.419
 !MESSAGE Both 'org.eclipse.jst.j2ee.core' and 'org.eclipse.jst.j2ee.core' register a package for 'application.xmi'
 
@@ -746,7 +755,10 @@ Command-line arguments:  -os win32 -ws win32 -arch x86_64 -product org.springfra
 !ENTRY org.eclipse.jface 2 0 2024-11-21 13:30:19.577
 !MESSAGE Keybinding conflicts occurred.  They may interfere with normal accelerator operation.
 !SUBENTRY 1 org.eclipse.jface 2 0 2024-11-21 13:30:19.577
+<<<<<<< HEAD
 >>>>>>> 579dc6d90287948950819b562de7b6836d55a614
+=======
+>>>>>>> 0fb7eca69f6166a6ac143ca3b03542486e3aa5da
 !MESSAGE A conflict occurred for CTRL+SHIFT+T:
 Binding(CTRL+SHIFT+T,
 	ParameterizedCommand(Command(org.eclipse.jdt.ui.navigate.open.type,Open Type,
@@ -765,6 +777,7 @@ Binding(CTRL+SHIFT+T,
 	org.eclipse.ui.defaultAcceleratorConfiguration,
 	org.eclipse.ui.contexts.window,,,system)
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 !ENTRY org.eclipse.ui 4 4 2024-11-20 16:25:35.374
 !MESSAGE Unable to create part
@@ -1045,6 +1058,8 @@ not correct please set the HOME environment variable and restart Eclipse. Otherw
 EGit might behave differently since they see different configuration options.
 This warning can be switched off on the Team > Git > Confirmations and Warnings preference page.
 =======
+=======
+>>>>>>> 0fb7eca69f6166a6ac143ca3b03542486e3aa5da
 !ENTRY org.springframework.tooling.ls.eclipse.commons 1 0 2024-11-21 13:30:24.904
 !MESSAGE Command list starting LS: org.springframework.tooling.boot.ls
 START:
@@ -1629,4 +1644,25 @@ java.lang.NullPointerException
 	at org.springsource.ide.eclipse.commons.livexp.core.LiveVariable.setValue(LiveVariable.java:46)
 	at org.springframework.ide.eclipse.boot.dash.util.AbstractPollingAppReadyStateMonitor$1.run(AbstractPollingAppReadyStateMonitor.java:51)
 	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:63)
+<<<<<<< HEAD
 >>>>>>> 579dc6d90287948950819b562de7b6836d55a614
+=======
+
+!ENTRY org.springframework.ide.eclipse.boot.dash 4 0 2024-11-22 08:42:54.970
+!MESSAGE Failed to connect to Boot app
+!STACK 0
+java.lang.NullPointerException
+	at java.base/java.util.concurrent.CompletableFuture.uniAcceptStage(CompletableFuture.java:732)
+	at java.base/java.util.concurrent.CompletableFuture.thenAccept(CompletableFuture.java:2182)
+	at org.springframework.ide.eclipse.boot.dash.liveprocess.DefaultLiveProcessCommandExecutor.executeCommand(DefaultLiveProcessCommandExecutor.java:60)
+	at org.springframework.ide.eclipse.boot.dash.BootDashActivator$1.stateChanged(BootDashActivator.java:219)
+	at org.springframework.ide.eclipse.boot.dash.BootDashActivator$1.stateChanged(BootDashActivator.java:1)
+	at org.springframework.ide.eclipse.boot.dash.util.RunStateTracker.updateOwnerStatesAndFireEvents(RunStateTracker.java:216)
+	at org.springframework.ide.eclipse.boot.dash.util.RunStateTracker$1.gotValue(RunStateTracker.java:151)
+	at org.springframework.ide.eclipse.boot.dash.util.RunStateTracker$1.gotValue(RunStateTracker.java:1)
+	at org.springsource.ide.eclipse.commons.livexp.core.LiveExpression.changed(LiveExpression.java:137)
+	at org.springsource.ide.eclipse.commons.livexp.core.LiveExpression.refresh(LiveExpression.java:81)
+	at org.springsource.ide.eclipse.commons.livexp.core.LiveVariable.setValue(LiveVariable.java:46)
+	at org.springframework.ide.eclipse.boot.dash.util.AbstractPollingAppReadyStateMonitor$1.run(AbstractPollingAppReadyStateMonitor.java:51)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:63)
+>>>>>>> 0fb7eca69f6166a6ac143ca3b03542486e3aa5da

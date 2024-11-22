@@ -175,6 +175,7 @@
               v-model="answer.answrTtl"
               placeholder="제목을 입력하세요"
               class="form-control"
+              style="width: 100%"
             />
           </div>
           <div class="form-group mb-4">
@@ -335,11 +336,35 @@
                   v-model="answer.answrTtl"
                   class="form-control"
                   placeholder="제목을 입력하세요"
+                  style="width: 100%"
                 />
               </div>
               <div class="form-group mb-4">
                 <label for="contents" class="form-label">내용</label>
-                <div id="editor3" style="height: 200px"></div>
+                <div class="editor">
+                  <div id="toolbar3">
+                    <!-- Quill toolbar buttons -->
+                    <select class="ql-font"></select>
+                    <select class="ql-size"></select>
+                    <button class="ql-bold"></button>
+                    <button class="ql-italic"></button>
+                    <button class="ql-underline"></button>
+                    <button class="ql-strike"></button>
+                    <select class="ql-color"></select>
+                    <select class="ql-background"></select>
+                    <button class="ql-header" value="1"></button>
+                    <button class="ql-header" value="2"></button>
+                    <button class="ql-blockquote"></button>
+                    <button class="ql-list" value="ordered"></button>
+                    <button class="ql-list" value="bullet"></button>
+                    <button class="ql-indent" value="-1"></button>
+                    <button class="ql-indent" value="+1"></button>
+                    <button class="ql-align"></button>
+                    <button class="ql-link"></button>
+                    <button class="ql-clean"></button>
+                  </div>
+                  <div id="editor3" style="height: 300px"></div>
+                </div>
               </div>
               <div class="d-flex justify-content-end gap-2">
                 <button
@@ -449,6 +474,7 @@
                   class="form-control"
                   placeholder="댓글을 입력하세요"
                   rows="3"
+                  style="width: 100%"
                 ></textarea>
                 <div class="d-flex justify-content-end mt-2">
                   <button

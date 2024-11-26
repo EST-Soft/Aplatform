@@ -158,6 +158,7 @@ import { api } from '@/axios.js';
 import { useRouter } from 'vue-router';
 import QuillEditorComponent from '@/components/common/Editor.vue';
 import store from '../../../store';
+import { showAlert } from '../../../utill/utillModal';
 
 const areas = ref([]);
 const jobs = ref([]);
@@ -280,7 +281,7 @@ const submitPost = () => {
       const { detailUrl, jbpSq: insertedJbpSq } = response;
       jbpSq.value = insertedJbpSq;
       console.log("글 번호: " + jbpSq.value);
-      alert('공고가 등록되었습니다.');
+      showAlert('공고가 등록되었습니다.');
       clearForm();
       router.push(detailUrl);
     })

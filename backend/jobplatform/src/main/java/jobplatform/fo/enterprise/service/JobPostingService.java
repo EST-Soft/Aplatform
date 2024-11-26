@@ -42,6 +42,12 @@ public interface JobPostingService {
     // 최근 본 공고 추가
     public void addJobView(Long mbrSq, Long jbpSq, String mbrId);
 
+
+
+	
+
+
+
     // 최근 본 공고 엔터티 추가
     public void addJobViewEntity(Long mbrSq, Long jbpSq, String mbrId);
 
@@ -49,8 +55,23 @@ public interface JobPostingService {
     public List<JobPostingDTO> getTopJobPostings();
 
     // 특정 기업의 공고 리스트 조회
+
     public List<JobPostingEntity> myJobPostingList(String sortBy, Long entrprsSq);
 
     // 마감일 연장
     public void extendDeadline(Long jbpSq, int daysToAdd);
+
+
+
+
+
+
+
+	
+
+
+	
 }
+
+
+

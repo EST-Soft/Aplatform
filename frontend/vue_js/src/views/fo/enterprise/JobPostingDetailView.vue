@@ -35,6 +35,7 @@
           </div>
           <div class="col-md-4">
             <div class="mb-3">
+
               <label class="form-label">접수시작일: {{ formatDate(jbp.regstrStrtDtm) }}</label>
             </div>
           </div>
@@ -156,7 +157,8 @@ const jbp = ref({
   jobName: "",
   workForm: "",
   slry: "",
-  regstrStrtDtm: ""
+  regstrStrtDtm: "",
+  regstrDlnDtm: "",
 });
 
 const formatDate = (dateString) => {
@@ -220,22 +222,23 @@ const deleteBoard = async () => {
 const applyJob = () => {
   showAlert("해당 기능은 수정중 입니다.")
   return
+
   /* const resumeId = prompt('이력서 번호를 입력하세요:');
   if (resumeId) {
-    insertApply(resumeId);
+  insertApply(resumeId);
   } */
 };
 
 /* const insertApply = async (resumeId) => {
   const applyData = {
-    resume: { rsmSq: resumeId }, 
+    resume: { rsmSq: resumeId },
     jobPosting: { jbpSq: jbp.value.jbpSq },
     apyDtm: new Date().toISOString()
   };
 
   try {
     const response = await api.$post('/apply/insert', applyData);
-    alert(response); 
+    alert(response);
   } catch (error) {
     console.error('Error applying job:', error);
     alert('입사지원을 처리하는 중 오류가 발생했습니다.');

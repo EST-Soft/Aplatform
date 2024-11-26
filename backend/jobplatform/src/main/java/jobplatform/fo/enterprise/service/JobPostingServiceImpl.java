@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -115,6 +116,7 @@ public class JobPostingServiceImpl implements JobPostingService {
         }
     }
 
+
     // 최근 본 공고 기록 추가
     @Override
     @Transactional
@@ -125,6 +127,7 @@ public class JobPostingServiceImpl implements JobPostingService {
     }
 
     // 공고 상세
+
     @Override
     @Transactional
     public JobPostingDTO jobPostingDetail(Long jbpSq, HttpSession session) {
@@ -137,6 +140,17 @@ public class JobPostingServiceImpl implements JobPostingService {
 
         JobPostingEntity jpe = jobPostingRepository.findById(jbpSq)
                 .orElseThrow(() -> new RuntimeException("Job posting not found with id " + jbpSq));
+
+
+
+        // JobPostingDTO 반환
+
+        EnterMemberEntity enterMember = jpe.getEnterpriseMember();
+
+        // 기업 이름 설정 
+        jpe.getEnterpriseMember().setEntrprsName(enterMember.getEntrprsName());
+
+
 
         return JobPostingDTO.from(jpe);
     }

@@ -126,6 +126,7 @@
           placeholder="추가 사유를 입력하세요"
           class="form-control"
           rows="3"
+          style="width: 100%"
         ></textarea>
         <div class="d-flex justify-content-between mt-3">
           <button class="btn btn-primary" @click="submitReport">신고</button>
@@ -175,6 +176,7 @@
               v-model="answer.answrTtl"
               placeholder="제목을 입력하세요"
               class="form-control"
+              style="width: 100%"
             />
           </div>
           <div class="form-group mb-4">
@@ -269,9 +271,13 @@
             <div v-html="answer.answrCntnt" class="mb-3"></div>
 
             <!-- 답변 상태 및 버튼 그룹 -->
-            <div class="d-flex justify-content-between align-items-center">
+            <!-- 답변 상태 및 버튼 그룹 -->
+            <div
+              class="d-flex justify-content-between align-items-center"
+              v-if="!answer.isEditing"
+            >
               <!-- 추천/비추천 -->
-              <div>
+              <div v-if="!mbrSqCheck(answer.mbrSq)" class="recommend-buttons">
                 <button
                   class="btn btn-outline-success btn-sm me-2"
                   @click="answerRcmndtn(answer.answrSq)"
@@ -291,7 +297,7 @@
               </div>
 
               <!-- 액션 버튼 -->
-              <div class="d-flex gap-2">
+              <div class="action-buttons ms-auto d-flex gap-2">
                 <button
                   class="btn btn-outline-warning btn-sm"
                   @click="toggleScrap('ANSWER', answer.answrSq)"
@@ -303,6 +309,7 @@
                   {{ answer.isScraped ? "스크랩 취소" : "스크랩" }}
                 </button>
                 <button
+                  v-if="!mbrSqCheck(answer.mbrSq)"
                   class="btn btn-danger btn-sm"
                   @click="openReportModal('답글', answer.answrSq, 'ANSWER')"
                 >
@@ -332,14 +339,38 @@
                 <input
                   type="text"
                   id="answrTtl"
-                  v-model="answer.answrTtl"
+                  v-model="answer.tempAnswerTitle"
                   class="form-control"
                   placeholder="제목을 입력하세요"
+                  style="width: 100%"
                 />
               </div>
               <div class="form-group mb-4">
                 <label for="contents" class="form-label">내용</label>
-                <div id="editor3" style="height: 200px"></div>
+                <div class="editor">
+                  <div id="toolbar3">
+                    <!-- Quill toolbar buttons -->
+                    <select class="ql-font"></select>
+                    <select class="ql-size"></select>
+                    <button class="ql-bold"></button>
+                    <button class="ql-italic"></button>
+                    <button class="ql-underline"></button>
+                    <button class="ql-strike"></button>
+                    <select class="ql-color"></select>
+                    <select class="ql-background"></select>
+                    <button class="ql-header" value="1"></button>
+                    <button class="ql-header" value="2"></button>
+                    <button class="ql-blockquote"></button>
+                    <button class="ql-list" value="ordered"></button>
+                    <button class="ql-list" value="bullet"></button>
+                    <button class="ql-indent" value="-1"></button>
+                    <button class="ql-indent" value="+1"></button>
+                    <button class="ql-align"></button>
+                    <button class="ql-link"></button>
+                    <button class="ql-clean"></button>
+                  </div>
+                  <div id="editor3" style="height: 300px"></div>
+                </div>
               </div>
               <div class="d-flex justify-content-end gap-2">
                 <button
@@ -348,7 +379,7 @@
                 >
                   저장
                 </button>
-                <button class="btn btn-secondary" @click="cancelEdit">
+                <button class="btn btn-secondary" @click="cancelEdit(answer)">
                   취소
                 </button>
               </div>
@@ -372,6 +403,7 @@
                 >
                   <div
                     class="d-flex justify-content-between align-items-center"
+                    v-if="!comment.isEditing"
                   >
                     <!-- 작성자와 날짜 -->
                     <div>
@@ -384,6 +416,7 @@
                     <!-- 신고 및 수정/삭제 버튼 -->
                     <div class="d-flex gap-2">
                       <button
+                        v-if="!mbrSqCheck(answer.mbrSq)"
                         class="btn btn-outline-danger btn-sm"
                         @click="
                           openReportModal('댓글', comment.cmntSq, 'COMMENT')
@@ -420,6 +453,7 @@
                       class="form-control"
                       rows="2"
                       placeholder="댓글을 수정하세요"
+                      style="width: 100%"
                     ></textarea>
                     <div class="d-flex justify-content-end gap-2 mt-2">
                       <button
@@ -449,6 +483,7 @@
                   class="form-control"
                   placeholder="댓글을 입력하세요"
                   rows="3"
+                  style="width: 100%"
                 ></textarea>
                 <div class="d-flex justify-content-end mt-2">
                   <button
@@ -656,7 +691,7 @@ const submitReport = async () => {
       issueRsn: issueReason, // 신고 사유
       mbrSq: member.value.mbrSq, // 로그인 사용자 ID
     });
-    showAlert(`${reportTarget.value.type}이(가) 신고되었습니다.`);
+    showAlert(`${reportTarget.value.type}이 신고되었습니다.`);
   } catch (error) {
     console.error("신고 처리 실패:", error);
     showAlert(`${reportTarget.value.type} 신고에 실패했습니다.`);
@@ -791,9 +826,12 @@ const saveEditedAnswer = async (answer) => {
   }
 
   try {
+    // 저장 전에 제목 업데이트
+    answer.answrTtl = answer.tempAnswerTitle;
+
     await api.$patch(`/answer`, answer);
     showAlert("답변이 수정되었습니다.");
-    cancelEdit(); // 수정 완료 후 창 닫기
+    cancelEdit(answer); // 수정 완료 후 창 닫기
   } catch (error) {
     console.error("답변 수정 실패:", error);
     showAlert("답변 수정에 실패했습니다.");
@@ -808,6 +846,7 @@ const cancelEdit = () => {
     );
     if (answer) {
       answer.isEditing = false;
+      answer.tempAnswerTitle = "";
     }
 
     // Quill 인스턴스 제거
@@ -832,6 +871,9 @@ const startEdit = async (answer) => {
 
   // 수정 상태 활성화
   answer.isEditing = true;
+
+  // 원래 제목 복사
+  answer.tempAnswerTitle = answer.answrTtl; // 복사된 제목
 
   // DOM이 렌더링될 때까지 대기
   await nextTick();
@@ -1019,7 +1061,10 @@ const answerSelection = (answrSq, brdSq) => {
     try {
       await api.$patch(`/answer/selection/${answrSq}/${brdSq}`);
       showAlert("답변이 채택됐습니다");
-      getAnswerList();
+
+      // 상태를 즉시 업데이트
+      board.value.brdCndtn = "Y"; // 'Y'로 상태 변경
+      getAnswerList(); // 필요 시, 최신 데이터를 다시 불러오기
     } catch (error) {
       showAlert("채택 실패", error);
     }
@@ -1031,8 +1076,10 @@ const answerSelfSelection = (brdSq) => {
     try {
       await api.$patch(`/board/selection/${brdSq}`);
       showAlert("자체해결 됐습니다");
+
+      // 상태를 즉시 업데이트
+      board.value.brdCndtn = "S"; // 'S'로 상태 변경
       window.location.href = `/board/qna/${brdSq}`;
-      getAnswerList();
     } catch (error) {
       showAlert("자체해결 실패", error);
     }

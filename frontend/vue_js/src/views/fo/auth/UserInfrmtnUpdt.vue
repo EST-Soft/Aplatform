@@ -52,19 +52,11 @@
     <div class="d-flex justify-content-center mb-4">
       <div class="profile-image-outer-container">
         <div class="profile-image-inner-container bg-color-dark">
-          <div v-if="result.mbr_img_file_url != null">
-            <img
-              :src="result.mbr_img_file_url"
-              alt="Profile Image"
-              v-if="img == 0"
-            />
-            <!-- <img
-              src="@/assets/avatar.jpg"
-              alt="Profile Image"
-              v-if="img == 0"
-            />-->
-            <!-- 이미지 저장소 정해지면 이거 지우고 위에꺼 주석 풀기 -->
+          <!-- 서버에서 이미지 URL을 받은 경우 -->
+          <div v-if="result.mbr_img_file_url != null && img == 0">
+            <img :src="result.mbr_img_file_url" alt="Profile Image" />
           </div>
+          <!-- 서버에서 이미지 URL이 없는 경우, 기본 이미지 표시 -->
           <div v-else>
             <img
               src="@/assets/avatar.jpg"
@@ -72,12 +64,15 @@
               v-if="img == 0"
             />
           </div>
+
+          <!-- 파일 업로드 후 미리보기 이미지 -->
           <img
             :src="imgUrl"
             alt="Profile Image"
             id="mbrImgFileUrl"
             v-if="img == 1"
           />
+
           <input
             type="hidden"
             name="mbrImgOrgnlFn"
@@ -90,10 +85,14 @@
             id="mbrImgFileUrl"
             v-model="mbrImgFileUrl"
           />
+
+          <!-- 프로필 이미지 업로드 버튼 -->
           <span class="profile-image-button bg-color-dark">
             <i class="fas fa-camera text-light"></i>
           </span>
         </div>
+
+        <!-- 파일 선택 input -->
         <input
           type="file"
           id="fileInput"
@@ -285,6 +284,7 @@
               </div>
             </div>
           </div>
+
           <div v-else>
             <div class="form-group row mb-4">
               <label
@@ -297,7 +297,7 @@
                   type="text"
                   name="mbr_adrs_post"
                   id="postcode"
-                  value=""
+                  v-model="mbrPost"
                 />
               </div>
               <div class="col-lg-2">
@@ -339,7 +339,7 @@
                   class="form-control text-3 h-auto py-2"
                   type="text"
                   name="mbr_adrs"
-                  value=""
+                  v-model="mbrAdrs"
                 />
               </div>
             </div>
@@ -484,29 +484,25 @@ const pwSubmit = async () => {
 const openPostcode = () => {
   new window.daum.Postcode({
     oncomplete: (data) => {
-      // 도로명 주소의 노출 규칙에 따라 주소를 표시한다.
-      // 내려오는 변수가 값이 없는 경우엔 공백('')값을 가지므로, 이를 참고하여 분기 한다.
-      var roadAddr = data.roadAddress; // 도로명 주소 변수
-      var extraRoadAddr = ""; // 참고 항목 변수
+      var roadAddr = data.roadAddress;
+      var extraRoadAddr = "";
 
-      // 법정동명이 있을 경우 추가한다. (법정리는 제외)
-      // 법정동의 경우 마지막 문자가 "동/로/가"로 끝난다.
       if (data.bname !== "" && /[동|로|가]$/g.test(data.bname)) {
         extraRoadAddr += data.bname;
       }
-      // 건물명이 있고, 공동주택일 경우 추가한다.
+
       if (data.buildingName !== "" && data.apartment === "Y") {
         extraRoadAddr +=
           extraRoadAddr !== "" ? ", " + data.buildingName : data.buildingName;
       }
-      // 표시할 참고항목이 있을 경우, 괄호까지 추가한 최종 문자열을 만든다.
+
       if (extraRoadAddr !== "") {
         extraRoadAddr = " (" + extraRoadAddr + ")";
       }
 
-      // 우편번호와 주소 정보를 해당 필드에 넣는다.
-      document.getElementById("postcode").value = data.zonecode;
-      document.getElementById("roadAddress").value = roadAddr;
+      // Update Vue's reactive properties directly
+      mbrPost.value = data.zonecode; // Using 'ref' value directly
+      mbrAdrs.value = roadAddr + extraRoadAddr; // Using 'ref' value directly
     },
   }).open();
 };
@@ -576,21 +572,18 @@ const verifyAuthCode = () => {
 };
 
 // 파일 선택 핸들러
-// 파일 선택 핸들러
 const handleFileChange = async (e) => {
-  const file = e.target.files[0]; // 선택된 파일 저장
-  if (file) {
-    // 미리보기 이미지 표시
+  const selectedFile = e.target.files[0]; // 선택된 파일 저장
+  if (selectedFile) {
     const reader = new FileReader();
     reader.onload = function (event) {
-      // 선택한 파일을 미리보기로 표시
       imgUrl.value = event.target.result; // FileReader로 얻은 Data URL을 imgUrl에 설정
       img.value = 1; // 이미지 표시 상태 (업로드 전 미리보기)
     };
-    reader.readAsDataURL(file); // 선택된 파일을 Data URL로 읽기
+    reader.readAsDataURL(selectedFile); // 선택된 파일을 Data URL로 읽기
 
     const formData = new FormData();
-    formData.append("file", file);
+    formData.append("file", selectedFile);
 
     try {
       // 이미지 파일을 서버에 업로드
@@ -600,20 +593,25 @@ const handleFileChange = async (e) => {
         },
       });
 
-      // 서버에서 반환된 이미지 URL을 실제 이미지 URL로 설정
-      // 이미지 URL을 서버에서 반환된 URL로 설정
-      const imageUrl = response.imgFileUrl; // 서버에서 반환된 이미지 URL
-      document.getElementById("imagePreview").src = imageUrl;
+      console.log("서버 응답:", response);
 
-      imgUrl.value = imageUrl; // 실제 이미지 URL로 설정
-      img.value = 1; // 이미지 표시 상태
+      // 서버 응답에서 URL을 확인하여 이미지 URL 설정
+      if (response && response.imgFileUrl) {
+        const imageUrl = response.imgFileUrl;
+        imgUrl.value = imageUrl; // 실제 이미지 URL로 설정
+        img.value = 1; // 이미지 표시 상태 (업로드 완료 후)
+      } else {
+        throw new Error("서버에서 이미지 URL을 반환하지 않았습니다.");
+      }
+
+      // 서버에서 반환된 이미지 URL을 hidden input에 설정
+      mbrImgFileUrl.value = response.imgFileUrl; // imgFileUrl을 hidden input에 설정
+      mbrImgOrgnlFn.value = selectedFile.name; // selectedFile.name을 사용하여 파일명 설정
     } catch (error) {
       console.error("이미지 업로드 중 오류 발생:", error);
+      alert("이미지 업로드 중 오류가 발생했습니다. 다시 시도해주세요.");
       img.value = 0; // 이미지 표시 상태 초기화
-      alert("이미지 업로드 중 오류가 발생했습니다. 다시 시도해주세요."); // 사용자에게 오류 알림
     }
-  } else {
-    img.value = 0; // 이미지 표시 상태 초기화 (파일이 선택되지 않은 경우)
   }
 };
 

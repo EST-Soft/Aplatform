@@ -47,12 +47,14 @@ public interface JobPostingRepository extends JpaRepository<JobPostingEntity, Lo
     @Query("INSERT INTO JobViewEntity (mbrSq, jbpSq, viewDate, mbrId) " +
            "VALUES (:mbrSq, :jbpSq, CURRENT_TIMESTAMP, :mbrId)")
     void addJobViewEntity(Long mbrSq, Long jbpSq, String mbrId);
+    
     // 검색
     List<JobPostingEntity> findByJbpTtlContainingOrJbpCntntContaining(String jbpTtl, String jbpCntnt);
 	List<JobPostingEntity> findByJbpTtlContaining(String jpbTtl);
 	List<JobPostingEntity> findByJbpCntntContaining(String jbpCntnt);
-        // 조회수(hits) 기준으로 상위 3개 공고 조회
-        List<JobPostingEntity> findTop3ByOrderByHitsDesc();
+        
+    // 조회수(hits) 기준으로 상위 3개 공고 조회
+    List<JobPostingEntity> findTop3ByOrderByHitsDesc();
 
 
     //마감일 연장 

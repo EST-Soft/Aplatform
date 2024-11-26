@@ -14,6 +14,5 @@ public class ApplyConditionDataDTO {
 	private Long apy_sq;
 	//지원 상태
 	private String apy_cndtn;
-	//면접 일시
-	private Timestamp intv_dtm;
+	
 }

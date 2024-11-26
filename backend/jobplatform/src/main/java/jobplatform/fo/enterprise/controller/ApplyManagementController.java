@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -83,33 +84,37 @@ public class ApplyManagementController {
 	}
 	
 	// 지원자 상태변경 
-	@PatchMapping("/applys/condition/{apy_sq}/{apy_cndtn}")
-	public ResponseEntity<HttpStatus> modifyApplyCondition(
-			@PathVariable(name = "apy_sq", required = false) Long apy_sq,
-			@PathVariable(name = "apy_cndtn", required = false) String apy_cndtn,
-			@RequestParam Timestamp intv_dtm
-			) {
-		
-		ApplyConditionDataDTO applyConditionDataDTO = new ApplyConditionDataDTO(apy_sq, apy_cndtn, intv_dtm);
-		
-		HttpStatus httpStatus = null;
-		
-		try {
-			//상태 변경 + 특정 상태시 면접일시 같이 입력
-			Boolean result = applyManagementService.modifyApplyCondition(applyConditionDataDTO);
-			if(result) {
-				httpStatus = HttpStatus.OK;
-			} else {
-				httpStatus = HttpStatus.NOT_FOUND;
-			}
-		} catch (SQLException | IOException e) {
-			// TODO Auto-generated catch block
-			//e.printStackTrace();
-			httpStatus = HttpStatus.BAD_GATEWAY; 
-		}
-		
-		return new ResponseEntity<HttpStatus>(httpStatus);
-	}
+	@PutMapping("/applys/condition/{apy_sq}/{apy_cndtn}")
+public ResponseEntity<HttpStatus> modifyApplyCondition(
+        @PathVariable(name = "apy_sq", required = false) Long apy_sq,
+        @PathVariable(name = "apy_cndtn", required = false) String apy_cndtn
+        //@RequestParam Timestamp intv_dtm
+) {
+    // 데이터 확인용 SysOut
+    System.out.println("Received Data - apy_sq: " + apy_sq + ", apy_cndtn: " + apy_cndtn);
+	
+    // DTO 생성
+    ApplyConditionDataDTO applyConditionDataDTO = new ApplyConditionDataDTO(apy_sq, apy_cndtn);
+
+    HttpStatus httpStatus = null;
+   try {
+        // 상태 변경 + 면접일시 입력 처리
+        Boolean result = applyManagementService.modifyApplyCondition(applyConditionDataDTO);
+        
+        // 상태에 따른 응답 처리
+        if (result) {
+            httpStatus = HttpStatus.OK;
+        } else {
+            httpStatus = HttpStatus.NOT_FOUND;
+        }
+    } catch (SQLException | IOException e) {
+        e.printStackTrace();
+        httpStatus = HttpStatus.BAD_GATEWAY;
+    }
+    
+    return new ResponseEntity<HttpStatus>(httpStatus);
+}
+
 	
 	
 }

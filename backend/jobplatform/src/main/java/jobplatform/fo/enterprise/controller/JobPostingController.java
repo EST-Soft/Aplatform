@@ -107,8 +107,8 @@ public class JobPostingController {
 
 	  //직업 목록	  //직업 목록
 	  @GetMapping("/jobs")
-	  public ResponseEntity<List<JobPostingEntity>> getAllJobs() {
-	    List<JobPostingEntity> jobs = jobRepository.findAll();
+	  public ResponseEntity<List<JobEntity>> getAllJobs() {
+	    List<JobEntity> jobs = jobRepository.findAll();
 	    System.out.println("직업" );
 	    return ResponseEntity.ok(jobs);
 	  }
@@ -168,6 +168,7 @@ public JobPostingDTO JobPostingDetail(@PathVariable Long jbpSq, HttpSession sess
 	// 공고 삭제 메소드
 	@DeleteMapping("/board/jobPostingDelete/{jbpSq}")
 	public void deleteJobPosting(@PathVariable Long jbpSq) {
+		System.out.println("delete"+jbpSq);
 		jobPostingService.deleteJobPosting(jbpSq);
 	}
 	

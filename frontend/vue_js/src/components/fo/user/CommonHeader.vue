@@ -190,13 +190,14 @@
                         </router-link>
                       </li>
                       <li class="dropdown">
-                        <router-link
-                          to="/enter/recommendResumeList"
+                        <a
                           class="dropdown-item dropdown-toggle font-weight-bold"
+                          href="#"
+                          @click.prevent="showdownAlert"
                         >
                           인재리스트
                           <i class="fas fa-chevron-down"></i>
-                        </router-link>
+                        </a>
                       </li>
                       <li class="dropdown">
                         <a
@@ -394,6 +395,9 @@ function closeNav() {
     enterNavElement.classList.remove("show");
     isEnterNavVisible.value = false;
   }
+}
+function showdownAlert() {
+  showAlert("아직 준비중입니다.");
 }
 </script>
 

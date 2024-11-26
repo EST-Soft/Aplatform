@@ -2,7 +2,7 @@ import axios from "axios";
 
 // axios 인스턴스 생성
 const apiInstance = axios.create({
-  baseURL: "http://localhost:80",
+  baseURL: "http://3.37.242.106:80",
 });
 
 // 공통 HTTP 메서드 정의

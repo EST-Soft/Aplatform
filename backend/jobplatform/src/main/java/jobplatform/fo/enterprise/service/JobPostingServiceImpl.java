@@ -207,16 +207,39 @@ public class JobPostingServiceImpl implements JobPostingService {
     // 공고 검색
     @Override
     public List<JobPostingEntity> searchJobPostings(String searchTerm, String searchField) {
-        if ("jbpTtl_jbpCntnt".equals(searchField)) {
-            return jobPostingRepository.findByJbpTtlContainingOrJbpCntntContaining(searchTerm, searchTerm);
-        } else if ("jbpTtl".equals(searchField)) {
-            return jobPostingRepository.findByJbpTtlContaining(searchTerm);
-        } else if ("jbpCntnt".equals(searchField)) {
-            return jobPostingRepository.findByJbpCntntContaining(searchTerm);
-        } else {
-            return jobPostingRepository.findAll();
+        System.out.println("searchTerm: " + searchTerm + ", searchField: " + searchField);
+    
+        // 빈 검색어 처리
+        if (searchTerm == null || searchTerm.isEmpty()) {
+            List<JobPostingEntity> allPostings = jobPostingRepository.findAll();
+            System.out.println("findAll() 호출 결과: " + allPostings);
+            return allPostings;
+        }
+    
+        // searchField 값 확인
+        System.out.println("검색 조건에 해당하는 필드: " + searchField);
+    
+        // 검색 조건 처리
+        switch (searchField) {
+            case "jbpTtl_jbpCntnt":
+                List<JobPostingEntity> result1 = jobPostingRepository.findByJbpTtlContainingOrJbpCntntContaining(searchTerm, searchTerm);
+                System.out.println("findByJbpTtlContainingOrJbpCntntContaining 결과: " + result1);
+                return result1;
+            case "jbpTtl":
+                List<JobPostingEntity> result2 = jobPostingRepository.findByJbpTtlContaining(searchTerm);
+                System.out.println("findByJbpTtlContaining 결과: " + result2);
+                return result2;
+            case "jbpCntnt":
+                List<JobPostingEntity> result3 = jobPostingRepository.findByJbpCntntContaining(searchTerm);
+                System.out.println("findByJbpCntntContaining 결과: " + result3);
+                return result3;
+            default:
+                System.out.println("기본값으로 처리됨: " + searchField);  // default가 호출된 경우 로그 추가
+                return jobPostingRepository.findAll();
         }
     }
+    
+    
 
     // 지원 등록
     @Override

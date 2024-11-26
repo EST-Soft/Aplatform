@@ -20,66 +20,73 @@
       <div class="container py-4">
         
         <div class="list-container">
-          <div class="list-header" v-if="paginatedItems.length > 0">
-            <div class="search-options">
-            </div>
-            <div v-show="isEnter">
-              <router-link to="/board/jobPostingInsert" class="btn btn-primary">공고 등록</router-link>
-            </div>
-            <div>
-              <select v-model="sortOption" class="section"  @change="fetchSortedItems" required>
-               <option value="" disabled selected>진행상태</option> 
-               <option value="예정">예정</option>
-               <option value="진행중">진행중</option>
-               <option value="채용종료">채용종료</option>
-              </select>
-              <button @click="clearAllFilter" class="btn btn-primary">초기화</button>
-            </div>
-            <SearchComponent @searchResult="handleSearchResult" />
-          </div>
-          <div class="list-body">
-  <div v-if="paginatedItems.length > 0">
-    <div v-for="(item, idx) in paginatedItems" :key="idx" class="custom">
-      <table class="info-table">
-        <tr>
-          <td style="font-size:16px;">{{ item.enterpriseMember.entrprsName }}</td>
-          <td style="font-size:16px;">{{ item.jbpTtl }}</td>
-          <td colspan="3" class="action-buttons-cell">
-            <!-- 수정 삭제 버튼  -->
-            <div>
-              <button class="btn btn-success" @click="goUpdatePage(item)">수정</button>
-              <button class="btn btn-danger ms-2" @click="confirmDelete(item)">삭제</button>
-            </div>
-          </td>
-          <td style="font-size:18px;">{{ getJobStatusClass(item) }}</td>
-          <td>
-            <button v-if="getJobStatus(item) === '채용종료'" class="btn btn-warning ms-2" @click="addDeadline(item)">마감일 추가</button>
-          </td>
-        </tr>
-        <tr>
-          <td style="font-size:16px;">{{ formatWorkArea(item.workArea) }}</td>
-          <td style="font-size:16px;">{{ getCareerText(item.crrDrtn) }}</td>
-          <td style="font-size:16px;">{{ getEducationText(item.edctn) }}</td>
-          <td style="font-size:16px;">{{ formatJobName(item.jobName) }}</td>
-          <td style="font-size:16px;">{{ item.regstrStrtDtm }}</td>
-          <td style="font-size:16px;">{{ item.regstrDlnDtm }}</td>
-          <td>
-            <div>
-              <button class="btn btn-apply ms-2" @click="gotoapplyPage(item)">지원자 현황</button>
-            </div>
-          </td>
-        </tr>
-      </table>
+  <div class="list-header">
+    <div class="search-options"></div>
+
+    <!-- 공고 등록 버튼 -->
+    <div v-show="isEnter">
+      <router-link to="/board/jobPostingInsert" class="btn btn-primary">공고 등록</router-link>
+    </div>
+
+    <!-- 진행 상태 필터 -->
+    <div>
+      <select v-model="sortOption" class="section" @change="fetchSortedItems" required>
+        <option value="" disabled selected>진행상태</option>
+        <option value="예정">예정</option>
+        <option value="진행중">진행중</option>
+        <option value="채용종료">채용종료</option>
+      </select>
+      <button @click="clearAllFilter" class="btn btn-primary">초기화</button>
+    </div>
+
+    <!-- 검색 컴포넌트 -->
+    <SearchComponent @searchResult="handleSearchResult" />
+  </div>
+
+  <div class="list-body">
+    <!-- 공고 리스트 -->
+    <div v-if="paginatedItems.length > 0">
+      <div v-for="(item, idx) in paginatedItems" :key="idx" class="custom">
+        <table class="info-table" @click="goToDetailPage(item)">
+          <tr>
+            <td style="font-size:16px;">{{ item.enterpriseMember.entrprsName }}</td>
+            <td style="font-size:16px;">제목:<br>{{ item.jbpTtl }}</td>
+            <td colspan="3" class="action-buttons-cell">
+              <div>
+                <button class="btn btn-success" @click.stop="goUpdatePage(item)">수정</button>
+                <button class="btn btn-danger ms-2" @click.stop="confirmDelete(item)">삭제</button>
+              </div>
+            </td>
+            <td style="font-size:18px;">{{ getJobStatusClass(item) }}</td>
+            <td>
+              <button v-if="getJobStatus(item) === '채용종료'" class="btn btn-warning ms-2" @click="addDeadline(item)">마감일 추가</button>
+            </td>
+          </tr>
+          <tr>
+            <td style="font-size:14px;" v-html="formatWorkArea(item.workArea)"></td>
+            <td style="font-size:14px;">경력:<br><span style="font-size:18px;">{{ getCareerText(item.crrDrtn) }}</span></td>
+            <td style="font-size:14px;">학력:<br><span style="font-size:18px;">{{ getEducationText(item.edctn) }}</span></td>
+            <td style="font-size:14px;" v-html="formatJobName(item.jobName)"></td>
+            <td style="font-size:14px;">시작일:<br><span style="font-size:16px;">{{ item.regstrStrtDtm }}</span></td>
+            <td style="font-size:14px;">마감일:<br><span style="font-size:16px;">{{ item.regstrDlnDtm }}</span></td>
+            <td>
+              <div>
+                <button class="btn btn-apply ms-2" @click.stop="gotoapplyPage(item)">지원자 현황</button>
+              </div>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- 등록된 공고가 없을 때 -->
+    <div v-else class="no-items text-center py-5">
+      <p class="text-muted">등록된 공고가 없습니다.</p>
+      <router-link to="/board/jobPostingInsert" class="btn btn-primary mt-3">공고 등록하기</router-link>
     </div>
   </div>
-  <!-- 검색 결과가 없을 때 표시될 메시지 -->
-  <div v-else class="no-items text-center py-5">
-              <p class="text-muted">등록된 공고가 없습니다.</p>
-              <router-link to="/board/jobPostingInsert" class="btn btn-primary mt-3">공고 등록하기</router-link>
-            </div>
 </div>
 
-        </div>
         <div class="pagenation-wrapper">
           <BasePagination :currentPage="state.currentPage" :totalPages="totalPages" @goToPage="goToPage" />
         </div>
@@ -96,6 +103,7 @@ import SearchComponent from '@/components/fo/enterprise/SearchComponent.vue';
 import moment from 'moment';
 import{ useStore } from "vuex";
 import { useRouter } from 'vue-router';
+import {  showAlert} from '../../../utill/utillModal';
 
 
 
@@ -117,52 +125,42 @@ const isEnter = computed(() => {
 });
 
 
-// 초기 데이터 로드
+
+// 원본 데이터를 저장하는 변수 추가
+const originalItems = ref([]);
+
+// 초기 데이터 로드 함수에서 원본 데이터를 저장
 const fetchItems = async () => {
   try {
-    // 로그인된 회사의 정보를 가져옵니다.
     const test = store.getters.getMember;
-    console.log("entrprsId:", test.entrprsId);
 
-    // 로그인한 회사의 ID를 쿼리에 추가하여 필터링
     const response = await api.$get('/board/list/jobPosting', {
       params: { 
         sortBy: sortOption.value,
-        entrprsId: test.entrprsId  // 기업의 pk로 필터링
+        entrprsId: test.entrprsId
       }
     });
-    // 가져온 공고 목록에서 enterpriseMember.entrprsId를 기준으로 필터링
-    if (response && response) {
-     // enterpriseMember.entrprsId 값이 test.entrprsId와 일치하는 항목만 필터링
-      const filteredItems = response.filter(item => {
-        return item.enterpriseMember && item.enterpriseMember.entrprsId === test.entrprsId;
-      });
 
-      // 필터링된 결과가 있다면 상태에 저장
-      if (filteredItems.length > 0) {
-        state.items = filteredItems;
-        console.log("Fetched and filtered items:", filteredItems);
-      } else {
-        console.log("No data found for entrprsId:", test.entrprsId);
-        state.items = []; // 필터링된 결과가 없으면 빈 배열로 설정
-      }
+    if (response) {
+      const filteredItems = response.filter(item => item.enterpriseMember?.entrprsId === test.entrprsId);
+      originalItems.value = filteredItems; // 원본 데이터 저장
+      state.items = filteredItems;
     } else {
-      console.error('No data found in response');
       state.items = [];
+      originalItems.value = [];
     }
-
   } catch (error) {
     console.error('Error fetching items:', error);
     state.items = [];
+    originalItems.value = [];
   }
 };
 
-
-
-
+// 진행 상태 필터링 함수 수정
 const fetchSortedItems = () => {
+  state.items = [...originalItems.value]; // 항상 원본 데이터로 초기화
   state.currentPage = 1; // 페이지를 첫 페이지로 초기화
-  
+
   // 선택된 값에 따라 공고 상태 필터링
   if (sortOption.value === '예정') {
     state.items = state.items.filter(item => getJobStatus(item) === '예정');
@@ -171,9 +169,12 @@ const fetchSortedItems = () => {
   } else if (sortOption.value === '채용종료') {
     state.items = state.items.filter(item => getJobStatus(item) === '채용종료');
   }
+};
 
-  // 필터링 후 항목들 다시 로드
-  console.log('Filtered items:', state.items);
+// 초기화 버튼 로직 수정
+const clearAllFilter = () => {
+  state.items = [...originalItems.value]; // 원본 데이터를 복원
+  sortOption.value = ''; // 선택된 필터를 초기화
 };
 
 // 마감일 추가 함수
@@ -199,10 +200,10 @@ const formatJobName = (jobName) => {
     // 문자열에서 대괄호와 따옴표 제거
     let cleaned = jobName.replace(/^\[|\]$/g, '').replace(/"/g, '');
     // 쉼표로 분리된 항목들을 배열로 만들고 다시 조인
-    return cleaned.split(',').map(item => item.trim()).join(', ');
+    return cleaned.split(',').map(item => item.trim()).join('<br>');
   } else if (Array.isArray(jobName)) {
     // 이미 배열인 경우 직접 조인
-    return jobName.join(', ');
+    return jobName.join('<br>');
   }
   // 그 외의 경우 원래 값 반환
   return jobName;
@@ -213,10 +214,10 @@ const formatWorkArea = (workArea) => {
     // 문자열에서 대괄호와 따옴표 제거
     let cleaned = workArea.replace(/^\[|\]$/g, '').replace(/"/g, '');
     // 쉼표로 분리된 항목들을 배열로 만들고 다시 조인
-    return cleaned.split(',').map(item => item.trim()).join(', ');
+    return cleaned.split(',').map(item => item.trim()).join('<br>');
   } else if (Array.isArray(workArea)) {
     // 이미 배열인 경우 직접 조인
-    return workArea.join(', ');
+    return workArea.join('<br>');
   }
   // 그 외의 경우 원래 값 반환
   return workArea;
@@ -266,26 +267,12 @@ onMounted(() => {
 });
 
 
-// 선택된 값, 검색 값 초기화
-const clearAllFilter =()=>{
-  fetchItems();
-}
-
-
 // 필터된 아이템들 계산
 const filteredItems = computed(() => {
   if (!state.items) return [];
-  const today = moment().format('YYYY-MM-DD');
-  return state.items.filter(item => {
-    let isValid = true;
-    // 공고 시작일이 오늘 날짜보다 작은지 확인
-    if (moment(item.regstrStrtDtm).isAfter(today)) {
-      isValid = false;
-    }
-
-    return isValid;
+    return state.items;
   });
-});
+
 
 // 페이지 변경 함수
 function goToPage(page) {
@@ -297,11 +284,19 @@ function goToPage(page) {
 
 watch(sortOption, fetchSortedItems);
 
+
 // 검색 결과 처리 함수
-const handleSearchResult = (searchResults) => {
-  state.items = searchResults;
+const handleSearchResult = (results) => {
+  // 검색된 결과에 대해 필터링을 적용
+  const filtered = results.filter(item => {
+    return item.enterpriseMember && item.enterpriseMember.entrprsId === store.getters.getMember?.entrprsId;
+  });  
+  console.log("검색 결과:", results);
+  state.items = filtered;
   state.currentPage = 1;
-}
+  
+};
+
 
 const isEditable = ref(true);
 const router = useRouter();
@@ -314,23 +309,24 @@ const goUpdatePage = (item) => {
 const gotoapplyPage = (item) => {
   router.push(`/applys/apply-list/${item.jbpSq}`);
 }
-
 const confirmDelete = (item) => {
   if (window.confirm('게시글을 삭제 하시겠습니까?')) {
     deleteBoard(item);
-    alert('게시글이 삭제되었습니다.');
+    showAlert('게시글이 삭제되었습니다.');
   }
 };
 
-const deleteBoard = async (jbp) => {
+const deleteBoard = async (item) => {
   try {
-    await api.$delete(`/board/jobPostingDelete/${jbp.jbpSq}`);
-    console.log('게시글이 삭제 되었습니다');
+    await api.$delete(`/board/jobPostingDelete/${item.jbpSq}`);
+    fetchItems();
     router.push('/board/list/jobPosting');
   } catch (error) {
     console.error('게시글 삭제가 실패 되었습니다:', error);
   }
 };
+
+
 
 // 학력 매핑 테이블
 const educationMapping = {
@@ -376,6 +372,10 @@ const getJobStatus = (item) => {
 const getJobStatusClass = (item) => {
   return getJobStatus(item);
 };
+
+const goToDetailPage = (item) => {
+  router.push(`/board/detail/jobPosting/${item.jbpSq}`);
+}
 
 </script>
 
@@ -434,11 +434,21 @@ td:first-child {
 }
 
 td:nth-child(2) {
-  width: 20%;
+  width: 10%;
 }
 
-td:nth-child(3){
-  width: auto;
+tr:nth-child(2) td:nth-of-type(3) {
+  width: 15%;
+}
+
+/* tr2에서 4번째 셀 (셀 4에만 적용) */
+tr:nth-child(2) td:nth-of-type(4) {
+  width: 10%;
+}
+
+/* tr2에서 5번째 셀 (셀 5에만 적용) */
+tr:nth-child(2) td:nth-of-type(5) {
+  width: 10%;
 }
 
 td:nth-child(4){
@@ -521,7 +531,15 @@ td:last-child{
   td:last-child {
     width: auto;
   }
+ td:first-child{
+  width: 10%;
+ }
+
   td:nth-child(2){
+    width: 10%;
+  }
+
+  td:nth-child(4){
     width: 20%;
   }
   td:last-child{

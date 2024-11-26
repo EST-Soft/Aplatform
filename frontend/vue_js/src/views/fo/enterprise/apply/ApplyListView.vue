@@ -49,9 +49,23 @@
         <div v-else>
           <div v-for="applyData in applyListData.applyDatas" :key="applyData.apy_sq">
             <ApplyDatas :applyData="applyData" />
+
+            <!-- 상태 선택 및 저장 -->
+            <div class="form-group">
+              <select v-model="applyData.selectedCondition" class="form-select form-control h-auto py-2">
+                <option v-for="applyCondition in applyListData.applyConditions" :key="applyCondition.code_id"
+                        :value="applyCondition.code_id">
+                  {{ applyCondition.code_name }}
+                </option>
+              </select>
+              <button class="btn btn-primary mt-2" @click="updateStatus(applyData)">
+                상태 저장
+              </button>
+            </div>
           </div>
         </div>
       </div>
+
       <hr class="gradient" />
       <div class="row">
         <!-- 페이지네이션 -->
@@ -63,113 +77,133 @@
   </div>
 </template>
 
+
 <script setup>
 import { onMounted, ref } from "vue";
+import { useRoute } from "vue-router";
 import PaginationData from "@/components/fo/enterprise/common/PaginationData.vue";
 import ApplyDatas from "@/components/fo/enterprise/apply/ApplyDatas.vue";
-import { api } from '@/axios';
+import { api } from "@/axios";
+import { showAlert } from "../../../../utill/utillModal";
 
+// 지원자 목록 데이터
 const applyListData = ref({
   applyDatas: [],
   paginationData: {},
-  searchData: { jbp_sq: 86, division: 'all', condition: '', sort: 'asc', pageNo: 1 },
-  applyConditions: [],  // 빈 배열로 초기화
+  searchData: { jbp_sq: 1, division: "all", condition: "", sort: "", pageNo: 1 },
+  applyConditions: [], // 초기 상태 빈 배열
 });
+
+const route = useRoute();
 
 onMounted(() => {
-  console.log("온마운트");
-  callAxios();  // 첫 로딩 시 데이터 요청
+  const jbpSqFromRoute = route.params.jbpSq || 1;
+  applyListData.value.searchData.jbp_sq = jbpSqFromRoute;
+  callAxios();
 });
 
-const callAxios = async () => { 
+// API 호출 함수
+const callAxios = async () => {
   const { jbp_sq, division, condition, sort, pageNo } = applyListData.value.searchData;
-  
-  const url = `/applys/apply-list/${jbp_sq}?division=${division}&condition=${condition}&sort=${sort}&pageNo=${pageNo}`;
-  console.log("Request URL:", url);
 
+  const url = `/applys/apply-list/${jbp_sq}?division=${division}&condition=${condition || ''}&sort=${sort || ''}&pageNo=${pageNo}`;
   
   try {
     const response = await api.$get(url);
-    console.log('axios 성공', response);
-    
     // 중복된 apy_sq 값 제거
     const uniqueApplyDatas = response?.applyDatas.filter((value, index, self) =>
-      index === self.findIndex((t) => (
-        t.apy_sq === value.apy_sq
-      ))
+      index === self.findIndex((t) => t.apy_sq === value.apy_sq)
     );
 
-    // 안전하게 응답 데이터 할당
+    // 데이터 할당
     applyListData.value.applyConditions = response?.applyConditions || [];
-    applyListData.value.applyDatas = uniqueApplyDatas; // 중복 제거된 데이터 할당
+    applyListData.value.applyDatas = uniqueApplyDatas;
     applyListData.value.paginationData = response?.paginationData || {};
 
-    console.log('applyConditions:', applyListData.value.applyConditions);
-    console.log('applyDatas:', applyListData.value.applyDatas);
-    console.log('paginationData:', applyListData.value.paginationData);
-
+    // 초기 selectedCondition 설정
+    applyListData.value.applyDatas.forEach(applyData => {
+      applyData.selectedCondition = applyData.apply_condition || ''; // 기존 상태 값으로 초기화
+    });
   } catch (error) {
-    console.error('axios 실패', error);
-    // 기본값으로 초기화
+    console.error("axios 실패", error);
     applyListData.value.applyConditions = [];
     applyListData.value.applyDatas = [];
     applyListData.value.paginationData = {};
   }
 };
 
-// 페이지네이션 페이지 변경
+const updateStatus = async (applyData) => {
+  try {
+    const { apy_sq , selectedCondition  } = applyData;
+    
+    // URL을 경로 변수와 쿼리 파라미터로 구성
+    const url = `/applys/condition/${apy_sq}/${selectedCondition}`;
+    
+    // PATCH 요청을 보냄
+    console.log("상태 업데이트 성공1111");
+    var response = await api.$put(url);
+    console.log("상태 업데이트 성공2222", response);
+
+
+    // 상태 업데이트 후 메시지 처리
+    showAlert('상태가 업데이트되었습니다.');
+    callAxios();
+  } catch (error) {
+    console.error("상태 업데이트 실패", error);
+    showAlert('상태 업데이트에 실패했습니다.');
+  }
+};
+
+
+// 페이지네이션 변경
 const changePageNo = (pageNo) => {
   applyListData.value.searchData.pageNo = pageNo;
   callAxios();
 };
 
-// 구분 선택
+// 구분 변경
 const changeDivision = (event) => {
   applyListData.value.searchData.division = event.target.value;
-  applyListData.value.searchData.pageNo = 1;  // 페이지를 처음으로 리셋
+  applyListData.value.searchData.pageNo = 1; // 페이지 초기화
   callAxios();
 };
 
-// 상태 선택
+// 상태 변경
 const changeCondition = (event) => {
-  // 문자열을 숫자로 변환
   applyListData.value.searchData.condition = event.target.value;
-
-  console.log(applyListData.value.searchData.condition);
-  console.log("ASD" + event.target.value);
-
-  applyListData.value.searchData.pageNo = 1;  // 페이지를 처음으로 리셋
+  applyListData.value.searchData.pageNo = 1; // 페이지 초기화
   callAxios();
 };
 
-// 정렬 선택
+// 정렬 변경
 const changeSort = (event) => {
   applyListData.value.searchData.sort = event.target.value;
-  applyListData.value.searchData.pageNo = 1;  // 페이지를 처음으로 리셋
+  applyListData.value.searchData.pageNo = 1; // 페이지 초기화
   callAxios();
 };
 </script>
 
+
 <style scoped>
-/* 기본적으로 가로로 펼쳐짐 */
+/* 기본 스타일 */
 select.form-select {
-  width: 100%; /* 전체 너비 사용 */
+  width: 100%; /* 전체 너비 */
   height: 40px; /* 높이 조정 */
   font-size: 14px; /* 글자 크기 */
 }
 
-/* 모바일 화면에서 가로로 유지 */
+/* 모바일 화면 */
 @media (max-width: 768px) {
   .form-group select.form-select {
-    width: 100%; /* 모바일에서 전체 너비 사용 */
+    width: 100%; /* 전체 너비 */
     height: 40px; /* 높이 유지 */
   }
 }
 
-/* 데스크탑 화면에서 크기 조정 */
+/* 데스크탑 화면 */
 @media (min-width: 769px) {
   .form-group select.form-select {
-    width: 100%; /* 데스크탑에서도 전체 너비 사용 */
+    width: 100%; /* 전체 너비 */
     height: 40px; /* 높이 유지 */
   }
 }

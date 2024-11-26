@@ -181,7 +181,7 @@
 	<!-- 지원자 상태 변경 -->
 	<update id="updateApplyCondition">
 		update P2_TBL_APPLY_H
-		set apy_cndtn = #{apy_cndtn}, intv_dtm = #{intv_dtm}
+		set apy_cndtn = #{apy_cndtn}
 		where apy_sq = #{apy_sq};
 	</update>
 </mapper>

@@ -80,7 +80,7 @@ const callAxios = async () => {
     // 리스트 뿌려주는 기본 axios
     await api.$get("/user/mypage/scrap/scrapList-list/" + scrapListData.value.searchData.mbr_sq + "/" + scrapListData.value.searchData.sort + "/" + scrapListData.value.searchData.pageNo)
         .then((success) => {
-            console.log('axios 성공' + success);
+            console.log('axios 성공' + scrapListData.value);
             scrapListData.value = success;
         })
         .catch((error) => {

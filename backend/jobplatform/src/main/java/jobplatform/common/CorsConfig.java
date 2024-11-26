@@ -13,16 +13,10 @@ public class CorsConfig {
     CorsFilter corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
-<<<<<<< HEAD
-<<<<<<< HEAD
-        // config.addAllowedOrigin("http://3.37.242.106"); 
-=======
-//         config.addAllowedOrigin("http://3.37.242.106"); 
->>>>>>> 579dc6d90287948950819b562de7b6836d55a614
-=======
-//         config.addAllowedOrigin("http://3.37.242.106"); 
->>>>>>> 0fb7eca69f6166a6ac143ca3b03542486e3aa5da
-        config.addAllowedOrigin("http://localhost:8080"); // 모든 원본 허용, 실제 운영 환경에서는 특정 도메인으로 제한해야 함
+
+//      config.addAllowedOrigin("http://3.37.242.106"); 
+
+     config.addAllowedOrigin("http://3.37.242.106"); // 모든 원본 허용, 실제 운영 환경에서는 특정 도메인으로 제한해야 함
         config.addAllowedHeader("*");
         config.addAllowedMethod("GET");
         config.addAllowedMethod("POST");

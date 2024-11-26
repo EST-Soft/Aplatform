@@ -46,6 +46,10 @@ public class ApplyManagementService {
             // 그 외의 값들에 대해 적절히 처리
             System.out.println("기타 조건 처리: " + condition);
         }
+        if (applySearchDataDTO.getJbp_sq() == 0 || applySearchDataDTO.getJbp_sq() <= 0) {
+            response.put("error", "Invalid jbp_sq");
+            return response;  // 유효하지 않으면 빈 결과 반환
+        }
     
         // 이후 데이터 처리 및 반환
         int totalCount = applyMapper.loadApplyListCount(applySearchDataDTO);
@@ -80,8 +84,13 @@ public class ApplyManagementService {
      * 지원자 상태 변경
      */
     public Boolean modifyApplyCondition(ApplyConditionDataDTO applyConditionDataDTO) throws SQLException, IOException {
+    if (applyConditionDataDTO == null) {
+        System.out.println("applyConditionDataDTO is null");
+    } else {
         System.out.println("지원자 상태 변경 요청: " + applyConditionDataDTO);
-        int updatedRows = applyMapper.updateApplyCondition(applyConditionDataDTO);
-        return updatedRows == 1;
     }
+    int updatedRows = applyMapper.updateApplyCondition(applyConditionDataDTO);
+    return updatedRows == 1;
+}
+
 }

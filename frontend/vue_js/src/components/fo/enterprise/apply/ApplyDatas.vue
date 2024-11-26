@@ -31,15 +31,15 @@
 
 <script setup>
 import router from "@/router";
-import { defineProps } from "vue";
+import { defineProps, defineEmits } from "vue";
 
 const props = defineProps(["applyData"]);
+const emit = defineEmits(["updateApplyData"]);
 
 // 포멧 함수
 // 날짜 포멧 변경
 const fomatDate = (dateTime) => {
   const returnData = new Date(dateTime).toLocaleDateString();
-
   return returnData;
 };
 // 학점 포멧 변경
@@ -70,14 +70,21 @@ const fomatSalaryNull = (data) => {
 // 함수
 // 루트에 정보들고 이동
 const goToDetail = (apy_sq) => {
+  // 상태가 "unrd"이면 "read"로 변경
+  if (props.applyData.apy_cndtn_name === "unrd") {
+    // 부모 컴포넌트로 상태 변경을 알림
+    emit("updateApplyData", { ...props.applyData, apy_cndtn_name: "read" });  // 새로운 객체를 만들어 상태 변경
+  }
+
+  // 상세 페이지로 이동
   router.push({
     name: "applyDetailView",
-    state: {
-      apy_sq: apy_sq,
-    },
+    params: { apySq: apy_sq },  // URL 파라미터로 apySq 값을 전달
   });
 };
 </script>
+
+
 
 <style scoped>
 .mainContainer {

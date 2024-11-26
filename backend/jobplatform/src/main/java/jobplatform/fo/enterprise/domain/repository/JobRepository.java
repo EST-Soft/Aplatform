@@ -15,7 +15,7 @@ import jobplatform.fo.enterprise.domain.entity.JobEntity;
 import jobplatform.fo.enterprise.domain.entity.JobPostingEntity;
 
 import java.time.LocalDateTime;
-public interface JobRepository extends JpaRepository<JobPostingEntity, Long> {
+public interface JobRepository extends JpaRepository<JobEntity, Long> {
 
     // 최근 본 공고를 기록하는 쿼리 메서드
     @Modifying

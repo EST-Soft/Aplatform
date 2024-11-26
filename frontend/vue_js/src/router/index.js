@@ -246,7 +246,7 @@ const routes = [
     component: ApplyListView,
   },
   {
-    path: "/applys/apply-detail",
+    path: "/applys/apply-detail/:apySq",
     name: "applyDetailView",
     component: ApplyDetailView,
   },

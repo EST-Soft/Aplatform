@@ -110,8 +110,6 @@
             <img src="@/assets/eye-removebg-preview.png" alt="eye image" class="small-image"> {{ item.hits }}
           </label>
              </div>
-             <img v-bind:src="item.isScraped ? require('@/assets/sht.png') : require('@/assets/bht.png')" 
-             alt="Heart Image" class="small-heart-image">
             </div>
       
               <!-- 타이틀과 기타 정보 - hover 시 숨김 -->
@@ -307,6 +305,11 @@ const filteredItems = computed(() => {
       isValid = false;
     }
 
+    const dDay = calculateDDay(item.regstrDlnDtm);
+    if(dDay === 0) {
+      isValid = false;
+    }
+
     return isValid;
   });
 });
@@ -335,10 +338,17 @@ watch(selectedJobTypes, () => {
 watch(sortOption, fetchSortedItems);
 
 // 검색 결과 처리 함수
-const handleSearchResult = (searchResults) => {
-  state.items = searchResults;
+const handleSearchResult = (results) => {
+  // 검색된 결과에 대해 필터링을 적용
+  const filtered = results.filter(item => {
+    return item;
+  });  
+  console.log("검색 결과:", results);
+  state.items = filtered;
   state.currentPage = 1;
-}
+  
+};
+
 
 // 드롭다운 토글 함수
 function toggleDropdown(type) {

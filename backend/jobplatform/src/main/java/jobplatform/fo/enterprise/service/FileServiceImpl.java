@@ -86,58 +86,58 @@ public class FileServiceImpl implements FileService {
     private String fileUrl;
 
     @Override
-    public ResumeProfileImageDto uploadImage(MultipartFile file) {
-        // 파일이 비어있는지 체크
-        if (file.isEmpty()) {
-            throw new IllegalArgumentException("파일이 비어 있습니다.");
-        }
-    
-        // 원본 파일명과 확장자 구하기
-        String originalFileName = file.getOriginalFilename();
-        String extension = originalFileName.substring(originalFileName.lastIndexOf("."));
-    
-        // 허용된 파일 확장자 체크
-        if (!Arrays.asList(".jpg", ".jpeg", ".png", ".gif").contains(extension.toLowerCase())) {
-            throw new IllegalArgumentException("허용되지 않는 파일 형식입니다.");
-        }
-    
-        // UUID로 새로운 파일명 생성
-        String uuid = UUID.randomUUID().toString();
-        String saveFileName = uuid + extension;
-    
-        // 실제 파일 저장 경로
-        String savePath = filePath + saveFileName;
-        System.out.println("저장할 파일 이름: " + saveFileName);
-
-    
-        // 디렉토리 존재 여부 체크
-        File directory = new File(filePath);
-        if (!directory.exists()) {
-            boolean created = directory.mkdirs();  // 디렉토리가 없다면 생성
-            if (!created) {
-                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "디렉토리 생성 실패");
-            }
-        }
-    
-        try {
-            file.transferTo(new File(savePath));
-            System.out.println("파일이 성공적으로 저장되었습니다: " + savePath);
-        } catch (IOException e) {
-            System.err.println("파일 저장 실패: " + e.getMessage());
-            e.printStackTrace();
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "파일 저장 중 오류 발생");
-        }
-        
-    
-        // 서버에서 접근할 수 있는 URL을 반환 (fileUrl은 파일 접근 URL의 기본 경로)
-        String url = fileUrl + saveFileName;
-    
-        // 이미지 URL과 원본 파일명 반환
-        ResumeProfileImageDto result = new ResumeProfileImageDto();
-        result.setImgOrgnlFn(originalFileName);
-        result.setImgFileUrl(url); // 서버 URL을 클라이언트로 반환
-        return result;
+public ResumeProfileImageDto uploadImage(MultipartFile file) {
+    // 파일이 비어있는지 체크
+    if (file.isEmpty()) {
+        throw new IllegalArgumentException("파일이 비어 있습니다.");
     }
+
+    String originalFileName = file.getOriginalFilename();
+    if (originalFileName == null || !originalFileName.contains(".")) {
+        throw new IllegalArgumentException("잘못된 파일명입니다.");
+    }
+
+    // 원본 파일명과 확장자 구하기
+    String extension = originalFileName.substring(originalFileName.lastIndexOf("."));
+
+    // 허용된 파일 확장자 체크
+    if (!Arrays.asList(".jpg", ".jpeg", ".png", ".gif").contains(extension.toLowerCase())) {
+        throw new IllegalArgumentException("허용되지 않는 파일 형식입니다.");
+    }
+
+    // UUID로 새로운 파일명 생성
+    String uuid = UUID.randomUUID().toString();
+    String saveFileName = uuid + extension;
+
+    // 실제 파일 저장 경로
+    String savePath = filePath + saveFileName;
+    System.out.println("저장할 파일 이름: " + saveFileName);
+
+    // 디렉토리 존재 여부 체크
+    File directory = new File(filePath);
+    if (!directory.exists() && !directory.mkdirs()) {
+        throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "디렉토리 생성 실패");
+    }
+
+    try {
+        file.transferTo(new File(savePath));
+        System.out.println("파일이 성공적으로 저장되었습니다: " + savePath);
+    } catch (IOException e) {
+        System.err.println("파일 저장 실패: " + e.getMessage());
+        e.printStackTrace();
+        throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "파일 저장 중 오류 발생");
+    }
+
+    // 서버에서 접근할 수 있는 URL을 반환
+    String url = fileUrl + saveFileName;
+
+    // 이미지 URL과 원본 파일명 반환
+    ResumeProfileImageDto result = new ResumeProfileImageDto();
+    result.setImgOrgnlFn(originalFileName);
+    result.setImgFileUrl(url); // 서버 URL을 클라이언트로 반환
+    return result;
+}
+
     
     
 

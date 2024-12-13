@@ -56,7 +56,7 @@ public class BoardAnswerController {
      @GetMapping("/{brdSq}")
      public ResponseEntity<?> findAnswer(@PathVariable int brdSq) {
         try{
-            System.out.println("brdSq 값 : " + brdSq);
+            // System.out.println("brdSq 값 : " + brdSq);
             Map<String, Integer> result = new HashMap<>();
             int checkAnswer = boardAnswerService.checkAnswer(brdSq);
             int countAnswer = boardAnswerService.countAnswer(brdSq);
@@ -98,7 +98,7 @@ public class BoardAnswerController {
       public ResponseEntity<?> getAnswerDetail(@PathVariable int answrSq) {
         try{
             BoardAnswerEntity answer = boardAnswerService.answer(answrSq);
-            System.out.println("여기서 answer는 무슨값?" + answer);
+            // System.out.println("여기서 answer는 무슨값?" + answer);
             return ResponseEntity.ok(answer);
         }catch(Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("답글 상세내용을 불러오는 중 오류가 발생했습니다.");

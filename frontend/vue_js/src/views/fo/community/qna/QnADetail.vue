@@ -638,6 +638,7 @@ const OpenEditAnswer = (answrSq) => {
 
   if(!quillInstance2.value){
     try{
+      console.log("asdasdas" + editor2.value);
       quillInstance2.value = new Quill(editor2.value, {
       theme: "snow",
       modules: {

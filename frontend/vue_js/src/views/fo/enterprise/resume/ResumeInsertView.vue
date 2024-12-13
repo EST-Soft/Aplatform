@@ -286,7 +286,7 @@
       <div class="float-end">
         <div class="btn btn-outline btn-xl btn-primary mb-2" @click="submitPost">저장</div>
         <div class="btn btn-outline btn-xl btn-light mb-2" @click="backToList">취소</div>
-        <button @click="testtest">테스트test</button>
+        <!-- <button @click="testtest">테스트test</button> -->
       </div>
     </div>
 
@@ -355,91 +355,91 @@ onMounted(() => {
 });
 
 
-const testtest = async () => {
-  event.preventDefault();
-  validateForm();
-  validateEducationForm();
-  validateCareerForm();
-  validateCertificateForm();
-  validateSelfIntroductionForm();
+// const testtest = async () => {
+//   event.preventDefault();
+//   validateForm();
+//   validateEducationForm();
+//   validateCareerForm();
+//   validateCertificateForm();
+//   validateSelfIntroductionForm();
 
-  const imageFormData = new FormData();
-  if (imageDatas.value) {
-    imageFormData.append('file', imageDatas.value);
-    const response = await api.$post('/file/upload-image', imageFormData, {
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      }
-    }).then((response) => {
-      console.log(response)
-      return response;
-    }).catch((error) => {
-      console.error('Error: ', error)
-    });
-    rsmImgOrgnlFn.value = response.imgOrgnlFn;
-    rsmImgFileUrl.value = response.imgFileUrl;
-  }
+//   const imageFormData = new FormData();
+//   if (imageDatas.value) {
+//     imageFormData.append('file', imageDatas.value);
+//     const response = await api.$post('/file/upload-image', imageFormData, {
+//       headers: {
+//         'Content-Type': 'multipart/form-data'
+//       }
+//     }).then((response) => {
+//       console.log(response)
+//       return response;
+//     }).catch((error) => {
+//       console.error('Error: ', error)
+//     });
+//     rsmImgOrgnlFn.value = response.imgOrgnlFn;
+//     rsmImgFileUrl.value = response.imgFileUrl;
+//   }
 
-  const formData = new FormData();
-  attachmentDatas.value.forEach(attachment => {
-    formData.append('file', attachment);
-  })
-  const attachmentList = [];
+//   const formData = new FormData();
+//   attachmentDatas.value.forEach(attachment => {
+//     formData.append('file', attachment);
+//   })
+//   const attachmentList = [];
 
-  skillsData.value = Object.values(skillsData.value).flat();
+//   skillsData.value = Object.values(skillsData.value).flat();
 
-  console.log(formData)
+//   console.log(formData)
 
-  if (attachmentDatas.value.length != 0) {
-    const response = await api.$post('http://localhost:80/file/upload-attachment', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      }
-    }).then((response) => {
-      console.log(response.data)
-      return response.data;
-    }).catch((error) => {
-      console.error('Error: ', error)
-    });
-    console.log(response)
-    const responseAttachment = response;
+//   if (attachmentDatas.value.length != 0) {
+//     const response = await api.$post('http://localhost:80/file/upload-attachment', formData, {
+//       headers: {
+//         'Content-Type': 'multipart/form-data'
+//       }
+//     }).then((response) => {
+//       console.log(response.data)
+//       return response.data;
+//     }).catch((error) => {
+//       console.error('Error: ', error)
+//     });
+//     console.log(response)
+//     const responseAttachment = response;
 
 
-    if (Array.isArray(responseAttachment)) {
-      responseAttachment.forEach(attachment => {
-        attachmentList.push({
-          atchmntOrgnlFn: attachment.atchmntOrgnlFn,
-          atchmntUrl: attachment.atchmntUrl
-        });
-      });
-    } else {
-      console.error('Expected an array but received:', responseAttachment);
-    }
-  }
+//     if (Array.isArray(responseAttachment)) {
+//       responseAttachment.forEach(attachment => {
+//         attachmentList.push({
+//           atchmntOrgnlFn: attachment.atchmntOrgnlFn,
+//           atchmntUrl: attachment.atchmntUrl
+//         });
+//       });
+//     } else {
+//       console.error('Expected an array but received:', responseAttachment);
+//     }
+//   }
 
-  console.log({
-    resumeDataDTO: {
-      rsmImgOrgnlFn: rsmImgOrgnlFn.value,
-      rsmImgFileUrl: rsmImgFileUrl.value,
-      rsmFnlEdctnCode: rsmFnlEdctnCode.value,
-      rsmGrd: rsmGrd.value,
-      rsmEs: rsmEs.value,
-      rsmTtl: rsmTtl.value,
-      rsmName: rsmName.value,
-      rsmGndrCode: rsmGndrCode.value,
-      rsmBd: rsmBd.value,
-      rsmMp: rsmMp.value,
-      rsmAdrs: rsmAdrs.value,
-      rsmEml: rsmEml.value
-    },
-    educationDtoList: educationsList.value,
-    skilsDataDtoList: skillsData.value,
-    certificateDtoList: certificateDatas.value,
-    selfIntroductionDtoList: selfIntroductionDatas.value,
-    careerDtoList: careerDatas.value,
-    attachmentDtoList: attachmentList
-  })
-}
+//   console.log({
+//     resumeDataDTO: {
+//       rsmImgOrgnlFn: rsmImgOrgnlFn.value,
+//       rsmImgFileUrl: rsmImgFileUrl.value,
+//       rsmFnlEdctnCode: rsmFnlEdctnCode.value,
+//       rsmGrd: rsmGrd.value,
+//       rsmEs: rsmEs.value,
+//       rsmTtl: rsmTtl.value,
+//       rsmName: rsmName.value,
+//       rsmGndrCode: rsmGndrCode.value,
+//       rsmBd: rsmBd.value,
+//       rsmMp: rsmMp.value,
+//       rsmAdrs: rsmAdrs.value,
+//       rsmEml: rsmEml.value
+//     },
+//     educationDtoList: educationsList.value,
+//     skilsDataDtoList: skillsData.value,
+//     certificateDtoList: certificateDatas.value,
+//     selfIntroductionDtoList: selfIntroductionDatas.value,
+//     careerDtoList: careerDatas.value,
+//     attachmentDtoList: attachmentList
+//   })
+// }
 const backToList = () => {
   window.location.href = `/resumes/resume-list`
 }

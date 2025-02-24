@@ -1,0 +1,9 @@
+diff a/backend/jobplatform/bin/src/main/resources/mybatis/mapper/M_EnterpriseMainPageMapper.xml b/backend/jobplatform/bin/src/main/resources/mybatis/mapper/M_EnterpriseMainPageMapper.xml	(rejected hunks)
+@@ -69,7 +69,7 @@
+         <result property="rsm_img_file_url" column="rsm_img_file_url" />
+         <result property="rsm_fnl_edctn_code" column="rsm_fnl_edctn_code" />
+         <result property="rsm_es" column="rsm_es" />
++        <result property="rsm_ttl" column="rsm_ttl" />
+         <result property="rsm_eml" column="rsm_eml" />
+         <result property="updt_dtm" column="updt_dtm" />
+         <collection property="crtfct_name" ofType="string" column="crtfct_name" />

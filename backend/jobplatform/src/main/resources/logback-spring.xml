@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="EUC-KR"?>
+<!--  
+	jdbc.sqlonly    : Logs only SQL
+	jdbc.sqltiming  : Logs the SQL, post-execution, including timing execution statistics
+	jdbc.audit      : Logs ALL JDBC calls except for ResultSets
+	jdbc.resultset  : all calls to ResultSet objects are logged
+	jdbc.connection : Logs connection open and close events
+-->
+<configuration>
+	<!-- 蹂??닔 吏??젙 -->
+    <property name="LOG_DIR" value="src/main/resources/logs" />
+    <property name="LOG_PATH_NAME" value="${LOG_DIR}/application.log" />
+	
+	<!-- ConsoleAppender -->
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<charset>EUC-KR</charset>
+			<pattern>%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n</pattern>
+		</encoder>
+	</appender>
+	<!--Query ConsoleAppender -->
+	<appender name="QSTDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} %n    %msg%n</pattern>
+		</encoder>
+	</appender>
+	org.mariadb.jdbc.Driver
+	<!-- Rolling File Appender
+    <appender name="ROLLING_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        	?뙆?씪 寃쎈줈
+        <file>${LOG_PATH_NAME}</file>
+        	異쒕젰?뙣?꽩
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+        Rolling ?젙梨?
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_DIR}/application.%d{yyyy-MM-dd}_%i.log</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                	?뙆?씪?떦 理쒓퀬 ?슜?웾 10MB
+                <maxFileSize>10MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            	?씪?옄蹂? 濡쒓렇?뙆?씪 理쒕?? 蹂닿??二쇨린(?씪?떒?쐞)留뚯빟 ?빐?떦 ?꽕?젙?씪 ?씠?긽?맂 ?뙆?씪??? ?옄?룞?쑝濡? ?젣嫄?
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+    </appender> -->
+	
+	<!-- ?봽濡쒖젥?듃 ?뙣?궎吏? ?븞 ?겢?옒?뒪?뿉 ?꽕?젙?맂 濡쒓렇 異쒕젰 -->
+	<logger name="ksmart.mybatis" level="INFO" additivity="false">
+		<appender-ref ref="STDOUT" />
+	</logger>
+
+	<!-- log4jdbc ?샃?뀡 ?꽕?젙 --> 
+	<logger name="jdbc" level="OFF" additivity="false">
+		<appender-ref ref="STDOUT" />
+	</logger> 
+	
+	<!-- 而ㅻ꽖?뀡 open close ?씠踰ㅽ듃瑜? 濡쒓렇 --> 
+	<logger name="jdbc.connection" level="OFF" additivity="false">
+		<appender-ref ref="STDOUT" />
+	</logger> 
+	
+	<!-- SQL臾몃쭔?쓣 濡쒓렇濡? ?궓湲곕ŉ, PreparedStatement?씪 寃쎌슦 愿??젴?맂 argument 媛믪쑝濡? ???泥대맂 SQL臾? 異쒕젰 --> 
+	<logger name="jdbc.sqlonly" level="OFF" additivity="false">
+		<appender-ref ref="STDOUT" />
+	</logger> 
+	
+	<!-- SQL臾멸낵 ?빐?떦 SQL?쓣 ?떎?뻾?떆?궎?뒗?뜲 ?닔?뻾?맂 ?떆媛? ?젙蹂?(milliseconds)瑜? ?룷?븿?븯?뿬 異쒕젰. --> 
+	<logger name="jdbc.sqltiming" level="INFO" additivity="false">
+		<appender-ref ref="STDOUT" />
+	</logger> 
+	
+	<!-- ResultSet?쓣 ?젣?쇅?븳 紐⑤뱺 JDBC ?샇異? ?젙蹂대?? 濡쒓렇 異쒕젰, 留롮?? ?뼇?쓽 濡쒓렇媛? ?깮?꽦?릺誘?濡? ?듅蹂꾪엳 JDBC 臾몄젣瑜? 異붿쟻?빐?빞 ?븷 ?븘?슂媛? ?엳?뒗 寃쎌슦瑜? ?젣?쇅?븯怨좊뒗 沅뚯옣 ?븞?븿. --> 
+	<logger name="jdbc.audit" level="OFF" additivity="false">
+		<appender-ref ref="STDOUT" />
+	</logger> 
+	
+	<!-- ResultSet?쓣 ?룷?븿?븳 紐⑤뱺 JDBC ?샇異? ?젙蹂대?? 濡쒓렇濡? ?궓湲곕??濡? 留ㅼ슦 諛⑸???븳 ?뼇?쓽 濡쒓렇媛? ?깮?꽦?맂?떎. --> 
+	<logger name="jdbc.resultset" level="OFF" additivity="false">
+		<appender-ref ref="STDOUT" />
+	</logger> 
+	
+	<!-- SQL 寃곌낵 議고쉶?맂 ?뜲?씠?꽣?쓽 table濡? ?몴?쁽?븯?뿬 濡쒓렇 異쒕젰 --> 
+	<logger name="jdbc.resultsettable" level="INFO" additivity="false">
+		<appender-ref ref="STDOUT" />
+	</logger>
+
+	<root level="ERROR">
+		<appender-ref ref="STDOUT" />
+	</root>
+</configuration>

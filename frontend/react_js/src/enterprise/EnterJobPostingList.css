@@ -1,0 +1,91 @@
+.list-container {
+    margin-bottom: 60px; /* 페이지네이션 영역과의 여백을 추가합니다 */
+    position: relative; /* 페이지네이션을 포함하는 부모 요소에 상대적인 위치를 설정합니다 */
+  }
+  .list-header {
+    display: flex;
+  }
+  .list-header > div {
+    margin-left: 50px;
+  }
+  .list-body {
+    margin-top: 50px;
+  }
+  .custom {
+    background-color: #ffffff;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin: 15px;
+    width: calc(25% - 30px); /* 4개의 아이템이 한 줄에 나타나도록 설정 */
+    border: 1px solid #002C7B;
+    text-align: center;
+    float: left;
+    height: 150px;
+    overflow: hidden;
+  }
+  .row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+  
+  .search-options {
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+  }
+  
+  .dropdown-wrapper {
+    position: relative; /* 부모 요소에 대해 위치를 상대적으로 설정 */
+  }
+  
+  .search-options button {
+    padding: 8px 16px;
+    font-size: 16px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 10px;
+  }
+  
+  .search-options button:hover {
+    background-color: #2980b9;
+  }
+  
+  .dropdown {
+    position: absolute;
+    top: 100%; /* 버튼 바로 아래에 위치하도록 설정 */
+    left: 0;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+    margin-top: 5px;
+    max-height: 200px; /* 드롭다운의 최대 높이 설정 */
+    overflow-y: auto; /* 세로 스크롤 처리 */
+    
+  }
+  
+  .dropdown label {
+    display: block;
+    padding: 10px;
+    
+  }
+  
+  .dropdown label:hover {
+    background-color: #f1f1f1;
+  }
+  
+  .pagenation-wrapper{
+    position: absolute; /* 절대적인 위치에서 설정합니다 */
+    width: 100%;
+    z-index: 1000;
+    bottom: -50px; /* 페이지네이션을 게시물 아래로 이동시킵니다 */
+  
+  }
+  .container{
+    position : relative;
+    margin-bottom: 50px;
+  }

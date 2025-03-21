@@ -87,10 +87,19 @@
 		WHERE prjct_sq = #{prjctSq}
 	</select>
 
-	<insert id="projectInsert" useGeneratedKeys="true" keyProperty="prjctSq">
-		INSERT INTO P5_TBL_PROJECT(entrprs_sq, prjct_ttl, prjct_tpy, prjct_work, prjct_use_skl, prjct_esntl_skl, prjct_esntl_crr, prjct_strt_date, prjct_end_date, prjct_prd, prjct_lctn )
-		VALUES(#{entrprsSq}, #{prjctTtl}, #{prjctTpy}, #{prjctWork}, #{prjctUseSkl}, #{prjctEsntlSkl}, #{prjctEsntlCrr}, #{prjctStrtDate}, #{prjctEndDate}, #{prjctPrd}, #{prjctLctn})
-	</insert>
+<insert id="projectInsert" useGeneratedKeys="true" keyProperty="prjctSq">
+    INSERT INTO P5_TBL_PROJECT(
+        entrprs_sq, prjct_ttl, prjct_tpy, prjct_work, prjct_use_skl, 
+        prjct_esntl_skl, prjct_esntl_crr, prjct_strt_date, prjct_end_date, 
+        prjct_prd, prjct_lctn
+    ) 
+    VALUES(
+        #{entrprsSq}, #{prjctTtl}, #{prjctTpy}, 
+        (SELECT job_mc_name FROM P2_TBL_JOB_CODE_S WHERE job_sq = #{prjctWork}), 
+        #{prjctUseSkl}, #{prjctEsntlSkl}, #{prjctEsntlCrr}, 
+        #{prjctStrtDate}, #{prjctEndDate}, #{prjctPrd}, #{prjctLctn}
+    )
+</insert>
 
 	<update id="projectUpdate">
 		UPDATE P5_TBL_PROJECT

@@ -42,10 +42,10 @@
           <label for="crrDrtn" class="form-label">경력</label>
           <select v-model="prjctEsntlCrr" class="form-control" id="prjctEsntlCrr">
             <option value="" disabled selected hidden>원하는 경력을 선택해주세요.</option>
-            <option value="4">초급</option>
-            <option value="8">중급</option>
-            <option value="12">고급</option>
-            <option value="none">상관없음</option>
+            <option value="초급">초급</option>
+            <option value="중급">중급</option>
+            <option value="고급">고급</option>
+            <option value="상관없음">상관없음</option>
           </select>
         </div>
 

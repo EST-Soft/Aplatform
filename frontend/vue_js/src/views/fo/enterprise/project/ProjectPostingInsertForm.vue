@@ -15,7 +15,7 @@
       <div class="row" style="margin-top: 30px;">
         <!-- 모집 직군 -->
         <div class="col-md-3 mb-3">
-          <label for="jobName" class="form-label">모집 직군</label>
+          <label for="jobName" class="form-label">모집 직군1</label>
           <div id="prjctWork" class="form-control" style="height: auto;">
             <div v-for="job in jobs" :key="job.jobSq" class="form-check">
               <input type="radio" v-model="selectedprjctWork" :value="job.jobSq" class="form-check-input"

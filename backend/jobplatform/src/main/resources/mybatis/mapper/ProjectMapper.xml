@@ -93,7 +93,6 @@
         prjct_esntl_skl, prjct_esntl_crr, prjct_strt_date, prjct_end_date, 
         prjct_prd, prjct_lctn
     ) 
-	<!-- ㅇ -->
     VALUES(
         #{entrprsSq}, #{prjctTtl}, #{prjctTpy}, 
         (SELECT job_mc_name FROM P2_TBL_JOB_CODE_S WHERE job_sq = #{prjctWork}), 

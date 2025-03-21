@@ -48,6 +48,7 @@ public class JobPostingDTO {
     private String useYn;
     private Long entrprsSq;
     private String enterpriseName;
+    private boolean isScrapped;
 
     @Builder.Default
     private List<Integer> areaIds = new ArrayList<>(); // 빈 리스트로 초기화

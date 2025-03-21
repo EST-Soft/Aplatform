@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 import jobplatform.fo.enterprise.domain.dto.JobPostingDTO;
 import jobplatform.fo.enterprise.domain.entity.ApplyEntity;
@@ -20,12 +19,11 @@ import jobplatform.fo.enterprise.domain.entity.JobPostingEntity;
 import jobplatform.fo.enterprise.domain.entity.JobViewEntity;
 import jobplatform.fo.enterprise.domain.entity.ResumeEntity;
 import jobplatform.fo.enterprise.domain.repository.ApplyRepository;
-import jobplatform.fo.enterprise.domain.repository.AreaRepository;
 import jobplatform.fo.enterprise.domain.repository.EnterMemberRepository;
 import jobplatform.fo.enterprise.domain.repository.JobPostingRepository;
-import jobplatform.fo.enterprise.domain.repository.JobRepository;
 import jobplatform.fo.enterprise.domain.repository.JobViewRepository;
 import jobplatform.fo.enterprise.domain.repository.ResumeRepository;
+import jobplatform.fo.user.domain.mapper.M_MypageMapper;
 
 @Service
 public class JobPostingServiceImpl implements JobPostingService {
@@ -41,27 +39,23 @@ public class JobPostingServiceImpl implements JobPostingService {
 
     @Autowired
     private ApplyRepository applyRepository;
-
-    @Autowired
-    private JobRepository jobRepository;
-
-    @Autowired
-    private AreaRepository areaRepository;
-
     @Autowired
     private JobViewRepository jobViewRepository;
 
-    private final JobViewService jobViewService;
-
     @Autowired
-    public JobPostingServiceImpl(@Lazy JobViewService jobViewService) {
-        this.jobViewService = jobViewService;
-    }
+    private M_MypageMapper mypageMapper;
 
     // 공고 리스트 조회
     @Override
-    public List<JobPostingEntity> jobPostingList(String sortBy) {
-        return jobPostingRepository.findAllJobPostings(sortBy);
+    public List<JobPostingEntity> jobPostingList(String sortBy, Long mbrSq) {
+        List<JobPostingEntity> jobPostingList = jobPostingRepository.findAllJobPostings(sortBy);
+        System.out.println(jobPostingList);
+        // 스크랩한 공고 목록 번호 불러오기
+        if (mbrSq != null) {
+            List<Long> jbpSqs = mypageMapper.getJbpSqsByMbrSq(mbrSq);
+            System.out.println(jbpSqs);
+        }
+        return jobPostingList;
     }
 
     // 특정 공고 리스트 조회
@@ -130,9 +124,7 @@ public class JobPostingServiceImpl implements JobPostingService {
 
     @Override
     @Transactional
-    public JobPostingDTO jobPostingDetail(Long jbpSq, HttpSession session) {
-        Long mbrSq = (Long) session.getAttribute("mbrSq");
-
+    public JobPostingDTO jobPostingDetail(Long jbpSq, Long mbrSq) {
         if (mbrSq != null) {
             LocalDateTime viewDate = LocalDateTime.now();
             jobViewRepository.insertJobView(mbrSq, jbpSq, viewDate);
@@ -141,18 +133,19 @@ public class JobPostingServiceImpl implements JobPostingService {
         JobPostingEntity jpe = jobPostingRepository.findById(jbpSq)
                 .orElseThrow(() -> new RuntimeException("Job posting not found with id " + jbpSq));
 
-
-
         // JobPostingDTO 반환
-
         EnterMemberEntity enterMember = jpe.getEnterpriseMember();
 
         // 기업 이름 설정 
         jpe.getEnterpriseMember().setEntrprsName(enterMember.getEntrprsName());
 
+        JobPostingDTO jobPostingDTO = JobPostingDTO.from(jpe);
 
-
-        return JobPostingDTO.from(jpe);
+        // 스크랩 체크
+        if (mypageMapper.checkScrapExists(mbrSq, jbpSq)) {
+            jobPostingDTO.setScrapped(true);
+        }
+        return jobPostingDTO;
     }
 
     // 조회수 증가

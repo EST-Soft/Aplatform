@@ -1,11 +1,8 @@
 package jobplatform.fo.project.controller;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.kafka.KafkaProperties.Producer;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -32,6 +29,8 @@ public class ProcjectController {
     @Autowired
     private ProjectService projectService;
 
+
+
     // @GetMapping("")
     // public ResponseEntity<List<ProjectDomain>> getProjectList(@RequestBody HashMap<String, Object> params) {
     //     List<ProjectDomain> projectList = projectService.projectList(params);
@@ -54,14 +53,28 @@ public class ProcjectController {
 
     @PostMapping("")
     public ResponseEntity<?> postMethodName(@RequestBody ProjectDomain projectEntity) {
+        System.out.println("🚀 postMethodName 실행됨!"); 
+  
+
         int result = projectService.projectInsert(projectEntity);
-        
-        if(result < 1){
-            return new ResponseEntity<>("FAIL",HttpStatus.BAD_REQUEST);
+
+          if (result < 1) {
+            return new ResponseEntity<>("FAIL", HttpStatus.BAD_REQUEST);
         }
 
-        return  new ResponseEntity<>("SUCCESS",HttpStatus.OK);
+        // 2. check 값이 true면 이메일 전송
+        if (projectEntity.isCheck()) {
+            // projectService.selectEmailsForEssentialSkills(projectEntity.getPrjctSq());
+            System.out.println("🚀 메일 실행됨!"); 
+            //회원번호 가져오기
+            List<Integer> re = projectService.selectQualifiedMembers(projectEntity.getPrjctSq());
+            System.out.println("🚀 re" +  re); 
+        }
+
+        return ResponseEntity.ok("SUCCESS");
     }
+
+
 
     @PutMapping("")
     public ResponseEntity<?> putMethodName(@RequestBody ProjectDomain projectEntity) {
@@ -84,5 +97,6 @@ public class ProcjectController {
 
         return  new ResponseEntity<>("SUCCESS",HttpStatus.OK);
     }
+    
     
 }

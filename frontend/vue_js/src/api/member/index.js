@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const instance = axios.create({
-  baseURL: "http://3.37.242.106:80",
+  baseURL: "http://3.37.242.106:8081",
 });
 
 // 회원가입

@@ -86,10 +86,12 @@
 		p.entrprs_sq = e.entrprs_sq
 		WHERE prjct_sq = #{prjctSq}
 	</select>
-	<insert id="projectInsert">
-		INSERT INTO P5_TBL_PROJECT(entrprs_sq, prjct_ttl, prjct_tpy, prjct_work, prjct_use_skl, prjct_esntl_crr, prjct_strt_date, prjct_end_date, prjct_prd, prjct_lctn)
-		VALUES(#{entrprsSq}, #{prjctTtl}, #{prjctTpy}, #{prjctWork}, #{prjctUseSkl}, #{prjctEsntlCrr}, #{prjctStrtDate}, #{prjctEndDate}, #{prjctPrd}, #{prjctLctn})
+
+	<insert id="projectInsert" useGeneratedKeys="true" keyProperty="prjctSq">
+		INSERT INTO P5_TBL_PROJECT(entrprs_sq, prjct_ttl, prjct_tpy, prjct_work, prjct_use_skl, prjct_esntl_skl, prjct_esntl_crr, prjct_strt_date, prjct_end_date, prjct_prd, prjct_lctn )
+		VALUES(#{entrprsSq}, #{prjctTtl}, #{prjctTpy}, #{prjctWork}, #{prjctUseSkl}, #{prjctEsntlSkl}, #{prjctEsntlCrr}, #{prjctStrtDate}, #{prjctEndDate}, #{prjctPrd}, #{prjctLctn})
 	</insert>
+
 	<update id="projectUpdate">
 		UPDATE P5_TBL_PROJECT
 		SET entrprs_sq = #{entrprsSq},
@@ -108,6 +110,7 @@
 		DELETE FROM P5_TBL_PROJECT
 		WHERE prjct_sq = #{prjctSq}
 	</delete>
+	
 	<!-- 🎯 필수 기술코드 + 필수 경력 만족하는 유저 찾기 -->
 	<sql id="FilteredUsers">
 		SELECT DISTINCT m.mem_sq, m.rem_emi
@@ -127,4 +130,34 @@
 	<select id="findEligibleUsers" resultType="jobplatform.fo.project.domain.UserEmailDomain">
 		<include refid="FilteredUsers" />
 	</select>
+
+
+
+
+<select id="selectQualifiedMembers" parameterType="int" resultType="int">
+    WITH EssentialSkills AS (
+        <!-- 특정 프로젝트의 필수 기술 가져오기 -->
+        SELECT TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(prjct_esntl_skl, ',', numbers.n), ',', -1)) AS skill_name
+        FROM P5_TBL_PROJECT
+        JOIN (
+            SELECT 1 AS n UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5
+            UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9 UNION ALL SELECT 10
+        ) numbers 
+        ON CHAR_LENGTH(prjct_esntl_skl) - CHAR_LENGTH(REPLACE(prjct_esntl_skl, ',', '')) >= numbers.n - 1
+        WHERE prjct_sq = #{prjctSq} 
+    ),
+    MatchedSkills AS (
+        <!-- 필수 기술명을 스킬 코드와 매칭 -->
+        SELECT skl.skl_code_sq
+        FROM EssentialSkills es
+        JOIN P2_TBL_SKILL_CODE_S skl ON TRIM(es.skill_name) = TRIM(skl.skl_sc_name)
+    )
+    <!-- 필수 기술을 보유한 회원 번호(rsm_sq) 가져오기 -->
+    SELECT DISTINCT r.rsm_sq
+    FROM P2_TBL_SKILL_CODE_RESUME_R r
+    JOIN MatchedSkills ms ON r.skl_code_sq = ms.skl_code_sq;
+</select>
+
+
+
 </mapper>

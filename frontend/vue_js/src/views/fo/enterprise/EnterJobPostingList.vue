@@ -25,7 +25,9 @@
 
     <!-- 공고 등록 버튼 -->
     <div v-show="isEnter">
-      <router-link to="/board/jobPostingInsert" class="btn btn-primary">공고 등록</router-link>
+      <router-link to="/board/jobPostingInsert" class="btn btn-primary" style="margin-right: 10px;">공고 등록</router-link>
+      <router-link to="/projectInsert" class="btn btn-primary">프로젝트 등록</router-link>
+     
     </div>
 
     <!-- 진행 상태 필터 -->

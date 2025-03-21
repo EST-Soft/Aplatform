@@ -49,6 +49,7 @@ import UserSingout from "../views/fo/auth/UserSingout.vue";
 import ScrapListView from "../views/fo/user/ScrapListView.vue";
 import EnterJobPostingList from "../views/fo/enterprise/EnterJobPostingList.vue";
 import ProjectDetailView from "../views/fo/enterprise/ProjectDetailView.vue";
+import ProjectPostingInsertForm from "../views/fo/enterprise/project/ProjectPostingInsertForm.vue";
 
 
 // import store from "@/store"; // Vuex 스토어를 직접 가져옵니다.
@@ -283,7 +284,12 @@ const routes = [
   {
     path :"/projectDetail/:prjctSq",
     component : ProjectDetailView,
-  }
+  },
+  {
+    path:"/projectInsert",
+    component: ProjectPostingInsertForm,
+  },
+
 ];
 
 const router = createRouter({

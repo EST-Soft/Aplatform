@@ -2,7 +2,6 @@ package jobplatform.fo.board.service;
 
 import jobplatform.fo.board.entity.AnswerCommentEntity;
 import jobplatform.fo.board.mapper.AnswerCommentMapper;
-import jobplatform.fo.board.service.AnswerCommentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

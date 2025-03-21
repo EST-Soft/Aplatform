@@ -22,4 +22,9 @@ public interface ProjectMapper {
     public int projectUpdate(ProjectDomain projectEntity);
 
     public int projectDelete(@Param("prjctSq") int prjctSq);
+
+    public List<String> selectEmailsForEssentialSkills(@Param("prjctSq") int prjctSq);
+
+    public List<Integer> selectQualifiedMembers(@Param("prjctSq") int prjctSq);
+
 }

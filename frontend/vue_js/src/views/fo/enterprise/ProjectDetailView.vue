@@ -1,15 +1,65 @@
 <template>
-    <div class="modal-wrap" v-show="modalCheck">
-        <div class="modal-container">
-            <h3 class="position-absolute top-30 start-50 translate-middle">프로젝트 지원서</h3>
+    <div class="modal-wrap" v-if="isLogin = 'member'" v-show="modalCheck">
+        <div class="modal-container" v-if="!profileModalCheck">
+            <h3>프로젝트 지원서</h3>
             <h4>이름 : 백바울</h4>
             <h4>주민번호 앞자리 : 950822</h4>
             <h4>전화번호 : 010-5555-5555</h4>
-            <h4>프로필 : 프로필 1 <a>(재선택)</a></h4>
-
+            <h4>프로필 : 프로필 1 <a @click="profileModalOpen">(재선택)</a></h4>
             <div class="modal-btn d-grid gap-2 d-md-flex justify-content-md-end">
-                <button @click="modalOpen" class="btn btn-outline-dark">닫기</button>
-                <button @click="modalOpen" class="btn btn-outline-dark">확인</button>
+                <button @click="applyModalOpen" class="btn btn-outline-dark">닫기</button>
+                <button @click="applyModalOpen" class="btn btn-outline-dark">확인</button>
+            </div>
+        </div>
+        <div class="modal-container" v-else>
+            <h3>프로필 선택</h3>
+            <h4><a>프로필 1 </a><span> 대표 프로필 </span></h4>
+            <h4><a>프로필 2 </a></h4>
+            <h4><a>프로필 3 </a></h4>
+            <div class="modal-btn d-grid gap-2 d-md-flex justify-content-md-end">
+                <button @click="profileModalOpen" class="btn btn-outline-dark">뒤로가기</button>
+            </div>
+        </div>
+    </div>
+    <div class="modal-wrap" v-if="isLogin = 'enter'" v-show="modalCheck">
+        <div class="modal-container" v-if="!profileModalCheck">
+            <h3>프로젝트 지원서</h3>
+            <div class="form-check h5">
+                <input class="form-check-input" type="checkbox" value="" id="flexCheck1">
+                <label class="form-check-label" for="flexCheck1">
+                    이름 : ~~~  ,등급 : ~~, 기술 : ~~~ 
+                </label>
+            </div>
+            <div class="form-check h5">
+                <input class="form-check-input" type="checkbox" value="" id="flexCheck2">
+                <label class="form-check-label" for="flexCheck2">
+                    이름 : ~~~  ,등급 : ~~, 기술 : ~~~ 
+                </label>
+            </div>
+            <div class="form-check h5">
+                <input class="form-check-input" type="checkbox" value="" id="flexCheck3">
+                <label class="form-check-label" for="flexCheck3">
+                    이름 : ~~~  ,등급 : ~~, 기술 : ~~~ 
+                </label>
+            </div>
+            <div class="form-check h5">
+                <input class="form-check-input" type="checkbox" value="" id="flexCheck4">
+                <label class="form-check-label" for="flexCheck4">
+                    이름 : ~~~  ,등급 : ~~, 기술 : ~~~ 
+                </label>
+            </div>
+            <div class="modal-btn d-grid gap-2 d-md-flex justify-content-md-end">
+                <button @click="applyModalOpen" class="btn btn-outline-dark">닫기</button>
+                <button @click="applyModalOpen" class="btn btn-outline-dark">확인</button>
+            </div>
+        </div>
+        <div class="modal-container" v-else>
+            <h3>프로필 선택</h3>
+            <h4><a>프로필 1 </a><span> 대표 프로필 </span></h4>
+            <h4><a>프로필 2 </a></h4>
+            <h4><a>프로필 3 </a></h4>
+            <div class="modal-btn d-grid gap-2 d-md-flex justify-content-md-end">
+                <button @click="profileModalOpen" class="btn btn-outline-dark">뒤로가기</button>
             </div>
         </div>
     </div>
@@ -81,19 +131,20 @@
         </div>
 
         <div id="btn" class="container-md themed-container d-flex justify-content-end">
-            <button type="button" class="btn btn-outline-dark" @click="modalOpen">프로젝트 지원</button>
+            <button type="button" class="btn btn-outline-dark" @click="applyModalOpen" v-show="isLogin != null">프로젝트
+                지원</button>
         </div>
-
     </section>
 </template>
 
 
 
 <script setup>
-import { onMounted, reactive, ref, watch } from 'vue';
+import { onMounted, reactive, ref, watch, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { api } from '../../../axios';
 import moment from 'moment';
+import { useStore } from 'vuex';
 
 const route = useRoute();
 const prjctSq = ref(route.params.prjctSq);
@@ -135,7 +186,7 @@ function toggleHeart() {
 // 모달창 관련
 const modalCheck = ref(false);
 
-function modalOpen() {
+function applyModalOpen() {
     modalCheck.value = !modalCheck.value;
 }
 
@@ -144,6 +195,23 @@ watch(modalCheck, () => {
     document.documentElement.style.overflow = modalCheck.value ? 'hidden' : 'auto';
 });
 
+const profileModalCheck = ref(false);
+
+function profileModalOpen() {
+    profileModalCheck.value = !profileModalCheck.value;
+}
+
+const store = useStore();
+
+const isLogin = computed(() => {
+    if (store.getters.getMember?.entrprsId != null) {
+        return "enter";
+    }
+    if (store.getters.getMember?.mbrId != null) {
+        return "member";
+    }
+    return null;
+});
 
 </script>
 
@@ -209,16 +277,25 @@ h2 {
 
 .modal-btn {
     position: absolute;
-    bottom: 20px; /* 하단에서 20px 간격 */
-    right: 20px;  /* 우측에서 20px 간격 */
+    bottom: 20px;
+    /* 하단에서 20px 간격 */
+    right: 20px;
+    /* 우측에서 20px 간격 */
     display: flex;
-    gap: 10px;  /* 버튼 간 간격 */
+    gap: 10px;
+    /* 버튼 간 간격 */
 }
 
-a{
-    cursor: pointer;   
+.apply-modal-container h3 {
+    text-align: center;
+    /* 텍스트 중앙 정렬 */
 }
-a:hover{
+
+a {
+    cursor: pointer;
+}
+
+a:hover {
     text-decoration: underline !important;
 }
 </style>

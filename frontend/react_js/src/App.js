@@ -64,7 +64,7 @@ function Test() {
     "/userManagement/EnterpriseManagement",
     "/userManagement/AdminManagement",
     "/userManagement/AdminMypage"
-  ]
+  ].includes(location.pathname);
 
   // 기업회원 사이드바 표시 조건
   const showSidebarEnter = [
@@ -118,7 +118,7 @@ function Test() {
       // 관리자 사이드바 레이아웃 
       :isAdmin? (
         
-          <AdminSidebarLayout showSidebar ={isAdmin}>
+          <AdminSidebarLayout showSidebar ={showSidebarAdmin}>
             <Routes>
               {/* 관리자용 라우팅  */}
               <Route path="/userManagement/UserManagement" element={<UserManagement />} />

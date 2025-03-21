@@ -1,8 +1,8 @@
 import axios from "axios";
 
-const baseUrl = "http://3.37.242.106:80";
+// const baseUrl = "http://3.37.242.106:80";
 
-//const baseUrl = "http://localhost:80";
+const baseUrl = "http://localhost:8081";
 
 // axios 인스턴스 8081
 const apiInstance = axios.create({
@@ -13,6 +13,7 @@ const apiInstance = axios.create({
 const api = {
   async $get(url, params) {
     try {
+      console.log("불러오는중");
       const response = await apiInstance.get(url, params);
       return response.data;
     } catch (err) {

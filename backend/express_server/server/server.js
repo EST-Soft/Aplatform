@@ -17,6 +17,8 @@ const db = mysql.createConnection({
   port: 3306,
   database: 'est_eep_db'
 });
+
+
 // 데이터베이스 연결
 db.connect(err => {
   if (err) {
@@ -114,6 +116,7 @@ app.get('/user', (req, res) => {
         joinDate: new Date(user.insrt_dtm).toISOString().split('T')[0],
         use_yn: user.use_yn,
          report_count : user.report_count
+        
 
         
       }));
@@ -183,11 +186,11 @@ app.get('/user', (req, res) => {
 
         //결과 데이터 형식 맞추기 (프론트엔드와의 형식 일관성 유지)
         const transformedResults = results.map(item => ({
-          idx: item.IDX,
-        title: item.TITLE,
+          brdSq: item.IDX,
+          brdTtl: item.TITLE,
         contents: item.CONTENTS,
         createdBy: item.createdBy,
-        createdAt: item.createdAt,
+        insrtDtm: item.createdAt,
         }));
         res.json({ pagination, data: transformedResults });
       });
@@ -270,11 +273,11 @@ app.get('/user', (req, res) => {
         return res.status(404).json({ message: 'Data not found' });
       }
       const item = {
-        idx: results[0].IDX,
-        title: results[0].TITLE,
+        brdSq: results[0].IDX,
+        brdTtl: results[0].TITLE,
         contents: results[0].CONTENTS,
         createdBy: results[0].createdBy,
-        createdAt: results[0].createdAt,
+        insrtDtm: results[0].createdAt,
       };
       res.json({ data: item });
     });

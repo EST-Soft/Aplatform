@@ -66,7 +66,7 @@ const JobInfo = () => {
   const getJobList = async () => {
     try{
       const resp = await axios.get('/board/list/jobPosting',{
-        params: { sorrtBy: sortOption}
+        params: { sortBy: sortOption}
       });
       setItems(resp.data || []);
     } catch (error){

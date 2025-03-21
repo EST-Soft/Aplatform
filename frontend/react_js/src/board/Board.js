@@ -5,6 +5,7 @@ import './Board.css'; // 외부 CSS 파일을 이용하여 스타일링
 
 const Board = ({ idx, title, contents, createdBy, createdAt, hits }) => {
   const navigate = useNavigate();
+  console.log("Board Props:", { idx, title, contents, createdBy, createdAt, hits });
   
   const moveToUpdate = () => {
     navigate('/update/' + idx);

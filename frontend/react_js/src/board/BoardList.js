@@ -86,30 +86,59 @@ const BoardList = () => {
   const [search, setSearch] = useState({ page: 1, sk: "", sv: "" });
   const { showModal } = useModal();
 
+  // const getBoardList = async () => {
+  //   console.log("서치", search.page);
+  //   if (search.page === curPage) return;
+  //   const queryString = Object.entries(search)
+  //     .map((e) => e.join("="))
+  //     .join("&");
+  //   const resp = await axios
+  //     .get("/board?" + queryString)
+  //     .then((res) => res.data);
+  //   setBoardList(resp.data || []);
+  //   const { endPage, nextBlock, prevBlock, startPage, totalPageCnt } =
+  //     resp.pagination;
+  //   console.log(resp.pagination);
+  //   setCurPage(search.page);
+  //   setPrevBlock(prevBlock);
+  //   setNextBlock(nextBlock);
+  //   setLastPage(totalPageCnt);
+  //   const tmpPages = [];
+  //   for (let i = startPage; i <= endPage; i++) {
+  //     tmpPages.push(i);
+  //   }
+  //   console.log("tempages", tmpPages);
+  //   setPageList(tmpPages);
+  // };
   const getBoardList = async () => {
-    console.log("서치", search.page);
+    console.log("Search Page:", search.page);
     if (search.page === curPage) return;
+    
     const queryString = Object.entries(search)
       .map((e) => e.join("="))
       .join("&");
-    const resp = await axios
-      .get("/board?" + queryString)
-      .then((res) => res.data);
-    setBoardList(resp.data || []);
-    const { endPage, nextBlock, prevBlock, startPage, totalPageCnt } =
-      resp.pagination;
+  
+    const resp = await axios.get("/board?" + queryString).then((res) => res.data);
+  
+    setBoardList(resp.data || []);  // 빈 배열로 초기화
+    const { endPage, nextBlock, prevBlock, startPage, totalPageCnt } = resp.pagination || {};  // 빈 객체로 초기화
+  
     console.log(resp.pagination);
+  
     setCurPage(search.page);
     setPrevBlock(prevBlock);
     setNextBlock(nextBlock);
     setLastPage(totalPageCnt);
+  
     const tmpPages = [];
     for (let i = startPage; i <= endPage; i++) {
       tmpPages.push(i);
     }
+  
     console.log("tempages", tmpPages);
     setPageList(tmpPages);
   };
+  
 
   const moveToWrite = () => {
     navigate("/write");
@@ -172,6 +201,18 @@ const BoardList = () => {
                 </tr>
               ))}
             </tbody>
+            {/* <tbody>
+  {Array.isArray(boardList) && boardList.map((board) => (
+    <tr key={board.idx}>
+      <td>
+        <Link to={`/board/${board.idx}`}>{board.title}</Link>
+      </td>
+      <td>{board.createdBy}</td>
+      <td>{board.createdAt ? board.createdAt.slice(0, 10) : 'N/A'}</td>
+    </tr>
+  ))}
+</tbody> */}
+
           </Table>
           <Section className="pagination-wrapper">
             <ul>

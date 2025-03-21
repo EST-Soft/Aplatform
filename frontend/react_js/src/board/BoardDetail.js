@@ -10,7 +10,7 @@ const BoardDetail = () => {
   const getBoard = async () => {
     const resp = await (await axios.get(`/board/${idx}`)).data;
     console.log("디테일 데이터", resp)
-    setBoard(resp);
+    setBoard(resp.data);
     setLoading(false);
   };
 
@@ -20,6 +20,7 @@ const BoardDetail = () => {
 
   return (
     <div>
+       {console.log("🔄 렌더링 시 board 상태:", board)}
       {loading ? (
         <h2>loading...</h2>
       ) : (

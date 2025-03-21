@@ -48,6 +48,8 @@ import UserPwChange from "../views/fo/auth/UserFind/UserPwChange.vue";
 import UserSingout from "../views/fo/auth/UserSingout.vue";
 import ScrapListView from "../views/fo/user/ScrapListView.vue";
 import EnterJobPostingList from "../views/fo/enterprise/EnterJobPostingList.vue";
+import ProjectDetailView from "../views/fo/enterprise/ProjectDetailView.vue";
+
 
 // import store from "@/store"; // Vuex 스토어를 직접 가져옵니다.
 
@@ -278,6 +280,10 @@ const routes = [
     path: "/enter/recommendResumeList",
     component: RecommendResumeList,
   },
+  {
+    path :"/projectDetail/:prjctSq",
+    component : ProjectDetailView,
+  }
 ];
 
 const router = createRouter({

@@ -1,8 +1,10 @@
 package jobplatform.fo.user.domain.repository;
 
+
 import java.util.Optional;
 
 import jakarta.transaction.Transactional;
+import jobplatform.fo.enterprise.domain.dto.EnterRegisterDTO;
 import jobplatform.fo.user.domain.entity.MemberEntity;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,8 +13,6 @@ import org.springframework.data.jpa.repository.Query;
 
 
 public interface MemberRepository extends JpaRepository<MemberEntity, Long> {
-
-    MemberEntity findByMbrSq(Long mbrSq);
 
     MemberEntity findByMbrIdAndMbrPswrd(String mbrId, String mbrPswrd);
 

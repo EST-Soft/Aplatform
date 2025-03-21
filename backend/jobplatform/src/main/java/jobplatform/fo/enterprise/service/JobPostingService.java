@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import jakarta.servlet.http.HttpSession;
 import jobplatform.fo.enterprise.domain.dto.JobPostingDTO;
 import jobplatform.fo.enterprise.domain.entity.ApplyEntity;
 import jobplatform.fo.enterprise.domain.entity.JobPostingEntity;
@@ -12,10 +13,10 @@ import jobplatform.fo.enterprise.domain.entity.JobPostingEntity;
 public interface JobPostingService {
 
     // 공고 리스트 조회
-    public List<JobPostingEntity> jobPostingList(String sortBy, Long mbrSq);
+    public List<JobPostingEntity> jobPostingList(String sortBy);
 
     // 공고 상세 조회
-    public JobPostingDTO jobPostingDetail(Long jbpSq, Long userSq);
+    public JobPostingDTO jobPostingDetail(Long jbpSq, HttpSession session);
 
     // 조회수 증가
     public Long increaseHits(Long jbpSq);
@@ -40,7 +41,13 @@ public interface JobPostingService {
 
     // 최근 본 공고 추가
     public void addJobView(Long mbrSq, Long jbpSq, String mbrId);
-    
+
+
+
+	
+
+
+
     // 최근 본 공고 엔터티 추가
     public void addJobViewEntity(Long mbrSq, Long jbpSq, String mbrId);
 
@@ -53,4 +60,18 @@ public interface JobPostingService {
 
     // 마감일 연장
     public void extendDeadline(Long jbpSq, int daysToAdd);
+
+
+
+
+
+
+
+	
+
+
+	
 }
+
+
+

@@ -66,9 +66,6 @@
             <div v-if="paginatedItems.length > 0">
               <div class="row">
                 <div v-for="(item, idx) in paginatedItems" :key="idx" class="custom col-md-3">
-                  <div class="scrap-button" v-if="member?.mbrSq">
-                    <button @click="toggleScrap(item.jbpSq)" class="btn btn-outline-warning btn-sm"><i class="bi" :class="item.scrapped ? 'bi-star-fill' : 'bi-star'"></i></button>
-                  </div>
                   <router-link :to="`/board/detail/jobPosting/${item.jbpSq}`" class="routerLink"
                     @mouseover="showDetails(idx)" @mouseleave="hideDetails(idx)">
                     <!-- 프로필 이미지와 D-Day -->
@@ -126,9 +123,9 @@ import BasePagination from "@/components/common/BasePagination.vue";
 import SearchComponent from '@/components/fo/enterprise/SearchComponent.vue';
 import moment from 'moment';
 import { useStore } from "vuex";
-import { showAlert } from "../../../utill/utillModal";
 
 const store = useStore();
+
 
 const state = reactive({
   items: [],
@@ -136,40 +133,27 @@ const state = reactive({
   itemsPerPage: 12,
 });
 
+
 const sortOption = ref('regstrStrtDtm');
-const member = computed(() => store.getters.getMember);
+
 
 const isEnter = computed(() => {
   return store.getters.getMember?.entrprsId != null;
 });
 
+
+
 // 초기 데이터 로드
 const fetchItems = async () => {
   try {
     const response = await api.$get('/board/list/jobPosting', {
-      params: { sortBy: sortOption.value,
-                mbrSq : member.value.mbrSq
-      }
+      params: { sortBy: sortOption.value }
     });
     state.items = response;
     console.log("asdasdas", response);
   } catch (error) {
     console.error('Error fetching items:', error);
   }
-};
-
-// 스크랩 추가 / 삭제 토글
-const toggleScrap = (jbp_sq) => {
-  const mbr_sq = store.getters.getMember?.mbrSq;
-  api.$post(`/user/mypage/scrap/insert/${mbr_sq}/${jbp_sq}`)
-  .then(response => {
-    showAlert(response);
-    console.log(response);
-  })
-  .catch(error => {
-    showAlert(error.response.data);
-    console.log(error.response.data);
-  })
 };
 
 const formatJobName = (jobName) => {

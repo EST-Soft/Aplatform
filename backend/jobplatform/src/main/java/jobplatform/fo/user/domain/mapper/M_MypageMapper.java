@@ -1,5 +1,6 @@
 package jobplatform.fo.user.domain.mapper;
 
+
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
@@ -92,6 +93,9 @@ public interface M_MypageMapper {
 	public List<Long> getJobsOfJobPost(Long jbp_sq);
 //	공고-스킬 관계 가지고오기
 	public List<Long> getSkillsOfJobPost(Long jbp_sq);
+
+	
+	
 	
 // 	@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@tools@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 //	대표이력서 rsm_sq 구하는 메서드
@@ -123,9 +127,7 @@ public interface M_MypageMapper {
     // 특정 회원의 최근 본 공고 목록 조회
     List<JobViewDTO> selectJobViewsByMember(Long mbrSq);
 		
-	// 스크랩 체크
-    public boolean checkScrapExists(@Param("mbr_sq") Long mbr_sq, @Param("jbp_sq") Long jbp_sq);
 
-	// 본인이 한 스크랩한 공고sq 리스트
-	public List<Long> getJbpSqsByMbrSq(@Param("mbr_sq") Long mbr_sq);
+
+	
 }

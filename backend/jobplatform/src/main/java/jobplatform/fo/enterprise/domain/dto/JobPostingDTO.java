@@ -4,10 +4,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import jobplatform.fo.enterprise.domain.entity.AreaEntity;
-import jobplatform.fo.enterprise.domain.entity.JobEntity;
+import jobplatform.fo.enterprise.domain.entity.EnterMemberEntity;
 import jobplatform.fo.enterprise.domain.entity.JobPostingEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -46,8 +44,10 @@ public class JobPostingDTO {
     private LocalDateTime updtDtm;
     private String dltYn;
     private String useYn;
+    private EnterMemberEntity enterpriseMember;
     private Long entrprsSq;
     private String enterpriseName;
+    private boolean isScrapped;
 
     @Builder.Default
     private List<Integer> areaIds = new ArrayList<>(); // 빈 리스트로 초기화
@@ -98,6 +98,7 @@ public class JobPostingDTO {
                 .updtDtm(entity.getUpdtDtm())
                 .dltYn(entity.getDltYn().name())
                 .useYn(entity.getUseYn().name())
+                .enterpriseMember(entity.getEnterpriseMember())
                 .entrprsSq(entity.getEnterpriseMember().getEntrprsSq())
                 .enterpriseName(entity.getEnterpriseMember().getEntrprsName())
                 .build();

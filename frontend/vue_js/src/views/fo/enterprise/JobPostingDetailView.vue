@@ -7,7 +7,12 @@
             <a href="#" class="card-action card-action-toggle" data-card-toggle=""></a>
             <a href="#" class="card-action card-action-dismiss" data-card-dismiss=""></a>
           </div>
-          <h2 class="card-title">공고</h2>
+          <div class="d-flex align-items-center w-100">
+            <h2 class="card-title me-auto" data-v-7f0d27c6="">공고</h2>
+            <button @click="toggleScrap(member?.mbrSq, route.params.jbpSq)" class="btn btn-outline-warning btn-sm" v-if="member?.mbrSq">
+              <i class="bi" :class="jbp.scrapped ? 'bi-star-fill' : 'bi-star'"></i>
+            </button>
+          </div>
         </header>
       </section>
 
@@ -129,6 +134,7 @@ const router = useRouter();
 
 const loading = ref(true);
 
+const member = computed(() => store.getters.getMember);
 const isMember = computed(() => {
   return store.getters.getMember?.mbrSq != null;
 });
@@ -159,7 +165,35 @@ const jbp = ref({
   slry: "",
   regstrStrtDtm: "",
   regstrDlnDtm: "",
+  scrapped: "false"
 });
+
+const toggleScrap = async (mbr_sq, jbp_sq) => {
+  const isScrapped = jbp.value.scrapped;
+  if(isScrapped) {
+    api.$post(`/user/mypage/scrap/delete/${mbr_sq}/${jbp_sq}`)
+    .then(response => {
+      jbp.value.scrapped = !jbp.value.scrapped;
+      showAlert(response);
+      console.log(response);
+    })
+    .catch(error => {
+      showAlert(error.response.data);
+      console.log(error.response.data);
+    })
+  } else {
+    api.$post(`/user/mypage/scrap/insert/${mbr_sq}/${jbp_sq}`)
+    .then(response => {
+      jbp.value.scrapped = !jbp.value.scrapped;
+      showAlert(response);
+      console.log(response);
+    })
+    .catch(error => {
+      showAlert(error.response.data);
+      console.log(error.response.data);
+    })
+  }
+}
 
 const formatDate = (dateString) => {
   const date = new Date(dateString);
@@ -173,7 +207,11 @@ const fetchJobPostingDetail = async () => {
   const jbpSq = route.params.jbpSq;
 
   try {
-    const response = await api.$get(`/board/detail/jobPosting/${jbpSq}`);
+    const response = await api.$get(`/board/detail/jobPosting/${jbpSq}`, {
+      params: {
+        ...(member.value?.mbrSq !== undefined && { mbrSq: member.value.mbrSq })
+      }
+    });
     jbp.value = response;
     enterCheck();
   } catch (error) {
@@ -182,8 +220,6 @@ const fetchJobPostingDetail = async () => {
     loading.value = false;
   }
 };
-
-
 
 onMounted(() => {
   fetchJobPostingDetail();

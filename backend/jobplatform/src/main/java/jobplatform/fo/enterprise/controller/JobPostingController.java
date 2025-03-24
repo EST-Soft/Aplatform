@@ -1,14 +1,11 @@
 package jobplatform.fo.enterprise.controller;
 
-import java.awt.geom.Area;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.batch.BatchProperties.Job;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -19,35 +16,31 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import jakarta.servlet.http.HttpSession;
 import jobplatform.fo.enterprise.domain.dto.JobPostingDTO;
-import jobplatform.fo.enterprise.domain.dto.JobViewDTO;
 import jobplatform.fo.enterprise.domain.entity.ApplyEntity;
 import jobplatform.fo.enterprise.domain.entity.AreaEntity;
 import jobplatform.fo.enterprise.domain.entity.JobEntity;
 import jobplatform.fo.enterprise.domain.entity.JobPostingEntity;
 import jobplatform.fo.enterprise.domain.entity.ResumeEntity;
 import jobplatform.fo.enterprise.domain.repository.AreaRepository;
-import jobplatform.fo.enterprise.domain.repository.EnterMemberRepository;
 import jobplatform.fo.enterprise.domain.repository.JobRepository;
 import jobplatform.fo.enterprise.domain.repository.ResumeRepository;
 import jobplatform.fo.enterprise.service.JobPostingService;
 import jobplatform.fo.enterprise.service.JobViewService;
-import jobplatform.fo.user.service.MypageService;
+import jobplatform.fo.user.domain.entity.MemberEntity;
+import jobplatform.fo.user.domain.repository.MemberRepository;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.web.bind.annotation.PutMapping;
-
-
 
 @Log4j2
 @RestController
 public class JobPostingController {
 	
+	@Autowired
+	private MemberRepository memberRepository;
+
 	@Autowired  
 	private JobPostingService jobPostingService;
-	
-	@Autowired
-	private EnterMemberRepository enterMemberRepository;
 	
 	@Autowired
 	private ResumeRepository resumeRepository;
@@ -57,26 +50,27 @@ public class JobPostingController {
 	
 	@Autowired
 	private JobRepository jobRepository;
-	    @Autowired
-    private MypageService mypageService;
-		    @Autowired
+
+	@Autowired
     private JobViewService jobViewService;
 	
 	@GetMapping("/board/list/jobPosting")
-	public ResponseEntity<List<JobPostingEntity>> jobPostingList(@RequestParam(value = "sortBy", defaultValue = "regstrStrtDtm") String sortBy) {
-	    List<JobPostingEntity> jobPostings = jobPostingService.jobPostingList(sortBy);
-	    return ResponseEntity.ok(jobPostings);
+	public ResponseEntity<List<JobPostingDTO>> jobPostingList(
+	@RequestParam(value = "sortBy", defaultValue = "regstrStrtDtm") String sortBy,
+	@RequestParam(required = false) Long mbrSq) {
+		System.out.println("리스트의 mbrSq: " + mbrSq);
+		List<JobPostingDTO> jobPostings = jobPostingService.jobPostingList(sortBy, mbrSq);
+		return ResponseEntity.ok(jobPostings);
 	}
 
 	@GetMapping("/board/list/myJobPosting")
-    public ResponseEntity<List<JobPostingEntity>> jobPostingList(
+    public ResponseEntity<List<JobPostingEntity>> myJobPostingList(
     @RequestParam(value = "sortBy", defaultValue = "regstrStrtDtm") String sortBy,
     @RequestParam(value = "entrprsSq", required = false) Long entrprsSq // 추가된 필터 파라미터
-) {
-    List<JobPostingEntity> jobPostings = jobPostingService.myJobPostingList(sortBy, entrprsSq);
-    return ResponseEntity.ok(jobPostings);
-}
-
+	) {
+		List<JobPostingEntity> jobPostings = jobPostingService.myJobPostingList(sortBy, entrprsSq);
+		return ResponseEntity.ok(jobPostings);
+	}
 	
 	// 공고 등록 메소드
 	@PostMapping("/board/jobPostingInsert")
@@ -114,36 +108,29 @@ public class JobPostingController {
 	  }
 	
 	// 공고 상세 조회 메소드
-@SuppressWarnings("unchecked")
-@GetMapping("/board/detail/jobPosting/{jbpSq}")
-public JobPostingDTO JobPostingDetail(@PathVariable Long jbpSq, HttpSession session) {
-    // 공고 상세 조회
-    JobPostingDTO jpe = jobPostingService.jobPostingDetail(jbpSq, session);
+	@SuppressWarnings("unchecked")
+	@GetMapping("/board/detail/jobPosting/{jbpSq}")
+	public JobPostingDTO JobPostingDetail(@PathVariable Long jbpSq, @RequestParam(required = false) Long mbrSq) {
+		// 공고 상세 조회
+		JobPostingDTO jpe = jobPostingService.jobPostingDetail(jbpSq, mbrSq);
+		System.out.println("공고 상세 조회 jdbSq: " + jbpSq);
+		System.out.println("공고 상세 조회 mbrSq: " + mbrSq);
+		System.out.println("1111111111111111"+jpe);
 
-    // 조회수 증가
-    jobPostingService.increaseHits(jbpSq);
+		// 조회수 증가
+		jobPostingService.increaseHits(jbpSq);
+		// 사용자 순번이 존재하면 최근 본 공고 목록을 DB에 저장
+		if (mbrSq != null) {
+			MemberEntity memberEntity = memberRepository.findByMbrSq(mbrSq); // 기업 회원은 최근 본 공고 목록이 없음
+			String mbrId = memberEntity.getMbrId();
 
-    // 세션에서 사용자 순번(mbrSq)을 가져옴
-    Long mbrSq = (Long) session.getAttribute("mbrSq");
+			// 최근 본 공고 목록을 DB에 저장
+			jobViewService.addJobViewEntity(mbrSq, jbpSq, mbrId);  // DB에 기록
+		}
 
-    // 사용자 순번이 존재하면 최근 본 공고 목록을 DB에 저장
-    if (mbrSq != null) {
-        // 사용자 ID를 세션에서 가져옴 (예: test)
-        String mbrId = (String) session.getAttribute("mbrId"); // 세션에서 사용자 ID를 가져옴
+		return jpe;
+	}
 
-        // 최근 본 공고 목록을 DB에 저장
-        jobViewService.addJobViewEntity(mbrSq, jbpSq, mbrId);  // DB에 기록
-        System.out.println("최근 본 공고 저장 - 사용자 순번: " + mbrSq + ", 공고 순번: " + jbpSq + ", 사용자 ID: " + mbrId);
-    }
-
-    return jpe;
-}
-
-
-
-
-
-	
 	// 공고 수정 메소드
 	@PostMapping("/board/jobPostingUpdate/{jbpSq}")
 	public void updateJobPosting(@PathVariable int jbpSq , @RequestBody JobPostingEntity jpe) {
@@ -164,7 +151,6 @@ public JobPostingDTO JobPostingDetail(@PathVariable Long jbpSq, HttpSession sess
 		}
 	}
 	
-	
 	// 공고 삭제 메소드
 	@DeleteMapping("/board/jobPostingDelete/{jbpSq}")
 	public void deleteJobPosting(@PathVariable Long jbpSq) {
@@ -175,10 +161,10 @@ public JobPostingDTO JobPostingDetail(@PathVariable Long jbpSq, HttpSession sess
 	// 공고 검색 메소드
     @GetMapping("/board/search")
     public List<JobPostingEntity> searchJobPostings(
-            @RequestParam(value = "searchTerm", required = false) String searchTerm,
-            @RequestParam(value = "searchField", defaultValue = "jbpTtl_jbpCntnt") String searchField) {
-        	System.out.println("검색 잘 되니"+searchTerm);
-        	System.out.println("검색 잘 되니"+searchField);
+	@RequestParam(value = "searchTerm", required = false) String searchTerm,
+	@RequestParam(value = "searchField", defaultValue = "jbpTtl_jbpCntnt") String searchField) {
+		System.out.println("검색 잘 되니"+searchTerm);
+        System.out.println("검색 잘 되니"+searchField);
         return jobPostingService.searchJobPostings(searchTerm, searchField);
     }
     
@@ -199,7 +185,4 @@ public JobPostingDTO JobPostingDetail(@PathVariable Long jbpSq, HttpSession sess
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("입사지원 실패");
 		}
 	}
-
-		
-	
 }

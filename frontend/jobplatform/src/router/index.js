@@ -22,7 +22,7 @@ import EnterInfoUpdate from '@/views/fo/enterprise/EnterInfoUpdate.vue'
 import TempTemp from '@/components/fo/enterprise/enterpriseMypage/TempTemp.vue'
 import EnterSignOut from '@/views/fo/enterprise/EnterSignOut.vue'
 import EnterChangePassword from '@/views/fo/enterprise/EnterChangePassword.vue'
-import LoginView from '@/views/fo/common/LoginView.vue';
+// import LoginView from '@/views/fo/common/LoginView.vue';
 import EnterMainView from '@/views/fo/enterprise/EnterMainView.vue'
 import RecommendResumeList from '@/views/fo/enterprise/RecommendResumeList.vue'
 
@@ -115,10 +115,10 @@ const routes = [
       }
     ]
   },
-  {
-    path : '/login',
-    component : LoginView
-  },
+  // {
+  //   path : '/login',
+  //   component : LoginView
+  // },
   {
     path : '/enter/recommendResumeList',
     component : RecommendResumeList

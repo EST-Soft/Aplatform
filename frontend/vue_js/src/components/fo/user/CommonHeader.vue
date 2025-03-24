@@ -362,7 +362,6 @@ function loginUser() {
     console.log("현재 로그인된 사용자:", userType.value);
   } else {
     console.log("로그인된 사용자가 없습니다.");
-    router.push("/login");
   }
 }
 

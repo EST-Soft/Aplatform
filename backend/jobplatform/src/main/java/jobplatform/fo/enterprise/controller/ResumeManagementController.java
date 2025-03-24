@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -37,7 +38,9 @@ import jobplatform.fo.user.domain.entity.MemberEntity;
 import jobplatform.fo.user.domain.vo.EducationDto;
 import jobplatform.fo.user.service.EducationService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class ResumeManagementController {
@@ -49,6 +52,8 @@ public class ResumeManagementController {
 	private final ResumeCertificateSService resumeCertificateSService;
 	private final SelfIntroductionService selfIntroductionService;
 	private final CareerService careerService;
+
+
 
 	/*
 	 * public ResumeManagementController(ResumeManagementService
@@ -119,6 +124,7 @@ public class ResumeManagementController {
 	 */
 
 	// 이력서 등록
+
 	@PostMapping("/resumes/insert-resume")
 	public void insertResumeFullData(@RequestParam("mbrSq") Long mbrSq, @RequestBody ResumeDataResponseDto requestDto) {
 		// 이력서 인적사항 및 이미지 처리
@@ -147,7 +153,10 @@ public class ResumeManagementController {
 		
 		// 스킬 정보 처리
 		List<SkillCodeSDto> skilsDataDtos = requestDto.getSkilsDataDtoList();
+		System.out.println("SkillCodeSDto list: " + skilsDataDtos.toString());
+		
 		if (skilsDataDtos != null && !skilsDataDtos.isEmpty()) {
+			System.out.println("SkillCodeSDto list2222: ");
 			skillCodeResumeRService.insertSkillCodeResume(rsmSq, skilsDataDtos);
 		}
 

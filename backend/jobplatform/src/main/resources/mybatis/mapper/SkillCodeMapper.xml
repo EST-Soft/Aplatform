@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jobplatform.fo.skill.mapper.SkillCodeMapper">
+
+<insert id="skillinsert">
+INSERT INTO P2_TBL_SKILL_CODE_RESUME_R (rsm_sq, skl_code_sq)
+VALUES (#{rsmSq}, #{sklCodeSq})
+
+</insert>
+
+</mapper>

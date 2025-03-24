@@ -25,6 +25,8 @@ public interface ProjectMapper {
 
     public List<String> selectEmailsForEssentialSkills(@Param("prjctSq") int prjctSq);
 
-    public List<Integer> selectQualifiedMembers(@Param("prjctSq") int prjctSq);
+    public List<String> selectQualifiedMembers(@Param("prjctSq") int prjctSq);
+
+    public int interviewInsert(@Param("prjctSq") int prjctSq, @Param("prjctInterv") String prjctInterv);
 
 }

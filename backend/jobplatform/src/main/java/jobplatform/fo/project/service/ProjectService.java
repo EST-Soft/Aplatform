@@ -26,7 +26,8 @@ public interface ProjectService {
     
     public List<String> selectEmailsForEssentialSkills(@Param("prjctSq") int prjctSq);
 
-    public List<Integer> selectQualifiedMembers(@Param("prjctSq") int prjctSq);
+    public List<String> selectQualifiedMembers(@Param("prjctSq") int prjctSq);
 
+    public int interviewInsert(int prjctSq, String prjctInterv);
     
 }

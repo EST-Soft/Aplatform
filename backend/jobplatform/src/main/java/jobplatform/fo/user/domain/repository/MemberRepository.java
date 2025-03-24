@@ -27,4 +27,12 @@ public interface MemberRepository extends JpaRepository<MemberEntity, Long> {
     @Transactional
     @Query("UPDATE MemberEntity e SET e.mbrPswrd = :#{#member.mbrPswrd} WHERE e.mbrSq = :#{#member.mbrSq}")
     int pswrdReset(MemberEntity member);
+
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE MemberEntity e SET e.mbrMp = :#{#member.mbrMp} WHERE e.mbrSq = :#{#member.mbrSq}")
+    int mbrMpReset(MemberEntity member);
+
+    
 }

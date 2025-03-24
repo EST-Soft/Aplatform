@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,6 +29,7 @@ import jobplatform.fo.enterprise.domain.dto.ResumeSearchDataDTO;
 import jobplatform.fo.enterprise.domain.dto.SelfIntroductionsDataDTO;
 import jobplatform.fo.enterprise.domain.dto.SkillCodeSDto;
 import jobplatform.fo.enterprise.domain.entity.ResumeEntity;
+import jobplatform.fo.enterprise.domain.repository.ResumeRepository;
 import jobplatform.fo.enterprise.service.AttachmentService;
 import jobplatform.fo.enterprise.service.CareerService;
 import jobplatform.fo.enterprise.service.ResumeCertificateSService;
@@ -52,6 +54,10 @@ public class ResumeManagementController {
 	private final ResumeCertificateSService resumeCertificateSService;
 	private final SelfIntroductionService selfIntroductionService;
 	private final CareerService careerService;
+
+
+	@Autowired
+	private ResumeRepository resumeRepository;
 
 
 
@@ -260,5 +266,15 @@ public class ResumeManagementController {
 
 		return new ResponseEntity<HttpStatus>(httpStatus);
 	}
+
+
+
+	// 3/24
+	@GetMapping("/resumes/{mbrSq}")
+    public List<ResumeEntity> getMemberDetail(@PathVariable("mbrSq") Long mbrSq) {
+
+        return resumeRepository.findByMbrSq(mbrSq);
+    }
+
 
 }

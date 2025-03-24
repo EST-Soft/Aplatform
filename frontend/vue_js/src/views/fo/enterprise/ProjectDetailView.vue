@@ -1,51 +1,69 @@
 <template>
-    <div class="modal-wrap" v-if="isLogin = 'member'" v-show="modalCheck">
-        <div class="modal-container" v-if="!profileModalCheck">
+    <div class="modal-wrap" v-if="isLogin === 'member'" v-show="modalCheck">
+        <div class="modal-container" v-if="!profileModalCheck && !profileDetailModalCheck">
             <h3>프로젝트 지원서</h3>
-            <h4>이름 : 백바울</h4>
-            <h4>주민번호 앞자리 : 950822</h4>
-            <h4>전화번호 : 010-5555-5555</h4>
-            <h4>프로필 : 프로필 1 <a @click="profileModalOpen">(재선택)</a></h4>
+            <h4>이름 : {{ state.member.mbrName }}</h4>
+            <h4>주민번호 앞자리 : {{ state.member.mbrBd }}</h4>
+            <h4 class="align-items-center">전화번호 :
+                <span v-if="!isPhoneNumberEditing">{{ state.member.mbrMp }}</span>
+                <input size=13 maxlength=13 class="phoneNum" v-if="isPhoneNumberEditing" type="text"
+                    v-model="state.member.mbrMp" />
+                <button class="btn btn-outline-dark modify" @click="toggleEditPhoneNumber">{{ isPhoneNumberEditing ?
+                    '취소' : '수정' }}</button>
+                <button class="btn btn-outline-dark modify" v-if="isPhoneNumberEditing"
+                    @click="saveUpdatedPhoneNumber">저장</button>
+            </h4>
+            <h4>프로필 : <span> {{ representativeResume.length > 0 ? representativeResume[0].rsmTtl : '대표 프로필 없음' }}</span><a @click="profileModalOpen"> (재선택)</a></h4>
             <div class="modal-btn d-grid gap-2 d-md-flex justify-content-md-end">
                 <button @click="applyModalOpen" class="btn btn-outline-dark">닫기</button>
                 <button @click="applyModalOpen" class="btn btn-outline-dark">확인</button>
             </div>
         </div>
-        <div class="modal-container" v-else>
+        <div class="modal-container" v-if="profileModalCheck && !profileDetailModalCheck">
             <h3>프로필 선택</h3>
-            <h4><a>프로필 1 </a><span> 대표 프로필 </span></h4>
-            <h4><a>프로필 2 </a></h4>
-            <h4><a>프로필 3 </a></h4>
+            <h4 v-for="(resume,index) in state.resumes" :key="resume.rsmSq"><a @click="profileDetailModalOpen">{{ index + 1 }}. {{ resume.rsmTtl }} </a><span v-if="resume.rsmRprsntvYn === 'y'" class="badge text-bg-primary title"> 대표 프로필 </span></h4>
             <div class="modal-btn d-grid gap-2 d-md-flex justify-content-md-end">
                 <button @click="profileModalOpen" class="btn btn-outline-dark">뒤로가기</button>
+            </div>
+        </div>
+        <div class="modal-container" v-if="profileModalCheck && profileDetailModalCheck">
+            <h3>프로필 상세보기</h3>
+            <h4>안녕하세요 개발자 백바울입니다.</h4>
+            <div class="modal-btn d-grid gap-2 d-md-flex justify-content-md-end">
+                <button class="btn btn-outline-dark">대표프로필 설정</button>
+                <button @click="profileDetailModalOpen" class="btn btn-outline-dark">뒤로가기</button>
             </div>
         </div>
     </div>
-    <div class="modal-wrap" v-if="isLogin = 'enter'" v-show="modalCheck">
-        <div class="modal-container" v-if="!profileModalCheck">
+    <div class="modal-wrap" v-if="isLogin === 'enter'" v-show="modalCheck">
+        <div class="modal-container" v-if="!profileModalCheck && !profileDetailModalCheck">
             <h3>프로젝트 지원서</h3>
             <div class="form-check h5">
-                <input class="form-check-input" type="checkbox" value="" id="flexCheck1">
+                <input class="form-check-input" type="checkbox" value="" id="flexCheck1"
+                    v-model="checkedItems.flexCheck1" @change="handleCheck('flexCheck1')">
                 <label class="form-check-label" for="flexCheck1">
-                    이름 : ~~~  ,등급 : ~~, 기술 : ~~~ 
+                    이름 : ~~~ ,등급 : ~~, 기술 : ~~~
                 </label>
             </div>
             <div class="form-check h5">
-                <input class="form-check-input" type="checkbox" value="" id="flexCheck2">
+                <input class="form-check-input" type="checkbox" value="" id="flexCheck2"
+                    v-model="checkedItems.flexCheck2" @change="handleCheck('flexCheck2')">
                 <label class="form-check-label" for="flexCheck2">
-                    이름 : ~~~  ,등급 : ~~, 기술 : ~~~ 
+                    이름 : ~~~ ,등급 : ~~, 기술 : ~~~
                 </label>
             </div>
             <div class="form-check h5">
-                <input class="form-check-input" type="checkbox" value="" id="flexCheck3">
+                <input class="form-check-input" type="checkbox" value="" id="flexCheck3"
+                    v-model="checkedItems.flexCheck3" @change="handleCheck('flexCheck3')">
                 <label class="form-check-label" for="flexCheck3">
-                    이름 : ~~~  ,등급 : ~~, 기술 : ~~~ 
+                    이름 : ~~~ ,등급 : ~~, 기술 : ~~~
                 </label>
             </div>
             <div class="form-check h5">
-                <input class="form-check-input" type="checkbox" value="" id="flexCheck4">
+                <input class="form-check-input" type="checkbox" value="" id="flexCheck4"
+                    v-model="checkedItems.flexCheck4" @change="handleCheck('flexCheck4')">
                 <label class="form-check-label" for="flexCheck4">
-                    이름 : ~~~  ,등급 : ~~, 기술 : ~~~ 
+                    이름 : ~~~ ,등급 : ~~, 기술 : ~~~
                 </label>
             </div>
             <div class="modal-btn d-grid gap-2 d-md-flex justify-content-md-end">
@@ -53,13 +71,21 @@
                 <button @click="applyModalOpen" class="btn btn-outline-dark">확인</button>
             </div>
         </div>
-        <div class="modal-container" v-else>
+        <div class="modal-container" v-if="profileModalCheck && !profileDetailModalCheck">
             <h3>프로필 선택</h3>
-            <h4><a>프로필 1 </a><span> 대표 프로필 </span></h4>
-            <h4><a>프로필 2 </a></h4>
-            <h4><a>프로필 3 </a></h4>
+            <h4><a @click="profileDetailModalOpen">프로필 1 </a><span> 대표 프로필 </span></h4>
+            <h4><a @click="profileDetailModalOpen">프로필 2 </a></h4>
+            <h4><a @click="profileDetailModalOpen">프로필 3 </a></h4>
             <div class="modal-btn d-grid gap-2 d-md-flex justify-content-md-end">
                 <button @click="profileModalOpen" class="btn btn-outline-dark">뒤로가기</button>
+            </div>
+        </div>
+        <div class="modal-container" v-if="profileModalCheck && profileDetailModalCheck">
+            <h3>프로필 상세보기</h3>
+            <h4>안녕하세요 개발자 백바울입니다.</h4>
+            <div class="modal-btn d-grid gap-2 d-md-flex justify-content-md-end">
+                <button class="btn btn-outline-dark">대표프로필 설정</button>
+                <button @click="profileDetailModalOpen" class="btn btn-outline-dark">뒤로가기</button>
             </div>
         </div>
     </div>
@@ -82,7 +108,7 @@
         <div class="container-md themed-container">
             <div class="row mb-3">
                 <div class="col-11 themed-grid-col">
-                    <h1>{{ state.item.prjctTtl }} / {{ state.item.entrprsName }}</h1>
+                    <h1>{{ state.project.prjctTtl }} / {{ state.project.entrprsName }}</h1>
                 </div>
                 <div class="col-1 themed-grid-col d-flex align-items-center justify-content-center">
                     <i :class="isFilled ? 'bi bi-heart-fill' : 'bi bi-heart'" @click="toggleHeart"
@@ -96,22 +122,22 @@
         <div class="container-md themed-container">
             <div class="row mb-3">
                 <div class="col-4 themed-grid-col">
-                    <h2>경력 : {{ state.item.prjctEsntlCrr }}</h2>
+                    <h2>경력 : {{ state.project.prjctEsntlCrr }}</h2>
                 </div>
                 <div class="col-4 themed-grid-col">
                     <h2>학력 : </h2>
                 </div>
                 <div class="col-4 themed-grid-col">
-                    <h2>위치 : {{ state.item.prjctLctn }}</h2>
+                    <h2>위치 : {{ state.project.prjctLctn }}</h2>
                 </div>
                 <div class="col-4 themed-grid-col">
-                    <h2>근무형태 : {{ state.item.prjctTpy }}</h2>
+                    <h2>근무형태 : {{ state.project.prjctTpy }}</h2>
                 </div>
                 <div class="col-4 themed-grid-col">
-                    <h2>기간 : {{ state.item.prjctPrd }}</h2>
+                    <h2>기간 : {{ state.project.prjctPrd }}</h2>
                 </div>
                 <div class="col-4 themed-grid-col">
-                    <h2>모집 직군 : {{ state.item.prjctWork }}</h2>
+                    <h2>모집 직군 : {{ state.project.prjctWork }}</h2>
                 </div>
             </div>
         </div>
@@ -119,13 +145,13 @@
         <div class="container-md themed-container">
             <div class="row mb-3">
                 <div class="col-12 themed-grid-col">
-                    <h2>사용기술 : {{ state.item.prjctUseSkl }}</h2>
+                    <h2>사용기술 : {{ state.project.prjctUseSkl }}</h2>
                 </div>
                 <div class="col-12 themed-grid-col">
-                    <h2>자격요건 : {{ state.item.prjctEsntlSkl }}</h2>
+                    <h2>자격요건 : {{ state.project.prjctEsntlSkl }}</h2>
                 </div>
                 <div class="col-12 themed-grid-col">
-                    <h2>인터뷰 기간 : {{ getDate(state.item.prjctStrt) }} ~ {{ getDate(state.item.prjctEnd) }}</h2>
+                    <h2>인터뷰 기간 : {{ getDate(state.project.prjctStrt) }} ~ {{ getDate(state.project.prjctEnd) }}</h2>
                 </div>
             </div>
         </div>
@@ -150,22 +176,63 @@ const route = useRoute();
 const prjctSq = ref(route.params.prjctSq);
 
 const state = reactive({
-    item: {},
+    project: {},
+    member: {},
+    resumes: [],
 });
 
+// 로그인 유저 정보 불러오기
+const fetchMember = async () => {
+    if (store.getters.getUserType === 'user') {
+        const mbrId = store.getters.getMember?.mbrId;
+        try {
+            const response = await api.$get(`/member/detail/${mbrId}`)
+            state.member = response;
+            response.mbrMp = formattedPhoneNumber(response.mbrMp);
 
-const fetchItems = async () => {
+            await fetchResumes();
+
+        } catch (error) {
+            console.error('에러 메시지 : ', error);
+        }
+    }
+
+}
+
+
+// 프로젝트 정보 불러오기
+const fetchProject = async () => {
     try {
         const response = await api.$get(`/project/${prjctSq.value}`);
-        state.item = response;
-        console.log(response);
+        state.project = response;
+        // console.log(response);
     } catch (error) {
         console.error('에러 메시지 : ', error);
     }
 }
 
+
+// 이력서 정보 불러오기
+const fetchResumes = async () => {
+    try {
+        const response = await api.$get(`/resumes/${state.member.mbrSq}`)
+        state.resumes = response;
+        console.log(response);
+    } catch (error) {
+        console.log("에러메시지 : " + error);
+    }
+}
+
+// 대표 이력서 필터링
+const representativeResume = computed(() => {
+  return state.resumes.filter(resume => resume.rsmRprsntvYn === 'y');
+});
+
 onMounted(() => {
-    fetchItems();
+    fetchProject();
+    fetchMember();
+
+    // console.log("로그인상태" + isLogin.value);
 })
 
 // 날짜 형식
@@ -188,30 +255,110 @@ const modalCheck = ref(false);
 
 function applyModalOpen() {
     modalCheck.value = !modalCheck.value;
+    isPhoneNumberEditing.value = false;
 }
-
-// 모달 창 오픈 시 스크롤 제한
-watch(modalCheck, () => {
-    document.documentElement.style.overflow = modalCheck.value ? 'hidden' : 'auto';
-});
 
 const profileModalCheck = ref(false);
 
 function profileModalOpen() {
     profileModalCheck.value = !profileModalCheck.value;
 }
+const profileDetailModalCheck = ref(false);
 
+function profileDetailModalOpen() {
+    profileDetailModalCheck.value = !profileDetailModalCheck.value;
+}
+
+const checkedItems = reactive({
+    flexCheck1: false,
+    flexCheck2: false,
+    flexCheck3: false,
+    flexCheck4: false,
+});
+
+function handleCheck(id) {
+    if (checkedItems[id]) {  // 체크된 경우(true)만 실행
+        console.log(`${id}가 체크되었습니다!`);
+        profileModalCheck.value = !profileModalCheck.value;
+    }
+}
+
+
+// 모달 창 오픈 시 스크롤 제한
+watch(modalCheck, () => {
+    document.documentElement.style.overflow = modalCheck.value ? 'hidden' : 'auto';
+});
+
+// 로그인 상태 확인
 const store = useStore();
 
 const isLogin = computed(() => {
     if (store.getters.getMember?.entrprsId != null) {
+        // console.log("entrprsId : " + store.getters.getMember?.entrprsId);
+        // console.log("유저타입 " + store.getters.getUserType);
         return "enter";
     }
     if (store.getters.getMember?.mbrId != null) {
+        // console.log("mbrId : " + store.getters.getMember?.mbrId);
+        // console.log("유저타입 " + store.getters.getUserType);
         return "member";
     }
     return null;
 });
+
+
+// 휴대폰 번호 포매팅 함수
+function formattedPhoneNumber(phoneNumber) {
+    // 숫자만 남기기
+    const cleaned = phoneNumber.replace(/\D/g, '');
+
+    // 10자리 또는 11자리 번호에 대해 포맷팅
+    if (cleaned.length <= 3) {
+        return cleaned;
+    } else if (cleaned.length <= 6) {
+        return `${cleaned.slice(0, 3)}-${cleaned.slice(3, 6)}`;
+    } else if (cleaned.length <= 10) {
+        return `${cleaned.slice(0, 3)}-${cleaned.slice(3, 6)}-${cleaned.slice(6, 10)}`;
+    } else {
+        return `${cleaned.slice(0, 3)}-${cleaned.slice(3, 7)}-${cleaned.slice(7, 11)}`;
+    }
+}
+
+// 휴대폰 번호 포매팅 초기화
+function orginalPhoneNumber(phoneNumber) {
+    // 숫자만 남기기
+    const cleaned = phoneNumber.replace(/\D/g, '');
+
+    return cleaned;
+}
+// 휴대폰 번호 수정
+const isPhoneNumberEditing = ref(false);
+
+function toggleEditPhoneNumber() {
+
+    isPhoneNumberEditing.value = !isPhoneNumberEditing.value;
+
+    if (isPhoneNumberEditing.value) {
+        state.member.mbrMp = orginalPhoneNumber(state.member.mbrMp);
+    }
+    else {
+        state.member.mbrMp = formattedPhoneNumber(state.member.mbrMp);
+    }
+}
+
+async function saveUpdatedPhoneNumber() {
+
+    try {
+        const result = await api.$patch("/member/mbrMpReset", state.member);
+        if (result) {
+            console.log(state.member);
+        }
+    } catch (error) {
+        console.error("에러메시지 : " + error);
+    }
+
+    isPhoneNumberEditing.value = false;
+}
 
 </script>
 
@@ -230,6 +377,8 @@ h1,
 h2 {
     margin-top: 15px;
 }
+
+
 
 .heart-icon {
     margin-top: 15px;
@@ -298,4 +447,35 @@ a {
 a:hover {
     text-decoration: underline !important;
 }
+
+.phoneNum {
+    border-width: 0 0 1px;
+}
+
+.phoneNum:focus {
+    outline: none;
+    margin-left: 5px;
+    /* 입력 필드와 버튼 사이 간격 조정 */
+}
+
+.modify {
+    height: 100%;
+    /* 다른 요소와 높이를 맞추기 */
+    padding: 5px 10px;
+    /* 버튼의 내부 여백 조정 */
+    margin-left: 5px;
+    vertical-align: middle;
+    /* 버튼이 텍스트와 정렬되도록 설정 */
+}
+
+.title{
+    vertical-align: middle;
+    height: auto;
+    margin-left: 5px;
+}
+
+h4{
+    margin-top: 8px;
+}
+
 </style>

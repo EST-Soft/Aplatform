@@ -4,6 +4,23 @@
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="jobplatform.fo.user.domain.mapper.M_MypageMapper">
 
+	<select id="getJbpSqsByMbrSq">
+		SELECT jbp_sq
+		FROM p2_tbl_scrap_s
+		WHERE mbr_sq = #{mbr_sq}
+	</select>
+
+	<select id="checkScrapExists" resultType="boolean">
+		SELECT EXISTS (
+			SELECT 1
+			FROM p2_tbl_scrap_s
+			WHERE
+				mbr_sq = #{mbr_sq}
+				AND
+				jbp_sq = #{jbp_sq}
+		)
+	</select>
+
 	<!-- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@마이페이지 메인 화면START@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ -->
 
 	<!-- 회원 정보 중 이름, 전화번호, 이메일, 포지션 제안 수락여부 -->

@@ -1,7 +1,6 @@
 package jobplatform.fo.enterprise.domain.repository;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.apache.ibatis.annotations.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -10,20 +9,17 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import jobplatform.fo.enterprise.domain.dto.JobPostingDTO;
-import jobplatform.fo.enterprise.domain.dto.JobViewDTO;
-import jobplatform.fo.enterprise.domain.entity.ApplyEntity;
-import jobplatform.fo.enterprise.domain.entity.EnterMemberEntity;
 import jobplatform.fo.enterprise.domain.entity.JobPostingEntity;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 @Repository
 public interface JobPostingRepository extends JpaRepository<JobPostingEntity, Long>{
 	
-
+    // 모든 데이터를 가져오게 되어있는데 마감일이 지난 것은 가져오지 않게 수정했음
 	// 전체 공고 리스트 조회 및 정렬
-    @Query("SELECT j FROM JobPostingEntity j ORDER BY "
+    @Query("SELECT j FROM JobPostingEntity j "
+    + "WHERE j.regstrDlnDtm >= CURRENT_DATE "  // 오늘 날짜보다 크거나 같은 것만 필터링
+    + "ORDER BY "
     + "CASE WHEN :sortBy = 'hits' THEN j.hits END DESC, "
     + "CASE WHEN :sortBy = 'regstrStrtDtm' THEN j.regstrStrtDtm END DESC")
     List<JobPostingEntity> findAllJobPostings(@Param("sortBy") String sortBy);

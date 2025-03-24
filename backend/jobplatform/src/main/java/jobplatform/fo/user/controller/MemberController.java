@@ -1,6 +1,5 @@
 package jobplatform.fo.user.controller;
 
-
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -10,6 +9,7 @@ import java.util.Random;
 
 import jobplatform.fo.common.config.JwtTokenProvider;
 import jobplatform.fo.enterprise.domain.dto.EnterRegisterDTO;
+import jobplatform.fo.project.domain.ProjectDomain;
 import jobplatform.fo.user.domain.entity.MemberEntity;
 import jobplatform.fo.user.domain.repository.MemberRepository;
 import jobplatform.fo.user.domain.vo.MemberVO;
@@ -80,17 +80,18 @@ public class MemberController {
 
         throw new ResponseStatusException(HttpStatus.NOT_FOUND, "잘못된 시도입니다.");
     }
-        // 공고 조회 시, 세션에 최근 본 공고 추가
-        @PostMapping("/viewJobPosting/{mbrSq}/{jbpSq}")
-        public ResponseEntity<Void> viewJobPosting(
-                @PathVariable Long mbrSq,   // 회원 순번 (mbrSq)
-                @PathVariable Long jbpSq,  // 공고 순번 (jbpSq)
-                HttpSession session) {
-            
-            // 해당 공고 ID를 세션에 저장
-            mypageService.saveJobView(mbrSq, jbpSq, session);
-            return ResponseEntity.status(HttpStatus.CREATED).build();
-        }
+
+    // 공고 조회 시, 세션에 최근 본 공고 추가
+    @PostMapping("/viewJobPosting/{mbrSq}/{jbpSq}")
+    public ResponseEntity<Void> viewJobPosting(
+            @PathVariable Long mbrSq, // 회원 순번 (mbrSq)
+            @PathVariable Long jbpSq, // 공고 순번 (jbpSq)
+            HttpSession session) {
+
+        // 해당 공고 ID를 세션에 저장
+        mypageService.saveJobView(mbrSq, jbpSq, session);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
 
     // 로그아웃 처리
     @PostMapping("/logout")
@@ -102,17 +103,18 @@ public class MemberController {
 
     @PostMapping("/update")
     public ResponseEntity<?> updateMember(@RequestBody MemberEntity updatedMember) {
-        System.out.println("머냐아아:"+updatedMember);
+        System.out.println("머냐아아:" + updatedMember);
         try {
             MemberEntity existingMember = memberRepository.findById(updatedMember.getMbrSq())
-                    .orElseThrow(() -> new IllegalArgumentException("회원을 찾을 수 없습니다. 회원 순번: " + updatedMember.getMbrSq()));
+                    .orElseThrow(
+                            () -> new IllegalArgumentException("회원을 찾을 수 없습니다. 회원 순번: " + updatedMember.getMbrSq()));
 
             if ((updatedMember.getMbrImgFileUrl() != null && updatedMember.getMbrImgFileUrl().length() > 0) ||
-            (updatedMember.getMbrImgOrgnlFn() != null && updatedMember.getMbrImgOrgnlFn().length() > 0)){
+                    (updatedMember.getMbrImgOrgnlFn() != null && updatedMember.getMbrImgOrgnlFn().length() > 0)) {
                 existingMember.setMbrImgFileUrl(updatedMember.getMbrImgFileUrl());
                 existingMember.setMbrImgOrgnlFn(updatedMember.getMbrImgOrgnlFn());
             }
-            
+
             // 업데이트할 필드 설정
             existingMember.setMbrId(updatedMember.getMbrId());
             existingMember.setMbrName(updatedMember.getMbrName());
@@ -131,11 +133,12 @@ public class MemberController {
     }
 
     @PutMapping("/delete")
-    public ResponseEntity<String> deleteMember(@RequestBody MemberEntity deletedMember, HttpSession session){
+    public ResponseEntity<String> deleteMember(@RequestBody MemberEntity deletedMember, HttpSession session) {
 
         try {
             // 회원조회
-            MemberEntity existingMember = memberRepository.findByMbrIdAndMbrPswrd(deletedMember.getMbrId(),deletedMember.getMbrPswrd());
+            MemberEntity existingMember = memberRepository.findByMbrIdAndMbrPswrd(deletedMember.getMbrId(),
+                    deletedMember.getMbrPswrd());
 
             if (existingMember == null) {
                 // 회원을 찾지 못한 경우
@@ -150,7 +153,7 @@ public class MemberController {
             // 회원 정보 업데이트
             memberRepository.save(existingMember);
 
-            session.invalidate(); //세션 무효화
+            session.invalidate(); // 세션 무효화
 
             return ResponseEntity.ok("탈퇴완료");
         } catch (DataAccessException e) {
@@ -164,7 +167,6 @@ public class MemberController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("회원 탈퇴 중 오류가 발생했습니다.");
         }
     }
-
 
     @PostMapping("/register")
     public ResponseEntity<String> registerUser(@RequestBody MemberEntity userData) {
@@ -208,8 +210,9 @@ public class MemberController {
     }
 
     // https://henniee.tistory.com/217 이메일 관련 참고 링크
-    //        mailSenderImpl.setUsername("walkingongreenball@gmail.com");		// 본인 또는 회사 아이디로 교체
-//        mailSenderImpl.setPassword("lopq jelw gspn fqux");				// 참고 링크에 따라 제공받은 비밀번호 사용
+    // mailSenderImpl.setUsername("walkingongreenball@gmail.com"); // 본인 또는 회사 아이디로
+    // 교체
+    // mailSenderImpl.setPassword("lopq jelw gspn fqux"); // 참고 링크에 따라 제공받은 비밀번호 사용
     @ResponseBody
     @PostMapping("/emlRegister")
     public ResponseEntity<Map<String, Object>> emlRegister(@RequestBody Map<String, String> request) {
@@ -270,7 +273,6 @@ public class MemberController {
         return ResponseEntity.ok(map);
     }
 
-
     @PostMapping("/findId")
     public ResponseEntity<String> findMbrId(@RequestBody MemberEntity userData) {
         try {
@@ -314,7 +316,8 @@ public class MemberController {
             MemberEntity mbr = memberRepository.findByMbrEmlAdrs(userData.getMbrEmlAdrs());
 
             // 이메일 주소와 이름, 아이디 유효성 확인
-            if (mbr == null || !mbr.getMbrName().equals(userData.getMbrName()) || !mbr.getMbrId().equals(userData.getMbrId())) {
+            if (mbr == null || !mbr.getMbrName().equals(userData.getMbrName())
+                    || !mbr.getMbrId().equals(userData.getMbrId())) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("일치하는 회원정보가 조회되지 않습니다.");
             }
 
@@ -326,13 +329,13 @@ public class MemberController {
     }
 
     @GetMapping("/pwCk")
-    public ResponseEntity<String> pwCk(@RequestParam("mbr_id") String mbrId, @RequestParam("mbr_pw") String mbrPw){
+    public ResponseEntity<String> pwCk(@RequestParam("mbr_id") String mbrId, @RequestParam("mbr_pw") String mbrPw) {
         // 사용자와 비밀번호 확인
         MemberEntity mpw = memberRepository.findByMbrIdAndMbrPswrd(mbrId, mbrPw);
         System.out.println(mpw);
-        if (mpw != null){
+        if (mpw != null) {
             return ResponseEntity.ok("성공");
-        }else{
+        } else {
             return ResponseEntity.ok("실패");
         }
     }
@@ -365,7 +368,7 @@ public class MemberController {
             map.put("message", "현재 비밀번호를 잘 못 입력하였습니다.");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(map);
         }
-    
+
     }
 
     @PatchMapping("/PswrdReset")
@@ -383,6 +386,7 @@ public class MemberController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(0);
         }
     }
+
     // https://henniee.tistory.com/217 이메일 관련 참고 링크
     @ResponseBody
     @PostMapping("/emlFind")
@@ -405,11 +409,10 @@ public class MemberController {
         mailSenderImpl.setPort(587);
         mailSenderImpl.setUsername("walkingongreenball@gmail.com");
         mailSenderImpl.setPassword("lopq jelw gspn fqux");
-        prop.put("mail.smtp.auth", true);	// 이메일 서버에 인증 요구
-        prop.put("mail.smtp.starttls.enable", true);  // 암호화된 연결을 활성화. starttls는 이메일 전송중에 보안 계층을 추가하여 데이터의 기밀성을 보호
+        prop.put("mail.smtp.auth", true); // 이메일 서버에 인증 요구
+        prop.put("mail.smtp.starttls.enable", true); // 암호화된 연결을 활성화. starttls는 이메일 전송중에 보안 계층을 추가하여 데이터의 기밀성을 보호
 
         mailSenderImpl.setJavaMailProperties(prop);
-
 
         MemberEntity member = memberRepository.findByMbrEmlAdrs(mbrEmlAdrs);
         if (member == null) {
@@ -432,8 +435,8 @@ public class MemberController {
             }
 
             String mail = "\n 회원정보조회 인증코드";
-            message.setSubject("회원정보조회 인증코드 메일입니다.");	// 이메일 제목
-            message.setText("인증번호는 " + key +" 입니다." + mail);	// 이메일 내용
+            message.setSubject("회원정보조회 인증코드 메일입니다."); // 이메일 제목
+            message.setText("인증번호는 " + key + " 입니다." + mail); // 이메일 내용
 
             try {
                 mailSenderImpl.send(message);
@@ -448,11 +451,12 @@ public class MemberController {
     // 네이버 로그인 콜백 처리
     // https://henniee.tistory.com/m/238 링크 참조
     @GetMapping("/loginNCallback")
-    public ResponseEntity<Map<String, Object>> handleLoginNCallback(@RequestParam String code, @RequestParam String state) {
+    public ResponseEntity<Map<String, Object>> handleLoginNCallback(@RequestParam String code,
+            @RequestParam String state) {
         try {
             // 네이버 API로 액세스 토큰 요청
-            String clientId = "TIwA7WnbAvnjEwnbPGZm";	// 본인 또는 회사 아이디로 교체
-            String clientSecret = "Qbh0YK_yrf"; 		// 참고 링크에 따라 제공받은 비밀번호 사용
+            String clientId = "TIwA7WnbAvnjEwnbPGZm"; // 본인 또는 회사 아이디로 교체
+            String clientSecret = "Qbh0YK_yrf"; // 참고 링크에 따라 제공받은 비밀번호 사용
             String tokenUrl = "https://nid.naver.com/oauth2.0/token?grant_type=authorization_code&client_id="
                     + clientId + "&client_secret=" + clientSecret + "&code=" + code + "&state=" + state;
 
@@ -467,8 +471,12 @@ public class MemberController {
             String refreshToken = (String) responseBody.get("refresh_token");
 
             // 네이버 프로필 조회 메서드 호출
-//            return getNaverUserProfile(accessToken, refreshToken);	// 회원가입, 로그인까지 진행하는 코드
-            return ResponseEntity.ok().body(Map.of("message", "네이버 로그인 성공", "access_token", accessToken, "refresh_token", refreshToken));	// vue로 바로 반환하는 코드
+            // return getNaverUserProfile(accessToken, refreshToken); // 회원가입, 로그인까지 진행하는 코드
+            return ResponseEntity.ok()
+                    .body(Map.of("message", "네이버 로그인 성공", "access_token", accessToken, "refresh_token", refreshToken)); // vue로
+                                                                                                                        // 바로
+                                                                                                                        // 반환하는
+                                                                                                                        // 코드
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
@@ -482,7 +490,8 @@ public class MemberController {
             headers.set("Authorization", "Bearer " + accessToken);
             HttpEntity<String> entity = new HttpEntity<>(headers);
 
-            ResponseEntity<String> profileResponse = restTemplate.exchange(profileUrl, HttpMethod.GET, entity, String.class);
+            ResponseEntity<String> profileResponse = restTemplate.exchange(profileUrl, HttpMethod.GET, entity,
+                    String.class);
 
             if (profileResponse.getStatusCode().is2xxSuccessful()) {
                 String responseBody = profileResponse.getBody();
@@ -513,9 +522,9 @@ public class MemberController {
                     // member.setSclCtgryCd("NAVER");
                     member.setDltYn('N');
                     member.setUseYn('Y');
-                    member.setMbrEmlRcvChck("N");    // 임시 값 설정
+                    member.setMbrEmlRcvChck("N"); // 임시 값 설정
                     member.setMbrPrvcyTrmsChck("Y");// 임시 값 설정
-                    member.setMbrPswrd(name);       // 임시 값 설정
+                    member.setMbrPswrd(name); // 임시 값 설정
 
                     // 회원 처리 메서드 호출
                     return processNaverMember(member, accessToken, refreshToken);
@@ -532,12 +541,14 @@ public class MemberController {
     }
 
     // 네이버 회원 정보 처리
-    private ResponseEntity<Map<String, Object>> processNaverMember(MemberEntity member, String accessToken, String refreshToken) {
+    private ResponseEntity<Map<String, Object>> processNaverMember(MemberEntity member, String accessToken,
+            String refreshToken) {
         try {
             MemberEntity existingMember = memberRepository.findByMbrEmlAdrs(member.getMbrEmlAdrs());
             if (existingMember != null) {
                 // 이미 존재하는 회원이면 로그인 성공으로 처리
-                Map<String, Object> response = Map.of("message", "네이버 로그인 성공", "access_token", accessToken, "refresh_token", refreshToken);
+                Map<String, Object> response = Map.of("message", "네이버 로그인 성공", "access_token", accessToken,
+                        "refresh_token", refreshToken);
                 return new ResponseEntity<>(response, HttpStatus.OK);
             } else {
                 // 새로운 회원이면 회원 가입 처리 후 로그인 성공으로 처리
@@ -546,7 +557,8 @@ public class MemberController {
                 savedUser.setInsrtMbrSq(savedUser.getMbrSq());
                 memberRepository.save(savedUser);
 
-                Map<String, Object> response = Map.of("message", "회원 가입 성공", "access_token", accessToken, "refresh_token", refreshToken);
+                Map<String, Object> response = Map.of("message", "회원 가입 성공", "access_token", accessToken,
+                        "refresh_token", refreshToken);
                 return new ResponseEntity<>(response, HttpStatus.OK);
             }
         } catch (Exception e) {
@@ -606,5 +618,44 @@ public class MemberController {
             result.put("message", "로그인 정보가 올바르지 않습니다.");
         }
         return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    // 3/24
+
+    @GetMapping("/detail/{mbrId}")
+    public Optional<MemberEntity> getMemberDetail(@PathVariable("mbrId") String mbrId) {
+        return memberRepository.findByMbrId(mbrId);
+    }
+
+    @PatchMapping("/mbrMpReset")
+    public ResponseEntity<Integer> mbrMpReset(@RequestBody MemberEntity member) {
+        try {
+            System.out.println("요청 받은 회원 정보: " + member);
+
+            // DB에서 기존 회원 정보 가져오기
+            Optional<MemberEntity> optionalMember = memberRepository.findByMbrId(member.getMbrId());
+            if (!optionalMember.isPresent()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(0);
+            }
+
+            MemberEntity existingMember = optionalMember.get();
+
+            // 전화번호에서 숫자만 남기기
+            String formattedPhoneNumber = member.getMbrMp().replaceAll("\\D", "");
+            existingMember.setMbrMp(formattedPhoneNumber);
+
+            // DB 업데이트 수행
+            int result = memberRepository.mbrMpReset(existingMember);
+
+            if (result == 0) {
+                return ResponseEntity.status(HttpStatus.NOT_MODIFIED).body(result);
+            }
+
+            System.out.println("전화번호 수정 성공: " + result);
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            System.out.println("전화번호 수정 오류: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(0);
+        }
     }
 }

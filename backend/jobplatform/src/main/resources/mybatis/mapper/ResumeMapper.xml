@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE mapper
-    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper
-	namespace="jobplatform.fo.enterprise.domain.mapper.ResumeMapper">
-
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jobplatform.fo.enterprise.domain.mapper.ResumeMapper">
 	<!-- 이력서 리스트 데이터 갯수 구해오기 -->
 	<select id="loadResumeListCount" resultType="int">
 		select count(1)
@@ -14,10 +10,8 @@
 		and use_yn = 'Y'
 		and dlt_yn = 'N'
 	</select>
-
 	<!-- 이력서 리스트 데이터 얻기 -->
-	<select id="selectResumeData"
-		resultType="jobplatform.fo.enterprise.domain.vo.ResumeListVO">
+	<select id="selectResumeData" resultType="jobplatform.fo.enterprise.domain.vo.ResumeListVO">
 		select
 		rsm_sq,
 		mbr_sq,
@@ -33,16 +27,14 @@
 		limit
 		#{paginationData.startRowIndex},#{paginationData.showDataCountPerPage}
 	</select>
-
 	<!-- 이력서 상세 정보 가져오기 -->
 	<select id="selectResumeM">
-		SELECT res.rsm_sq, res.mbr_sq, res.rsm_img_orgnl_fn, res.rsm_img_file_url, res.rsm_fnl_edctn_code, res.rsm_grd, res.rsm_es, res.rsm_ttl, 
+		SELECT res.rsm_sq, res.mbr_sq, res.rsm_img_orgnl_fn, res.rsm_img_file_url, res.rsm_fnl_edctn_code, res.rsm_grd, res.rsm_es, res.rsm_ttl,
 		res.rsm_name, res.rsm_gndr_code, res.rsm_bd, res.rsm_mp, res.rsm_adrs, res.rsm_eml, res.insrt_dtm, res.updt_dtm, cdn.code_name
 		FROM p2_tbl_resume_m as res, p2_tbl_common_code_dtl_s as cdn
 		WHERE res.rsm_sq = #{rsm_sq}
 		and res.rsm_fnl_edctn_code = cdn.code_id
 	</select>
-
 	<!-- 학력 정보 가져오기 -->
 	<select id="selectResumeEducation" resultType="jobplatform.fo.enterprise.domain.vo.ResumeEducationDataVO">
 		SELECT edu.edctn_sq, edu.schl_name, edu.schl_cndtn_code, edu.schl_dprtmnt, edu.schl_admsn_date, edu.schl_grdtn_date, edu.use_yn, cdn.code_name
@@ -52,7 +44,6 @@
 		and edu.dlt_yn = 'N'
 		and edu.schl_cndtn_code = cdn.code_id
 	</select>
-
 	<!-- 경력 정보 가져오기 -->
 	<select id="selectResumeCareer" resultType="jobplatform.fo.enterprise.domain.vo.ResumeCareerDataVO">
 		SELECT crr_sq, entrprs_name, entrprs_pstn, entrprs_jac_date, entrprs_rsgntn_date, use_yn
@@ -61,7 +52,6 @@
 		and use_yn = 'Y'
 		and dlt_yn = 'N'
 	</select>
-
 	<!-- 기술 정보 가져오기 -->
 	<select id="selectResumeSkillCode" resultType="jobplatform.fo.enterprise.domain.vo.ResumeSkillCodeDataVO">
 		SELECT skcd.skl_code_sq, skcd.skl_lc_name, skcd.skl_mc_name, skcd.skl_sc_name, skcd.use_yn
@@ -72,7 +62,6 @@
 		and skcd.skl_code_sq = skcdre.skl_code_sq
 		and skcdre.rsm_sq = #{rsm_sq}
 	</select>
-
 	<!-- 자격증 정보 가져오기 -->
 	<select id="selectResumeCertificate" resultType="jobplatform.fo.enterprise.domain.vo.ResumeCertificateDataVO">
 		SELECT crtfct_sq, crtfct_name, crtfct_isr, crtfct_ad, use_yn
@@ -81,7 +70,6 @@
 		and use_yn = 'Y'
 		and dlt_yn = 'N'
 	</select>
-
 	<!-- 자기소개서 정보 가져오기 -->
 	<select id="selectResumeSelfIntroduction" resultType="jobplatform.fo.enterprise.domain.vo.ResumeSelfintroductionDataVO">
 		SELECT si_sq, si_ttl, si_cntnt, use_yn
@@ -90,7 +78,6 @@
 		and use_yn = 'Y'
 		and dlt_yn = 'N'
 	</select>
-
 	<!-- 첨부파일 정보 가져오기 -->
 	<select id="selectResumeAttachment" resultType="jobplatform.fo.enterprise.domain.vo.ResumeAttachmentDataVO">
 		SELECT atchmnt_sq, atchmnt_orgnl_fn, atchmnt_url, use_yn
@@ -99,7 +86,6 @@
 		and use_yn = 'Y'
 		and dlt_yn = 'N'
 	</select>
-
 	<!-- 대표 이력서 여부 변경 -->
 	<update id="updateResumeyRepresentative">
 		update P2_TBL_RESUME_M
@@ -113,7 +99,6 @@
 		and rsm_rprsntv_yn = "Y")
 		OR rsm_sq = #{rsm_sq} ;
 	</update>
-
 	<!-- 이력서 모든 데이터 삭제 -> YN 으로 구현 -->
 	<!-- 이력서 삭제 -->
 	<update id="deleteResumeFullData">
@@ -156,7 +141,6 @@
 		="N"
 		where rsm_sq = #{rsm_sq}
 	</update>
-
 	<!-- 이력서 복사 처리 -->
 	<!-- 이력서 메인테이블 복사 -->
 	<insert id="insertCopyResume">
@@ -195,4 +179,14 @@
 		NOW() from P2_TBL_RESUME_M where rsm_sq = #{rsm_sq};
 	</insert>
 
+
+
+	<!-- 3/24 -->
+
+	<!-- 이력서 리스트 불러오기 -->
+	<select id="getResumeList" resultType="jobplatform.fo.enterprise.domain.vo.ResumeListVO">
+		select rsm_sq, mbr_sq, rsm_rprsntv_yn, rsm_ttl from p2_tbl_resume_m where mbr_sq = #{mbr_sq};
+	</select>
+
+	
 </mapper>

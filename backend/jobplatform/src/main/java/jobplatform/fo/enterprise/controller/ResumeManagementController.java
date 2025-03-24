@@ -40,7 +40,9 @@ import jobplatform.fo.user.domain.entity.MemberEntity;
 import jobplatform.fo.user.domain.vo.EducationDto;
 import jobplatform.fo.user.service.EducationService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class ResumeManagementController {
@@ -53,8 +55,11 @@ public class ResumeManagementController {
 	private final SelfIntroductionService selfIntroductionService;
 	private final CareerService careerService;
 
+
 	@Autowired
 	private ResumeRepository resumeRepository;
+
+
 
 	/*
 	 * public ResumeManagementController(ResumeManagementService
@@ -125,6 +130,7 @@ public class ResumeManagementController {
 	 */
 
 	// 이력서 등록
+
 	@PostMapping("/resumes/insert-resume")
 	public void insertResumeFullData(@RequestParam("mbrSq") Long mbrSq, @RequestBody ResumeDataResponseDto requestDto) {
 		// 이력서 인적사항 및 이미지 처리
@@ -153,7 +159,10 @@ public class ResumeManagementController {
 		
 		// 스킬 정보 처리
 		List<SkillCodeSDto> skilsDataDtos = requestDto.getSkilsDataDtoList();
+		System.out.println("SkillCodeSDto list: " + skilsDataDtos.toString());
+		
 		if (skilsDataDtos != null && !skilsDataDtos.isEmpty()) {
+			System.out.println("SkillCodeSDto list2222: ");
 			skillCodeResumeRService.insertSkillCodeResume(rsmSq, skilsDataDtos);
 		}
 

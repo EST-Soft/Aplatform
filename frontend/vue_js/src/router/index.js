@@ -55,7 +55,7 @@ import ProjectPostingInsertForm from "../views/fo/enterprise/project/ProjectPost
 // import store from "@/store"; // Vuex 스토어를 직접 가져옵니다.
 
 const routes = [
-  { path: "/:pathMatch(.*)*", redirect: "/" }, // 존재하지 않는 경로일 때 메인 페이지로 리디렉션
+
   {
     path: "/",
     component: UserMainView,
@@ -288,12 +288,16 @@ const routes = [
   {
     path:"/projectInsert",
     component: ProjectPostingInsertForm,
+
   },
 
+  // { path: "/:pathMatch(.*)*", redirect: "/" }, // 존재하지 않는 경로일 때 메인 페이지로 리디렉션
 ];
 
+
+
 const router = createRouter({
-  history: createWebHistory(process.env.BASE_URL),
+  history: createWebHistory("/"),
   routes,
   linkActiveClass: "active",
 });

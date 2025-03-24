@@ -61,13 +61,16 @@ public class ProcjectController {
           if (result < 1) {
             return new ResponseEntity<>("FAIL", HttpStatus.BAD_REQUEST);
         }
+        for (String time : projectEntity.getPrjctInterv()) {
+            projectService.interviewInsert(projectEntity.getPrjctSq(), time);
+        }
 
         // 2. check 값이 true면 이메일 전송
         if (projectEntity.isCheck()) {
             // projectService.selectEmailsForEssentialSkills(projectEntity.getPrjctSq());
             System.out.println("🚀 메일 실행됨!"); 
             //회원번호 가져오기
-            List<Integer> re = projectService.selectQualifiedMembers(projectEntity.getPrjctSq());
+            List<String> re = projectService.selectQualifiedMembers(projectEntity.getPrjctSq());
             System.out.println("🚀 re" +  re); 
         }
 

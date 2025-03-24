@@ -1,6 +1,7 @@
 package jobplatform.fo.project.domain;
 
 import java.util.Date;
+import java.util.List;
 
 import lombok.Data;
 
@@ -33,7 +34,9 @@ public class ProjectDomain {
     private Date prjctEndDate;
     // 알람 발송 여부
     private boolean check;
-
-
+    // 프로젝트 내용
+    private String prjctCntnt;
+    // 인터뷰 시간
+    private List<String> prjctInterv;
 
 }

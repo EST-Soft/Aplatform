@@ -113,33 +113,93 @@
       
       
     </div>
-    <div style="display: flex; justify-content: center; align-items: center; height: 100vh;">
+    <div style="display: flex; justify-content: center; align-items: center;">
     <div class="row" style="width: 1000px;">
     <div class="mb-3">
-      <label for="jbpCntnt" class="form-label">내용</label>
-      <QuillEditorComponent v-model="jbpCntnt" />
+      <label for="jbpCntnt" class="form-label">추가내용</label>
+      <QuillEditorComponent v-model="prjctCntnt" />
     </div>
+      
+      
+      <!-- 프로젝트 공고 시작일 ~ 마감일까지 기간 및 라디오 박스 생성 클릭한 일자들을 선정해서 인터뷰 일정에 저장 -->
+      
+      <div class="row">
+           <div class="col-md-6 mb-3">
+             <label class="form-label">프로젝트 공고 시작일</label>
+             <input type="date" v-model="prjctStrtDate" class="form-control">
+           </div>
+           <div class="col-md-6 mb-3">
+             <label class="form-label">프로젝트 공고 마감일</label>
+             <input type="date" v-model="prjctEndDate" class="form-control">
+            </div>
+          </div>
+          
+          <!-- 날짜 선택 -->
+          <div v-if="availableDates.length">
+            <label class="form-label">인터뷰 제외 날짜 선택</label>
+            <select v-model="selectedDate" class="form-select">
+              <option v-for="date in availableDates" :key="date" :value="date">
+                {{ date }}
+              </option>
+            </select>
+          </div>
+          
+          <!-- 선택된 날짜의 시간대 라디오 버튼 -->
+          <div v-if="selectedDate">
+            <h5 class="mt-3">{{ selectedDate }} 인터뷰 제외 시간 선택(날짜별 인터뷰 불가능 시간대)</h5>
+            <div class="d-flex flex-wrap">
+              <div v-for="time in times" :key="time" class="form-check me-3">
+                <input
+                type="radio"
+                :id="`${selectedDate}-${time}`"
+                :value="time"
+                v-model="selectedTime"
+                :disabled="isTimeExcluded(time)"
+                class="form-check-input"
+                />
+                <label :for="`${selectedDate}-${time}`" class="form-check-label" :class="{ 'text-muted': isTimeExcluded(time) }">
+                  {{ time }} <span v-if="isTimeExcluded(time)"></span>
+               </label>
+             </div>
+            </div>
+          </div>
+          
+          
+          <!-- 선택한 시간 임시 저장 -->
+          <button @click="addExcludedTime" class="btn btn-secondary mt-3">저장</button>
+          
+          <!-- 임시 저장된 제외 시간 목록 -->
+          <div v-if="tempExcludedTimes.length">
+            <h5 class="mt-4">저장된 인터뷰 제외 시간</h5>
+            <ul class="list-group">
+              <li v-for="(item, index) in tempExcludedTimes" :key="index" class="list-group-item d-flex justify-content-between">
+                <span>{{ item.date }} - {{ item.time }}</span>
+                <button @click="removeExcludedTime(index)" class="btn btn-danger btn-sm">X</button>
+              </li>
+            </ul>
+          </div>
+          
 
-      <div class="col-md-6 mb-3">
-        <label for="prjctStrtDate" class="form-label">프로젝트 공고 시작일</label>
-        <input type="datetime-local" v-model="prjctStrtDate" class="form-control" id="prjctStrtDate"
-          :min="minRegstrStrtDtm">
-      </div>
-      <div class="col-md-6 mb-3">
-        <label for="prjctEndDate" class="form-label">프로젝트 공고 마감일</label>
-        <input type="datetime-local" v-model="prjctEndDate" class="form-control" id="prjctEndDate">
-      </div>
-      <div class="checkbox-container" style="margin-top: 50px;">
-        <label>
-          <input type="checkbox" v-model="isChecked" style="margin-top: 10px;" />
-          필수 스킬을 보유한 회원들에게 메일을 발송합니다.
-        </label>
-        <p>체크 상태: {{ isChecked }}</p>
-
-        <button @click="submitPost">공고 등록하기</button>
-      </div>
-    </div>
-    </div>
+         
+         <div>
+           <!-- 프로젝트 시작일 & 마감일 설정 -->
+           
+           
+           <div class="checkbox-container" style="margin-top: 50px;">
+             <label>
+               <input type="checkbox" v-model="isChecked" style="margin-top: 10px; margin-bottom: 20px;" />
+               필수 스킬을 보유한 회원들에게 메일을 발송합니다.
+              </label>
+              
+              
+              
+              <div>
+                <button @click="submitPost">공고 등록하기</button>
+              </div>
+            </div>
+          </div>
+</div>
+</div>
 
 
 
@@ -172,11 +232,11 @@ const jobs = ref([]);
 // const jbpSq = ref(0);
 const entrprsSq = store.getters.getMember.pk;
 const prjctTtl = ref('');
-const jbpCntnt = ref('');
 const prjctTpy = ref("");
 const prjctPrdstrd = ref("");
 const prjctPrdend = ref("");
 const prjctEsntlCrr = ref("");
+const prjctCntnt = ref("");
 
 
 // 기술들 문자열 저장
@@ -194,6 +254,82 @@ const useSkillsData = ref([]);
 
 // 메일 수신 여부
 const isChecked = ref(false); // 기본값: false
+
+
+
+// 선택된 날짜
+const selectedDate = ref("");
+
+// 선택 가능한 시간 리스트
+const times = ref(["09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00"]);
+
+// 제외할 시간 목록 (DB에서 가져오는 데이터)
+const excludedTimes = ref({});
+
+// 임시 저장 목록 (사용자가 선택한 데이터)
+const tempExcludedTimes = ref([]);
+
+// 선택된 시간
+const selectedTime = ref(null);
+
+// 프로젝트 기간 내 날짜 리스트 (주말 제외)
+const availableDates = computed(() => {
+  if (!prjctStrtDate.value || !prjctEndDate.value) return [];
+
+  const start = new Date(prjctStrtDate.value);
+  const end = new Date(prjctEndDate.value);
+  const dates = [];
+
+
+  while (start <= end) {
+    const dayOfWeek = start.getDay(); // 0: 일요일, 6: 토요일
+    if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+      // 주말 제외 (일요일, 토요일)
+      const formattedDate = start.toISOString().split("T")[0]; // YYYY-MM-DD 형식
+      dates.push(formattedDate);
+    }
+    start.setDate(start.getDate() + 1);
+  }
+
+  return dates;
+});
+
+
+// 특정 날짜에 대한 제외 시간 확인
+const isTimeExcluded = (time) => {
+  return (
+    excludedTimes.value[selectedDate.value]?.includes(time) || 
+    tempExcludedTimes.value.some(item => item.date === selectedDate.value && item.time === time)
+  );
+};
+
+// 선택한 시간 임시 저장
+const addExcludedTime = () => {
+  if (!selectedDate.value || !selectedTime.value) {
+    alert("날짜와 시간을 선택해주세요.");
+    return;
+  }
+
+  // 중복 방지
+  if (isTimeExcluded(selectedTime.value)) {
+    alert("이미 선택된 시간입니다.");
+    return;
+  }
+
+  tempExcludedTimes.value.push({
+    date: selectedDate.value,
+    time: selectedTime.value,
+  });
+
+  selectedTime.value = null; // 선택 초기화
+};
+
+// 선택한 시간 삭제
+const removeExcludedTime = (index) => {
+  tempExcludedTimes.value.splice(index, 1);
+};
+
+
 
 
 watch(skillsData, (newSkills) => {
@@ -357,10 +493,10 @@ const formatDate = (date) => (date ? dayjs(date).format("YYYY-MM-DD") : "");
 
 // ✅ 개월 수 계산 후 문자열 생성
 const prjctPrd = computed(() => {
-  if (!prjctStrtDate.value || !prjctEndDate.value) return "";
+  if (!prjctPrdstrd.value || !prjctPrdend.value) return "";
 
-  const startDate = dayjs(prjctStrtDate.value);
-  const endDate = dayjs(prjctEndDate.value);
+  const startDate = dayjs(prjctPrdstrd.value);
+  const endDate = dayjs(prjctPrdend.value);
   const diffDays = endDate.diff(startDate, "day"); // 전체 일수 차이
   const diffMonths = endDate.diff(startDate, "month"); // 개월 수
 
@@ -372,7 +508,7 @@ const prjctPrd = computed(() => {
     durationText += `${diffDays % 30}일`;
   }
 
-  return `${formatDate(prjctStrtDate.value)} ~ ${formatDate(prjctEndDate.value)} (${durationText.trim()})`;
+  return `${formatDate(prjctPrdstrd.value)} ~ ${formatDate(prjctPrdend.value)} (${durationText.trim()})`;
 });
 
 
@@ -381,6 +517,12 @@ const submitPost = () => {
   //   alert('제목과 내용을 확인하세요.');
   //   return;
   // }
+  console.table(tempExcludedTimes.value);
+
+  const formattedInterviews = tempExcludedTimes.value.map(item => 
+  `${item.date} ${item.time}`
+);
+
 
   api.$post('/project', {
     entrprsSq: entrprsSq,
@@ -395,6 +537,8 @@ const submitPost = () => {
     prjctPrd: prjctPrd.value,
     prjctLctn: selectedprjctLctn.value,
     check: isChecked.value,
+    prjctCntnt: prjctCntnt.value,
+    prjctInterv: formattedInterviews
 
   })
 

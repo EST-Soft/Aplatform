@@ -48,8 +48,6 @@ public class JobPostingServiceImpl implements JobPostingService {
     @Override
     public List<JobPostingDTO> jobPostingList(String sortBy, Long mbrSq) {
         List<JobPostingEntity> jobPostings = jobPostingRepository.findAllJobPostings(sortBy);
-        System.out.println("123123123123");
-        System.out.println(jobPostings);
         List<JobPostingDTO> jpdList = null;
         
         if (mbrSq != null) {

@@ -93,7 +93,7 @@ const close = () => {
 };
 
 const skillsSave = () => {
-    console.log(selectedSkills.value)
+    console.log('selectedSkills.value: ', selectedSkills.value)
     emit('update:skillsData', selectedSkills.value);
     close()
 }

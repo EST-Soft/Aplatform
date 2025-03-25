@@ -15,20 +15,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.servlet.http.HttpSession;
 import jobplatform.fo.enterprise.common.Pagination;
-import jobplatform.fo.enterprise.domain.dto.JobPostingDTO;
-import jobplatform.fo.enterprise.domain.dto.JobViewDTO;
 import jobplatform.fo.enterprise.domain.dto.ResumeSearchDataDTO;
-import jobplatform.fo.enterprise.domain.entity.JobPostingEntity;
-import jobplatform.fo.enterprise.domain.entity.JobViewEntity;
 import jobplatform.fo.enterprise.domain.mapper.CommonCodeMapper;
 
 import jobplatform.fo.enterprise.domain.vo.CommonCodeVO;
-import jobplatform.fo.enterprise.domain.vo.JobViewVO;
-import jobplatform.fo.enterprise.domain.vo.ResumeListVO;
 import jobplatform.fo.enterprise.domain.vo.ScrapVO;
 import jobplatform.fo.user.domain.mapper.M_MypageMapper;
 import jobplatform.fo.user.domain.vo.M_JobPosting_pp;
-import jobplatform.fo.user.domain.vo.MemberVO;
 
 
 @Service

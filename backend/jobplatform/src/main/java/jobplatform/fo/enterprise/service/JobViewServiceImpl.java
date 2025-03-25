@@ -10,16 +10,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import jakarta.servlet.http.HttpSession;
-import jobplatform.fo.enterprise.domain.dto.JobPostingDTO;
 import jobplatform.fo.enterprise.domain.dto.JobViewDTO;
 import jobplatform.fo.enterprise.domain.entity.JobPostingEntity;
 import jobplatform.fo.enterprise.domain.entity.JobViewEntity;
 import jobplatform.fo.enterprise.domain.repository.JobPostingRepository;
 import jobplatform.fo.enterprise.domain.repository.JobViewRepository;
-import jobplatform.fo.user.domain.mapper.M_MypageMapper;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 @Service

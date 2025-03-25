@@ -53,8 +53,18 @@
           </select>
         </div> -->
         <div class="col-md-3 mb-3">
-          <label for="sklName" class="form-label">요구 스킬</label>
-          <input type="text" v-model="sklName" class="form-control" id="sklName" placeholder="기술명을 입력하세요">
+          <label for="sklName" class="form-label" style=" margin-top: 20px; margin-bottom: 15px;">
+            요구 스킬
+          </label>
+
+          <!-- 기술들을 콤마로 구분해서 input 안에 표시 -->
+          <div class="input-group">
+            <input type="text" :value="formattedSkills" class="form-control" id="sklName" @click="openSkillsModal"
+              placeholder="기술명을 입력하세요" readonly />
+          </div>
+        <!-- Skills 선택 모달 -->
+        <SkillsResume :isVisible="showSkillsModal" :skillsData="skillsData" @update:isVisible="showSkillsModal = $event"
+          @update:skillsData="updateSkillsData" />
         </div>
       </div>
 
@@ -98,7 +108,7 @@
         <div class="col-md-3 mb-3">
           <label class="form-label">급여</label>
           <div class="input-group">
-            <input type="text" v-model="slry" class="form-control" id="slry" placeholder="연봉"
+            <input type="number" v-model="slry" class="form-control" id="slry" placeholder="연봉"
               :disabled="interviewAgreement">
             <div class="input-group-text">
               <input type="checkbox" v-model="interviewAgreement"> 면접 후 협의
@@ -153,12 +163,13 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 import { api } from '@/axios.js';
 import { useRouter } from 'vue-router';
 import QuillEditorComponent from '@/components/common/Editor.vue';
 import store from '../../../store';
 import { showAlert } from '../../../utill/utillModal';
+import SkillsResume from '../../../components/fo/enterprise/resume/SkillsResume.vue';
 
 const areas = ref([]);
 const jobs = ref([]);
@@ -185,6 +196,10 @@ const picEml = ref('');
 const jbpEndYn = ref('N');
 const jbpCndtn = ref('');
 const insrtMbrSq = ref(1);
+
+const skillsData = ref([]); // 기술
+const formattedSkills = ref(""); // 선택된 기술들을 문자열로 저장
+const showSkillsModal = ref(false); // 기술 모달 표시 여부
 
 const interviewAgreement = ref(false);
 const router = useRouter();
@@ -217,6 +232,32 @@ onMounted(() => {
   console.log('Component mounted');
   fetchAreasAndJobs();
 });
+
+// 스킬
+const openSkillsModal = () => {
+  showSkillsModal.value = true;
+}; // openSkillsModal
+
+watch(skillsData, (newSkills) => {
+  console.log("Updated skillsData:", newSkills); // 디버깅용 콘솔 출력
+  if (Array.isArray(newSkills)) {
+    console.log("sdfdgffdg" + formattedSkills.value);
+
+    formattedSkills.value = newSkills.map(skill => skill.sklScName).join(", ");
+  } else {
+    console.log("sdfdgffdg" + formattedSkills.value);
+    formattedSkills.value = ""; // 배열이 아닐 경우 초기화
+  }
+}, { deep: true });
+
+const updateSkillsData = (newSkills) => {
+  const sk = Object.values(newSkills).flat();
+  if (Array.isArray(sk)) {
+    skillsData.value = [...sk]; // 배열일 경우만 업데이트
+  } else {
+    console.error("updateSkillsData received a non-array value:", sk);
+  }
+};
 
 const submitPost = () => {
   if (jbpTtl.value.trim() === '' || jbpCntnt.value.trim() === '') {
@@ -260,7 +301,7 @@ const submitPost = () => {
     jbpTtl: jbpTtl.value,
     jbpCntnt: jbpCntnt.value,
     crrDrtn: crrDrtn.value,
-    sklName: sklName.value,
+    sklName: formattedSkills.value,
     jobName: jobNames,
     edctn: edctn.value,
     workArea: areaNames,

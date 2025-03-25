@@ -91,6 +91,16 @@
             </div>
           </div>
         </div>
+        <div class="row mt-3">
+          <div class="col-md-12">
+            <div class="mb-3">
+              <label for="skills" class="form-label">요구 스킬</label>
+              <div class="d-flex flex-wrap gap-2" id="skills">
+                <span v-for="(skill, index) in jbp.skills" :key="index" class="badge bg-primary">{{ skill }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
         <div class="col-md-12">
           <div class="mb-1">
             <label for="jbpCntnt" class="form-label">공고 내용</label>
@@ -158,6 +168,8 @@ const jbp = ref({
   jbpCntnt: "",
   hits: 0,
   crrDrtn: "",
+  sklName: "",
+  skills: [],
   edctn: "",
   workArea: "",
   jobName: "",
@@ -213,6 +225,7 @@ const fetchJobPostingDetail = async () => {
       }
     });
     jbp.value = response;
+    jbp.value.skills = jbp.value.sklName.split(', ');
     enterCheck();
   } catch (error) {
     console.error('Error fetching job posting detail:', error);

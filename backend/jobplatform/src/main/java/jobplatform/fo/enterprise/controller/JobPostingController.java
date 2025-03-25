@@ -60,6 +60,7 @@ public class JobPostingController {
 	@RequestParam(required = false) Long mbrSq) {
 		System.out.println("리스트의 mbrSq: " + mbrSq);
 		List<JobPostingDTO> jobPostings = jobPostingService.jobPostingList(sortBy, mbrSq);
+		System.out.println(jobPostings);
 		return ResponseEntity.ok(jobPostings);
 	}
 
@@ -68,6 +69,7 @@ public class JobPostingController {
     @RequestParam(value = "sortBy", defaultValue = "regstrStrtDtm") String sortBy,
     @RequestParam(value = "entrprsSq", required = false) Long entrprsSq // 추가된 필터 파라미터
 	) {
+		System.out.println("리스트의 entrprsSq: " + entrprsSq);
 		List<JobPostingEntity> jobPostings = jobPostingService.myJobPostingList(sortBy, entrprsSq);
 		return ResponseEntity.ok(jobPostings);
 	}

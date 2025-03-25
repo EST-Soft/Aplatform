@@ -202,5 +202,21 @@ public class ResumeManagementService {
 	 * 
 	 * return resumeEntity;
 	 * } // insertImage
-	 */
+	 */ 
+
+
+
+	 // 3/24
+
+	 // 대표 이력서 변경 로직
+
+	 @Transactional
+	 public void updateRepresentativeResume(Long mbrSq, Long newRsmSq) {
+		 // 1. 현재 대표 이력서의 'rsmRprsntvYn' 값을 'n'으로 업데이트
+		 resumeRepository.resetRepresentativeResume(mbrSq);
+ 
+		 // 2. 새로운 대표 이력서의 'rsmRprsntvYn' 값을 'y'로 업데이트
+		 resumeRepository.setRepresentativeResume(newRsmSq);
+	 }
+	 
 }

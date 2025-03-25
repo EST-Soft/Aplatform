@@ -13,7 +13,8 @@
                 <button class="btn btn-outline-dark modify" v-if="isPhoneNumberEditing"
                     @click="saveUpdatedPhoneNumber">저장</button>
             </h4>
-            <h4>프로필 : <span> {{ representativeResume.length > 0 ? representativeResume[0].rsmTtl : '대표 프로필 없음' }}</span><a @click="profileModalOpen"> (재선택)</a></h4>
+            <h4>프로필 : <span> {{ representativeResume.length > 0 ? representativeResume[0].rsmTtl : '대표 프로필 없음'
+            }}</span><a @click="profileModalOpen"> (재선택)</a></h4>
             <div class="modal-btn d-grid gap-2 d-md-flex justify-content-md-end">
                 <button @click="applyModalOpen" class="btn btn-outline-dark">닫기</button>
                 <button @click="applyModalOpen" class="btn btn-outline-dark">확인</button>
@@ -21,16 +22,25 @@
         </div>
         <div class="modal-container" v-if="profileModalCheck && !profileDetailModalCheck">
             <h3>프로필 선택</h3>
-            <h4 v-for="(resume,index) in state.resumes" :key="resume.rsmSq"><a @click="profileDetailModalOpen">{{ index + 1 }}. {{ resume.rsmTtl }} </a><span v-if="resume.rsmRprsntvYn === 'y'" class="badge text-bg-primary title"> 대표 프로필 </span></h4>
+            <h4 v-for="(resume, index) in state.resumes" :key="resume.rsmSq"><a @click="selectProfile(index)">{{ index +
+                1 }}. {{ resume.rsmTtl }} </a><span v-if="resume.rsmRprsntvYn === 'y'"
+                    class="badge text-bg-primary title"> 대표 프로필 </span></h4>
             <div class="modal-btn d-grid gap-2 d-md-flex justify-content-md-end">
                 <button @click="profileModalOpen" class="btn btn-outline-dark">뒤로가기</button>
             </div>
         </div>
         <div class="modal-container" v-if="profileModalCheck && profileDetailModalCheck">
             <h3>프로필 상세보기</h3>
-            <h4>안녕하세요 개발자 백바울입니다.</h4>
+            <h4>프로필 제목</h4>
+            <h4>이름 : {{ selectProfileDetail?.rsmName }}</h4>
+            <h4>생년월일 : {{ selectProfileDetail?.rsmBd }}</h4>
+            <h4>연락처 : {{ selectProfileDetail?.rsmMp }}</h4>
+            <h4>이메일 : {{ selectProfileDetail?.rsmEml }}</h4>
+            <h4>최종 학력 : {{ formatEducation(selectProfileDetail?.rsmFnlEdctnCode) }}</h4>
+            <h4>희망 연봉 : {{ formatNumberWithCommas(selectProfileDetail?.rsmEs) }} 원</h4>
             <div class="modal-btn d-grid gap-2 d-md-flex justify-content-md-end">
-                <button class="btn btn-outline-dark">대표프로필 설정</button>
+                <button class="btn btn-outline-dark" @click="changeRepresentativeResume(selectProfileDetail)">대표프로필
+                    설정</button>
                 <button @click="profileDetailModalOpen" class="btn btn-outline-dark">뒤로가기</button>
             </div>
         </div>
@@ -111,7 +121,7 @@
                     <h1>{{ state.project.prjctTtl }} / {{ state.project.entrprsName }}</h1>
                 </div>
                 <div class="col-1 themed-grid-col d-flex align-items-center justify-content-center">
-                    <i :class="isFilled ? 'bi bi-heart-fill' : 'bi bi-heart'" @click="toggleHeart"
+                    <i :class="isScrapped ? 'bi bi-heart-fill' : 'bi bi-heart'" @click="toggleHeart"
                         class="heart-icon"></i>
                 </div>
 
@@ -196,7 +206,6 @@ const fetchMember = async () => {
             console.error('에러 메시지 : ', error);
         }
     }
-
 }
 
 
@@ -217,7 +226,7 @@ const fetchResumes = async () => {
     try {
         const response = await api.$get(`/resumes/${state.member.mbrSq}`)
         state.resumes = response;
-        console.log(response);
+        // console.log(response);
     } catch (error) {
         console.log("에러메시지 : " + error);
     }
@@ -225,15 +234,71 @@ const fetchResumes = async () => {
 
 // 대표 이력서 필터링
 const representativeResume = computed(() => {
-  return state.resumes.filter(resume => resume.rsmRprsntvYn === 'y');
+    return state.resumes.filter(resume => resume.rsmRprsntvYn === 'y');
 });
+
+// 프로필 상세보기
+const selectedResumeIndex = ref(null);
+
+function selectProfile(index) {
+    selectedResumeIndex.value = index;
+    profileDetailModalOpen();
+}
+
+const selectProfileDetail = computed(() => {
+    if (selectedResumeIndex.value !== null) {
+        return state.resumes[selectedResumeIndex.value];
+    }
+
+    return null;
+})
+
+// 학력 포매팅 함수
+function formatEducation(edu) {
+    if (edu === 'did') {
+        return '박사';
+    } if (edu === 'mid') {
+        return '석사';
+    } if (edu === 'unvrsty') {
+        return '대학교(4년제)';
+    } if (edu === 'jc') {
+        return '대학교(2,3년제)';
+    } if (edu === 'hs') {
+        return '고등학교';
+    } if (edu === 'ni') {
+        return '미입력';
+    } if (edu === 'ednm') {
+        return '학력무관';
+    }
+}
+
+function formatNumberWithCommas(number) {
+    return number.toLocaleString('en-US');
+}
+
 
 onMounted(() => {
     fetchProject();
     fetchMember();
-
-    // console.log("로그인상태" + isLogin.value);
 })
+
+// 대표 프로필 변경
+async function changeRepresentativeResume(selectProfileDetail) {
+    try {
+        const mbrSq = state.member.mbrSq;
+        const rsmSq = selectProfileDetail.rsmSq;
+        console.log("mbrSq :", mbrSq);
+        console.log("rsmSq :", rsmSq);
+        const result = await api.$patch(`/resumes/${mbrSq}/${rsmSq}`);
+        await fetchResumes();
+        if (result) {
+            console.log("업데이트 완료");
+        }
+    } catch (error) {
+        console.error('에러메시지 : ' + error);
+    }
+    profileDetailModalOpen();
+}
 
 // 날짜 형식
 
@@ -241,14 +306,6 @@ function getDate(date) {
     const formatDate = moment(date).format("YYYY-MM-DD");
     return formatDate;
 }
-
-// 스크랩 관련 
-const isFilled = ref(false);
-
-function toggleHeart() {
-    isFilled.value = !isFilled.value;
-}
-
 
 // 모달창 관련
 const modalCheck = ref(false);
@@ -266,6 +323,7 @@ function profileModalOpen() {
 const profileDetailModalCheck = ref(false);
 
 function profileDetailModalOpen() {
+
     profileDetailModalCheck.value = !profileDetailModalCheck.value;
 }
 
@@ -331,6 +389,7 @@ function orginalPhoneNumber(phoneNumber) {
 
     return cleaned;
 }
+
 // 휴대폰 번호 수정
 const isPhoneNumberEditing = ref(false);
 
@@ -359,6 +418,23 @@ async function saveUpdatedPhoneNumber() {
 
     isPhoneNumberEditing.value = false;
 }
+
+
+// 스크랩 관련 
+const isScrapped = ref(false);
+
+// const fetchScrap = async () => {
+//     try {
+//         const response = await api
+//     } catch (error) {
+//         console.error("에러메시지", error);
+//     }
+// }
+
+function toggleHeart() {
+    isScrapped.value = !isScrapped.value;
+}
+
 
 </script>
 
@@ -468,14 +544,13 @@ a:hover {
     /* 버튼이 텍스트와 정렬되도록 설정 */
 }
 
-.title{
+.title {
     vertical-align: middle;
     height: auto;
     margin-left: 5px;
 }
 
-h4{
+h4 {
     margin-top: 8px;
 }
-
 </style>

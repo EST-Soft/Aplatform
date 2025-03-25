@@ -61,8 +61,8 @@
 		P3_TBL_ENTERPRISE_MEMBER_M e
 		ON
 		p.entrprs_sq = e.entrprs_sq
+		ORDER BY p.prjct_sq DESC
 	</select>
-
 	<select id="projectRead" resultMap="ProjectResultMap">
 		SELECT
 		p.prjct_sq AS prjctSq,
@@ -86,21 +86,19 @@
 		p.entrprs_sq = e.entrprs_sq
 		WHERE prjct_sq = #{prjctSq}
 	</select>
-
-<insert id="projectInsert" useGeneratedKeys="true" keyProperty="prjctSq">
-    INSERT INTO P5_TBL_PROJECT(
-        entrprs_sq, prjct_ttl, prjct_tpy, prjct_work, prjct_use_skl, 
-        prjct_esntl_skl, prjct_esntl_crr, prjct_strt_date, prjct_end_date, 
-        prjct_prd, prjct_lctn, prjct_cntnt
-    ) 
-    VALUES(
-        #{entrprsSq}, #{prjctTtl}, #{prjctTpy}, 
-        (SELECT job_mc_name FROM P2_TBL_JOB_CODE_S WHERE job_sq = #{prjctWork}), 
-        #{prjctUseSkl}, #{prjctEsntlSkl}, #{prjctEsntlCrr}, 
-        #{prjctStrtDate}, #{prjctEndDate}, #{prjctPrd}, #{prjctLctn}, #{prjctCntnt}
-    )
-</insert>
-
+	<insert id="projectInsert" useGeneratedKeys="true" keyProperty="prjctSq">
+		INSERT INTO P5_TBL_PROJECT(
+		entrprs_sq, prjct_ttl, prjct_tpy, prjct_work, prjct_use_skl,
+		prjct_esntl_skl, prjct_esntl_crr, prjct_strt_date, prjct_end_date,
+		prjct_prd, prjct_lctn, prjct_cntnt
+		)
+		VALUES(
+		#{entrprsSq}, #{prjctTtl}, #{prjctTpy},
+		(SELECT job_mc_name FROM P2_TBL_JOB_CODE_S WHERE job_sq = #{prjctWork}),
+		#{prjctUseSkl}, #{prjctEsntlSkl}, #{prjctEsntlCrr},
+		#{prjctStrtDate}, #{prjctEndDate}, #{prjctPrd}, #{prjctLctn}, #{prjctCntnt}
+		)
+	</insert>
 	<update id="projectUpdate">
 		UPDATE P5_TBL_PROJECT
 		SET entrprs_sq = #{entrprsSq},
@@ -119,7 +117,6 @@
 		DELETE FROM P5_TBL_PROJECT
 		WHERE prjct_sq = #{prjctSq}
 	</delete>
-	
 	<!-- 🎯 필수 기술코드 + 필수 경력 만족하는 유저 찾기 -->
 	<sql id="FilteredUsers">
 		SELECT DISTINCT m.mem_sq, m.rem_emi
@@ -139,51 +136,41 @@
 	<select id="findEligibleUsers" resultType="jobplatform.fo.project.domain.UserEmailDomain">
 		<include refid="FilteredUsers" />
 	</select>
-
-
-
-
-<select id="selectQualifiedMembers" parameterType="int" resultType="string">
-   
+	<select id="selectQualifiedMembers" parameterType="int" resultType="string">
 		<!-- 필수 스킬을 모두 포함한 회원 -->
 		WITH EssentialSkills AS (
 		<!-- 특정 프로젝트의 필수 기술 가져오기 -->
 		SELECT TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(prjct_esntl_skl, ',', numbers.n), ',', -1)) AS skill_name
 		FROM P5_TBL_PROJECT
 		JOIN (
-			SELECT 1 AS n UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5
-			UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9 UNION ALL SELECT 10
+		SELECT 1 AS n UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5
+		UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9 UNION ALL SELECT 10
 		) numbers
 		ON CHAR_LENGTH(prjct_esntl_skl) - CHAR_LENGTH(REPLACE(prjct_esntl_skl, ',', '')) >= numbers.n - 1
 		WHERE prjct_sq = #{prjctSq}
-	), 
-	MatchedSkills AS (
+		),
+		MatchedSkills AS (
 		<!-- 필수 기술명을 스킬 코드와 매칭 -->
 		SELECT skl.skl_code_sq
 		FROM EssentialSkills es
 		JOIN P2_TBL_SKILL_CODE_S skl ON TRIM(es.skill_name) = TRIM(skl.skl_sc_name)
-	),
-	MatchedMembers AS (
+		),
+		MatchedMembers AS (
 		<!-- 필수 기술을 보유한 회원 번호(rsm_sq) 가져오기 -->
 		SELECT r.rsm_sq
 		FROM P2_TBL_SKILL_CODE_RESUME_R r
 		JOIN MatchedSkills ms ON r.skl_code_sq = ms.skl_code_sq
 		GROUP BY r.rsm_sq
 		HAVING COUNT(DISTINCT r.skl_code_sq) = (SELECT COUNT(*) FROM EssentialSkills)  -- 필수 스킬을 모두 보유한 사람만
-	)
+		)
 		<!-- 이메일 가져오기 (이메일 수신 동의한 사람만) -->
 		SELECT DISTINCT m.mbr_eml_adrs
 		FROM P3_TBL_MEMBER_M m
 		JOIN MatchedMembers mm ON m.mbr_sq = mm.rsm_sq
 		WHERE m.mbr_eml_rcv_yn = 'Y';
-
-</select>
-
-<insert id="interviewInsert">
-INSERT INTO P5_TBL_PROJECT_INTERVIEW (prjct_sq, intrvw_excptn_dtm)
-VALUES (#{prjctSq}, #{prjctInterv})
-</insert>
-
-
-
+	</select>
+	<insert id="interviewInsert">
+		INSERT INTO P5_TBL_PROJECT_INTERVIEW (prjct_sq, intrvw_excptn_dtm)
+		VALUES (#{prjctSq}, #{prjctInterv})
+	</insert>
 </mapper>

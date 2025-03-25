@@ -270,11 +270,19 @@ public class ResumeManagementController {
 
 
 	// 3/24
+
+	// 이력서 조회하기
 	@GetMapping("/resumes/{mbrSq}")
     public List<ResumeEntity> getMemberDetail(@PathVariable("mbrSq") Long mbrSq) {
 
-        return resumeRepository.findByMbrSq(mbrSq);
+        return resumeRepository.findByMbrSqOrderByRsmRprsntvYnDesc(mbrSq);
     }
 
+	// 대표 이력서 변경하기
+    @PatchMapping("/resumes/{mbrSq}/{rsmSq}")
+    public void updateRepresentativeResume(@PathVariable("mbrSq") Long mbrSq, @PathVariable("rsmSq") Long rsmSq) {
+        resumeManagementService.updateRepresentativeResume(mbrSq, rsmSq);
+    }
+	
 
 }

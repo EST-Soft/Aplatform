@@ -3,9 +3,15 @@
 <mapper namespace="jobplatform.fo.skill.mapper.SkillCodeMapper">
 
 <insert id="skillinsert">
-INSERT INTO P2_TBL_SKILL_CODE_RESUME_R (rsm_sq, skl_code_sq)
-VALUES (#{rsmSq}, #{sklCodeSq})
-
+    INSERT INTO P2_TBL_SKILL_CODE_RESUME_R (rsm_sq, skl_code_sq)
+    VALUES (#{rsmSq}, #{sklCodeSq})
 </insert>
+
+<select id="existSkill" resultType="Integer">
+    SELECT COUNT(*)
+    FROM P2_TBL_SKILL_CODE_RESUME_R
+    WHERE rsm_sq = #{rsmSq}
+    AND skl_code_sq = #{sklCodeSq}
+</select>
 
 </mapper>

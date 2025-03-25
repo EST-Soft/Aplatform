@@ -7,4 +7,6 @@ import org.apache.ibatis.annotations.Param;
 public interface SkillCodeMapper {
     
     public int skillinsert(@Param("rsmSq") Long rsmSq, @Param("sklCodeSq") Long sklCodeSq);
+
+    public int existSkill(@Param("rsmSq") Long rsmSq, @Param("sklCodeSq") Long sklCodeSq);
 }

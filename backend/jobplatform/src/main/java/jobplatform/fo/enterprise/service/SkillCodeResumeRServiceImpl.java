@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import jobplatform.fo.enterprise.domain.dto.SkillCodeSDto;
 import jobplatform.fo.enterprise.domain.entity.SkillCodeResumeREntity;
@@ -22,14 +23,21 @@ public class SkillCodeResumeRServiceImpl implements SkillCodeResumeRService {
     @Autowired
     private SkillCodeMapper skillCodeMapper;
 
+    @Transactional
     @Override
     public void insertSkillCodeResume(Long rsmSq, List<SkillCodeSDto> skillCodeSDtos) {
 
-        System.out.println("왜 아나옴?" + skillCodeSDtos);
         for (SkillCodeSDto skillCodeSDto : skillCodeSDtos) {
             
-            System.out.println("왜 아나옴2222?" + skillCodeSDto.getSklCodeSq());
-            skillCodeMapper.skillinsert(rsmSq, skillCodeSDto.getSklCodeSq());
+            int exist = skillCodeMapper.existSkill(rsmSq, skillCodeSDto.getSklCodeSq());
+            if(exist < 1){
+           int result = skillCodeMapper.skillinsert(rsmSq, skillCodeSDto.getSklCodeSq());
+           if(result < 0){
+               System.out.println("등록 실패");
+            }
+            System.out.println("등록 성공");
+        }
+        System.out.println("중복됨");
             
         }
         

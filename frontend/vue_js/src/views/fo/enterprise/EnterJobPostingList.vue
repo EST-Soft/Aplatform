@@ -23,6 +23,12 @@
   <div class="list-header">
     <div class="search-options"></div>
 
+    <div v-show="isEnter">
+        <router-link to="/board/list/jobPosting" class="btn btn-primary" style="margin-right: 10px;">공고 등록 현황</router-link>
+        <router-link to="/enterProjectList" class="btn btn-primary">프로젝트 등록 현황</router-link>
+       
+      </div>
+
     <!-- 공고 등록 버튼 -->
     <div v-show="isEnter">
       <router-link to="/board/jobPostingInsert" class="btn btn-primary" style="margin-right: 10px;">공고 등록</router-link>
@@ -410,7 +416,7 @@ const goToDetailPage = (item) => {
   padding: 1rem;
   margin: 15px 0;
   width: 100%;
-  border: 1px solid #002C7B;
+  border: 1px solid #020916;
 }
 
 table {

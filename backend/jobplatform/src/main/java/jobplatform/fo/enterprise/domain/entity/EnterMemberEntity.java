@@ -85,7 +85,7 @@ public class EnterMemberEntity {
     private LocalDateTime insertEntrprsDtm; // 등록_일시
 
     @Column(name = "updt_entrprs_sq", nullable = true)
-    private long updtEntrprsSq; // 수정_기업_순번
+    private Long updtEntrprsSq; // 수정_기업_순번
 
     @LastModifiedDate
     @Column(name = "updt_entrpts_dtm", nullable = true)

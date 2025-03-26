@@ -162,7 +162,7 @@ public class M_MypageServiceImpl implements M_MypageService{
         List<M_JobPosting_pp> result = mypageMapper.getPPJopPostingData(rsm_sq, limit, offset);
         
         for(M_JobPosting_pp temp : result){
-            Long jbp_sq = temp.getJbp_sq();
+            Long jbp_sq = temp.getJbpSq();
             List<Long> areas = mypageMapper.getAreasOfJobPost(jbp_sq);
             List<Long> jobs = mypageMapper.getJobsOfJobPost(jbp_sq);
             List<Long> skills = mypageMapper.getSkillsOfJobPost(jbp_sq);
@@ -208,11 +208,14 @@ public class M_MypageServiceImpl implements M_MypageService{
 
         // jbp_sq 리스트를 Long으로 변환하여 생성
         List<Long> jbpSqList = new ArrayList<>();
+        System.out.println("scrapVO길이: " + scrapVO.size());
+        System.out.println(scrapVO);
         for (ScrapVO scrap : scrapVO) {
-            jbpSqList.add(scrap.getJbp_sq());
+            jbpSqList.add(scrap.getJbpSq());
         }
         // 공고 정보 가져오기
         List<M_JobPosting_pp> JobPostingDTO = mypageMapper.selectJobPosting(jbpSqList);
+        System.out.println(JobPostingDTO);
         //공고 정보 map에 추가
         map.put("jobPostingData", JobPostingDTO);
 

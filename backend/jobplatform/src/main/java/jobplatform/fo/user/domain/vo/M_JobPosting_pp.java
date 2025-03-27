@@ -16,7 +16,7 @@ public class M_JobPosting_pp {
     private String crrDrtn;
     private String edctn;
     private Timestamp regstrDlnDtm;
-    private Long pstn_prpslSq;
+    private Long pstnPrpslSq;
     private Timestamp prpslDtm;
     private String pstnPrpslCndtn;
     private String entrprsName;
@@ -24,7 +24,7 @@ public class M_JobPosting_pp {
     private List<String> jobs;
     private List<String> skills;
     private int hits;
-    private String work_form;
+    private String workForm;
     private String slry;
     private String forSeacrch;
     private String codeId;
@@ -39,4 +39,5 @@ public class M_JobPosting_pp {
     private String picEml;
     private String jbpEndYn;
     private String jbpCndtn;
+    private boolean isScrapped;
 }

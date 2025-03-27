@@ -125,7 +125,7 @@ public class M_MypageController {
 	// 스크랩 목록 불러오기 (정렬 일반화)
 	@GetMapping("/scrap/scrapList-list/{mbr_sq}/{sort}/{pageNo}")
 	public ResponseEntity<Map<String, Object>> findResumeListData(
-			@PathVariable("mbr_sq") int mbr_sq,
+			@PathVariable("mbr_sq") Long mbr_sq,
 			@PathVariable("sort") String sort,
 			@PathVariable("pageNo") int pageNo) throws SQLException, IOException {
 

@@ -214,10 +214,17 @@ public class M_MypageServiceImpl implements M_MypageService{
             jbpSqList.add(scrap.getJbpSq());
         }
         // 공고 정보 가져오기
-        List<M_JobPosting_pp> JobPostingDTO = mypageMapper.selectJobPosting(jbpSqList);
-        System.out.println(JobPostingDTO);
+        List<M_JobPosting_pp> jobPostingDtoList = mypageMapper.selectJobPosting(jbpSqList);
+        // 스크랩 체크
+        for (M_JobPosting_pp jobPostingDto : jobPostingDtoList) {
+            if (mypageMapper.checkScrapExists(resumeSearchDataDTO.getMbr_sq(), jobPostingDto.getJbpSq())) {
+                jobPostingDto.setScrapped(true);
+            }
+        }
+
+        System.out.println(jobPostingDtoList);
         //공고 정보 map에 추가
-        map.put("jobPostingData", JobPostingDTO);
+        map.put("jobPostingData", jobPostingDtoList);
 
 		return map;
 	}

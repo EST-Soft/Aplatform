@@ -26,13 +26,13 @@
 
     <div class="row">
         <!-- 자료없을때 예외 -->
-        <div v-if="scrapListData.scrapDatas.length == 0">
+        <div v-if="!hasScrapData">
             <strong class="font-weight-extra-bold"> 자료가 없습니다. </strong>
         </div>
         <!-- 자료있을때 for -->
         <div v-else>
             <div v-for="jobPostingData in scrapListData.jobPostingData" :key="jobPostingData.jbp_sq">
-                <MypageScrap :jobPostingData="jobPostingData" @scrap-apy="scrapApy"/>
+                <MypageScrap :jobPostingData="jobPostingData" @scrap-apy="scrapApy" @update:scrapped="(newValue) => jobPostingData.scrapped = newValue" v-if="jobPostingData.scrapped" />
             </div>
         </div>
     </div>
@@ -88,6 +88,11 @@ const callAxios = async () => {
 
         });
 };
+
+const hasScrapData = computed (() => {
+    if (!scrapListData.value.jobPostingData) return false;
+    return Object.values(scrapListData.value.jobPostingData).some(item => item.scrapped);
+})
 
 // 스크랩 공고에 지원
 const scrapApy = async (emit) => {

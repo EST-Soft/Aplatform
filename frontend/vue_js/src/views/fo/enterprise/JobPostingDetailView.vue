@@ -9,9 +9,13 @@
           </div>
           <div class="d-flex align-items-center w-100">
             <h2 class="card-title me-auto" data-v-7f0d27c6="">공고</h2>
-            <button @click="toggleScrap(member?.mbrSq, route.params.jbpSq)" class="btn btn-outline-warning btn-sm" v-if="member?.mbrSq">
-              <i class="bi" :class="jbp.scrapped ? 'bi-star-fill' : 'bi-star'"></i>
-            </button>
+            <JobPostingScrap
+              v-if="member?.mbrSq"
+              :mbrSq="member?.mbrSq" 
+              :jbpSq="route.params.jbpSq" 
+              :scrapped="jbp.scrapped"
+              @update:scrapped="(newValue) => jbp.scrapped = newValue"
+            />
           </div>
         </header>
       </section>
@@ -134,7 +138,7 @@ import { useRoute, useRouter } from 'vue-router';
 import QuillEditorComponent from '@/components/common/Editor.vue';
 import { useStore } from 'vuex';
 import { showAlert } from '../../../utill/utillModal';
-
+import JobPostingScrap from './JobPostingScrap.vue';
 
 const store = useStore();
 const isEditable = ref(true);
@@ -179,33 +183,6 @@ const jbp = ref({
   regstrDlnDtm: "",
   scrapped: "false"
 });
-
-const toggleScrap = async (mbr_sq, jbp_sq) => {
-  const isScrapped = jbp.value.scrapped;
-  if(isScrapped) {
-    api.$post(`/user/mypage/scrap/delete/${mbr_sq}/${jbp_sq}`)
-    .then(response => {
-      jbp.value.scrapped = !jbp.value.scrapped;
-      showAlert(response);
-      console.log(response);
-    })
-    .catch(error => {
-      showAlert(error.response.data);
-      console.log(error.response.data);
-    })
-  } else {
-    api.$post(`/user/mypage/scrap/insert/${mbr_sq}/${jbp_sq}`)
-    .then(response => {
-      jbp.value.scrapped = !jbp.value.scrapped;
-      showAlert(response);
-      console.log(response);
-    })
-    .catch(error => {
-      showAlert(error.response.data);
-      console.log(error.response.data);
-    })
-  }
-}
 
 const formatDate = (dateString) => {
   const date = new Date(dateString);

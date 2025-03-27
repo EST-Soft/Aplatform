@@ -1,7 +1,12 @@
 <template>
+
     <div class="modal-wrap" v-if="isLogin === 'member'" v-show="modalCheck">
         <div class="modal-container" v-if="!profileModalCheck && !profileDetailModalCheck">
+            <div class="d-flex justify-content-end">
+                <button type="button" class="btn-close" aria-label="Close" @click="applyModalOpen"></button>
+            </div>
             <h3>프로젝트 지원서</h3>
+            <br>
             <h4>이름 : {{ state.member.mbrName }}</h4>
             <h4>주민번호 앞자리 : {{ state.member.mbrBd }}</h4>
             <h4 class="align-items-center">전화번호 :
@@ -13,24 +18,42 @@
                 <button class="btn btn-outline-dark modify" v-if="isPhoneNumberEditing"
                     @click="saveUpdatedPhoneNumber">저장</button>
             </h4>
-            <h4>프로필 : <span> {{ representativeResume.length > 0 ? representativeResume[0].rsmTtl : '대표 프로필 없음' }}</span><a @click="profileModalOpen"> (재선택)</a></h4>
+            <h4>프로필 : <span v-if="state.changeResume?.rsmTtl">
+                    {{ state.changeResume.rsmTtl }}
+                </span>
+                <span v-else>
+                    {{ representativeResume.length > 0 ? representativeResume[0].rsmTtl : '대표 프로필 없음' }}
+                </span> (<a @click="profileModalOpen">재선택</a>)
+            </h4>
             <div class="modal-btn d-grid gap-2 d-md-flex justify-content-md-end">
-                <button @click="applyModalOpen" class="btn btn-outline-dark">닫기</button>
-                <button @click="applyModalOpen" class="btn btn-outline-dark">확인</button>
+                <button @click="(representativeResume?.length ?? 0) > 0 || (state.changeResume && Object.keys(state.changeResume).length > 0) ? projectApply() : showSetResume()
+"
+                    class="btn btn-outline-dark">
+                    지원하기
+                </button>
+
             </div>
         </div>
         <div class="modal-container" v-if="profileModalCheck && !profileDetailModalCheck">
             <h3>프로필 선택</h3>
-            <h4 v-for="(resume,index) in state.resumes" :key="resume.rsmSq"><a @click="profileDetailModalOpen">{{ index + 1 }}. {{ resume.rsmTtl }} </a><span v-if="resume.rsmRprsntvYn === 'y'" class="badge text-bg-primary title"> 대표 프로필 </span></h4>
+            <h4 v-for="(resume, index) in state.resumes" :key="resume.rsmSq"><a @click="selectProfile(index)">{{ index +
+                1 }}. {{ resume.rsmTtl }} </a><span v-if="resume.rsmRprsntvYn === 'y'"
+                    class="badge text-bg-primary title"> 대표 프로필 </span></h4>
             <div class="modal-btn d-grid gap-2 d-md-flex justify-content-md-end">
                 <button @click="profileModalOpen" class="btn btn-outline-dark">뒤로가기</button>
             </div>
         </div>
         <div class="modal-container" v-if="profileModalCheck && profileDetailModalCheck">
             <h3>프로필 상세보기</h3>
-            <h4>안녕하세요 개발자 백바울입니다.</h4>
+            <h4>{{ selectProfileDetail?.rsmTtl }}</h4>
+            <h4>이름 : {{ selectProfileDetail?.rsmName }}</h4>
+            <h4>생년월일 : {{ selectProfileDetail?.rsmBd }}</h4>
+            <h4>연락처 : {{ selectProfileDetail?.rsmMp }}</h4>
+            <h4>이메일 : {{ selectProfileDetail?.rsmEml }}</h4>
+            <h4>최종 학력 : {{ formatEducation(selectProfileDetail?.rsmFnlEdctnCode) }}</h4>
+            <h4>희망 연봉 : {{ formatNumberWithCommas(selectProfileDetail?.rsmEs) }} 원</h4>
             <div class="modal-btn d-grid gap-2 d-md-flex justify-content-md-end">
-                <button class="btn btn-outline-dark">대표프로필 설정</button>
+                <button class="btn btn-outline-dark" @click="changeResume">프로필 변경</button>
                 <button @click="profileDetailModalOpen" class="btn btn-outline-dark">뒤로가기</button>
             </div>
         </div>
@@ -111,14 +134,11 @@
                     <h1>{{ state.project.prjctTtl }} / {{ state.project.entrprsName }}</h1>
                 </div>
                 <div class="col-1 themed-grid-col d-flex align-items-center justify-content-center">
-                    <i :class="isFilled ? 'bi bi-heart-fill' : 'bi bi-heart'" @click="toggleHeart"
+                    <i :class="isScrapped ? 'bi bi-heart-fill' : 'bi bi-heart'" @click="toggleScrap"
                         class="heart-icon"></i>
                 </div>
-
             </div>
-
         </div>
-
         <div class="container-md themed-container">
             <div class="row mb-3">
                 <div class="col-4 themed-grid-col">
@@ -141,7 +161,6 @@
                 </div>
             </div>
         </div>
-
         <div class="container-md themed-container">
             <div class="row mb-3">
                 <div class="col-12 themed-grid-col">
@@ -151,11 +170,11 @@
                     <h2>자격요건 : {{ state.project.prjctEsntlSkl }}</h2>
                 </div>
                 <div class="col-12 themed-grid-col">
-                    <h2>인터뷰 기간 : {{ getDate(state.project.prjctStrt) }} ~ {{ getDate(state.project.prjctEnd) }}</h2>
+                    <h2>인터뷰 기간 : {{ getDate(state.project.prjctStrt) }} ~ {{ getDate(state.project.prjctEnd) }}
+                    </h2>
                 </div>
             </div>
         </div>
-
         <div id="btn" class="container-md themed-container d-flex justify-content-end">
             <button type="button" class="btn btn-outline-dark" @click="applyModalOpen" v-show="isLogin != null">프로젝트
                 지원</button>
@@ -171,6 +190,7 @@ import { useRoute } from 'vue-router';
 import { api } from '../../../axios';
 import moment from 'moment';
 import { useStore } from 'vuex';
+import { showAlert, showConfirm } from '../../../utill/utillModal';
 
 const route = useRoute();
 const prjctSq = ref(route.params.prjctSq);
@@ -179,22 +199,122 @@ const state = reactive({
     project: {},
     member: {},
     resumes: [],
+    changeResume: {},
 });
+
+
+
+// 프로필 변경
+function changeResume() {
+    state.changeResume = selectProfileDetail;
+    console.log(state.changeResume);
+    profileModalCheck.value = false;
+    profileDetailModalCheck.value = false;
+}
+
+// 프로젝트 지원
+const projectApply = async () => {
+    const isAlreadyApplied = await checkApplyProject();
+    if (isAlreadyApplied) return; // 이미 지원했다면 실행 중단
+
+    showConfirm("지원하시겠습니까?", async () => {
+        try {
+            // 일반 회원 로그인일 때
+            if (store.getters.getUserType === 'user') {
+                let data = {};
+                if (Object.keys(state.changeResume).length > 0) {
+                    data = {
+                        mbrSq: state.changeResume.mbrSq,
+                        rsmSq: state.changeResume.rsmSq,
+                        prjctSq: state.project.prjctSq,
+                    };
+                    console.log("바뀐 프로필로 지원합니다: ", data);
+                } else {
+                    data = {
+                        mbrSq: representativeResume.value[0].mbrSq,
+                        rsmSq: representativeResume.value[0].rsmSq,
+                        prjctSq: state.project.prjctSq,
+                    };
+                    console.log("대표 프로필로 지원합니다: ", data);
+                }
+                await api.$post(`/project-applies`, data);
+                showAlert("지원 성공 !");
+            }
+        } catch (error) {
+            console.log("에러메시지", error);
+            showAlert("지원에 실패하였습니다.");
+        }
+    });
+};
+
+// // 해당 프로젝트 지원 했는지 체크
+const checkApplyProject = async () => {
+    try {
+        if (store.getters.getUserType === 'user') {
+            const response = await api.$get(`/project-applies/userApplyCheck/${state.member.mbrSq}/${state.project.prjctSq}`);
+            if (response) {
+                showAlert("이미 지원한 프로젝트입니다.");
+                return true; // 이미 지원했으면 true 반환
+            }
+        }
+    } catch (error) {
+        console.log("에러메시지: ", error);
+    }
+    return false; // 지원 안 했으면 false 반환
+};
+
+// 대표 프로필 미설정 or 선택 프로필 미설정
+function showSetResume() {
+    showAlert("프로필 설정이 필요합니다.");
+}
+
+const fetchScrap = async () => {
+    try {
+        // 일반 회원 로그인일 때
+        if (store.getters.getUserType === 'user') {
+            const response = await api.$get(`/scrap/projectDetail/${state.member.mbrSq}/${prjctSq.value}`);
+            isScrapped.value = response;
+            // console.log("isScrapped ", isScrapped.value);
+        }
+    } catch (error) {
+        console.error("에러메시지", error);
+    }
+}
+
+
+// 스크랩 관련 
+const isScrapped = ref(false);
+
+async function toggleScrap() {
+    // 일반 회원 로그인일 떄
+    if (store.getters.getUserType === 'user') {
+        try {
+            if (isScrapped.value) {
+                await api.$delete(`/scrap/remove/${state.member.mbrSq}/${prjctSq.value}`);
+            } else {
+                await api.$post(`/scrap/create/${state.member.mbrSq}/${prjctSq.value}`);
+            }
+            await fetchScrap();
+        } catch (error) {
+            console.error("에러메시지", error);
+        }
+    }
+}
+
 
 // 로그인 유저 정보 불러오기
 const fetchMember = async () => {
-    if (store.getters.getUserType === 'user') {
-        const mbrId = store.getters.getMember?.mbrId;
-        try {
-            const response = await api.$get(`/member/detail/${mbrId}`)
+    try {
+        if (store.getters.getUserType === 'user') {
+            const mbrId = store.getters.getMember?.mbrId;
+            const response = await api.$get(`/member/detail/${mbrId}`);
             state.member = response;
             response.mbrMp = formattedPhoneNumber(response.mbrMp);
-
+            await fetchScrap();
             await fetchResumes();
-
-        } catch (error) {
-            console.error('에러 메시지 : ', error);
         }
+    } catch (error) {
+        console.error('에러 메시지 : ', error);
     }
 
 }
@@ -217,7 +337,7 @@ const fetchResumes = async () => {
     try {
         const response = await api.$get(`/resumes/${state.member.mbrSq}`)
         state.resumes = response;
-        console.log(response);
+        // console.log(response);
     } catch (error) {
         console.log("에러메시지 : " + error);
     }
@@ -225,15 +345,71 @@ const fetchResumes = async () => {
 
 // 대표 이력서 필터링
 const representativeResume = computed(() => {
-  return state.resumes.filter(resume => resume.rsmRprsntvYn === 'y');
+    return state.resumes.filter(resume => resume.rsmRprsntvYn === 'y');
 });
+
+// 프로필 상세보기
+const selectedResumeIndex = ref(null);
+
+function selectProfile(index) {
+    selectedResumeIndex.value = index;
+    profileDetailModalOpen();
+}
+
+const selectProfileDetail = computed(() => {
+    if (selectedResumeIndex.value !== null) {
+        return state.resumes[selectedResumeIndex.value];
+    }
+
+    return null;
+})
+
+// 학력 포매팅 함수
+function formatEducation(edu) {
+    if (edu === 'did') {
+        return '박사';
+    } if (edu === 'mid') {
+        return '석사';
+    } if (edu === 'unvrsty') {
+        return '대학교(4년제)';
+    } if (edu === 'jc') {
+        return '대학교(2,3년제)';
+    } if (edu === 'hs') {
+        return '고등학교';
+    } if (edu === 'ni') {
+        return '미입력';
+    } if (edu === 'ednm') {
+        return '학력무관';
+    }
+}
+
+function formatNumberWithCommas(number) {
+    return number.toLocaleString('en-US');
+}
+
 
 onMounted(() => {
     fetchProject();
     fetchMember();
-
-    // console.log("로그인상태" + isLogin.value);
 })
+
+// // 대표 프로필 변경
+// async function changeRepresentativeResume(selectProfileDetail) {
+//     try {
+//         const mbrSq = state.member.mbrSq;
+//         const rsmSq = selectProfileDetail.rsmSq;
+//         console.log("mbrSq :", mbrSq);
+//         console.log("rsmSq :", rsmSq);
+//         const result = await api.$patch(`/resumes/${mbrSq}/${rsmSq}`);
+//         await fetchResumes();
+//         if (result) {
+//             console.log("업데이트 완료");
+//         }
+//     } catch (error) {
+//         console.error('에러메시지 : ' + error);
+//     }
+//     profileDetailModalOpen();
+// }
 
 // 날짜 형식
 
@@ -241,14 +417,6 @@ function getDate(date) {
     const formatDate = moment(date).format("YYYY-MM-DD");
     return formatDate;
 }
-
-// 스크랩 관련 
-const isFilled = ref(false);
-
-function toggleHeart() {
-    isFilled.value = !isFilled.value;
-}
-
 
 // 모달창 관련
 const modalCheck = ref(false);
@@ -266,6 +434,7 @@ function profileModalOpen() {
 const profileDetailModalCheck = ref(false);
 
 function profileDetailModalOpen() {
+
     profileDetailModalCheck.value = !profileDetailModalCheck.value;
 }
 
@@ -331,6 +500,7 @@ function orginalPhoneNumber(phoneNumber) {
 
     return cleaned;
 }
+
 // 휴대폰 번호 수정
 const isPhoneNumberEditing = ref(false);
 
@@ -360,6 +530,9 @@ async function saveUpdatedPhoneNumber() {
     isPhoneNumberEditing.value = false;
 }
 
+
+
+
 </script>
 
 <style scoped>
@@ -378,8 +551,6 @@ h2 {
     margin-top: 15px;
 }
 
-
-
 .heart-icon {
     margin-top: 15px;
     font-size: xx-large;
@@ -390,7 +561,7 @@ h2 {
 
 .bi-heart-fill {
     /* 크기 조정 가능 */
-    color: red;
+    color: rgb(255, 94, 94);
     /* 하트 색상 조정 가능 */
 }
 
@@ -468,14 +639,13 @@ a:hover {
     /* 버튼이 텍스트와 정렬되도록 설정 */
 }
 
-.title{
+.title {
     vertical-align: middle;
     height: auto;
     margin-left: 5px;
 }
 
-h4{
+h4 {
     margin-top: 8px;
 }
-
 </style>

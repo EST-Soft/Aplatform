@@ -178,15 +178,13 @@
 		insrt_mbr_sq,
 		NOW() from P2_TBL_RESUME_M where rsm_sq = #{rsm_sq};
 	</insert>
-
-
-
 	<!-- 3/24 -->
-
+	
 	<!-- 이력서 리스트 불러오기 -->
 	<select id="getResumeList" resultType="jobplatform.fo.enterprise.domain.vo.ResumeListVO">
-		select rsm_sq, mbr_sq, rsm_rprsntv_yn, rsm_ttl from p2_tbl_resume_m where mbr_sq = #{mbr_sq};
+		select rsm_sq, mbr_sq, rsm_rprsntv_yn, rsm_ttl 
+		from p2_tbl_resume_m 
+		where mbr_sq = #{mbr_sq} 
+		order by rsm_rprsntv_yn desc
 	</select>
-
-	
 </mapper>

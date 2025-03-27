@@ -11,12 +11,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ScrapVO {
 	// 스크랩 순번
-	private Long scrap_sq;
+	private Long scrapSq;
 	// 회원 순번
-	private Long mbr_sq;
+	private Long mbrSq;
 	// 구인공고 순번
-	private Long jbp_sq;
+	private Long jbpSq;
 	// 스크랩 일시
-	private Timestamp scrap_dtm;
+	private Timestamp scrapDtm;
 	
 }

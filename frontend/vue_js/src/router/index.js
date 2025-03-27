@@ -50,6 +50,8 @@ import ScrapListView from "../views/fo/user/ScrapListView.vue";
 import EnterJobPostingList from "../views/fo/enterprise/EnterJobPostingList.vue";
 import ProjectDetailView from "../views/fo/enterprise/ProjectDetailView.vue";
 import ProjectPostingInsertForm from "../views/fo/enterprise/project/ProjectPostingInsertForm.vue";
+import EnterProjectList from "../views/fo/enterprise/EnterProjectList.vue";
+import EnterProjectUpdate from "../views/fo/enterprise/EnterProjectUpdate.vue";
 
 
 // import store from "@/store"; // Vuex 스토어를 직접 가져옵니다.
@@ -290,6 +292,18 @@ const routes = [
     component: ProjectPostingInsertForm,
 
   },
+
+  {
+    path:"/enterProjectList",
+    component: EnterProjectList,
+
+  },
+
+  {
+    path: "/projectUpdate/:prjctSq",
+    component: EnterProjectUpdate,
+  },
+
 
   // { path: "/:pathMatch(.*)*", redirect: "/" }, // 존재하지 않는 경로일 때 메인 페이지로 리디렉션
 ];

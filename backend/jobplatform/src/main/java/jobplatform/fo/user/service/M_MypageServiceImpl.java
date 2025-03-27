@@ -15,20 +15,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.servlet.http.HttpSession;
 import jobplatform.fo.enterprise.common.Pagination;
-import jobplatform.fo.enterprise.domain.dto.JobPostingDTO;
-import jobplatform.fo.enterprise.domain.dto.JobViewDTO;
 import jobplatform.fo.enterprise.domain.dto.ResumeSearchDataDTO;
-import jobplatform.fo.enterprise.domain.entity.JobPostingEntity;
-import jobplatform.fo.enterprise.domain.entity.JobViewEntity;
 import jobplatform.fo.enterprise.domain.mapper.CommonCodeMapper;
 
 import jobplatform.fo.enterprise.domain.vo.CommonCodeVO;
-import jobplatform.fo.enterprise.domain.vo.JobViewVO;
-import jobplatform.fo.enterprise.domain.vo.ResumeListVO;
 import jobplatform.fo.enterprise.domain.vo.ScrapVO;
 import jobplatform.fo.user.domain.mapper.M_MypageMapper;
 import jobplatform.fo.user.domain.vo.M_JobPosting_pp;
-import jobplatform.fo.user.domain.vo.MemberVO;
 
 
 @Service
@@ -169,7 +162,7 @@ public class M_MypageServiceImpl implements M_MypageService{
         List<M_JobPosting_pp> result = mypageMapper.getPPJopPostingData(rsm_sq, limit, offset);
         
         for(M_JobPosting_pp temp : result){
-            Long jbp_sq = temp.getJbp_sq();
+            Long jbp_sq = temp.getJbpSq();
             List<Long> areas = mypageMapper.getAreasOfJobPost(jbp_sq);
             List<Long> jobs = mypageMapper.getJobsOfJobPost(jbp_sq);
             List<Long> skills = mypageMapper.getSkillsOfJobPost(jbp_sq);
@@ -215,11 +208,14 @@ public class M_MypageServiceImpl implements M_MypageService{
 
         // jbp_sq 리스트를 Long으로 변환하여 생성
         List<Long> jbpSqList = new ArrayList<>();
+        System.out.println("scrapVO길이: " + scrapVO.size());
+        System.out.println(scrapVO);
         for (ScrapVO scrap : scrapVO) {
-            jbpSqList.add(scrap.getJbp_sq());
+            jbpSqList.add(scrap.getJbpSq());
         }
         // 공고 정보 가져오기
         List<M_JobPosting_pp> JobPostingDTO = mypageMapper.selectJobPosting(jbpSqList);
+        System.out.println(JobPostingDTO);
         //공고 정보 map에 추가
         map.put("jobPostingData", JobPostingDTO);
 

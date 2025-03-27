@@ -25,7 +25,7 @@
 
 <script setup>
 import { api } from '@/axios';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import { defineEmits, defineProps } from 'vue';
 
 const props = defineProps({
@@ -36,6 +36,10 @@ const props = defineProps({
     skillsData: {
         type: Object,
         required: true
+    },
+    formattesSkil:{
+        type: Array,
+        required:true
     }
 })
 
@@ -59,8 +63,31 @@ const selectedSkills = ref({
 onMounted(async () => {
     try {
         const response = await api.$get('/skl-cd/list');
-        console.log(response);
         insertSklData(response);
+
+        watch(() => props.formattesSkil, async(newSkills) => {
+    
+    // 기존 데이터를 지우고 새롭게 할당 (Vue 반응성 보장)
+    selectedSkills.value = {
+        'Language': [],
+        'Framework': [],
+        'Tool': []
+    };
+
+    newSkills.forEach(skill => {
+        Object.keys(localSkills.value).forEach(category => {
+            if (localSkills.value[category].some(item => item.sklScName === skill)) {
+                
+                // selectedSkills 업데이트
+                selectedSkills.value[category].push(
+                    localSkills.value[category].find(item => item.sklScName === skill)
+                );
+            }
+        });
+    });
+}, { immediate: true });
+
+
     } catch (error) {
         console.error('Error:', error);
     }
@@ -93,7 +120,7 @@ const close = () => {
 };
 
 const skillsSave = () => {
-    console.log(selectedSkills.value)
+    console.log('selectedSkills.value: ', selectedSkills.value)
     emit('update:skillsData', selectedSkills.value);
     close()
 }

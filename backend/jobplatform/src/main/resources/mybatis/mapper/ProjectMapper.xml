@@ -161,8 +161,9 @@
 		FROM P2_TBL_SKILL_CODE_RESUME_R r
 		JOIN MatchedSkills ms ON r.skl_code_sq = ms.skl_code_sq
 		GROUP BY r.rsm_sq
-		HAVING COUNT(DISTINCT r.skl_code_sq) = (SELECT COUNT(*) FROM EssentialSkills)  -- 필수 스킬을 모두 보유한 사람만
-		)
+		HAVING COUNT(DISTINCT r.skl_code_sq) = (SELECT COUNT(*) FROM EssentialSkills)  
+		<!--  필수 스킬을 모두 보유한 사람만 -->
+	)
 		<!-- 이메일 가져오기 (이메일 수신 동의한 사람만) -->
 		SELECT DISTINCT m.mbr_eml_adrs
 		FROM P3_TBL_MEMBER_M m

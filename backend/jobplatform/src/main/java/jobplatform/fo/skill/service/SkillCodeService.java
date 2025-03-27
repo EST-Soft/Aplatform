@@ -6,4 +6,6 @@ public interface SkillCodeService {
     
 
       public int skillinsert(@Param("rsmSq") Long rsmSq, @Param("sklCodeSq") String sklCodeSq);
+
+      public int existSkill(@Param("rsmSq") Long rsmSq, @Param("sklCodeSq") Long sklCodeSq);
 }

@@ -3,10 +3,10 @@
     <div class="container text-center">
         <div class="row pb-3">
             <div class="col-auto">
-                {{ props.jobPostingData.entrprs_name }}
+                {{ props.jobPostingData.entrprsName }}
             </div>
             <div class="col">
-                <router-link :to="`/board/detail/jobPosting/${props.jobPostingData.jbp_sq}`">{{ props.jobPostingData.jbp_ttl }}</router-link>
+                <router-link :to="`/board/detail/jobPosting/${props.jobPostingData.jbpSq}`">{{ props.jobPostingData.jbpTtl }}</router-link>
             </div>
             <div class="col-1" @click="toggleImage">
                 <img :src="currentImage" alt="" style="width: 20px;">
@@ -14,25 +14,25 @@
         </div>
         <div class="row d-flex flex-wrap align-items-center">
             <div class="col-auto">
-                {{ props.jobPostingData.work_area }}
+                {{ props.jobPostingData.workArea }}
             </div>
             <div class="col">
-                {{ findCodeName(props.jobPostingData.crr_drtn) }}
+                {{ findCodeName(props.jobPostingData.crrDrtn) }}
             </div>
             <div class="col">
                 {{ findCodeName(props.jobPostingData.edctn) }}
             </div>
             <div class="col">
-                {{ props.jobPostingData.work_form }}
+                {{ props.jobPostingData.workForm }}
             </div>
             <div class="col-auto">
-                {{ fomatDate(props.jobPostingData.regstr_strt_dtm) }} 부터
+                {{ fomatDate(props.jobPostingData.regstrStrtDtm) }} 부터
             </div>
             <div class="col-auto">
-                {{ fomatDate(props.jobPostingData.regstr_dln_dtm) }} 까지
+                {{ fomatDate(props.jobPostingData.regstrDlnDtm) }} 까지
             </div>
             <div class="col-md-auto">
-                <button v-if="props.jobPostingData.regstr_dln_dtm >= new Date().toISOString()" @click="$emit('scrapApy', props.jobPostingData.jbp_sq)" class="btn btn-modern btn-light mb-2">지원하기</button>
+                <button v-if="props.jobPostingData.regstrDlnDtm >= new Date().toISOString()" @click="$emit('scrapApy', props.jobPostingData.jbpSq)" class="btn btn-modern btn-light mb-2">지원하기</button>
                 <button v-else class="btn btn-modern btn-dark mb-2">지원불가</button>
             </div>
         </div>
@@ -48,13 +48,17 @@ import { useStore } from "vuex";
 
 const store = useStore();
 
-const props = defineProps(["jobPostingData"]); 
+const props = defineProps({
+    jobPostingData: Object
+}); 
 const result = ref({commonCodeList: []});
 const member = computed(() => store.getters.getMember);
 
 onMounted(async () => {
     try {
         result.value = await api.$get(`/user/mypage/scrap/commonCode`);
+        console.log('result', result.value);
+        console.log('props', props.jobPostingData);
     } catch (error) {
         console.error('Failed to fetch resume details:', error);
     }
@@ -62,7 +66,7 @@ onMounted(async () => {
 
 // 코드 ID에 해당하는 코드 이름 찾기
 const findCodeName = (codeId) => {
-    const code = result.value.commonCodeList.find(item => item.code_id === codeId);
+    const code = result.value.commonCodeList.find(item => item.codeId === codeId);
     return code ? code.code_name : 'N/A'; // 값이 없을 경우 'N/A' 반환
 };
 

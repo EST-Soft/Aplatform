@@ -137,6 +137,7 @@ public class ResumeManagementController {
 		System.out.println(requestDto);
 		System.out.println(mbrSq);
 		ResumeDataDTO resumeDataDTO = requestDto.getResumeDataDTO();
+		
 		Long rsmSq = resumeManagementService.insertResume(mbrSq, resumeDataDTO);
 
 		// 이미지가 있을 시 첨부파일
@@ -163,7 +164,7 @@ public class ResumeManagementController {
 		
 		if (skilsDataDtos != null && !skilsDataDtos.isEmpty()) {
 			System.out.println("SkillCodeSDto list2222: ");
-			skillCodeResumeRService.insertSkillCodeResume(rsmSq, skilsDataDtos);
+			skillCodeResumeRService.insertSkillCodeResume(mbrSq, skilsDataDtos);
 		}
 
 		// 자격증 정보 처리

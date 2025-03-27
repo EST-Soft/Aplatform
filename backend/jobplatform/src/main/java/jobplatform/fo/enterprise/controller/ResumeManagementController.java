@@ -71,7 +71,7 @@ public class ResumeManagementController {
 	// 이력서 목록 불러오기 (정렬 일반화)
 	@GetMapping("/resumes/resume-list/{mbr_sq}/{sort}/{pageNo}")
 	public ResponseEntity<Map<String, Object>> findResumeListData(
-			@PathVariable("mbr_sq") int mbr_sq,
+			@PathVariable("mbr_sq") Long mbr_sq,
 			@PathVariable("sort") String sort,
 			@PathVariable("pageNo") int pageNo) {
 

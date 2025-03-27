@@ -69,6 +69,7 @@ public class ProcjectController {
 
     @GetMapping("/{prjctSq}")
     public ProjectDomain getProjectDetail(@PathVariable("prjctSq") int prjctSq) {
+        System.out.println("여기나옴1111111?");
         return projectService.projectRead(prjctSq);
     }
 

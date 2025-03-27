@@ -18,7 +18,7 @@
             <label for="jobName" class="form-label">모집 직군</label>
             <div id="prjctWork" class="form-control" style="height: auto;">
               <div v-for="job in jobs" :key="job.jobSq" class="form-check">
-                <input type="radio" v-model="selectedprjctWork" :value="job.jobSq" class="form-check-input"
+                <input type="radio" v-model="selectedprjctWork" :value="job.jobScName" class="form-check-input"
                   :id="'job-' + job.jobSq" name="jobGroup">
                 <label class="form-check-label" :for="'job-' + job.jobSq">{{ job.jobScName }}</label>
               </div>
@@ -69,7 +69,7 @@
               <input type="text" :value="formattedUseSkills" class="form-control" id="useSkl" @click="openUseSkillsModal"
                 placeholder="기술명을 입력하세요" readonly />
             </div>
-            <UseSkillsResume :isVisible="showUseSkillsModal" :useSkillsData="useSkillsData"
+            <UseSkillsResume :isVisible="showUseSkillsModal" :useSkillsData="useSkillsData" :formattesUseSkil="formattesUseSkil"  
               @update:isVisible="showUseSkillsModal = $event" @update:useSkillsData="updateUseSkillsData" />
           </div>
   
@@ -90,7 +90,7 @@
   
   
           <!-- Skills 선택 모달 -->
-          <SkillsResume :isVisible="showSkillsModal" :skillsData="skillsData" @update:isVisible="showSkillsModal = $event"
+          <SkillsResume :isVisible="showSkillsModal" :skillsData="skillsData" :formattesSkil="formattesSkil" @update:isVisible="showSkillsModal = $event"
             @update:skillsData="updateSkillsData" />
   
   
@@ -98,15 +98,12 @@
   
   
         <div class="row" >
-          <div class="col-md-6 mb-3">
-            <label for="prjctPrdstrd" class="form-label">프로젝트 시작일</label>
-            <input type="datetime-local" v-model="prjctPrdstrd" class="form-control" id="prjctPrdstrd"
-              :min="minRegstrStrtDtm">
+          <div class="col-md-12 mb-3">
+            <label for="prjctPrd" class="form-label">프로젝트 일정</label>
+            <input type="text" v-model="prjctPrd" class="form-control" id="prjctPrd"
+             >
           </div>
-          <div class="col-md-6 mb-3">
-            <label for="prjctPrdend" class="form-label">프로젝트 마감일</label>
-            <input type="datetime-local" v-model="prjctPrdend" class="form-control" id="prjctPrdend">
-          </div>
+        
         </div>
         
         
@@ -126,11 +123,11 @@
         <div class="row">
              <div class="col-md-6 mb-3">
                <label class="form-label">프로젝트 공고 시작일</label>
-               <input type="date" v-model="prjctStrtDate" class="form-control">
+               <input type="date" v-model="prjctStrtDate" class="form-control"  :min="minRegstrStrtDtm">
              </div>
              <div class="col-md-6 mb-3">
                <label class="form-label">프로젝트 공고 마감일</label>
-               <input type="date" v-model="prjctEndDate" class="form-control">
+               <input type="date" v-model="prjctEndDate" class="form-control"  :min="minRegstrStrtDtm">
               </div>
             </div>
             
@@ -186,15 +183,12 @@
              
              
              <div class="checkbox-container" style="margin-top: 50px;">
-               <label>
-                 <input type="checkbox" v-model="isChecked" style="margin-top: 10px; margin-bottom: 20px;" />
-                 필수 스킬을 보유한 회원들에게 메일을 발송합니다.
-                </label>
+             
                 
                 
                 
                 <div>
-                  <button @click="submitPost">공고 등록하기</button>
+                  <button @click="submitPost">공고 수정하기</button>
                 </div>
               </div>
             </div>
@@ -214,7 +208,6 @@
   
   import { ref, computed, onMounted, watch } from 'vue';
   import { api } from '@/axios.js';
-  // import { useRouter } from 'vue-router';
   import QuillEditorComponent from '@/components/common/Editor.vue';
   import dayjs from "dayjs"; // 날짜 계산을 쉽게 하기 위한 라이브러리
   import duration from "dayjs/plugin/duration";
@@ -222,7 +215,10 @@
   import { showAlert } from '../../../utill/utillModal';
   import SkillsResume from '../../../components/fo/enterprise/resume/SkillsResume.vue';
   import UseSkillsResume from '../../../components/fo/enterprise/resume/UseSkillsResume.vue';
-  
+  import { useRoute } from 'vue-router';
+  // import { prSelect } from "../enterprise/project/api/project";
+
+
   dayjs.extend(duration);
   
   const areas = ref([]);
@@ -233,8 +229,6 @@
   const entrprsSq = store.getters.getMember.pk;
   const prjctTtl = ref('');
   const prjctTpy = ref("");
-  const prjctPrdstrd = ref("");
-  const prjctPrdend = ref("");
   const prjctEsntlCrr = ref("");
   const prjctCntnt = ref("");
   
@@ -242,6 +236,8 @@
   // 기술들 문자열 저장
   const formattedSkills = ref(""); // 선택된 기술들을 문자열로 저장
   const formattedUseSkills = ref(""); // 선택된 기술들을 문자열로 저장
+  const formattesUseSkil = ref([]); // 선택된 기술들을 문자열로 저장
+  const formattesSkil = ref([]);
   
   // 기술 모달 표시 여부
   const showSkillsModal = ref(false);
@@ -271,6 +267,16 @@
   
   // 선택된 시간
   const selectedTime = ref(null);
+
+
+  
+  const route = useRoute();
+
+
+
+  console.log("현재 params:", route.params.prjctSq); // 👈 params 값 확인
+  // const project = ref(null);
+  const prjctSq = ref(route.params.prjctSq);
   
   // 프로젝트 기간 내 날짜 리스트 (주말 제외)
   const availableDates = computed(() => {
@@ -379,6 +385,8 @@
   // 스킬
   const openSkillsModal = () => {
     showSkillsModal.value = true;
+    
+
   }; // openSkillsModal
   const openUseSkillsModal = () => {
     showUseSkillsModal.value = true;
@@ -447,7 +455,6 @@
   
   
   // const interviewAgreement = ref(false);
-  // const router = useRouter();
   
   // 현재 날짜 이전은 선택 불가
   const minRegstrStrtDtm = computed(() => {
@@ -475,42 +482,85 @@
     }
   };
   
+
   
   onMounted(() => {
     console.log('Component mounted');
     fetchAreasAndJobs();
+    fetchProject();
+  
+  
   });
   const selectedprjctWork = ref("");
   const selectedprjctLctn = ref("");
   const prjctStrtDate = ref("");
   const prjctEndDate = ref("");
+  const project = ([]);
   
   
   
+
   
-  // ✅ 날짜를 `YYYY-MM-DD` 형식으로 변환
-  const formatDate = (date) => (date ? dayjs(date).format("YYYY-MM-DD") : "");
-  
-  // ✅ 개월 수 계산 후 문자열 생성
-  const prjctPrd = computed(() => {
-    if (!prjctPrdstrd.value || !prjctPrdend.value) return "";
-  
-    const startDate = dayjs(prjctPrdstrd.value);
-    const endDate = dayjs(prjctPrdend.value);
-    const diffDays = endDate.diff(startDate, "day"); // 전체 일수 차이
-    const diffMonths = endDate.diff(startDate, "month"); // 개월 수
-  
-    let durationText = "";
-    if (diffMonths > 0) {
-      durationText = `${diffMonths}개월 `;
+ const prjctPrd = ref("");
+
+
+
+
+
+// 프로젝트 정보 불러오기
+const fetchProject = async () => {
+    try {
+        const response = await api.$get(`/project/${prjctSq.value}`);
+        project.value = response;
+        console.log("뭐임?");
+        console.log(response);
+        
+        // 유형
+        prjctTpy.value = project.value.prjctTpy; 
+        // 제목
+        prjctTtl.value = project.value.prjctTtl; 
+        //내용
+        prjctCntnt.value = project.value.prjctCntnt;
+
+        // 근무지
+        selectedprjctLctn.value = project.value.prjctLctn; 
+        // 경력
+        prjctEsntlCrr.value = project.value.prjctEsntlCrr; 
+        // 모집 직군
+        selectedprjctWork.value = project.value.prjctWork; 
+        // 프로젝트 채용 시작 ~ 마감일
+        prjctEndDate.value = project.value.prjctEnd.substring(0, 10);
+        prjctStrtDate.value = project.value.prjctStrt.substring(0, 10);
+        // 프로젝트 일정
+        prjctPrd.value = project.value.prjctPrd;
+        console.log(prjctEndDate.value)
+        console.log(prjctStrtDate.value + "이거나옴?")
+
+        // 프로젝트 사용기술
+        formattedUseSkills.value = project.value.prjctUseSkl; 
+        // 프로젝트 필수기술
+        formattedSkills.value = project.value.prjctEsntlSkl; 
+
+
+
+        prjctTpy.value = project.value.prjctTpy; 
+
+        const receivedSkills = project.value.prjctUseSkl;
+        const receivedEsntSkills = project.value.prjctEsntlSkl;
+
+        formattesUseSkil.value = receivedSkills.split(',').map(skill => skill.trim()); 
+        formattesSkil.value = receivedEsntSkills.split(',').map(skill => skill.trim());
+        console.log(formattesUseSkil);
+        console.log(formattesSkil);
+
+    } catch (error) {
+        console.error('에러 메시지 : ', error);
     }
-    if (diffDays % 30 > 0) {
-      durationText += `${diffDays % 30}일`;
-    }
-  
-    return `${formatDate(prjctPrdstrd.value)} ~ ${formatDate(prjctPrdend.value)} (${durationText.trim()})`;
-  });
-  
+}
+
+
+
+
   
   const submitPost = () => {
     // if (prjctTtl.value.trim() === '' || jbpCntnt.value.trim() === '') {
@@ -534,7 +584,6 @@
       prjctEsntlCrr: prjctEsntlCrr.value,
       prjctStrtDate: prjctStrtDate.value.split('T')[0],
       prjctEndDate: prjctEndDate.value.split('T')[0],
-      prjctPrd: prjctPrd.value,
       prjctLctn: selectedprjctLctn.value,
       check: isChecked.value,
       prjctCntnt: prjctCntnt.value,

@@ -2,10 +2,8 @@ package jobplatform.fo.user.controller;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -15,24 +13,17 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import jakarta.servlet.http.HttpSession;
 import jobplatform.fo.enterprise.domain.dto.JobPostingDTO;
 import jobplatform.fo.enterprise.domain.dto.JobViewDTO;
 import jobplatform.fo.enterprise.domain.dto.ResumeSearchDataDTO;
-import jobplatform.fo.enterprise.domain.entity.ApplyEntity;
-import jobplatform.fo.enterprise.domain.entity.JobPostingEntity;
 import jobplatform.fo.enterprise.domain.entity.JobViewEntity;
-import jobplatform.fo.enterprise.domain.vo.JobViewVO;
 import jobplatform.fo.enterprise.service.JobPostingService;
 import jobplatform.fo.enterprise.service.JobViewService;
-import jobplatform.fo.user.domain.entity.MemberEntity;
-import jobplatform.fo.user.domain.vo.M_JobPosting_pp;
 import jobplatform.fo.user.service.M_MypageService;
 
 

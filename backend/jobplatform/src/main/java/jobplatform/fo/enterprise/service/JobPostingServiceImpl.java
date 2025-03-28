@@ -141,11 +141,6 @@ public class JobPostingServiceImpl implements JobPostingService {
     @Override
     @Transactional
     public JobPostingDTO jobPostingDetail(Long jbpSq, Long mbrSq) {
-        if (mbrSq != null) {
-            LocalDateTime viewDate = LocalDateTime.now();
-            jobViewRepository.insertJobView(mbrSq, jbpSq, viewDate);
-        }
-
         JobPostingEntity jpe = jobPostingRepository.findById(jbpSq)
                 .orElseThrow(() -> new RuntimeException("Job posting not found with id " + jbpSq));
 
@@ -278,8 +273,13 @@ public class JobPostingServiceImpl implements JobPostingService {
 
     @Override
     public void addJobView(Long mbrSq, Long jbpSq, String mbrId) {
-        Optional<JobViewEntity> existingJobView = jobViewRepository.findByMbrSqAndJbpSq(mbrSq, jbpSq);
-        if (existingJobView.isPresent()) {
+        // Optional<JobViewEntity> existingJobView = jobViewRepository.findByMbrSqAndJbpSq(mbrSq, jbpSq);
+        // if (existingJobView.isPresent()) {
+        //     System.out.println("이미 본 공고가 있습니다. 저장하지 않습니다.");
+        //     return;
+        // }
+
+        if (jobViewRepository.existsByMbrSqAndJbpSq(mbrSq, jbpSq)) {
             System.out.println("이미 본 공고가 있습니다. 저장하지 않습니다.");
             return;
         }

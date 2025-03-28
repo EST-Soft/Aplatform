@@ -11,9 +11,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import jobplatform.fo.enterprise.domain.dto.JobViewDTO;
-import jobplatform.fo.enterprise.domain.entity.JobPostingEntity;
 import jobplatform.fo.enterprise.domain.entity.JobViewEntity;
-import jobplatform.fo.enterprise.domain.repository.JobPostingRepository;
+import jobplatform.fo.enterprise.domain.mapper.JobViewMapper;
 import jobplatform.fo.enterprise.domain.repository.JobViewRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,11 +22,12 @@ public class JobViewServiceImpl implements JobViewService {
 
    
     private final JobViewRepository jobViewRepository;
+    private final JobViewMapper jobViewMapper;
+
     @Autowired
-    private JobPostingRepository jobPostingRepository;
-    @Autowired
-    public JobViewServiceImpl(JobViewRepository jobViewRepository) {
+    public JobViewServiceImpl(JobViewRepository jobViewRepository, JobViewMapper jobViewMapper) {
         this.jobViewRepository = jobViewRepository;
+        this.jobViewMapper = jobViewMapper;
     }
     
     // 1. 특정 회원이 본 직업 공고 목록 조회
@@ -54,34 +54,18 @@ public class JobViewServiceImpl implements JobViewService {
    // 최근 본 공고 추가 또는 갱신
    @Override
    public void addJobView(Long mbrSq, Long jbpSq, String mbrId) {
-       // 1. 공고 순번(jbpSq)을 기준으로 JobPostingEntity 조회
-       JobPostingEntity jobPosting = jobPostingRepository.findById(jbpSq)
-               .orElseThrow(() -> new RuntimeException("Job posting not found for jbpSq: " + jbpSq));
-   
-       // 이미 본 공고인지 체크
-       Optional<JobViewEntity> existingJobView = jobViewRepository.findByMbrSqAndJbpSq(mbrSq, jbpSq);
-   
-       if (existingJobView.isPresent()) {
-           // 2. 이미 본 공고가 있다면, 해당 공고의 조회 시간을 최신으로 업데이트
-           JobViewEntity jobViewEntity = existingJobView.get();
-           jobViewEntity.setViewDate(LocalDateTime.now()); // 최신 시간으로 갱신
-           jobViewRepository.save(jobViewEntity); // 업데이트된 entity 저장
-   
-           System.out.println("기존 공고의 조회 시간을 갱신했습니다: mbrSq=" + mbrSq + ", jbpSq=" + jbpSq);
-       } else {
-           // 3. 새로운 공고를 본 경우에는 새 JobViewEntity를 생성
-           JobViewEntity jobViewEntity = new JobViewEntity();
-           jobViewEntity.setMbrSq(mbrSq);  // 회원 순번
-           jobViewEntity.setJbpSq(jbpSq);  // 공고 순번
-           jobViewEntity.setMbrId(mbrId);  // 회원 ID
-           jobViewEntity.setViewDate(LocalDateTime.now());  // 최근 본 시간 (현재 시간)
-           jobViewEntity.setJobPosting(jobPosting);  // 공고 정보 설정
-   
-           // 4. JobViewEntity 저장
-           jobViewRepository.save(jobViewEntity);
-   
-           System.out.println("새 공고를 저장했습니다: mbrSq=" + mbrSq + ", jbpSq=" + jbpSq);
-       }
+        // 이미 본 공고인지 체크
+        System.out.println("공고11 mbrId : " + mbrId);
+        if (!jobViewMapper.existsJobViewByMbrSqAndJbpSq(mbrSq, jbpSq)) {
+            // 봤떤 공고가 아니라면 공고 조회 등록
+            System.out.println("공고22 mbrId : " + mbrId);
+            jobViewMapper.insertJobView(mbrSq, jbpSq, mbrId);
+            System.out.println("새 공고를 저장했습니다: mbrSq=" + mbrSq + ", jbpSq=" + jbpSq);
+        } else {
+            // 봤던 공고라면 조회 시간 업데이트
+            jobViewMapper.updateJobViewDate(mbrSq, jbpSq, LocalDateTime.now());
+            System.out.println("기존 공고의 조회 시간을 갱신했습니다: mbrSq=" + mbrSq + ", jbpSq=" + jbpSq);
+        }
    }
    
     // 최근 본 공고 목록을 페이지네이션으로 조회
@@ -135,5 +119,3 @@ public class JobViewServiceImpl implements JobViewService {
      }
 
 }
- 
- 

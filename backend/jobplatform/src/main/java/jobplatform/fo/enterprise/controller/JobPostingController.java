@@ -125,9 +125,9 @@ public class JobPostingController {
 		if (mbrSq != null) {
 			MemberEntity memberEntity = memberRepository.findByMbrSq(mbrSq); // 기업 회원은 최근 본 공고 목록이 없음
 			String mbrId = memberEntity.getMbrId();
-
+			System.out.println("공고 mbrId : " + mbrId);
 			// 최근 본 공고 목록을 DB에 저장
-			jobViewService.addJobViewEntity(mbrSq, jbpSq, mbrId);  // DB에 기록
+			jobViewService.addJobView(mbrSq, jbpSq, mbrId);  // DB에 기록
 		}
 
 		return jpe;

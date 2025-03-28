@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="jobplatform.fo.enterprise.domain.mapper.JobViewMapper">
+    <select id="existsJobViewByMbrSqAndJbpSq" resultType="boolean">
+        SELECT 
+            EXISTS (
+                SELECT 1
+                FROM p5_tbl_job_view_r
+                WHERE mbr_Sq = #{mbrSq}
+                AND jbp_Sq = #{jbpSq}
+            )
+    </select>
+
+    <insert id="insertJobView">
+        INSERT INTO p5_tbl_job_view_r
+        (mbr_Sq, jbp_Sq, mbr_id)
+        VALUES
+        (#{mbrSq}, #{jbpSq}, #{mbrId})
+    </insert>
+
+    <update id="updateJobViewDate">
+        UPDATE p5_tbl_job_view_r
+        SET view_date = #{now}
+        WHERE mbr_sq = #{mbrSq}
+        AND jbp_Sq = #{jbpSq}
+    </update>
+</mapper>

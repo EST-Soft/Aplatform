@@ -18,7 +18,7 @@ public interface EnterMemberRepository extends JpaRepository<EnterMemberEntity,L
 	
 	
 	@Query(value ="SELECT m.entrprsPswrd FROM EnterMemberEntity m WHERE m.entrprsId = :entrprsId")
-	String findByEntrprsId(String entrprsId);
+	String findEntrprsPswrdByEntrprsId(String entrprsId);
 
 
 	boolean existsByEntrprsPicEml(String entrprsPicEml);
@@ -50,5 +50,8 @@ public interface EnterMemberRepository extends JpaRepository<EnterMemberEntity,L
 //	@Modifying
 //	@Query("UPDATE EnterMemberEntity e SET e.entrprsPswrd = :encodePswrd WHERE e.entrprsId = :entrprsId")
 //	void updatePassword(@Param("encodePswrd") String encodePswrd, @Param("entrprsId") String entrprsId);
+
+
+	Optional<EnterMemberEntity> findByEntrprsId(String entrprsId);
 
 }

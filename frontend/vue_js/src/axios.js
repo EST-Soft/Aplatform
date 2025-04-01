@@ -13,7 +13,7 @@ const apiInstance = axios.create({
 const api = {
   async $get(url, params) {
     try {
-      console.log("불러오는중");
+      // console.log("불러오는중");
       const response = await apiInstance.get(url, params);
       return response.data;
     } catch (err) {

@@ -20,8 +20,10 @@ import jobplatform.fo.enterprise.domain.mapper.CommonCodeMapper;
 
 import jobplatform.fo.enterprise.domain.vo.CommonCodeVO;
 import jobplatform.fo.enterprise.domain.vo.ScrapVO;
+import jobplatform.fo.project.domain.ProjectScrapDomain;
 import jobplatform.fo.user.domain.mapper.M_MypageMapper;
 import jobplatform.fo.user.domain.vo.M_JobPosting_pp;
+import jobplatform.fo.user.domain.vo.M_ProjectPosting_pp;
 
 
 @Service
@@ -229,6 +231,38 @@ public class M_MypageServiceImpl implements M_MypageService{
 		return map;
 	}
 
+    // 이력서 리스트 데이터 얻기 (프로젝트용)
+	public Map<String, Object> findProjectScrapData(ResumeSearchDataDTO resumeSearchDataDTO) throws SQLException, IOException {
+		Map<String, Object> map = new HashMap<String, Object>();
+		// 총 데이터 갯수
+		int totalCount = mypageMapper.loadProjectScrapListCount(resumeSearchDataDTO);
+		// 페이지네이션 정보 생성 (기본 1페이지 = 데이터10 / 페이지그룹= 페이지5)
+		Pagination pagination = new Pagination(totalCount, resumeSearchDataDTO.getPageNo());
+		// 페이지네이션 정보 map 추가
+		map.put("paginationData", pagination);
+		// 검색/정렬 정보 map 추가
+		map.put("searchData", resumeSearchDataDTO);
+		// 스크랩 리스트 정보 얻기
+		List<ProjectScrapDomain> projectScrapDomain = mypageMapper.selectProjectScrapData(map);
+		// 스크랩 리스트 정보 map 추가
+		map.put("scrapDatas", projectScrapDomain);
+
+        // jbp_sq 리스트를 Long으로 변환하여 생성
+        List<Long> prjctSqList = new ArrayList<>();
+        System.out.println("projectScrapDomain길이: " + projectScrapDomain.size());
+        System.out.println(projectScrapDomain);
+        for (ProjectScrapDomain projectDomain : projectScrapDomain) {
+            prjctSqList.add(projectDomain.getPrjctSq());
+        }
+        // 공고 정보 가져오기
+        List<M_ProjectPosting_pp> ProjectPostingDTO = mypageMapper.selectProjectPosting(prjctSqList);
+        System.out.println(ProjectPostingDTO);
+        //공고 정보 map에 추가
+        map.put("projectPostingData", ProjectPostingDTO);
+
+		return map;
+	}
+
     public Map<String, Object> findCommonCode(){
         Map<String, Object> map = new HashMap<String, Object>();
         List<CommonCodeVO> commonCodeVO = commonCodeMapper.findCommonCode();
@@ -278,6 +312,8 @@ public List<Long> getRecentJobViews(Long mbrSq, HttpSession session) {
     }
     return recentViews;
 }
+
+
 
 
     

@@ -8,7 +8,7 @@
             <h3>프로젝트 지원서</h3>
             <br>
             <h4>이름 : {{ state.member.mbrName }}</h4>
-            <h4>주민번호 앞자리 : {{ state.member.mbrBd }}</h4>
+            <h4>주민등록번호 : {{ state.member.mbrBd }} - {{ state.member.gndrTypCd === 'm' || state.member.gndrTypCd === 'M' ? "1" : "2"}}XXXXXX</h4>
             <h4 class="align-items-center">전화번호 :
                 <span v-if="!isPhoneNumberEditing">{{ state.member.mbrMp }}</span>
                 <input size=13 maxlength=13 class="phoneNum" v-if="isPhoneNumberEditing" type="text"
@@ -27,8 +27,7 @@
             </h4>
             <div class="modal-btn d-grid gap-2 d-md-flex justify-content-md-end">
                 <button @click="(representativeResume?.length ?? 0) > 0 || (state.changeResume && Object.keys(state.changeResume).length > 0) ? projectApply() : showSetResume()
-"
-                    class="btn btn-outline-dark">
+                    " class="btn btn-outline-dark">
                     지원하기
                 </button>
 
@@ -60,7 +59,7 @@
     </div>
     <div class="modal-wrap" v-if="isLogin === 'enter'" v-show="modalCheck">
         <div class="modal-container" v-if="!profileModalCheck && !profileDetailModalCheck">
-            <h3>프로젝트 지원서</h3>
+            <h3>프로젝트 지원 인원 목록</h3>
             <div class="form-check h5">
                 <input class="form-check-input" type="checkbox" value="" id="flexCheck1"
                     v-model="checkedItems.flexCheck1" @change="handleCheck('flexCheck1')">
@@ -200,8 +199,14 @@ const state = reactive({
     member: {},
     resumes: [],
     changeResume: {},
+    enter: {},
 });
 
+
+// 기업에 소속된 희원들 정보 불러오기
+// const fetchEnterMembers = async () => {
+
+// };
 
 
 // 프로필 변경
@@ -272,7 +277,12 @@ const fetchScrap = async () => {
     try {
         // 일반 회원 로그인일 때
         if (store.getters.getUserType === 'user') {
-            const response = await api.$get(`/scrap/projectDetail/${state.member.mbrSq}/${prjctSq.value}`);
+            const response = await api.$get(`/scrap/projectDetail/user/${state.member.mbrSq}/${prjctSq.value}`);
+            isScrapped.value = response;
+            // console.log("isScrapped ", isScrapped.value);
+        }
+        if(store.getters.getUserType === 'enter'){
+            const response = await api.$get(`/scrap/projectDetail/enter/${state.enter.entrprsSq}/${prjctSq.value}`);
             isScrapped.value = response;
             // console.log("isScrapped ", isScrapped.value);
         }
@@ -290,9 +300,23 @@ async function toggleScrap() {
     if (store.getters.getUserType === 'user') {
         try {
             if (isScrapped.value) {
-                await api.$delete(`/scrap/remove/${state.member.mbrSq}/${prjctSq.value}`);
+                await api.$delete(`/scrap/remove/user/${state.member.mbrSq}/${prjctSq.value}`);
             } else {
-                await api.$post(`/scrap/create/${state.member.mbrSq}/${prjctSq.value}`);
+                await api.$post(`/scrap/create/user/${state.member.mbrSq}/${prjctSq.value}`);
+            }
+            await fetchScrap();
+        } catch (error) {
+            console.error("에러메시지", error);
+        }
+    }
+
+    // 기업 회원 로그인일 때
+    if (store.getters.getUserType === 'enter') {
+        try {
+            if (isScrapped.value) {
+                await api.$delete(`/scrap/remove/enter/${state.enter.entrprsSq}/${prjctSq.value}`);
+            } else {
+                await api.$post(`/scrap/create/enter/${state.enter.entrprsSq}/${prjctSq.value}`);
             }
             await fetchScrap();
         } catch (error) {
@@ -303,16 +327,24 @@ async function toggleScrap() {
 
 
 // 로그인 유저 정보 불러오기
-const fetchMember = async () => {
+const fetchLoginInfo = async () => {
     try {
+        // 일반 회원일 때
         if (store.getters.getUserType === 'user') {
             const mbrId = store.getters.getMember?.mbrId;
             const response = await api.$get(`/member/detail/${mbrId}`);
             state.member = response;
             response.mbrMp = formattedPhoneNumber(response.mbrMp);
-            await fetchScrap();
-            await fetchResumes();
+            console.log(state.member);
         }
+        // 기업 회원일 때
+        if(store.getters.getUserType === 'enter'){
+            const enter = store.getters.enterMember;
+            state.enter = enter;
+            console.log(state.enter);
+        }
+        await fetchScrap();
+        await fetchResumes();
     } catch (error) {
         console.error('에러 메시지 : ', error);
     }
@@ -337,7 +369,7 @@ const fetchResumes = async () => {
     try {
         const response = await api.$get(`/resumes/${state.member.mbrSq}`)
         state.resumes = response;
-        // console.log(response);
+        console.log("이력서" , response);
     } catch (error) {
         console.log("에러메시지 : " + error);
     }
@@ -390,7 +422,7 @@ function formatNumberWithCommas(number) {
 
 onMounted(() => {
     fetchProject();
-    fetchMember();
+    fetchLoginInfo();
 })
 
 // // 대표 프로필 변경
@@ -462,7 +494,7 @@ watch(modalCheck, () => {
 const store = useStore();
 
 const isLogin = computed(() => {
-    if (store.getters.getMember?.entrprsId != null) {
+    if (store.getters.enterMember?.entrprsId != null) {
         // console.log("entrprsId : " + store.getters.getMember?.entrprsId);
         // console.log("유저타입 " + store.getters.getUserType);
         return "enter";

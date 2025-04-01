@@ -2,9 +2,13 @@ package jobplatform.fo.enterprise.domain.dto;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class EnterInfoDTO {
 	
 	private Long entrprsSq; // 기업 순번

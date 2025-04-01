@@ -1,15 +1,13 @@
 package jobplatform.fo.enterprise.service;
 
-import java.io.IOException;
-import java.nio.file.Paths;
-import java.util.List;
+import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
+import jobplatform.fo.enterprise.domain.dto.EnterInfoDTO;
 import jobplatform.fo.enterprise.domain.dto.EnterLoginDTO;
 import jobplatform.fo.enterprise.domain.dto.EnterRegisterDTO;
 import jobplatform.fo.enterprise.domain.entity.EnterMemberEntity;
@@ -20,34 +18,28 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 @RequiredArgsConstructor
 @Service
-public class EnterMemberServiceImpl implements EnterMemberService{
-
+public class EnterMemberServiceImpl implements EnterMemberService {
 
     @Autowired
     EnterMemberRepository enterMemberRepository;
-    
-    
-    
+
     @Autowired
     PasswordEncoder passwordEncoder;
-    
 
     @Autowired
     ModelMapper modelMapper;
 
-
-
     @Override
     public void insert(EnterRegisterDTO enterMemberDTO) {
 
-        System.out.println("서비스로 넘어오는 DTO : " + enterMemberDTO );
-        if(enterMemberDTO != null ){
-           EnterMemberEntity enterMemberEntity = modelMapper.map(enterMemberDTO,EnterMemberEntity.class);
-           
-           String encodePswrd =   passwordEncoder.encode(enterMemberDTO.getEntrprsPswrd());
-           
+        System.out.println("서비스로 넘어오는 DTO : " + enterMemberDTO);
+        if (enterMemberDTO != null) {
+            EnterMemberEntity enterMemberEntity = modelMapper.map(enterMemberDTO, EnterMemberEntity.class);
+
+            String encodePswrd = passwordEncoder.encode(enterMemberDTO.getEntrprsPswrd());
+
             enterMemberEntity.setEntrprsPswrd(encodePswrd);
-             
+
             enterMemberRepository.save(enterMemberEntity);
         }
     }
@@ -55,8 +47,8 @@ public class EnterMemberServiceImpl implements EnterMemberService{
     @Override
     public boolean selectId(String entrprsId) {
 
-        //아이디 조회
-       boolean yn =  enterMemberRepository.existsByEntrprsId(entrprsId);
+        // 아이디 조회
+        boolean yn = enterMemberRepository.existsByEntrprsId(entrprsId);
 
         return yn;
     }
@@ -80,37 +72,55 @@ public class EnterMemberServiceImpl implements EnterMemberService{
     @Override
     public String findByPswrd(EnterRegisterDTO enterRegisterDTO) {
 
-        String entrprsSq=enterMemberRepository.findByEntrprsPw(enterRegisterDTO);
+        String entrprsSq = enterMemberRepository.findByEntrprsPw(enterRegisterDTO);
 
-            return entrprsSq;
+        return entrprsSq;
     }
 
     @Override
     public int pswrdReset(EnterRegisterDTO enterRegisterDTO) {
-        String encodePswrd =   passwordEncoder.encode(enterRegisterDTO.getEntrprsPswrd());
+        String encodePswrd = passwordEncoder.encode(enterRegisterDTO.getEntrprsPswrd());
         enterRegisterDTO.setEntrprsPswrd(encodePswrd);
-        int result= enterMemberRepository.pswrdReset(enterRegisterDTO);
+        int result = enterMemberRepository.pswrdReset(enterRegisterDTO);
 
         return result;
     }
 
     @Override
     public Long login(EnterLoginDTO enterLoginDTO) {
-    	
-    	String id = enterLoginDTO.getEntrprsId();
 
-    	Long sq = null;
-    	//전에 저장한 암호화된 비밀번호
-    	String pswrd = 	enterMemberRepository.findByEntrprsId(id);
-    	//전에 저장한 암호화된 비밀번호와 확인 (컨트롤러에서 받아온 password, 전에 저장한 암호화된 비빌번호 )
-    	if(passwordEncoder.matches(enterLoginDTO.getEntrprsPswrd(), pswrd)) {
-    		
-    	 sq	= enterMemberRepository.findByEntrprsIdSq(id);
-    	};
-    	//무슨 값을 리턴해주는게 좋을까? 
-    	
-    	return sq;
+        String id = enterLoginDTO.getEntrprsId();
+
+        Long sq = null;
+        // 전에 저장한 암호화된 비밀번호
+        String pswrd = enterMemberRepository.findEntrprsPswrdByEntrprsId(id);
+        // 전에 저장한 암호화된 비밀번호와 확인 (컨트롤러에서 받아온 password, 전에 저장한 암호화된 비빌번호 )
+        if (passwordEncoder.matches(enterLoginDTO.getEntrprsPswrd(), pswrd)) {
+
+            sq = enterMemberRepository.findByEntrprsIdSq(id);
+        }
+        ;
+        // 무슨 값을 리턴해주는게 좋을까?
+
+        return sq;
     }
- 
-    
+
+    @Override
+    public Optional<EnterInfoDTO> getEnterInfo(String entrprsId) {
+        return enterMemberRepository.findByEntrprsId(entrprsId)
+            .map(entity -> new EnterInfoDTO(
+                entity.getEntrprsSq(),      // 기업 순번
+                entity.getEntrprsId(),      // 기업 아이디
+                entity.getEntrprsName(),    // 기업명
+                entity.getEntrprsHp(),      // 기업 홈페이지
+                entity.getEntrprsAdrs(),    // 기업 주소
+                entity.getEntrprsPicName(), // 담당자 이름
+                entity.getEntrprsPicMp(),   // 담당자 전화번호
+                entity.getEntrprsPicEml(),  // 담당자 이메일 주소
+                entity.getEntrprsZipCode(), // 기업 우편번호
+                null,                       // 프로필 이미지 (MultipartFile은 일반적으로 DTO에서 사용되지 않음)
+                entity.getLogoFileUrl()     // 프로필 이미지 URL
+            ));
+    }
+
 }

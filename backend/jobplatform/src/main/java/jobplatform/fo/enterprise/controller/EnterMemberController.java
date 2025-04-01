@@ -10,15 +10,23 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.servlet.http.HttpSession;
+import jobplatform.fo.enterprise.domain.dto.EnterInfoDTO;
 import jobplatform.fo.enterprise.domain.dto.EnterLoginDTO;
+import jobplatform.fo.enterprise.domain.dto.EnterMemberListDTO;
 import jobplatform.fo.enterprise.domain.dto.EnterRegisterDTO;
+import jobplatform.fo.enterprise.domain.entity.EnterpriseMemberEntity;
 import jobplatform.fo.enterprise.service.EnterMemberService;
+import jobplatform.fo.enterprise.service.EnterpriseMemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
+import java.lang.foreign.Linker.Option;
 import java.time.Duration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+
 
 
 @Log4j2
@@ -29,6 +37,9 @@ public class EnterMemberController {
 
     @Autowired
     EnterMemberService enterMemberService;
+
+    @Autowired
+    EnterpriseMemberService enterpriseMemberService;
 
 
     // ResponseEntity로 상태 코드만 전달,
@@ -108,7 +119,7 @@ public class EnterMemberController {
 
         Map map = new HashMap();
 
-        map.put("pk",pk);
+        map.put("entrprsSq",pk);
         map.put("entrprsId",enterLoginDTO.getEntrprsId());
 
         log.info("cookie"+ cookie);
@@ -162,4 +173,18 @@ public class EnterMemberController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(0);
         }
     }
+
+
+    @GetMapping("/{entrprsId}")
+    public Optional<EnterInfoDTO> getEnter(@PathVariable String entrprsId) {
+        return enterMemberService.getEnterInfo(entrprsId);
+    }
+
+
+    @GetMapping("/memberList/{entrprsSq}")
+    public List<EnterMemberListDTO> getMemberList(@PathVariable Long entrprsSq) {
+        return enterpriseMemberService.getEnterpriseMemberList(entrprsSq);
+    }
+    
+    
 }

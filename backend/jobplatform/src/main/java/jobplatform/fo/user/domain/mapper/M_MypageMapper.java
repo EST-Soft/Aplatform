@@ -15,7 +15,9 @@ import jobplatform.fo.enterprise.domain.entity.JobViewEntity;
 import jobplatform.fo.enterprise.domain.vo.JobViewVO;
 import jobplatform.fo.enterprise.domain.vo.ResumeListVO;
 import jobplatform.fo.enterprise.domain.vo.ScrapVO;
+import jobplatform.fo.project.domain.ProjectScrapDomain;
 import jobplatform.fo.user.domain.vo.M_JobPosting_pp;
+import jobplatform.fo.user.domain.vo.M_ProjectPosting_pp;
 import jobplatform.fo.user.domain.vo.MemberVO;
 
 @Mapper
@@ -128,4 +130,15 @@ public interface M_MypageMapper {
 
 	// 본인이 한 스크랩한 공고sq 리스트
 	public List<Long> getJbpSqsByMbrSq(@Param("mbr_sq") Long mbr_sq);
+
+
+
+
+	// 페이지네이션을 위한 데이터 수 얻기 (프로젝트용)
+	int loadProjectScrapListCount(ResumeSearchDataDTO resumeSearchDataDTO) throws SQLException, IOException;
+
+	List<ProjectScrapDomain> selectProjectScrapData(Map<String, Object> map) throws SQLException, IOException;
+
+	public List<M_ProjectPosting_pp> selectProjectPosting(List<Long> prjctSqList);
+
 }

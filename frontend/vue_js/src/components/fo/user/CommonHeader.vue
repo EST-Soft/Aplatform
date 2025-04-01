@@ -132,7 +132,7 @@
                       data-focus="headerSearch"
                       aria-label="Search"
                     >
-                      {{ member.mbrName }}님
+                      {{ member ? member.mbrName : '' }}님
                     </span>
                     <a
                       href="#"
@@ -263,7 +263,7 @@
                       data-focus="headerSearch"
                       aria-label="Search"
                     >
-                      {{ member.entrprsId }}님
+                      {{ enterMember? enterMember.entrprsId : ""}}님
                     </span>
                     <a
                       href="#"
@@ -307,7 +307,8 @@ const router = useRouter();
 
 const userType = computed(() => store.getters.getUserType);
 const member = computed(() => store.getters.getMember);
-const isLoggedIn = computed(() => member.value !== null);
+const enterMember = computed(() => store.getters.enterMember);
+const isLoggedIn = computed(() => member.value !== null || enterMember.value !==null);
 
 function toggleNav(type) {
   if (type === "user") {
@@ -358,7 +359,12 @@ function closeAllDropdowns() {
 
 function loginUser() {
   if (isLoggedIn.value) {
-    console.log("현재 로그인된 사용자:", member.value);
+    if(userType.value === "user"){
+      console.log("현재 로그인된 사용자:", member.value);
+    
+    }if(userType.value === "enter"){
+      console.log("현재 로그인된 사용자:", enterMember.value);
+    }
     console.log("현재 로그인된 사용자:", userType.value);
   } else {
     console.log("로그인된 사용자가 없습니다.");
@@ -366,7 +372,12 @@ function loginUser() {
 }
 
 function logout() {
-  store.commit("clearMember");
+  if(userType.value === "user"){
+    store.commit("clearMember");
+  }
+  if(userType.value === "enter"){
+    store.commit("clearEnter");
+  }
   store.commit("changeUserType", "user");
 
   api.$post("/member/logout").then(() => {

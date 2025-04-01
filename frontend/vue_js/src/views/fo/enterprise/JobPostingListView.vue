@@ -25,11 +25,9 @@
           <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" checked
             @click="setFilter('organization')">
           <label class="btn btn-outline-primary" for="btnradio1">소속 채용</label>
-
           <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off"
             @click="setFilter('project')">
           <label class="btn btn-outline-primary" for="btnradio2">프로젝트 채용</label>
-
         </div>
 
         <OrganizationRecruitment v-if="activeFilter === 'organization'" />
@@ -51,9 +49,9 @@ import { ref } from 'vue';
 const activeFilter = ref('organization');
 
 function setFilter(filter) {
-  console.log('필터버튼클릭');
+  // console.log('필터버튼클릭');
   this.activeFilter = filter;
-  console.log('현재 필터는?', this.activeFilter);
+  // console.log('현재 필터는?', this.activeFilter);
 }
 
 </script>

@@ -150,7 +150,7 @@ const LoginSubmit = async () => {
   }
   try {
     const res = await api.$post("/member/login", loginData);
-    console.log(res);
+    console.log("일반 :" ,res);
     // 정상적으로 로그인된 경우
     if (res) {
       showAlert(`로그인 되었습니다. ${res.mbrName} 님 환영합니다.`);

@@ -9,7 +9,7 @@ const store = createStore({
   state: {
     userType: sessionStorage.getItem("userType") || "", // 세션 스토리지에서 userType을 가져오도록 수정
     member: JSON.parse(sessionStorage.getItem("member")) || null, // 사용자 정보 저장할 상태
-    enterMember: [], // 배열 형태로 저장
+    enterMember: JSON.parse(sessionStorage.getItem("enter")) || null, // 배열 형태로 저장
   },
   mutations: {
     changeUserType(state, userType) {
@@ -18,6 +18,15 @@ const store = createStore({
     },
     setEnter(state, payLoad) {
       state.enterMember = payLoad;
+      sessionStorage.setItem("enter", JSON.stringify(payLoad));
+    },
+    clearEnter(state) {
+      state.enterMember = null;
+      sessionStorage.removeItem("enter"); // 세션 스토리지에서 'enter' 삭제
+    },
+    updateEnterInfo(state, updatedInfo) {
+      state.enterMember = { ...state.enterMember, ...updatedInfo };
+      sessionStorage.setItem("enter", JSON.stringify(state.enterMember));
     },
     setMember(state, payLoad) {
       state.member = payLoad;

@@ -63,7 +63,8 @@ public interface M_MypageService {
 
 
 
-
+	//스크랩 목록
+	public Map<String, Object> findProjectScrapData(ResumeSearchDataDTO resumeSearchDataDTO) throws SQLException, IOException;
 
 
 }

@@ -115,9 +115,6 @@ public class JobPostingController {
 	public JobPostingDTO JobPostingDetail(@PathVariable Long jbpSq, @RequestParam(required = false) Long mbrSq) {
 		// 공고 상세 조회
 		JobPostingDTO jpe = jobPostingService.jobPostingDetail(jbpSq, mbrSq);
-		System.out.println("공고 상세 조회 jdbSq: " + jbpSq);
-		System.out.println("공고 상세 조회 mbrSq: " + mbrSq);
-		System.out.println("1111111111111111"+jpe);
 
 		// 조회수 증가
 		jobPostingService.increaseHits(jbpSq);
@@ -136,7 +133,6 @@ public class JobPostingController {
 	// 공고 수정 메소드
 	@PostMapping("/board/jobPostingUpdate/{jbpSq}")
 	public void updateJobPosting(@PathVariable int jbpSq , @RequestBody JobPostingEntity jpe) {
-		System.out.println("여기서 받는 jpe : " + jpe);
 		jobPostingService.updateJobPosting(jpe);
 	}
     
@@ -171,13 +167,19 @@ public class JobPostingController {
     }
     
     @PostMapping("/apply/insert")
-	public ResponseEntity<String> insertApply(@RequestBody ApplyEntity ae) {
+	public ResponseEntity<String> insertApply(@RequestBody ApplyEntity ae, @RequestParam String mbrMp, @RequestParam Long mbrSq) {
+		System.out.println("apply insert ae : " + ae);
 		try {
 			Optional<ResumeEntity> optionalResume = resumeRepository.findByRsmSq(ae.getResume().getRsmSq());
+			System.out.println("공고 지원 optionalResume : " + optionalResume);
+			MemberEntity optionalMember = memberRepository.findByMbrSq(mbrSq);
 			if (optionalResume.isPresent()) {
 				ae.setResume(optionalResume.get());
 				Long apySq = jobPostingService.insertApply(ae);
-				return ResponseEntity.status(HttpStatus.CREATED).body("입사지원 성공 : " + apySq);
+				optionalMember.setMbrMp(mbrMp);
+				memberRepository.mbrMpReset(optionalMember);
+				return ResponseEntity
+				.status(HttpStatus.CREATED).body("입사지원 성공 : " + apySq);
 			} else {
 				return ResponseEntity.status(HttpStatus.NOT_FOUND).body("이력서 찾을 수 없음");
 			}

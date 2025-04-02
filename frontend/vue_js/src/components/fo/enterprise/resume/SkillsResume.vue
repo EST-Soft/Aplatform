@@ -74,6 +74,7 @@ onMounted(async () => {
         'Tool': []
     };
 
+    if (Array.isArray(newSkills)) {
     newSkills.forEach(skill => {
         Object.keys(localSkills.value).forEach(category => {
             if (localSkills.value[category].some(item => item.sklScName === skill)) {
@@ -85,6 +86,9 @@ onMounted(async () => {
             }
         });
     });
+} else {
+    console.error("newSkills is not an array", newSkills);
+}
 }, { immediate: true });
 
 

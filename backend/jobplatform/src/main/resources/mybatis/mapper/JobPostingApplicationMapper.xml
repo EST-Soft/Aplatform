@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jobplatform.fo.user.domain.mapper.JobPostingApplicationMapper">
+    <!-- 대표가 아니면 rsumeVo에는 아무것도 안담김 -->
+    <select id="getJobPostingApplicationDtoByMbrSq" resultType="JobPostingApplicationMapper">
+        select m.mbr_name, m.mbr_bd, m.mbr_mp, r.rsm_sq as "selectedResume.rsm_sq", r.rsm_ttl as "selectedResume.rsm_ttl"
+        from p3_tbl_member_m m
+        left join p2_tbl_resume_m r
+        on m.mbr_sq = r.mbr_sq and r.rsm_rprsntv_yn = 'Y'
+        where m.mbr_sq = #{mbrSq}
+    </select>
+</mapper>

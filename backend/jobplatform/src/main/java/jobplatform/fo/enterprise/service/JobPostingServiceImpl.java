@@ -254,11 +254,10 @@ public class JobPostingServiceImpl implements JobPostingService {
                         "이력서를 찾을 수 없습니다. rsmSq: " + ae.getResume().getRsmSq()));
 
         ae.setResume(resume);
-
         if (applyRepository.existsByResumeRsmSqAndJobPostingJbpSq(ae.getResume().getRsmSq(), ae.getJobPosting().getJbpSq())) {
             throw new IllegalArgumentException("이미 지원한 이력서입니다.");
         }
-
+        System.out.println("에러난 부분 ae: " + ae);
         ApplyEntity saveApply = applyRepository.save(ae);
         return saveApply.getApySq();
     }

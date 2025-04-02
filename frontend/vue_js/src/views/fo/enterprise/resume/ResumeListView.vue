@@ -24,7 +24,7 @@
         </div>
         <!-- 자료있을때 for -->
         <div v-else>
-            <div v-for="resumeData in resumeListData.resumeDatas" :key="resumeData.rsm_sq">
+            <div v-for="resumeData in resumeListData.resumeDatas" :key="resumeData.rsmSq">
                 <ResumeDatas :resumeData="resumeData" @modify-representative="modifyRepresentative"
                     @modify-resumes="modifyResumes" @delete-resumes="deleteResumes" @copy-resumes="copyResumes" />
             </div>
@@ -73,7 +73,7 @@ const callAxios = async () => {
     // 리스트 뿌려주는 기본 axios
     await api.$get("/resumes/resume-list/" + resumeListData.value.searchData.mbr_sq + "/" + resumeListData.value.searchData.sort + "/" + resumeListData.value.searchData.pageNo)
         .then((success) => {
-            console.log('axios 성공' + success);
+            console.log('axios 성공', success);
             resumeListData.value = success;
         })
         .catch((error) => {

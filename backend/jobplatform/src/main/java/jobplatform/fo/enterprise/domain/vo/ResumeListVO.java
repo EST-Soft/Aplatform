@@ -11,17 +11,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ResumeListVO {
 	// 이력서 순번
-	private int rsm_sq;
+	private int rsmSq;
 	// 회원 순번
-	private int mbr_sq;
+	private int mbrSq;
 	// 대표여부
-	private String rsm_rprsntv_yn;
+	private String rsmRprsntvYn;
 	// 제목
-	private String rsm_ttl;
+	private String rsmTtl;
 	// 수정일
-	private Timestamp updt_dtm;
+	private Timestamp updtDtm;
 	// 등록일
-	private Timestamp insrt_dtm;
-	
-	
+	private Timestamp insrtDtm;
 }

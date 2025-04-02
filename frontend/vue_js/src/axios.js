@@ -21,9 +21,9 @@ const api = {
       throw err; // 에러를 다시 던져서 호출한 곳에서 처리할 수 있게 함
     }
   },
-  async $post(url, data) {
+  async $post(url, data, config = undefined) {
     try {
-      const response = await apiInstance.post(url, data);
+      const response = await apiInstance.post(url, data, config);
       return response.data;
     } catch (err) {
       console.error(err);

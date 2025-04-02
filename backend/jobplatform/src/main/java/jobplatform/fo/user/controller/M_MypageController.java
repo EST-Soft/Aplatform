@@ -128,26 +128,24 @@ public class M_MypageController {
 		httpStatus = HttpStatus.OK;
 
 		return new ResponseEntity<Map<String, Object>>(map, httpStatus);
-
 	}
 
-		// 스크랩 목록 불러오기 (프로젝트용)
-		@GetMapping("/scrap/project-scrapList-list/{mbr_sq}/{sort}/{pageNo}")
-		public ResponseEntity<Map<String, Object>> findProjectListData(
-				@PathVariable("mbr_sq") Long mbr_sq,
-				@PathVariable("sort") String sort,
-				@PathVariable("pageNo") int pageNo) throws SQLException, IOException {
-	
-			ResumeSearchDataDTO resumeSearchDataDTO = new ResumeSearchDataDTO(mbr_sq, sort, pageNo);
-			Map<String, Object> map = null;
-			HttpStatus httpStatus = null;
-	
-			map = myPageService.findProjectScrapData(resumeSearchDataDTO);
-			httpStatus = HttpStatus.OK;
-	
-			return new ResponseEntity<Map<String, Object>>(map, httpStatus);
-	
-		}
+	// 스크랩 목록 불러오기 (프로젝트용)
+	@GetMapping("/scrap/project-scrapList-list/{mbr_sq}/{sort}/{pageNo}")
+	public ResponseEntity<Map<String, Object>> findProjectListData(
+			@PathVariable("mbr_sq") Long mbr_sq,
+			@PathVariable("sort") String sort,
+			@PathVariable("pageNo") int pageNo) throws SQLException, IOException {
+
+		ResumeSearchDataDTO resumeSearchDataDTO = new ResumeSearchDataDTO(mbr_sq, sort, pageNo);
+		Map<String, Object> map = null;
+		HttpStatus httpStatus = null;
+
+		map = myPageService.findProjectScrapData(resumeSearchDataDTO);
+		httpStatus = HttpStatus.OK;
+
+		return new ResponseEntity<Map<String, Object>>(map, httpStatus);
+	}
 
 	//공고 학력, 경력 공통코드 불러오기
 	@GetMapping("/scrap/commonCode")

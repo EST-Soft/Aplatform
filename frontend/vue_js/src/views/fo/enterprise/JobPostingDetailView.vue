@@ -11,8 +11,8 @@
             <h2 class="card-title me-auto" data-v-7f0d27c6="">공고</h2>
             <JobPostingScrap
               v-if="member?.mbrSq"
-              :mbrSq="member?.mbrSq" 
-              :jbpSq="route.params.jbpSq" 
+              :mbrSq="parseInt(member?.mbrSq)" 
+              :jbpSq="parseInt(route.params.jbpSq)" 
               :scrapped="jbp.scrapped"
               @update:scrapped="(newValue) => jbp.scrapped = newValue"
             />
@@ -112,10 +112,15 @@
           </div>
         </div>
 
-        <!-- 입사지원 버튼 -->
+        <!-- 소속지원 버튼 -->
         <div v-show="isMember" class="row mt-3">
           <div class="col d-flex justify-content-end">
-            <button class="btn btn-primary" @click="applyJob">입사지원</button>
+            <JobApplcationBtn
+              @open-modal="openJobPostingModal"
+              @close-modal="closeJobPostingModal"
+              @submit="handleApplicationSubmit"
+              :is-modal-open="isJobPostingModalOpen"
+            />
           </div>
         </div>
 
@@ -139,6 +144,7 @@ import QuillEditorComponent from '@/components/common/Editor.vue';
 import { useStore } from 'vuex';
 import { showAlert } from '../../../utill/utillModal';
 import JobPostingScrap from './JobPostingScrap.vue';
+import JobApplcationBtn from './JobApplicationBtn.vue';
 
 const store = useStore();
 const isEditable = ref(true);
@@ -153,8 +159,6 @@ const isMember = computed(() => {
   return store.getters.getMember?.mbrSq != null;
 });
 
-// const jobId = route.params.jbpSq;
-
 const checkEnter = ref(false);
 
 const enterCheck = () => {
@@ -162,7 +166,6 @@ const enterCheck = () => {
     checkEnter.value = true;
   }
 };
-
 
 const jbp = ref({
   jbpSq: 0,
@@ -244,33 +247,6 @@ const deleteBoard = async () => {
   }
 };
 
-// alert창에서 이력서 순번을 넣어야 해서 닫아녾음
-const applyJob = () => {
-  showAlert("해당 기능은 수정중 입니다.")
-  return
-
-  /* const resumeId = prompt('이력서 번호를 입력하세요:');
-  if (resumeId) {
-  insertApply(resumeId);
-  } */
-};
-
-/* const insertApply = async (resumeId) => {
-  const applyData = {
-    resume: { rsmSq: resumeId },
-    jobPosting: { jbpSq: jbp.value.jbpSq },
-    apyDtm: new Date().toISOString()
-  };
-
-  try {
-    const response = await api.$post('/apply/insert', applyData);
-    alert(response);
-  } catch (error) {
-    console.error('Error applying job:', error);
-    alert('입사지원을 처리하는 중 오류가 발생했습니다.');
-  }
-}; */
-
 // 학력 매핑 테이블
 const educationMapping = {
   'ednm': '학력무관',
@@ -301,8 +277,23 @@ const getCareerText = (value) => {
 const educationText = computed(() => getEducationText(jbp.value.edctn));
 const careerText = computed(() => getCareerText(jbp.value.crrDrtn));
 
-</script>
+// 모달 상태 관리
+const isJobPostingModalOpen = ref(false);
 
-<style scoped>
-/* 추가적인 스타일 정의 */
-</style>
+// 모달 열기
+function openJobPostingModal () {
+  isJobPostingModalOpen.value = true;
+}
+
+// 모달 닫기
+function closeJobPostingModal () {
+  isJobPostingModalOpen.value = false;
+}
+
+// 소속 지원 제출
+const handleApplicationSubmit = () => {
+  showAlert('지원이 완료되었습니다.');
+  closeJobPostingModal();
+}
+
+</script>

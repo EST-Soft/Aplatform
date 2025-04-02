@@ -69,7 +69,6 @@ public class ProcjectController {
 
     @GetMapping("/{prjctSq}")
     public ProjectDomain getProjectDetail(@PathVariable("prjctSq") int prjctSq) {
-        System.out.println("여기나옴1111111?");
         return projectService.projectRead(prjctSq);
     }
 
@@ -114,7 +113,6 @@ public class ProcjectController {
     
     @DeleteMapping("/{prjctSq}")
     public ResponseEntity<?> deleteMethodName(@PathVariable("prjctSq") int prjctSq) {
-        System.out.println( " 123123이거나옴?");
         int result = projectService.projectDelete(prjctSq);
         
         if(result < 1){

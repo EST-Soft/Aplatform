@@ -1,5 +1,5 @@
 <template>
-            <div class="modal-wrap" v-show="modalCheck">
+    <div class="modal-wrap" v-show="modalCheck">
         <div class="modal-container" v-if="!profileModalCheck && !profileDetailModalCheck">
             <div class="d-flex justify-content-end">
                 <button type="button" class="btn-close" aria-label="Close" @click="applyModalOpen"></button>
@@ -7,7 +7,8 @@
             <h3>프로젝트 지원서</h3>
             <br>
             <h4>이름 : {{ state.member.mbrName }}</h4>
-            <h4>주민등록번호 : {{ state.member.mbrBd }} - {{ state.member.gndrTypCd === 'm' || state.member.gndrTypCd === 'M' ? "1" : "2"}}XXXXXX</h4>
+            <h4>주민등록번호 : {{ state.member.mbrBd }} - {{ state.member.gndrTypCd === 'm' || state.member.gndrTypCd === 'M'
+                ? "1" : "2"}}XXXXXX</h4>
             <h4 class="align-items-center">전화번호 :
                 <span v-if="!isPhoneNumberEditing">{{ state.member.mbrMp }}</span>
                 <input size=13 maxlength=13 class="phoneNum" v-if="isPhoneNumberEditing" type="text"
@@ -82,7 +83,7 @@
                 </div>
                 <div class="col-md-auto">
                     <button v-if="props.projectPostingData.prjctEndDate >= new Date().toISOString()"
-                        class="btn btn-modern btn-light mb-2" @click="applyModalOpen" >지원하기</button>
+                        class="btn btn-modern btn-light mb-2" @click="applyModalOpen">지원하기</button>
                     <button v-else class="btn btn-modern btn-dark mb-2">지원불가</button>
                 </div>
             </div>
@@ -92,11 +93,12 @@
 </template>
 
 <script setup>
-import { defineProps, ref, computed, reactive, onMounted, watch } from "vue";
+import { defineProps, ref, computed, reactive, onMounted, watch, defineEmits } from "vue";
 import { api } from '@/axios';  // API 인스턴스 임포트
 import { useStore } from "vuex";
 import { showAlert, showConfirm } from "../../../../utill/utillModal";
 const store = useStore();
+const emit = defineEmits(['reload']);
 
 const state = reactive({
     resumes: [],
@@ -111,7 +113,7 @@ const member = computed(() => store.getters.getMember);
 
 onMounted(() => {
     fetchLoginInfo();
-    console.log("멤버정보:" , member.value);
+    console.log("멤버정보:", member.value);
 })
 
 
@@ -120,24 +122,13 @@ const currentImage = ref(require('@/assets/sht.png'));
 
 // 이미지 클릭 시 호출될 함수
 const toggleImage = () => {
-    const newImage = currentImage.value === require('@/assets/sht.png')
-        ? require('@/assets/bht.png') // 다른 이미지 경로로 변경
-        : require('@/assets/sht.png'); // 원래 이미지로 되돌림
-
-    // 이미지 상태 업데이트
-    currentImage.value = newImage;
-
     const mbr_sq = member.value.mbrSq;
     const prjctSq = props.projectPostingData.prjctSq;
 
-    // 이미지 상태에 따라 다른 서버 요청 전송
-    if (newImage === require('@/assets/bht.png')) {
-        // bht.png로 변경될 때의 서버 요청
-        sendImageChangeToServer(mbr_sq, prjctSq, 'remove/user'); // 스크랩 삭제
-    } else {
-        // sht.png로 변경될 때의 서버 요청
-        sendImageChangeToServer(mbr_sq, prjctSq, 'create/user'); // 스크랩 추가
-    }
+    showConfirm("스크랩을 해제하시겠습니까?", () =>
+        sendImageChangeToServer(mbr_sq, prjctSq, 'remove/user'));
+
+
 };
 
 // 스크랩 요청
@@ -145,6 +136,8 @@ const sendImageChangeToServer = async (mbr_sq, prjctSq, endpoint) => {
     try {
         if (endpoint === 'remove/user') {
             await api.$delete(`/scrap/${endpoint}/${mbr_sq}/${prjctSq}`);
+            showAlert("해제되었습니다.");
+            emit('reload');
         }
         else {
             await api.$post(`/scrap/${endpoint}/${mbr_sq}/${prjctSq}`);
@@ -280,6 +273,7 @@ async function saveUpdatedPhoneNumber() {
 const modalCheck = ref(false);
 
 function applyModalOpen() {
+    console.log("대표이력서", representativeResume);
     modalCheck.value = !modalCheck.value;
     isPhoneNumberEditing.value = false;
 }
@@ -306,7 +300,7 @@ const fetchResumes = async () => {
     try {
         const response = await api.$get(`/resumes/${state.member.mbrSq}`)
         state.resumes = response;
-        console.log("이력서" , response);
+        console.log("이력서", response);
     } catch (error) {
         console.log("에러메시지 : " + error);
     }
@@ -359,11 +353,11 @@ function formatNumberWithCommas(number) {
 // 로그인 유저 정보 불러오기
 const fetchLoginInfo = async () => {
     try {
-            const mbrId = store.getters.getMember?.mbrId;
-            const response = await api.$get(`/member/detail/${mbrId}`);
-            state.member = response;
-            response.mbrMp = formattedPhoneNumber(response.mbrMp);
-            console.log(state.member);
+        const mbrId = store.getters.getMember?.mbrId;
+        const response = await api.$get(`/member/detail/${mbrId}`);
+        state.member = response;
+        response.mbrMp = formattedPhoneNumber(response.mbrMp);
+        console.log(state.member);
         await fetchResumes();
     } catch (error) {
         console.error('에러 메시지 : ', error);

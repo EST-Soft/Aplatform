@@ -17,7 +17,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "P3_TBL_MEMBER_M")
+@Table(name = "p3_tbl_member_m")
 @Data
 @DynamicInsert
 @NoArgsConstructor

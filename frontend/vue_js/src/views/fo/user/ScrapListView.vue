@@ -55,7 +55,7 @@
     <!-- 자료있을때 for -->
     <div v-else>
       <div v-for="projectPostingData in scrapListData.projectPostingData" :key="projectPostingData.prjctSq">
-        <MypageScrapProject :projectPostingData="projectPostingData" />
+        <MypageScrapProject :projectPostingData="projectPostingData" @reload="fetchProjectScrap"/>
       </div>
     </div>
   </div>

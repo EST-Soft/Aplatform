@@ -362,10 +362,14 @@ const filteredAreas = computed(() => {
 
 // 필터링된 직종 목록 계산
 const filteredJobTypes = computed(() => {
+  console.log(jobs.value);
   return jobs.value.filter(job => {
-    return job.jobScName.toLowerCase().includes(jobTypeSearch.value.toLowerCase());
+    const jobName = job.jobScName || '';
+    const search = jobTypeSearch.value || '';
+    return jobName.toLowerCase().includes(search.toLowerCase());
   });
 });
+
 
 // 학력 매핑 테이블
 const educationMapping = {

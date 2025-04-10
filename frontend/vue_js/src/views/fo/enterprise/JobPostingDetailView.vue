@@ -162,7 +162,7 @@ const isMember = computed(() => {
 const checkEnter = ref(false);
 
 const enterCheck = () => {
-  if (store.getters.getMember?.pk == jbp.value.entrprsSq) {
+  if (store.getters.enterMember?.pk == jbp.value.entrprsSq) {
     checkEnter.value = true;
   }
 };

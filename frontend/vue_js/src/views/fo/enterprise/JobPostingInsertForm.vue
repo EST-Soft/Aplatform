@@ -178,7 +178,7 @@ const selectedJobs = ref([]);
 
 
 const jbpSq = ref(0);
-const entrprsSq = store.getters.getMember.pk;
+const entrprsSq = store.getters.enterMember.pk;
 const jbpTtl = ref('');
 const jbpCntnt = ref('');
 const crrDrtn = ref(801);
@@ -241,12 +241,12 @@ const openSkillsModal = () => {
 watch(skillsData, (newSkills) => {
   console.log("Updated skillsData:", newSkills); // 디버깅용 콘솔 출력
   if (Array.isArray(newSkills)) {
-    console.log("sdfdgffdg" + formattedSkills.value);
 
     formattedSkills.value = newSkills.map(skill => skill.sklScName).join(", ");
-  } else {
     console.log("sdfdgffdg" + formattedSkills.value);
+  } else {
     formattedSkills.value = ""; // 배열이 아닐 경우 초기화
+    console.log("sdfdgffdg" + formattedSkills.value);
   }
 }, { deep: true });
 

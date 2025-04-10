@@ -22,7 +22,7 @@
 		<result property="insrtEntrprsSq" column="insrt_entrprs_sq"/>
 		<result property="insertEntrprsDtm" column="insrt_entrprs_dtm"/>
 		<result property="updtEntrprsSq" column="updt_entrprs_sq"/>
-		<result property="updtEntrptsDtm" column="updt_entrpts_dtm"/>
+		<result property="updtEntrptsDtm" column="updt_entrprs_dtm"/>
 		<result property="dltYn" column="dlt_yn"/>
 		<result property="useYn" column="use_yn"/>
 		<result property="del" column="del"/>

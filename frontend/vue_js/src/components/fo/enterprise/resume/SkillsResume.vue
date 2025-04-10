@@ -61,8 +61,10 @@ const selectedSkills = ref({
 
 
 onMounted(async () => {
+
     try {
         const response = await api.$get('/skl-cd/list');
+        console.log("기술 ? ", response);
         insertSklData(response);
 
         watch(() => props.formattesSkil, async(newSkills) => {
@@ -99,16 +101,16 @@ onMounted(async () => {
 
 const insertSklData = (data) => {
     data.forEach(item => {
-        const { sklLcName, sklScName } = item;
-        if (sklLcName === "언어") {
+        const { sklMcName, sklScName } = item;
+        if (sklMcName === "언어") {
             if (!localSkills.value['Language'].includes(sklScName)) {
                 localSkills.value['Language'].push(item);
             }
-        } else if (sklLcName === "프레임워크") {
+        } else if (sklMcName === "프레임워크") {
             if (!localSkills.value['Framework'].includes(sklScName)) {
                 localSkills.value['Framework'].push(item);
             }
-        } else if (sklLcName === "툴") {
+        } else if (sklMcName === "툴") {
             if (!localSkills.value['Tool'].includes(sklScName)) {
                 localSkills.value['Tool'].push(item);
             }

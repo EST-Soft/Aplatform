@@ -129,7 +129,7 @@ const sortOption = ref('regstrStrtDtm');
 
 
 const isEnter = computed(() => {
-  return store.getters.getMember?.entrprsId != null;
+  return store.getters.enterMember?.entrprsId != null;
 });
 
 
@@ -140,7 +140,7 @@ const originalItems = ref([]);
 // 초기 데이터 로드 함수에서 원본 데이터를 저장
 const fetchItems = async () => {
   try {
-    const test = store.getters.getMember;
+    const test = store.getters.enterMember;
 
     const response = await api.$get('/board/list/jobPosting', {
       params: { 
@@ -297,7 +297,7 @@ watch(sortOption, fetchSortedItems);
 const handleSearchResult = (results) => {
   // 검색된 결과에 대해 필터링을 적용
   const filtered = results.filter(item => {
-    return item.enterpriseMember && item.enterpriseMember.entrprsId === store.getters.getMember?.entrprsId;
+    return item.enterpriseMember && item.enterpriseMember.entrprsId === store.getters.enterMember?.entrprsId;
   });  
   console.log("검색 결과:", results);
   state.items = filtered;

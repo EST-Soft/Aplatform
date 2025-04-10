@@ -150,7 +150,7 @@ const LoginSubmit = async () => {
   try {
     const response = await api.$post("/enter/login", loginData);
     console.log("기업: " ,response);
-    if (response.entrprsSq) {
+    if (response.pk) {
       // 로그인 성공 시 Vuex에 저장
       store.commit("setEnter", response);
       showAlert(`로그인 되었습니다. ${response.entrprsId} 님 환영합니다.`);

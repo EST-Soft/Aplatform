@@ -122,38 +122,87 @@ onMounted(() => {
   performSearch();
 });
 
-// 검색 함수 (대학교, 고등학교 동시에)
+// // 검색 함수 (대학교, 고등학교 동시에)
+// const performSearch = () => {
+//   const urlForUniversity = `http://www.career.go.kr/cnet/openapi/getOpenApi?apiKey=b5e83526a03f37b8349141b21fa2f6e7&svcType=api&svcCode=SCHOOL&contentType=json&perPage=5&gubun=univ_list&searchSchulNm=${searchTerm.value}&thisPage=${paginationData.pageNo}`;
+//   const urlForHighSchool = `http://www.career.go.kr/cnet/openapi/getOpenApi?apiKey=b5e83526a03f37b8349141b21fa2f6e7&svcType=api&svcCode=SCHOOL&contentType=json&perPage=5&gubun=high_list&searchSchulNm=${searchTerm.value}&thisPage=${paginationData.pageNo}`;
+
+//   // 대학교 데이터 가져오기
+//   api
+//     .$get(urlForUniversity)
+//     .then((response) => {
+//       console.log("University Search response:", response);
+//       // 대학교 결과 처리
+//       searchResult.value = response.dataSearch.content;
+
+//       // 고등학교 데이터 가져오기
+//       api
+//         .$get(urlForHighSchool)
+//         .then((response) => {
+//           console.log("High School Search response:", response);
+//           // 고등학교 결과를 기존 대학교 결과에 추가
+//           searchResult.value = searchResult.value.concat(
+//             response.dataSearch.content
+//           );
+
+//           if (response.dataSearch.content.length > 0) {
+//             const totalCount = response.dataSearch.content[0].totalCount; // 전체 데이터 수
+//             paginationData.totalPageCount = Math.ceil(totalCount / 5); // 총 페이지 수 계산
+//             paginationData.endNumOfPageGroups = Math.min(
+//               paginationData.showPageGroupsCount,
+//               paginationData.totalPageCount
+//             ); // 페이지 그룹 끝 번호 설정
+//           } else {
+//             initPage(); // 검색 결과가 없으면 초기화
+//           }
+//         })
+//         .catch((error) => {
+//           console.error("Error searching for high school:", error);
+//         });
+//     })
+//     .catch((error) => {
+//       console.error("Error searching for university:", error);
+//     });
+// };
 const performSearch = () => {
-  const urlForUniversity = `http://www.career.go.kr/cnet/openapi/getOpenApi?apiKey=b5e83526a03f37b8349141b21fa2f6e7&svcType=api&svcCode=SCHOOL&contentType=json&perPage=5&gubun=univ_list&searchSchulNm=${searchTerm.value}&thisPage=${paginationData.pageNo}`;
-  const urlForHighSchool = `http://www.career.go.kr/cnet/openapi/getOpenApi?apiKey=b5e83526a03f37b8349141b21fa2f6e7&svcType=api&svcCode=SCHOOL&contentType=json&perPage=5&gubun=high_list&searchSchulNm=${searchTerm.value}&thisPage=${paginationData.pageNo}`;
+  const gubunUniv = "univ_list";
+  const gubunHigh = "high_list";
+  const page = paginationData.pageNo;
 
   // 대학교 데이터 가져오기
   api
-    .$get(urlForUniversity)
+    .$get("/career-api/school", {
+      params: {
+        gubun: gubunUniv,
+        searchSchulNm: searchTerm.value,
+        thisPage: page
+      }
+    })
     .then((response) => {
-      console.log("University Search response:", response);
-      // 대학교 결과 처리
       searchResult.value = response.dataSearch.content;
 
       // 고등학교 데이터 가져오기
       api
-        .$get(urlForHighSchool)
+        .$get("/career-api/school", {
+          params: {
+            gubun: gubunHigh,
+            searchSchulNm: searchTerm.value,
+            thisPage: page
+          }
+        })
         .then((response) => {
-          console.log("High School Search response:", response);
-          // 고등학교 결과를 기존 대학교 결과에 추가
-          searchResult.value = searchResult.value.concat(
-            response.dataSearch.content
-          );
+          const result = response.dataSearch.content;
+          searchResult.value = searchResult.value.concat(result);
 
-          if (response.dataSearch.content.length > 0) {
-            const totalCount = response.dataSearch.content[0].totalCount; // 전체 데이터 수
-            paginationData.totalPageCount = Math.ceil(totalCount / 5); // 총 페이지 수 계산
+          if (result.length > 0) {
+            const totalCount = result[0].totalCount;
+            paginationData.totalPageCount = Math.ceil(totalCount / 5);
             paginationData.endNumOfPageGroups = Math.min(
               paginationData.showPageGroupsCount,
               paginationData.totalPageCount
-            ); // 페이지 그룹 끝 번호 설정
+            );
           } else {
-            initPage(); // 검색 결과가 없으면 초기화
+            initPage();
           }
         })
         .catch((error) => {
@@ -164,6 +213,7 @@ const performSearch = () => {
       console.error("Error searching for university:", error);
     });
 };
+
 
 // 검색 버튼 클릭 시
 const doNewSearch = () => {

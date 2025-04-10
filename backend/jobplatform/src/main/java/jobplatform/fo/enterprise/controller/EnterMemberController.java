@@ -119,7 +119,7 @@ public class EnterMemberController {
 
         Map map = new HashMap();
 
-        map.put("entrprsSq",pk);
+        map.put("pk",pk);
         map.put("entrprsId",enterLoginDTO.getEntrprsId());
 
         log.info("cookie"+ cookie);

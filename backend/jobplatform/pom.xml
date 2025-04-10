@@ -12,6 +12,7 @@
 	<artifactId>demo</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>jobplatform</name>
+	<packaging>war</packaging>
 	<description>Demo project for Spring Boot</description>
 	<url/>
 	<licenses>
@@ -30,6 +31,11 @@
 		<java.version>21</java.version>
 	</properties>
 	<dependencies>
+		<dependency>
+		    <groupId>org.springframework.boot</groupId>
+		      <artifactId>spring-boot-starter-tomcat</artifactId>
+		      <scope>provided</scope> <!-- ì•ˆë˜ì–´ ìžˆëŠ” ê²½ìš° ë³€ê²½! -->
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
@@ -107,7 +113,7 @@
 
 		
 		
-        <!--±â¿ì??? Ãß??? ????????????-->
+        <!--ï¿½ï¿½ï¿½??? ï¿½ï¿½??? ????????????-->
 		<dependency>
 			<groupId>org.modelmapper</groupId>
 			<artifactId>modelmapper</artifactId>
@@ -118,7 +124,7 @@
 			<artifactId>spring-security-crypto</artifactId>
 			<version>5.1.5.RELEASE</version><!--$NO-MVN-MAN-VER$-->
 		</dependency>
-		<!-- ????????? log Ãâ·Â Ãß??? -->
+		<!-- ????????? log ï¿½ï¿½ï¿½ ï¿½ï¿½??? -->
 		<dependency>
 			<groupId>org.bgee.log4jdbc-log4j2</groupId>
 			<artifactId>log4jdbc-log4j2-jdbc4.1</artifactId>

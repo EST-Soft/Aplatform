@@ -282,7 +282,7 @@ const fetchScrap = async () => {
             // console.log("isScrapped ", isScrapped.value);
         }
         if(store.getters.getUserType === 'enter'){
-            const response = await api.$get(`/scrap/projectDetail/enter/${state.enter.entrprsSq}/${prjctSq.value}`);
+            const response = await api.$get(`/scrap/projectDetail/enter/${state.enter.pk}/${prjctSq.value}`);
             isScrapped.value = response;
             // console.log("isScrapped ", isScrapped.value);
         }
@@ -314,9 +314,9 @@ async function toggleScrap() {
     if (store.getters.getUserType === 'enter') {
         try {
             if (isScrapped.value) {
-                await api.$delete(`/scrap/remove/enter/${state.enter.entrprsSq}/${prjctSq.value}`);
+                await api.$delete(`/scrap/remove/enter/${state.enter.pk}/${prjctSq.value}`);
             } else {
-                await api.$post(`/scrap/create/enter/${state.enter.entrprsSq}/${prjctSq.value}`);
+                await api.$post(`/scrap/create/enter/${state.enter.pk}/${prjctSq.value}`);
             }
             await fetchScrap();
         } catch (error) {
